@@ -10,10 +10,8 @@
     <g transform="translate(256 262) scale(1.18) translate(-256 -261)">
     <path d="M96 196V156q0-26 26-26h82q12 0 20 8l24 24h142q26 0 26 26v8z" fill="#AEBFCD"/>
     <rect x="96" y="186" width="320" height="206" rx="26" fill="#FFFFFF"/>
-    <path d="M232 282v-18a24 24 0 0 1 48 0v18" fill="none" stroke="#008080" stroke-width="16"/>
-    <rect x="218" y="276" width="76" height="60" rx="10" fill="#008080"/>
-    <circle cx="256" cy="299" r="8.5" fill="#FFFFFF"/>
-    <path d="M251.5 303h9l3 17h-15z" fill="#FFFFFF"/>
+    <circle cx="256" cy="262" r="27" fill="#008080"/>
+    <path d="M202 344v-8q0-38 54-38t54 38v8z" fill="#008080"/>
   </g>
   </g>
   <text x="180" y="108" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="88" letter-spacing="-1.5"><tspan fill="#4DB8B8" font-weight="400">my</tspan><tspan fill="#FFFFFF" font-weight="700">Life</tspan></text>
