@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MyLife.Client\MyLife.Client.csproj" />
     <ProjectReference Include="..\MyLife.Shared\MyLife.Shared.csproj" />
+    <ProjectReference Include="..\MyLife.Crypto\MyLife.Crypto.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />

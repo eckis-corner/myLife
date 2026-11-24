@@ -11,6 +11,8 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 builder.Services.AddScoped<AppInfoClient>();
 builder.Services.AddScoped<CultureService>();
 builder.Services.AddScoped<IMyLifeCrypto, JsMyLifeCrypto>();
+builder.Services.AddScoped<SetupClient>();
+builder.Services.AddScoped<VaultSetupService>();
 
 var host = builder.Build();
 

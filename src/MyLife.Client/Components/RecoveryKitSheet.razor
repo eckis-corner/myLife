@@ -1,0 +1,52 @@
+@* Druckbares Wiederherstellungs-Kit: 24 Wörter, QR-Code, Konto und Instanz. Beim Drucken bleibt nur dieser Bereich sichtbar (app.css). *@
+@inject IStringLocalizer<SharedResource> L
+@inject NavigationManager Navigation
+
+<MudPaper Class="mylife-print pa-4" Outlined>
+    <MudStack Spacing="3">
+        <MudText Typo="Typo.h5" HtmlTag="h2">@L["RecoveryKitTitle"]</MudText>
+
+        <MudGrid Spacing="2">
+            <MudItem xs="12" sm="4"><MudText Typo="Typo.body2"><b>@L["RecoveryKitAccount"]:</b> @DisplayName (@Email)</MudText></MudItem>
+            <MudItem xs="12" sm="5"><MudText Typo="Typo.body2"><b>@L["RecoveryKitInstance"]:</b> @Navigation.BaseUri.TrimEnd('/')</MudText></MudItem>
+            <MudItem xs="12" sm="3"><MudText Typo="Typo.body2"><b>@L["RecoveryKitCreated"]:</b> @CreatedAt.ToString("d")</MudText></MudItem>
+        </MudGrid>
+
+        <MudText Typo="Typo.subtitle2">@L["RecoveryKitWords"]</MudText>
+        <MudGrid Spacing="1" data-testid="recovery-words">
+            @for (var i = 0; i < Words.Count; i++)
+            {
+                var number = i + 1;
+                var word = Words[i];
+                <MudItem xs="6" sm="4" md="3">
+                    <MudText Typo="Typo.body1" Class="mylife-recovery-word">
+                        <span class="mylife-recovery-number">@number.</span> @word
+                    </MudText>
+                </MudItem>
+            }
+        </MudGrid>
+
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+            <MudImage Src="@_qrCode" Alt="@L["RecoveryKitWords"]" Width="180" Height="180" />
+            <MudStack Spacing="2" Style="flex: 1; min-width: 240px;">
+                <MudText Typo="Typo.body2">@L["RecoveryKitInstructions"]</MudText>
+                <MudAlert Severity="Severity.Error" Dense Variant="Variant.Outlined">@L["RecoveryKitWarning"]</MudAlert>
+            </MudStack>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+@code {
+    private string? _qrCode;
+
+    [Parameter, EditorRequired] public IReadOnlyList<string> Words { get; set; } = [];
+
+    [Parameter, EditorRequired] public string DisplayName { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public string Email { get; set; } = string.Empty;
+
+    [Parameter] public DateTime CreatedAt { get; set; } = DateTime.Today;
+
+    // Der QR-Code enthält die Wörter selbst, damit er auch ohne myLife lesbar bleibt.
+    protected override void OnParametersSet() => _qrCode = QrCodeService.ToDataUri(string.Join(' ', Words));
+}

@@ -3,5 +3,6 @@ window.myLife = {
     getStoredCulture: () => window.localStorage.getItem("mylife.culture"),
     setStoredCulture: (culture) => window.localStorage.setItem("mylife.culture", culture),
     getBrowserLanguage: () => navigator.language || "de",
-    setDocumentLanguage: (culture) => { document.documentElement.lang = culture; }
+    setDocumentLanguage: (culture) => { document.documentElement.lang = culture; },
+    print: () => window.print()
 };

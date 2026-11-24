@@ -1,0 +1,14 @@
+@* Hinweis „Was gehört nicht hinein“ (Architektur 6.2). Wird im Assistenten und später auf der Hinweisseite verwendet. *@
+@inject IStringLocalizer<SharedResource> L
+
+<MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Block">
+    <MudText Typo="Typo.subtitle1" Class="mb-1"><b>@L["NotInVaultTitle"]</b></MudText>
+    <MudText Typo="Typo.body2">@L["NotInVaultIntro"]</MudText>
+    <MudList T="string" Dense ReadOnly>
+        <MudListItem Icon="@Icons.Material.Outlined.Pin">@L["NotInVaultPins"]</MudListItem>
+        <MudListItem Icon="@Icons.Material.Outlined.Password">@L["NotInVaultPasswords"]</MudListItem>
+        <MudListItem Icon="@Icons.Material.Outlined.CurrencyBitcoin">@L["NotInVaultSeeds"]</MudListItem>
+        <MudListItem Icon="@Icons.Material.Outlined.Description">@L["NotInVaultOriginals"]</MudListItem>
+    </MudList>
+    <MudText Typo="Typo.body2">@L["NotInVaultWhy"]</MudText>
+</MudAlert>

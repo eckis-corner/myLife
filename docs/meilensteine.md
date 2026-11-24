@@ -17,7 +17,7 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 ## M1 – MVP: Tresor
 
 1. **Krypto-Kern:** `myLife.crypto.js` (Argon2id, HKDF, AES-GCM, ECIES, ECDSA), C#-Fassade, .NET-Referenzimplementierung, Testvektoren, Kreuztests ✅ (24.11.2026, [kryptoformat.md](kryptoformat.md))
-2. **Einrichtungsassistent:** erster Nutzer als Admin, Master-Passwort, Recovery-Kit (24 Wörter und QR-Code, druckbar), TOTP und/oder Passkey, Hinweis „Was gehört nicht hinein“
+2. **Einrichtungsassistent:** erster Nutzer als Admin, Master-Passwort, Recovery-Kit (24 Wörter und QR-Code, druckbar), TOTP und/oder Passkey, Hinweis „Was gehört nicht hinein“ ✅ (24.11.2026; Einrichtungscode 51, Passkey mit M1.3, 52)
 3. **Anmeldung** mit zweitem Faktor, automatische Abmeldung, Passwort ändern, Wiederherstellung per Recovery-Key
 4. **Schema-Motor:** Objekttyp-Schemata → Formular, Datenblatt, Suchindex
 5. **Alle Objekttypen der Bereiche 0–11 und 13** (siehe [objekttypen.md](objekttypen.md)): anlegen, bearbeiten, beenden, löschen (Papierkorb). Dazu Wünsche, Verweise, Zusatzfelder und die Prüfungen „Gehört nicht hinein“.

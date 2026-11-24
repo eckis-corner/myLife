@@ -2,3 +2,36 @@
 h1:focus {
     outline: none;
 }
+
+/* Wiederherstellungs-Kit */
+.mylife-recovery-word {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.mylife-recovery-number {
+    display: inline-block;
+    min-width: 2.2em;
+    color: var(--mud-palette-text-secondary);
+}
+
+/* Beim Drucken nur den markierten Bereich zeigen (Wiederherstellungs-Kit, später Datenblätter). */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .mylife-print,
+    .mylife-print * {
+        visibility: visible;
+    }
+
+    .mylife-print {
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+}

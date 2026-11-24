@@ -4,7 +4,7 @@
 
 myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: Versicherungen, Konten, Kredite, Verträge, Urkunden, digitale Zugänge, Kontakte und persönliche Wünsche. Solange du lebst, kann niemand die Daten lesen, auch nicht der Betreiber des Servers. Wirst du handlungsunfähig oder stirbst du, erhalten deine Vertrauenspersonen über einen Notfallzugang (Dead-Man's-Switch) genau die Bereiche, die du für sie freigegeben hast.
 
-> **Status:** frühe Entwicklung (Meilenstein M0 – Grundgerüst). Noch nicht für echte Daten geeignet.
+> **Status:** frühe Entwicklung (Meilenstein M1 – Tresor, in Arbeit). Noch nicht für echte Daten geeignet.
 
 ## Merkmale (geplant)
 
@@ -38,6 +38,8 @@ dotnet run --project src/MyLife.Server       # http://localhost:5062
 dotnet test --solution MyLife.slnx           # Tests (nutzen Testcontainers)
 python3 tools/resources.py                   # Ressourcen-Dateien de/en neu erzeugen
 ```
+
+**Ersteinrichtung:** Solange es keinen Nutzer gibt, schreibt der Server einen Einrichtungscode ins Protokoll (Terminal bzw. Debug-Konsole). Der Assistent unter `/setup` fragt danach.
 
 **VS Code:** Mit F5 („myLife (Server)“) startet VS Code die Datenbank, baut den Server, startet ihn im Debugger und öffnet die App unter <http://localhost:5062>. Für Hot Reload gibt es die Aufgabe `watch`. Voraussetzung ist die Erweiterung C# Dev Kit.
 

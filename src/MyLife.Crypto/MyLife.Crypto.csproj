@@ -12,6 +12,10 @@
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" />
   </ItemGroup>
   <ItemGroup>
+    <!-- BIP-39, englische Wortliste aus github.com/bitcoin/bips, SHA-256 2f5eed53a4727b4bf8880d8f3f199efc90e58503646d9ff8eff3a2ed3b24dbda -->
+    <EmbeddedResource Include="Resources\bip39-english.txt" LogicalName="MyLife.Crypto.bip39-english.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="MyLife.Tests" />
   </ItemGroup>
 </Project>

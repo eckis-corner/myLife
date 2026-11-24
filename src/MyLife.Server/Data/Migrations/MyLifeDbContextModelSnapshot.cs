@@ -41,6 +41,126 @@ namespace MyLife.Server.Data.Migrations
 
                     b.ToTable("system_settings", (string)null);
                 });
+
+            modelBuilder.Entity("MyLife.Server.Data.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AuthHash")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("auth_hash");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("display_name");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_admin");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<int>("KdfIterations")
+                        .HasColumnType("integer")
+                        .HasColumnName("kdf_iterations");
+
+                    b.Property<int>("KdfMemoryKiB")
+                        .HasColumnType("integer")
+                        .HasColumnName("kdf_memory_kib");
+
+                    b.Property<int>("KdfParallelism")
+                        .HasColumnType("integer")
+                        .HasColumnName("kdf_parallelism");
+
+                    b.Property<byte[]>("KdfSalt")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("kdf_salt");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language");
+
+                    b.Property<DateTimeOffset?>("LastLoginAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_login_at");
+
+                    b.Property<byte[]>("PublicEncryptionKey")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("public_encryption_key");
+
+                    b.Property<byte[]>("PublicSigningKey")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("public_signing_key");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TotpSecret")
+                        .HasColumnType("text")
+                        .HasColumnName("totp_secret");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<byte[]>("WrappedEncryptionPrivateKey")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("wrapped_encryption_private_key");
+
+                    b.Property<byte[]>("WrappedSigningPrivateKey")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("wrapped_signing_private_key");
+
+                    b.Property<byte[]>("WrappedVmk")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("wrapped_vmk");
+
+                    b.Property<byte[]>("WrappedVmkByRecovery")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("wrapped_vmk_by_recovery");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("users", (string)null);
+                });
 #pragma warning restore 612, 618
         }
     }

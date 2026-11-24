@@ -10,7 +10,7 @@
   <data name="BackToHome" xml:space="preserve"><value>Zur Übersicht</value></data>
   <data name="ErrorUnhandled" xml:space="preserve"><value>Ein unerwarteter Fehler ist aufgetreten.</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>Hier entsteht dein digitaler Notfallordner: Versicherungen, Konten, Verträge, Urkunden und Wünsche an einem sicheren Ort. Alles wird in deinem Browser verschlüsselt, sodass nur du und im Ernstfall deine Vertrauenspersonen die Daten lesen können.</value></data>
-  <data name="HomeNextStepsText" xml:space="preserve"><value>Als Nächstes folgen die Einrichtung, die Anmeldung mit zweitem Faktor und der verschlüsselte Tresor.</value></data>
+  <data name="HomeNextStepsText" xml:space="preserve"><value>Als Nächstes folgen die Anmeldung mit zweitem Faktor und der verschlüsselte Tresor.</value></data>
   <data name="HomeNextStepsTitle" xml:space="preserve"><value>Wie geht es weiter?</value></data>
   <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Verschlüsselungsformat</value></data>
   <data name="HomeStatusReachable" xml:space="preserve"><value>Server erreichbar</value></data>
@@ -25,7 +25,80 @@
   <data name="NavHome" xml:space="preserve"><value>Übersicht</value></data>
   <data name="NotFoundText" xml:space="preserve"><value>Die aufgerufene Seite gibt es nicht.</value></data>
   <data name="NotFoundTitle" xml:space="preserve"><value>Seite nicht gefunden</value></data>
+  <data name="NotInVaultAcknowledge" xml:space="preserve"><value>Verstanden</value></data>
+  <data name="NotInVaultIntro" xml:space="preserve"><value>myLife sagt deiner Familie, was es gibt und wo es liegt. Zugangsdaten, mit denen jemand sofort an Geld kommt, gehören nicht hinein:</value></data>
+  <data name="NotInVaultOriginals" xml:space="preserve"><value>Originale von Urkunden, nur ihren Ablageort</value></data>
+  <data name="NotInVaultPasswords" xml:space="preserve"><value>Einzelne Passwörter. Nenne stattdessen deinen Passwortmanager und wo sein Notfallzugang liegt.</value></data>
+  <data name="NotInVaultPins" xml:space="preserve"><value>PINs, TANs und vollständige Kartennummern</value></data>
+  <data name="NotInVaultSeeds" xml:space="preserve"><value>Seed-Phrasen von Kryptowährungen, nur den Ort, an dem sie liegen</value></data>
+  <data name="NotInVaultTitle" xml:space="preserve"><value>Was gehört nicht in myLife?</value></data>
+  <data name="NotInVaultWhy" xml:space="preserve"><value>myLife warnt dich, wenn eine Eingabe danach aussieht.</value></data>
   <data name="OpenMenu" xml:space="preserve"><value>Menü öffnen</value></data>
+  <data name="RecoveryKitAccount" xml:space="preserve"><value>Konto</value></data>
+  <data name="RecoveryKitCreated" xml:space="preserve"><value>Erstellt am</value></data>
+  <data name="RecoveryKitInstance" xml:space="preserve"><value>Instanz</value></data>
+  <data name="RecoveryKitInstructions" xml:space="preserve"><value>So kommst du wieder an deinen Tresor: Auf der Anmeldeseite „Passwort vergessen“ wählen und die 24 Wörter eingeben oder den QR-Code scannen. Danach vergibst du ein neues Master-Passwort.</value></data>
+  <data name="RecoveryKitTitle" xml:space="preserve"><value>myLife – Wiederherstellungs-Kit</value></data>
+  <data name="RecoveryKitWarning" xml:space="preserve"><value>Wer diese Wörter kennt, kann deinen Tresor öffnen. Nicht fotografieren und nicht digital speichern.</value></data>
+  <data name="RecoveryKitWords" xml:space="preserve"><value>Wiederherstellungswörter</value></data>
   <data name="Reload" xml:space="preserve"><value>Neu laden</value></data>
+  <data name="SetupAccountText" xml:space="preserve"><value>Als Administrator verwaltest du Einstellungen und Benutzer. In fremde Tresore kannst du trotzdem nicht hineinsehen.</value></data>
+  <data name="SetupAlreadyDone" xml:space="preserve"><value>myLife ist bereits eingerichtet.</value></data>
+  <data name="SetupBack" xml:space="preserve"><value>Zurück</value></data>
+  <data name="SetupDisplayName" xml:space="preserve"><value>Anzeigename</value></data>
+  <data name="SetupDisplayNameRequired" xml:space="preserve"><value>Bitte einen Namen eingeben (höchstens 100 Zeichen).</value></data>
+  <data name="SetupEmail" xml:space="preserve"><value>E-Mail-Adresse</value></data>
+  <data name="SetupEmailHelp" xml:space="preserve"><value>Für die Anmeldung, für Erinnerungen und für den Notfallzugang.</value></data>
+  <data name="SetupEmailInvalid" xml:space="preserve"><value>Bitte eine gültige E-Mail-Adresse eingeben.</value></data>
+  <data name="SetupErrorCrypto" xml:space="preserve"><value>Die Schlüssel konnten im Browser nicht erzeugt werden. Bitte verwende einen aktuellen Browser.</value></data>
+  <data name="SetupError_setup-already-completed" xml:space="preserve"><value>myLife ist bereits eingerichtet.</value></data>
+  <data name="SetupError_setup-failed" xml:space="preserve"><value>Die Einrichtung ist fehlgeschlagen. Bitte versuche es erneut.</value></data>
+  <data name="SetupError_setup-invalid-input" xml:space="preserve"><value>Einige Angaben sind ungültig. Bitte prüfe sie.</value></data>
+  <data name="SetupError_setup-invalid-token" xml:space="preserve"><value>Der Einrichtungscode stimmt nicht. Nach einem Neustart des Containers gilt ein neuer Code.</value></data>
+  <data name="SetupError_setup-rate-limited" xml:space="preserve"><value>Zu viele Versuche. Bitte warte eine Minute.</value></data>
+  <data name="SetupError_setup-totp-expired" xml:space="preserve"><value>Die Einrichtung des zweiten Faktors ist abgelaufen. Bitte scanne den neuen QR-Code.</value></data>
+  <data name="SetupError_setup-totp-invalid-code" xml:space="preserve"><value>Der Code stimmt nicht. Bitte prüfe die Uhrzeit des Smartphones und versuche es erneut.</value></data>
+  <data name="SetupFinish" xml:space="preserve"><value>Tresor anlegen</value></data>
+  <data name="SetupFinishCreating" xml:space="preserve"><value>Schlüssel werden erzeugt …</value></data>
+  <data name="SetupFinishDoneText" xml:space="preserve"><value>Ab jetzt meldest du dich mit deiner E-Mail-Adresse, dem Master-Passwort und dem Code aus der Authenticator-App an.</value></data>
+  <data name="SetupFinishDoneTitle" xml:space="preserve"><value>Dein Tresor ist angelegt</value></data>
+  <data name="SetupFinishText" xml:space="preserve"><value>Alles bereit. Beim Anlegen erzeugt dein Browser die Schlüssel. Das dauert einige Sekunden.</value></data>
+  <data name="SetupNext" xml:space="preserve"><value>Weiter</value></data>
+  <data name="SetupPassword" xml:space="preserve"><value>Master-Passwort</value></data>
+  <data name="SetupPasswordAcknowledge" xml:space="preserve"><value>Ich habe verstanden, dass niemand mein Master-Passwort zurücksetzen kann.</value></data>
+  <data name="SetupPasswordHelp" xml:space="preserve"><value>Mindestens {0} Zeichen. Gut merkbar und sicher ist ein Satz aus mehreren Wörtern.</value></data>
+  <data name="SetupPasswordMismatch" xml:space="preserve"><value>Die Passwörter stimmen nicht überein.</value></data>
+  <data name="SetupPasswordRepeat" xml:space="preserve"><value>Passwort wiederholen</value></data>
+  <data name="SetupPasswordStrength" xml:space="preserve"><value>Stärke: {0}</value></data>
+  <data name="SetupPasswordStrengthFair" xml:space="preserve"><value>ausreichend</value></data>
+  <data name="SetupPasswordStrengthStrong" xml:space="preserve"><value>stark</value></data>
+  <data name="SetupPasswordStrengthWeak" xml:space="preserve"><value>zu kurz</value></data>
+  <data name="SetupPasswordText" xml:space="preserve"><value>Das Master-Passwort entschlüsselt deinen Tresor. Niemand kann es zurücksetzen, auch der Administrator nicht. Geht es verloren, hilft nur das Wiederherstellungs-Kit aus dem nächsten Schritt.</value></data>
+  <data name="SetupPasswordTooShort" xml:space="preserve"><value>Mindestens {0} Zeichen</value></data>
+  <data name="SetupRecoveryConfirmText" xml:space="preserve"><value>Zur Kontrolle: Gib die Wörter an diesen Stellen ein.</value></data>
+  <data name="SetupRecoveryPrint" xml:space="preserve"><value>Kit drucken</value></data>
+  <data name="SetupRecoveryStored" xml:space="preserve"><value>Ich habe das Kit ausgedruckt oder abgeschrieben und sicher verwahrt.</value></data>
+  <data name="SetupRecoveryText" xml:space="preserve"><value>Mit diesen 24 Wörtern kommst du an deinen Tresor, wenn du das Master-Passwort vergisst. Drucke das Kit aus oder schreibe die Wörter ab und bewahre es getrennt vom Passwort auf, zum Beispiel im Schließfach.</value></data>
+  <data name="SetupRecoveryWordNumber" xml:space="preserve"><value>Wort {0}</value></data>
+  <data name="SetupRecoveryWordWrong" xml:space="preserve"><value>Stimmt nicht</value></data>
+  <data name="SetupShowPassword" xml:space="preserve"><value>Passwort anzeigen</value></data>
+  <data name="SetupStepAccount" xml:space="preserve"><value>Dein Konto</value></data>
+  <data name="SetupStepFinish" xml:space="preserve"><value>Abschluss</value></data>
+  <data name="SetupStepNotInVault" xml:space="preserve"><value>Was nicht hineingehört</value></data>
+  <data name="SetupStepOf" xml:space="preserve"><value>Schritt {0} von {1}</value></data>
+  <data name="SetupStepPassword" xml:space="preserve"><value>Master-Passwort</value></data>
+  <data name="SetupStepRecovery" xml:space="preserve"><value>Wiederherstellungs-Kit</value></data>
+  <data name="SetupStepTwoFactor" xml:space="preserve"><value>Zweiter Faktor</value></data>
+  <data name="SetupStepWelcome" xml:space="preserve"><value>Willkommen</value></data>
+  <data name="SetupTitle" xml:space="preserve"><value>Einrichtung</value></data>
+  <data name="SetupTokenHelp" xml:space="preserve"><value>Steht im Protokoll des Containers, etwa im Container Manager unter mylife-app → Protokoll. Nach jedem Neustart gilt ein neuer Code.</value></data>
+  <data name="SetupTokenLabel" xml:space="preserve"><value>Einrichtungscode</value></data>
+  <data name="SetupTokenRequired" xml:space="preserve"><value>Bitte den Einrichtungscode eingeben.</value></data>
+  <data name="SetupTwoFactorCode" xml:space="preserve"><value>6-stelliger Code</value></data>
+  <data name="SetupTwoFactorCodeRequired" xml:space="preserve"><value>Bitte den 6-stelligen Code eingeben.</value></data>
+  <data name="SetupTwoFactorPasskeyLater" xml:space="preserve"><value>Einen Passkey kannst du nach der ersten Anmeldung zusätzlich einrichten.</value></data>
+  <data name="SetupTwoFactorSecret" xml:space="preserve"><value>Schlüssel zum manuellen Eingeben</value></data>
+  <data name="SetupTwoFactorText" xml:space="preserve"><value>Zur Anmeldung brauchst du zusätzlich einen Code aus einer Authenticator-App, zum Beispiel Aegis, Google Authenticator, Microsoft Authenticator oder deinem Passwortmanager. Scanne den QR-Code und gib den angezeigten Code ein.</value></data>
+  <data name="SetupWelcomeText" xml:space="preserve"><value>Diese Instanz ist noch nicht eingerichtet. Du legst jetzt das erste Konto an. Es wird Administrator und bekommt einen eigenen Tresor. Alle Schlüssel entstehen in deinem Browser, der Server sieht nur verschlüsselte Daten.</value></data>
   <data name="ToggleDarkMode" xml:space="preserve"><value>Hell/Dunkel umschalten</value></data>
 </root>

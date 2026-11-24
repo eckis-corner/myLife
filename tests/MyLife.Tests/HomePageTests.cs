@@ -7,6 +7,7 @@ using MudBlazor.Services;
 using MyLife.Client.Pages;
 using MyLife.Client.Services;
 using MyLife.Shared;
+using MyLife.Shared.Setup;
 
 namespace MyLife.Tests;
 
@@ -42,16 +43,33 @@ public sealed class HomePageTests : BunitContext
             Assert.Contains("Der Server ist nicht erreichbar", page.Markup, StringComparison.Ordinal));
     }
 
-    private void UseServer(HttpStatusCode status, AppInfoDto? body)
+    [Fact]
+    public void RedirectsToSetupWhenInstanceIsNotSetUp()
     {
-        var http = new HttpClient(new StubHandler(status, body)) { BaseAddress = new Uri("http://localhost/") };
-        Services.AddSingleton(new AppInfoClient(http));
+        UseServer(HttpStatusCode.OK, new AppInfoDto("1.2.3", 1), setupRequired: true);
+        var navigation = Services.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
+
+        Render<Home>();
+
+        Assert.EndsWith("/setup", navigation.Uri, StringComparison.Ordinal);
     }
 
-    private sealed class StubHandler(HttpStatusCode status, AppInfoDto? body) : HttpMessageHandler
+    private void UseServer(HttpStatusCode status, AppInfoDto? body, bool setupRequired = false)
+    {
+        var http = new HttpClient(new StubHandler(status, body, setupRequired)) { BaseAddress = new Uri("http://localhost/") };
+        Services.AddSingleton(new AppInfoClient(http));
+        Services.AddSingleton(new SetupClient(http));
+    }
+
+    private sealed class StubHandler(HttpStatusCode status, AppInfoDto? body, bool setupRequired) : HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            if (request.RequestUri!.AbsolutePath == "/api/setup/status")
+            {
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = JsonContent.Create(new SetupStatusDto(setupRequired)) });
+            }
+
             var response = new HttpResponseMessage(status);
             if (body is not null)
             {

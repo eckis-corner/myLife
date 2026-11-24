@@ -10,7 +10,7 @@
   <data name="BackToHome" xml:space="preserve"><value>Back to overview</value></data>
   <data name="ErrorUnhandled" xml:space="preserve"><value>An unexpected error has occurred.</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>This is where your digital emergency folder takes shape: insurance policies, accounts, contracts, certificates and wishes in one safe place. Everything is encrypted in your browser, so only you and, in an emergency, your trusted persons can read it.</value></data>
-  <data name="HomeNextStepsText" xml:space="preserve"><value>Next up: initial setup, sign-in with a second factor and the encrypted vault.</value></data>
+  <data name="HomeNextStepsText" xml:space="preserve"><value>Next up: sign-in with a second factor and the encrypted vault.</value></data>
   <data name="HomeNextStepsTitle" xml:space="preserve"><value>What comes next?</value></data>
   <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Encryption format</value></data>
   <data name="HomeStatusReachable" xml:space="preserve"><value>Server reachable</value></data>
@@ -25,7 +25,80 @@
   <data name="NavHome" xml:space="preserve"><value>Overview</value></data>
   <data name="NotFoundText" xml:space="preserve"><value>The page you requested does not exist.</value></data>
   <data name="NotFoundTitle" xml:space="preserve"><value>Page not found</value></data>
+  <data name="NotInVaultAcknowledge" xml:space="preserve"><value>Understood</value></data>
+  <data name="NotInVaultIntro" xml:space="preserve"><value>myLife tells your family what exists and where to find it. Credentials that give someone immediate access to money do not belong in it:</value></data>
+  <data name="NotInVaultOriginals" xml:space="preserve"><value>Original certificates, only where they are filed</value></data>
+  <data name="NotInVaultPasswords" xml:space="preserve"><value>Individual passwords. Name your password manager instead and where its emergency access is kept.</value></data>
+  <data name="NotInVaultPins" xml:space="preserve"><value>PINs, TANs and full card numbers</value></data>
+  <data name="NotInVaultSeeds" xml:space="preserve"><value>Cryptocurrency seed phrases, only the place where they are kept</value></data>
+  <data name="NotInVaultTitle" xml:space="preserve"><value>What does not belong in myLife?</value></data>
+  <data name="NotInVaultWhy" xml:space="preserve"><value>myLife warns you when something you enter looks like one of these.</value></data>
   <data name="OpenMenu" xml:space="preserve"><value>Open menu</value></data>
+  <data name="RecoveryKitAccount" xml:space="preserve"><value>Account</value></data>
+  <data name="RecoveryKitCreated" xml:space="preserve"><value>Created on</value></data>
+  <data name="RecoveryKitInstance" xml:space="preserve"><value>Instance</value></data>
+  <data name="RecoveryKitInstructions" xml:space="preserve"><value>To regain access to your vault: choose “Forgot password” on the sign-in page and enter the 24 words or scan the QR code. Then set a new master password.</value></data>
+  <data name="RecoveryKitTitle" xml:space="preserve"><value>myLife – Recovery kit</value></data>
+  <data name="RecoveryKitWarning" xml:space="preserve"><value>Anyone who knows these words can open your vault. Do not photograph them or store them digitally.</value></data>
+  <data name="RecoveryKitWords" xml:space="preserve"><value>Recovery words</value></data>
   <data name="Reload" xml:space="preserve"><value>Reload</value></data>
+  <data name="SetupAccountText" xml:space="preserve"><value>As administrator you manage settings and users. You still cannot look into anyone else's vault.</value></data>
+  <data name="SetupAlreadyDone" xml:space="preserve"><value>myLife has already been set up.</value></data>
+  <data name="SetupBack" xml:space="preserve"><value>Back</value></data>
+  <data name="SetupDisplayName" xml:space="preserve"><value>Display name</value></data>
+  <data name="SetupDisplayNameRequired" xml:space="preserve"><value>Please enter a name (at most 100 characters).</value></data>
+  <data name="SetupEmail" xml:space="preserve"><value>Email address</value></data>
+  <data name="SetupEmailHelp" xml:space="preserve"><value>Used for signing in, for reminders and for emergency access.</value></data>
+  <data name="SetupEmailInvalid" xml:space="preserve"><value>Please enter a valid email address.</value></data>
+  <data name="SetupErrorCrypto" xml:space="preserve"><value>The keys could not be created in your browser. Please use an up-to-date browser.</value></data>
+  <data name="SetupError_setup-already-completed" xml:space="preserve"><value>myLife has already been set up.</value></data>
+  <data name="SetupError_setup-failed" xml:space="preserve"><value>Setup failed. Please try again.</value></data>
+  <data name="SetupError_setup-invalid-input" xml:space="preserve"><value>Some entries are invalid. Please check them.</value></data>
+  <data name="SetupError_setup-invalid-token" xml:space="preserve"><value>The setup code is not correct. A new code is issued whenever the container restarts.</value></data>
+  <data name="SetupError_setup-rate-limited" xml:space="preserve"><value>Too many attempts. Please wait a minute.</value></data>
+  <data name="SetupError_setup-totp-expired" xml:space="preserve"><value>Setting up the second factor has expired. Please scan the new QR code.</value></data>
+  <data name="SetupError_setup-totp-invalid-code" xml:space="preserve"><value>The code is not correct. Please check the time on your phone and try again.</value></data>
+  <data name="SetupFinish" xml:space="preserve"><value>Create vault</value></data>
+  <data name="SetupFinishCreating" xml:space="preserve"><value>Creating keys …</value></data>
+  <data name="SetupFinishDoneText" xml:space="preserve"><value>From now on you sign in with your email address, your master password and the code from your authenticator app.</value></data>
+  <data name="SetupFinishDoneTitle" xml:space="preserve"><value>Your vault has been created</value></data>
+  <data name="SetupFinishText" xml:space="preserve"><value>Everything is ready. Your browser creates the keys when you continue. This takes a few seconds.</value></data>
+  <data name="SetupNext" xml:space="preserve"><value>Next</value></data>
+  <data name="SetupPassword" xml:space="preserve"><value>Master password</value></data>
+  <data name="SetupPasswordAcknowledge" xml:space="preserve"><value>I understand that nobody can reset my master password.</value></data>
+  <data name="SetupPasswordHelp" xml:space="preserve"><value>At least {0} characters. A sentence of several words is both memorable and secure.</value></data>
+  <data name="SetupPasswordMismatch" xml:space="preserve"><value>The passwords do not match.</value></data>
+  <data name="SetupPasswordRepeat" xml:space="preserve"><value>Repeat password</value></data>
+  <data name="SetupPasswordStrength" xml:space="preserve"><value>Strength: {0}</value></data>
+  <data name="SetupPasswordStrengthFair" xml:space="preserve"><value>fair</value></data>
+  <data name="SetupPasswordStrengthStrong" xml:space="preserve"><value>strong</value></data>
+  <data name="SetupPasswordStrengthWeak" xml:space="preserve"><value>too short</value></data>
+  <data name="SetupPasswordText" xml:space="preserve"><value>The master password decrypts your vault. Nobody can reset it, not even the administrator. If you lose it, only the recovery kit from the next step can help.</value></data>
+  <data name="SetupPasswordTooShort" xml:space="preserve"><value>At least {0} characters</value></data>
+  <data name="SetupRecoveryConfirmText" xml:space="preserve"><value>To check: enter the words at these positions.</value></data>
+  <data name="SetupRecoveryPrint" xml:space="preserve"><value>Print kit</value></data>
+  <data name="SetupRecoveryStored" xml:space="preserve"><value>I have printed or written down the kit and stored it safely.</value></data>
+  <data name="SetupRecoveryText" xml:space="preserve"><value>These 24 words get you into your vault if you forget the master password. Print the kit or write the words down and keep it separate from the password, for example in a safe deposit box.</value></data>
+  <data name="SetupRecoveryWordNumber" xml:space="preserve"><value>Word {0}</value></data>
+  <data name="SetupRecoveryWordWrong" xml:space="preserve"><value>Does not match</value></data>
+  <data name="SetupShowPassword" xml:space="preserve"><value>Show password</value></data>
+  <data name="SetupStepAccount" xml:space="preserve"><value>Your account</value></data>
+  <data name="SetupStepFinish" xml:space="preserve"><value>Finish</value></data>
+  <data name="SetupStepNotInVault" xml:space="preserve"><value>What does not belong in it</value></data>
+  <data name="SetupStepOf" xml:space="preserve"><value>Step {0} of {1}</value></data>
+  <data name="SetupStepPassword" xml:space="preserve"><value>Master password</value></data>
+  <data name="SetupStepRecovery" xml:space="preserve"><value>Recovery kit</value></data>
+  <data name="SetupStepTwoFactor" xml:space="preserve"><value>Second factor</value></data>
+  <data name="SetupStepWelcome" xml:space="preserve"><value>Welcome</value></data>
+  <data name="SetupTitle" xml:space="preserve"><value>Setup</value></data>
+  <data name="SetupTokenHelp" xml:space="preserve"><value>Shown in the container log, for example in Container Manager under mylife-app → Log. A new code is issued after every restart.</value></data>
+  <data name="SetupTokenLabel" xml:space="preserve"><value>Setup code</value></data>
+  <data name="SetupTokenRequired" xml:space="preserve"><value>Please enter the setup code.</value></data>
+  <data name="SetupTwoFactorCode" xml:space="preserve"><value>6-digit code</value></data>
+  <data name="SetupTwoFactorCodeRequired" xml:space="preserve"><value>Please enter the 6-digit code.</value></data>
+  <data name="SetupTwoFactorPasskeyLater" xml:space="preserve"><value>You can add a passkey after you first sign in.</value></data>
+  <data name="SetupTwoFactorSecret" xml:space="preserve"><value>Key for manual entry</value></data>
+  <data name="SetupTwoFactorText" xml:space="preserve"><value>To sign in you also need a code from an authenticator app such as Aegis, Google Authenticator, Microsoft Authenticator or your password manager. Scan the QR code and enter the code shown.</value></data>
+  <data name="SetupWelcomeText" xml:space="preserve"><value>This instance has not been set up yet. You are about to create the first account. It becomes the administrator and gets its own vault. All keys are created in your browser; the server only ever sees encrypted data.</value></data>
   <data name="ToggleDarkMode" xml:space="preserve"><value>Toggle light/dark mode</value></data>
 </root>

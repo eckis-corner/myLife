@@ -1,0 +1,182 @@
+@page "/setup"
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["AppName"] – @L["SetupTitle"]</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="px-0">
+    <MudStack Spacing="4">
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["SetupTitle"]</MudText>
+
+        @if (_isLoading)
+        {
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudProgressCircular Indeterminate Size="Size.Small" />
+                <MudText>@L["Loading"]</MudText>
+            </MudStack>
+        }
+        else if (_statusError)
+        {
+            <MudAlert Severity="Severity.Warning">@L["HomeStatusUnreachable"]</MudAlert>
+        }
+        else if (_completed)
+        {
+            <MudPaper Class="pa-6" Elevation="1" data-testid="setup-done">
+                <MudStack Spacing="3" AlignItems="AlignItems.Start">
+                    <MudIcon Icon="@Icons.Material.Filled.VerifiedUser" Color="Color.Success" Size="Size.Large" />
+                    <MudText Typo="Typo.h5" HtmlTag="h2">@L["SetupFinishDoneTitle"]</MudText>
+                    <MudText>@L["SetupFinishDoneText"]</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="">@L["BackToHome"]</MudButton>
+                </MudStack>
+            </MudPaper>
+        }
+        else if (!_required)
+        {
+            <MudAlert Severity="Severity.Info" data-testid="setup-not-required">
+                @L["SetupAlreadyDone"]
+                <MudButton Variant="Variant.Text" Href="" Class="ml-2">@L["BackToHome"]</MudButton>
+            </MudAlert>
+        }
+        else
+        {
+            <MudPaper Class="pa-4 pa-sm-6" Elevation="1">
+                <MudStack Spacing="4">
+                    <MudStack Spacing="1">
+                        <MudText Typo="Typo.caption">@L["SetupStepOf", _step + 1, StepTitles.Length]</MudText>
+                        <MudText Typo="Typo.h5" HtmlTag="h2" data-testid="setup-step-title">@L[StepTitles[_step]]</MudText>
+                        <MudProgressLinear Value="@(_step + 1)" Min="0" Max="@StepTitles.Length" Color="Color.Primary" Rounded />
+                    </MudStack>
+
+                    <MudForm @ref="_form" SuppressImplicitSubmission>
+                        <MudStack Spacing="3">
+                            @switch (_step)
+                            {
+                                case StepWelcome:
+                                    <MudText>@L["SetupWelcomeText"]</MudText>
+                                    <MudTextField T="string" @bind-Value="_token" Label="@L["SetupTokenLabel"]" HelperText="@L["SetupTokenHelp"]"
+                                                  Required RequiredError="@L["SetupTokenRequired"]" Variant="Variant.Outlined"
+                                                  AutoFocus Immediate Class="mylife-recovery-word" data-testid="setup-token" />
+                                    break;
+
+                                case StepAccount:
+                                    <MudText>@L["SetupAccountText"]</MudText>
+                                    <MudTextField T="string" @bind-Value="_displayName" Label="@L["SetupDisplayName"]" Variant="Variant.Outlined"
+                                                  Required RequiredError="@L["SetupDisplayNameRequired"]" MaxLength="@SetupLimits.MaxDisplayNameLength"
+                                                  Validation="@(new Func<string, string?>(ValidateDisplayName))" AutoFocus />
+                                    <MudTextField T="string" @bind-Value="_email" Label="@L["SetupEmail"]" HelperText="@L["SetupEmailHelp"]"
+                                                  Variant="Variant.Outlined" InputType="InputType.Email" Required RequiredError="@L["SetupEmailInvalid"]"
+                                                  MaxLength="@SetupLimits.MaxEmailLength" Validation="@(new Func<string, string?>(ValidateEmail))" />
+                                    <MudSelect T="string" @bind-Value="_language" Label="@L["Language"]" Variant="Variant.Outlined">
+                                        @foreach (var culture in SupportedCultures.All)
+                                        {
+                                            <MudSelectItem Value="@culture">@L[$"LanguageName_{culture}"]</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                    break;
+
+                                case StepNotInVault:
+                                    <NotInVaultHint />
+                                    <MudCheckBox T="bool" @bind-Value="_notInVaultAcknowledged" Label="@L["NotInVaultAcknowledge"]" Color="Color.Primary" />
+                                    break;
+
+                                case StepPassword:
+                                    <MudText>@L["SetupPasswordText"]</MudText>
+                                    <MudTextField T="string" @bind-Value="_password" Label="@L["SetupPassword"]"
+                                                  HelperText="@L["SetupPasswordHelp", SetupLimits.MinPasswordLength]" Variant="Variant.Outlined"
+                                                  InputType="@(_showPassword ? InputType.Text : InputType.Password)" Immediate AutoFocus
+                                                  Adornment="Adornment.End" AdornmentIcon="@(_showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                                                  AdornmentAriaLabel="@L["SetupShowPassword"]" OnAdornmentClick="() => _showPassword = !_showPassword"
+                                                  Validation="@(new Func<string, string?>(ValidatePassword))" UserAttributes="@NewPasswordAttributes" />
+                                    <MudStack Spacing="1">
+                                        <MudProgressLinear Value="@PasswordScore" Max="3" Color="@PasswordColor" Rounded />
+                                        <MudText Typo="Typo.caption">@L["SetupPasswordStrength", L[PasswordStrengthKey]]</MudText>
+                                    </MudStack>
+                                    <MudTextField T="string" @bind-Value="_passwordRepeat" Label="@L["SetupPasswordRepeat"]" Variant="Variant.Outlined"
+                                                  InputType="@(_showPassword ? InputType.Text : InputType.Password)" Immediate
+                                                  Validation="@(new Func<string, string?>(ValidatePasswordRepeat))" UserAttributes="@NewPasswordAttributes" />
+                                    <MudCheckBox T="bool" @bind-Value="_passwordAcknowledged" Label="@L["SetupPasswordAcknowledge"]" Color="Color.Primary" />
+                                    break;
+
+                                case StepRecovery:
+                                    <MudText>@L["SetupRecoveryText"]</MudText>
+                                    <RecoveryKitSheet Words="_words" DisplayName="@_displayName" Email="@_email" />
+                                    <MudStack Row Wrap="Wrap.Wrap">
+                                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintAsync">@L["SetupRecoveryPrint"]</MudButton>
+                                    </MudStack>
+                                    <MudText Typo="Typo.subtitle2">@L["SetupRecoveryConfirmText"]</MudText>
+                                    <MudGrid Spacing="2">
+                                        @for (var i = 0; i < _confirmPositions.Length; i++)
+                                        {
+                                            var slot = i;
+                                            <MudItem xs="12" sm="4">
+                                                <MudTextField T="string" @bind-Value="_confirmInputs[slot]" Label="@L["SetupRecoveryWordNumber", _confirmPositions[slot] + 1]"
+                                                              Variant="Variant.Outlined" Immediate UserAttributes="@NoAutofillAttributes"
+                                                              Validation="@(new Func<string, string?>(value => ValidateRecoveryWord(slot, value)))" />
+                                            </MudItem>
+                                        }
+                                    </MudGrid>
+                                    <MudCheckBox T="bool" @bind-Value="_recoveryStored" Label="@L["SetupRecoveryStored"]" Color="Color.Primary" />
+                                    break;
+
+                                case StepTwoFactor:
+                                    <MudText>@L["SetupTwoFactorText"]</MudText>
+                                    @if (_enrollment is not null)
+                                    {
+                                        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+                                            <MudImage Src="@_totpQrCode" Alt="@L["SetupStepTwoFactor"]" Width="200" Height="200" />
+                                            <MudStack Spacing="1">
+                                                <MudText Typo="Typo.caption">@L["SetupTwoFactorSecret"]</MudText>
+                                                <MudText Class="mylife-recovery-word" Style="word-break: break-all;">@FormatSecret(_enrollment.Secret)</MudText>
+                                            </MudStack>
+                                        </MudStack>
+                                        <MudTextField T="string" @bind-Value="_totpCode" Label="@L["SetupTwoFactorCode"]" Variant="Variant.Outlined"
+                                                      InputMode="InputMode.numeric" MaxLength="7" Required RequiredError="@L["SetupTwoFactorCodeRequired"]"
+                                                      UserAttributes="@OneTimeCodeAttributes" AutoFocus />
+                                        <MudText Typo="Typo.caption">@L["SetupTwoFactorPasskeyLater"]</MudText>
+                                    }
+                                    break;
+
+                                case StepFinish:
+                                    <MudText>@L["SetupFinishText"]</MudText>
+                                    <MudSimpleTable Dense Outlined>
+                                        <tbody>
+                                            <tr><td>@L["SetupDisplayName"]</td><td>@_displayName</td></tr>
+                                            <tr><td>@L["SetupEmail"]</td><td>@_email</td></tr>
+                                            <tr><td>@L["Language"]</td><td>@L[$"LanguageName_{_language}"]</td></tr>
+                                        </tbody>
+                                    </MudSimpleTable>
+                                    @if (_busy)
+                                    {
+                                        <MudStack Row AlignItems="AlignItems.Center">
+                                            <MudProgressCircular Indeterminate Size="Size.Small" />
+                                            <MudText>@L["SetupFinishCreating"]</MudText>
+                                        </MudStack>
+                                    }
+                                    break;
+                            }
+                        </MudStack>
+                    </MudForm>
+
+                    @if (_error is not null)
+                    {
+                        <MudAlert Severity="Severity.Error" data-testid="setup-error">@L[_error]</MudAlert>
+                    }
+
+                    <MudStack Row Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap">
+                        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
+                                   Disabled="@(_step == 0 || _busy)" OnClick="Back">@L["SetupBack"]</MudButton>
+                        @if (_step == StepFinish)
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock"
+                                       Disabled="_busy" OnClick="FinishAsync" data-testid="setup-finish">@L["SetupFinish"]</MudButton>
+                        }
+                        else
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward"
+                                       Disabled="@(_busy || !CanContinue)" OnClick="NextAsync" data-testid="setup-next">@L["SetupNext"]</MudButton>
+                        }
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        }
+    </MudStack>
+</MudContainer>

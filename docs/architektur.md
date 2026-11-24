@@ -93,7 +93,7 @@ Der Server liefert den Code aus, der die Daten entschlüsselt. Ein kompromittier
 | Symmetrische Verschlüsselung | **AES-256-GCM**, zufälliger Nonce mit 96 Bit, AAD = Objekttyp, Objekt-ID und Formatversion |
 | Asymmetrisch (Umschläge) | **ECDH P-256** mit ephemerem Schlüssel, dann HKDF und AES-256-GCM (ECIES-Muster). P-256 statt X25519, weil es in allen Browsern und in .NET gleich verfügbar ist. |
 | Signatur | ECDSA P-256 (Identitätsschlüssel je Nutzer) |
-| Wiederherstellungs-Schlüssel | 256 Bit Zufall, als 24 Wörter (BIP-39-Wortliste, deutsch und englisch) und als QR-Code |
+| Wiederherstellungs-Schlüssel | 256 Bit Zufall, als 24 Wörter (englische BIP-39-Standardliste, 50) und als QR-Code |
 
 ### 4.2 Schlüsselhierarchie (je Nutzer)
 
@@ -262,7 +262,7 @@ Er kennt die E-Mail-Adressen und Anzeigenamen der Nutzer, wer wessen Vertrauensp
 - Images für **linux/amd64** (Celeron J4125), gebaut über GitHub Actions nach `ghcr.io/eckis-corner/mylife` (26, 28).
 - Speicherbedarf: App etwa 200 MB, PostgreSQL etwa 150 MB RAM. Argon2id läuft im Browser, nicht auf der NAS.
 - Volumes: `pgdata`, `files`, `backup` und `keys`. In `keys` liegt der Schlüsselring von ASP.NET Data Protection. Ohne ihn lassen sich TOTP-Geheimnisse und das SMTP-Passwort nicht mehr entschlüsseln, deshalb gehört `keys` in die Sicherung.
-- Beim ersten Start gibt es einen **Einrichtungsassistenten**: ersten Nutzer als Admin anlegen, 2FA, Recovery-Kit drucken, SMTP einstellen und testen.
+- Beim ersten Start gibt es einen **Einrichtungsassistenten**: ersten Nutzer als Admin anlegen, 2FA, Recovery-Kit drucken, SMTP einstellen und testen (SMTP folgt mit M2). Er verlangt den **Einrichtungscode** aus dem Container-Protokoll (51).
 - Die Anleitungen (`docs/betrieb/`) beschreiben Installation in Container Manager und Nginx Proxy Manager, Update, Sicherung, Rücksicherung und die Übergabe an eine Nachfolgeperson (4c).
 
 ## 9. Querschnitt

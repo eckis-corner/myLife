@@ -66,6 +66,15 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 48 | Datenblatt | Wie vorgeschlagen: strukturierte Ansicht aller Felder, einzeln druckbar und als PDF, Teil des Notfallordners |
 | 49 | Planfreigabe | Plan freigegeben, Umsetzung M0 gestartet |
 
+## Runde 4 (24.11.2026, Umsetzung M1)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 50 | Wortliste Recovery-Key | **Englische BIP-39-Standardliste** für alle Sprachen. Eine offizielle deutsche Liste gibt es nicht; die Oberfläche drumherum ist deutsch bzw. englisch. Beim Eingeben genügen die ersten vier Buchstaben jedes Worts. |
+| 51 | Schutz der Ersteinrichtung | Solange es keinen Nutzer gibt, verlangt der Assistent einen **Einrichtungscode**. Der Server erzeugt ihn bei jedem Start neu und schreibt ihn ins Container-Protokoll. Sonst würde Administrator, wer die offene URL zuerst aufruft. |
+| 52 | Passkey | Die Einrichtung eines Passkeys kommt mit der Anmeldung in **M1.3** (Registrierung und Anmeldung zusammen, damit beides gemeinsam getestet wird). Der Assistent richtet TOTP ein. |
+| 53 | Anmeldehash auf dem Server | Argon2id mit m = 19 MiB, t = 2, p = 1 über den Anmeldehash aus dem Browser. Die Eingabe hat bereits 256 Bit Entropie; moderate Parameter schonen die Synology. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

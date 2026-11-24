@@ -503,9 +503,9 @@ public sealed class ReferenceMyLifeCrypto : IMyLifeCrypto
     }
 }
 
-/// <summary>Argon2id über Konscious.Security.Cryptography (RFC 9106, Version 0x13).</summary>
+/// <summary>Argon2id über Konscious.Security.Cryptography (RFC 9106, Version 0x13). Auch für den Anmeldehash auf dem Server.</summary>
 [UnsupportedOSPlatform("browser")]
-internal static class Argon2
+public static class Argon2
 {
     public static async Task<byte[]> HashAsync(
         byte[] password, byte[] salt, int memoryKiB, int iterations, int parallelism, int length,

@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M0:** Die App zeigt nur die Startseite mit dem Status der Instanz. Bitte noch keine echten Daten erfassen.
+> **Stand M1.2:** Die App lässt sich einrichten (erstes Konto mit Tresor und zweitem Faktor). Anmeldung und Tresorinhalte folgen. Bitte noch keine echten Daten erfassen.
 
 ## 1. Ordner anlegen
 
@@ -65,7 +65,21 @@ Die App nimmt `X-Forwarded-*`-Header nur aus privaten Netzen an (10.x, 172.16–
 
 Danach `https://mylife.eckis-corner.de` öffnen. Die Startseite zeigt „Server erreichbar“ und die Version.
 
-## 6. Updates
+## 6. Ersteinrichtung
+
+Beim ersten Aufruf von `https://mylife.eckis-corner.de` startet der Einrichtungsassistent. Er fragt nach dem **Einrichtungscode**. Der Server schreibt ihn beim Start ins Protokoll:
+
+**Container Manager → Container → `mylife-app-1` → Protokoll** (oder per SSH `sudo docker logs mylife-app-1`), Zeile:
+
+```text
+myLife ist noch nicht eingerichtet. Einrichtungscode für den Assistenten: ABCD-EFGH-JKLM-NPQR-STUV
+```
+
+Nach jedem Neustart des Containers gilt ein neuer Code. Sobald das erste Konto angelegt ist, gibt es keinen Code mehr und der Assistent ist gesperrt.
+
+Der Assistent führt durch Konto, Master-Passwort, Wiederherstellungs-Kit (ausdrucken!) und die Authenticator-App. Die Schlüssel entstehen im Browser; das Anlegen dauert einige Sekunden.
+
+## 7. Updates
 
 Container Manager → Projekt `mylife` → **Aktion → Stoppen**, dann **Image** → `ghcr.io/eckis-corner/mylife` → **Aktualisieren**, dann das Projekt wieder **starten**. Alternativ per SSH:
 
@@ -77,7 +91,7 @@ sudo docker compose up -d
 
 Datenbank-Migrationen laufen beim Start automatisch.
 
-## 7. Sicherung
+## 8. Sicherung
 
 Bis zum Meilenstein M3 (automatische, konsistente Sicherung per `pg_dump`) gilt:
 
@@ -85,7 +99,7 @@ Bis zum Meilenstein M3 (automatische, konsistente Sicherung per `pg_dump`) gilt:
 - Für eine konsistente Datenbanksicherung das Projekt vor der Sicherung kurz stoppen oder die Sicherung zu einer ruhigen Zeit planen.
 - **`data/app/keys`** enthält die Schlüssel, mit denen der Server Einstellungen wie das SMTP-Passwort schützt. Ohne diesen Ordner sind diese Einstellungen nach einer Rücksicherung neu einzugeben. Die Inhalte der Tresore hängen **nicht** davon ab, sie sind mit den Schlüsseln der Nutzer verschlüsselt.
 
-## 8. Lokale Entwicklung und eigener Build
+## 9. Lokale Entwicklung und eigener Build
 
 ```bash
 cp .env.example .env        # Passwort setzen
