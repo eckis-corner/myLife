@@ -7,7 +7,21 @@ window.myLife = {
     print: () => window.print(),
     // Letzte Aktivität für die automatische Abmeldung (IdleMonitor).
     lastActivity: Date.now(),
-    getIdleSeconds: () => Math.floor((Date.now() - window.myLife.lastActivity) / 1000)
+    getIdleSeconds: () => Math.floor((Date.now() - window.myLife.lastActivity) / 1000),
+    // Entschlüsselte Dokumente existieren nur im Browser: als Blob-URL zur Vorschau oder als Download.
+    createObjectUrl: (bytes, type) => URL.createObjectURL(new Blob([bytes], { type: type || "application/octet-stream" })),
+    revokeObjectUrl: (url) => URL.revokeObjectURL(url),
+    downloadBytes: (bytes, fileName, type) => {
+        const url = URL.createObjectURL(new Blob([bytes], { type: type || "application/octet-stream" }));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        link.rel = "noopener";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
 };
 
 for (const type of ["pointerdown", "pointermove", "keydown", "wheel", "touchstart", "scroll"]) {

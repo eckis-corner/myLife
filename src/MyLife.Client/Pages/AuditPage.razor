@@ -1,0 +1,98 @@
+@page "/account/audit"
+@attribute [Authorize]
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject VaultClient Api
+@inject VaultService Vault
+@inject SchemaText Text
+
+<PageTitle>@L["AppName"] – @L["NavAudit"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["NavAudit"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AuditText"]</MudText>
+
+    <MudTable T="AuditEntryDto" ServerData="LoadAsync" Hover Striped Dense="false" Elevation="1" RowsPerPage="50" Breakpoint="Breakpoint.Sm"
+              LoadingProgressColor="Color.Primary" data-testid="audit-table">
+        <ToolBarContent>
+            <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>@L["AuditAt"]</MudTh>
+            <MudTh>@L["AuditAction"]</MudTh>
+            <MudTh>@L["AuditTarget"]</MudTh>
+            <MudTh>@L["AuditActor"]</MudTh>
+            <MudTh>@L["AuditIp"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["AuditAt"]">@context.At.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)</MudTd>
+            <MudTd DataLabel="@L["AuditAction"]">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(context.Action == AuditActions.LoginFailed ? Color.Error : Color.Default)">
+                    @L[$"Audit_{context.Action}"]
+                </MudChip>
+            </MudTd>
+            <MudTd DataLabel="@L["AuditTarget"]">@Target(context)</MudTd>
+            <MudTd DataLabel="@L["AuditActor"]">@(context.ActorName ?? "–")</MudTd>
+            <MudTd DataLabel="@L["AuditIp"]">@(context.Ip ?? "–")</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2" Class="pa-4">@L["AuditEmpty"]</MudText>
+        </NoRecordsContent>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+        </PagerContent>
+    </MudTable>
+</MudStack>
+
+@code {
+    private static readonly int[] PageSizes = [25, 50, 100];
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await Vault.EnsureLoadedAsync();
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            // Ohne Tresor zeigen wir nur IDs statt Titeln.
+        }
+    }
+
+    private async Task<TableData<AuditEntryDto>> LoadAsync(TableState state, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var page = await Api.GetAuditAsync(state.Page, state.PageSize, cancellationToken);
+            return new TableData<AuditEntryDto> { Items = page.Items, TotalItems = page.Total };
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            return new TableData<AuditEntryDto> { Items = [], TotalItems = 0 };
+        }
+    }
+
+    // Titel kennt nur der Browser: Das Protokoll auf dem Server enthält nur IDs und Objekttypen.
+    private string Target(AuditEntryDto entry)
+    {
+        if (entry.TargetId is { } id)
+        {
+            if (Vault.TitleOf(id) is { } title)
+            {
+                return title;
+            }
+
+            if (Vault.Files.FirstOrDefault(f => f.Id == id) is { } file)
+            {
+                return file.Metadata.FileName;
+            }
+        }
+
+        if (entry.TargetType == "area" && int.TryParse(entry.Details, NumberStyles.Integer, CultureInfo.InvariantCulture, out var area))
+        {
+            return Text.Area(area);
+        }
+
+        return entry.TargetType is { } type && ObjectCatalog.Find(type) is { } objectType ? Text.Type(objectType) : "–";
+    }
+}

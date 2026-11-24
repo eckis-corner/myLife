@@ -32,7 +32,18 @@
             <Authorized>
                 <MudNavMenu>
                     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
+                    <MudNavLink Href="search" Icon="@Icons.Material.Outlined.Search">@L["NavSearch"]</MudNavLink>
+                    <MudNavGroup Title="@L["NavAreas"]" Icon="@Icons.Material.Outlined.FolderOpen" Expanded>
+                        @foreach (var area in MyLife.Shared.Vault.ObjectCatalog.Areas.Where(a => a.IsAvailable))
+                        {
+                            <MudNavLink Href="@($"area/{area.Number}")" Icon="@AreaIcons.For(area.Number)">@L[$"Area_{area.Number}"]</MudNavLink>
+                        }
+                    </MudNavGroup>
+                    <MudNavLink Href="export" Icon="@Icons.Material.Outlined.IosShare">@L["NavExport"]</MudNavLink>
+                    <MudNavLink Href="trash" Icon="@Icons.Material.Outlined.Delete">@L["NavTrash"]</MudNavLink>
+                    <MudNavLink Href="account/audit" Icon="@Icons.Material.Outlined.History">@L["NavAudit"]</MudNavLink>
                     <MudNavLink Href="account/security" Icon="@Icons.Material.Outlined.Security">@L["NavSecurity"]</MudNavLink>
+                    <MudNavLink Href="hints/not-in-vault" Icon="@Icons.Material.Outlined.Block">@L["NotInVaultTitle"]</MudNavLink>
                 </MudNavMenu>
             </Authorized>
         </AuthorizeView>

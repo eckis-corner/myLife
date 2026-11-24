@@ -1,0 +1,246 @@
+@* Dokumente an einem Objekt (M1.6): hochladen (auch Foto direkt vom Smartphone), Vorschau für PDF und Bilder, speichern, in den Papierkorb. *@
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject VaultService Vault
+@inject BrowserFiles Files
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="2">
+    @if (_files.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mylife-muted"><i>@L["DocumentsEmpty"]</i></MudText>
+    }
+    else
+    {
+        <MudTable Items="_files" Hover Dense="false" Striped Elevation="0" Breakpoint="Breakpoint.Sm" data-testid="documents">
+            <HeaderContent>
+                <MudTh>@L["DocumentLabel"]</MudTh>
+                <MudTh>@L["DocumentDate"]</MudTh>
+                <MudTh>@L["DocumentSize"]</MudTh>
+                <MudTh />
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@L["DocumentLabel"]">
+                    <b>@(string.IsNullOrWhiteSpace(context.Metadata.Label) ? context.Metadata.FileName : context.Metadata.Label)</b>
+                    <div class="mylife-muted">@context.Metadata.FileName</div>
+                </MudTd>
+                <MudTd DataLabel="@L["DocumentDate"]">@(context.Metadata.Date?.ToString("d", CultureInfo.CurrentCulture) ?? "–")</MudTd>
+                <MudTd DataLabel="@L["DocumentSize"]">@FormatSize(context.Metadata.Size)</MudTd>
+                <MudTd Style="white-space: nowrap; text-align: right">
+                    @if (BrowserFiles.CanPreview(context.Metadata.ContentType))
+                    {
+                        <MudTooltip Text="@L["DocumentPreview"]">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Visibility" aria-label="@L["DocumentPreview"]" Disabled="_busy" OnClick="() => PreviewAsync(context)" />
+                        </MudTooltip>
+                    }
+                    <MudTooltip Text="@L["DocumentDownload"]">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Download" aria-label="@L["DocumentDownload"]" Disabled="_busy" OnClick="() => DownloadAsync(context)" />
+                    </MudTooltip>
+                    @if (!ReadOnly)
+                    {
+                        <MudTooltip Text="@L["Delete"]">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" aria-label="@L["Delete"]" Disabled="_busy" OnClick="() => DeleteAsync(context)" />
+                        </MudTooltip>
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+
+    @if (!ReadOnly)
+    {
+        @if (_selected is null)
+        {
+            <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                <MudButton HtmlTag="label" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.UploadFile" for="@_fileInputId" Disabled="_busy">
+                    @L["DocumentAdd"]
+                </MudButton>
+                <MudButton HtmlTag="label" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.PhotoCamera" for="@_photoInputId" Disabled="_busy">
+                    @L["DocumentPhoto"]
+                </MudButton>
+            </MudStack>
+            <InputFile id="@_fileInputId" class="mylife-hidden-input" OnChange="Select" data-testid="document-input" />
+            <InputFile id="@_photoInputId" class="mylife-hidden-input" OnChange="Select" accept="image/*" capture="environment" />
+            <MudText Typo="Typo.caption" Class="mylife-muted">@L["DocumentLimit", VaultLimits.MaxDocumentBytes / 1024 / 1024]</MudText>
+        }
+        else
+        {
+            <MudPaper Outlined Class="pa-3">
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.body2"><b>@_selected.Name</b> · @FormatSize(_selected.Size)</MudText>
+                    <MudGrid Spacing="2">
+                        <MudItem xs="12" sm="8">
+                            <MudTextField T="string" @bind-Value="_label" Label="@L["DocumentLabel"]" Variant="Variant.Outlined" Margin="Margin.Dense" MaxLength="200" />
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudDatePicker @bind-Date="_date" Label="@L["DocumentDate"]" Variant="Variant.Outlined" Margin="Margin.Dense" Editable Clearable />
+                        </MudItem>
+                    </MudGrid>
+                    @if (_busy)
+                    {
+                        <MudProgressLinear Value="@(_progress * 100)" Color="Color.Primary" />
+                    }
+                    <MudStack Row Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Text" Disabled="_busy" OnClick="Cancel">@L["Cancel"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" Disabled="_busy" OnClick="UploadAsync"
+                                   data-testid="document-upload">@L["DocumentUpload"]</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        }
+    }
+</MudStack>
+
+@code {
+    private readonly string _fileInputId = $"file-{Guid.NewGuid():N}";
+    private readonly string _photoInputId = $"photo-{Guid.NewGuid():N}";
+    private List<VaultFile> _files = [];
+    private IBrowserFile? _selected;
+    private string? _label;
+    private DateTime? _date;
+    private bool _busy;
+    private double _progress;
+
+    [Parameter, EditorRequired] public Guid ObjectId { get; set; }
+
+    [Parameter] public bool ReadOnly { get; set; }
+
+    protected override void OnParametersSet() => Refresh();
+
+    private void Refresh() => _files = [.. Vault.FilesOf(ObjectId).Where(f => !f.IsDeleted).OrderByDescending(f => f.CreatedAt)];
+
+    private void Select(InputFileChangeEventArgs args)
+    {
+        var file = args.File;
+        if (file.Size > VaultLimits.MaxDocumentBytes)
+        {
+            Snackbar.Add(L["VaultError_vault-file-too-large", VaultLimits.MaxDocumentBytes / 1024 / 1024], Severity.Error);
+            return;
+        }
+
+        _selected = file;
+        _label = Path.GetFileNameWithoutExtension(file.Name);
+        _date = null;
+    }
+
+    private void Cancel() => _selected = null;
+
+    private async Task UploadAsync()
+    {
+        if (_selected is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _progress = 0;
+        try
+        {
+            var metadata = new DocumentMetadata
+            {
+                Label = _label?.Trim() ?? string.Empty,
+                FileName = _selected.Name,
+                ContentType = string.IsNullOrEmpty(_selected.ContentType) ? "application/octet-stream" : _selected.ContentType,
+                Size = _selected.Size,
+                Date = _date is { } d ? DateOnly.FromDateTime(d) : null,
+            };
+            await using var stream = _selected.OpenReadStream(VaultLimits.MaxDocumentBytes);
+            await Vault.UploadAsync(ObjectId, stream, metadata, new Progress<double>(p => { _progress = p; StateHasChanged(); }));
+            _selected = null;
+            Refresh();
+            Snackbar.Add(L["DocumentUploaded"], Severity.Success);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException or IOException or System.Security.Cryptography.CryptographicException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}", VaultLimits.MaxDocumentBytes / 1024 / 1024], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task PreviewAsync(VaultFile file)
+    {
+        var content = await LoadAsync(file);
+        if (content is null)
+        {
+            return;
+        }
+
+        var url = await Files.CreateUrlAsync(content, file.Metadata.ContentType);
+        try
+        {
+            var parameters = new DialogParameters<DocumentPreviewDialog>
+            {
+                { x => x.Url, url },
+                { x => x.ContentType, file.Metadata.ContentType },
+                { x => x.Title, string.IsNullOrWhiteSpace(file.Metadata.Label) ? file.Metadata.FileName : file.Metadata.Label },
+            };
+            var dialog = await Dialogs.ShowAsync<DocumentPreviewDialog>(file.Metadata.FileName, parameters,
+                new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseButton = true });
+            await dialog.Result;
+        }
+        finally
+        {
+            await Files.RevokeUrlAsync(url);
+        }
+    }
+
+    private async Task DownloadAsync(VaultFile file)
+    {
+        var content = await LoadAsync(file);
+        if (content is not null)
+        {
+            await Files.SaveAsync(content, file.Metadata.FileName, file.Metadata.ContentType);
+        }
+    }
+
+    private async Task<byte[]?> LoadAsync(VaultFile file)
+    {
+        _busy = true;
+        try
+        {
+            return await Vault.DownloadAsync(file);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+            return null;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task DeleteAsync(VaultFile file)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["DocumentDeleteTitle"], L["DocumentDeleteText", file.Metadata.FileName],
+            yesText: L["Delete"], cancelText: L["Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        try
+        {
+            await Vault.DeleteFileAsync(file);
+            Refresh();
+            Snackbar.Add(L["MovedToTrash"], Severity.Success);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{VaultErrors.Failed}"], Severity.Error);
+        }
+    }
+
+    public static string FormatSize(long bytes) => bytes switch
+    {
+        < 1024 => $"{bytes} B",
+        < 1024 * 1024 => $"{bytes / 1024.0:0.#} KB",
+        _ => $"{bytes / 1024.0 / 1024.0:0.#} MB",
+    };
+}

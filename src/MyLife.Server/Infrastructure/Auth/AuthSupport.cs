@@ -71,12 +71,14 @@ internal sealed class PendingTokens(IDataProtectionProvider protection, TimeProv
 }
 
 /// <summary>Fehlversuche zählen und Konten vorübergehend sperren (Architektur 4.4).</summary>
-internal sealed class LoginAttempts(IOptions<MyLifeOptions> options, TimeProvider time)
+internal sealed class LoginAttempts(IOptions<MyLifeOptions> options, TimeProvider time, IHttpContextAccessor http)
 {
     public bool IsLocked(User user) => user.LockoutUntil is { } until && until > time.GetUtcNow();
 
-    public void Failed(User user)
+    /// <summary>Zählt einen Fehlversuch und vermerkt ihn im Audit-Log des Kontos (gespeichert mit dem nächsten SaveChanges).</summary>
+    public void Failed(User user, MyLifeDbContext db)
     {
+        db.AuditLog.Add(AuditLog.Entry(MyLife.Shared.Vault.AuditActions.LoginFailed, null, user.Id, time.GetUtcNow(), http.HttpContext?.Connection.RemoteIpAddress));
         user.FailedLoginCount++;
         if (user.FailedLoginCount >= options.Value.LockoutThreshold)
         {

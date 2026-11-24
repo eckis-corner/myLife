@@ -1,0 +1,91 @@
+@* Datenblatt eines Objekts (Entscheidung 48): alle Angaben, Verknüpfungen in beide Richtungen, Dokumente. Auch für Druck und Druckansicht. *@
+@inject IStringLocalizer<SharedResource> L
+@inject SchemaText Text
+@inject VaultService Vault
+
+<div class="mylife-datasheet" data-testid="datasheet">
+    @if (ShowTitle)
+    {
+        <MudText Typo="Typo.h6" HtmlTag="h3">@Item.Title</MudText>
+    }
+    <MudText Typo="Typo.caption" Class="mylife-muted">
+        @Text.Type(Item.Type)@(Item.Status == ObjectStatus.Ended ? $" · {Text.Status(Item.Status)}" : string.Empty)
+    </MudText>
+
+    <MudSimpleTable Dense Elevation="0" Class="mylife-datasheet-table mt-2">
+        <tbody>
+            @foreach (var row in Text.Rows(Item, Vault.TitleOf))
+            {
+                <tr>
+                    <th scope="row">@row.Label</th>
+                    <td class="@(row.Multiline ? "mylife-multiline" : null)">
+                        @if (row.Reference is { } reference && Links && Vault.Find(reference) is not null)
+                        {
+                            <MudLink Href="@($"object/{reference}")">@row.Value</MudLink>
+                        }
+                        else
+                        {
+                            @row.Value
+                        }
+                    </td>
+                </tr>
+            }
+            @if (_linked.Count > 0)
+            {
+                <tr>
+                    <th scope="row">@L["CommonLinks"]</th>
+                    <td>
+                        @foreach (var other in _linked)
+                        {
+                            <div>
+                                @if (Links)
+                                {
+                                    <MudLink Href="@($"object/{other.Id}")">@other.Title</MudLink>
+                                }
+                                else
+                                {
+                                    @other.Title
+                                }
+                                <span class="mylife-muted"> (@Text.Type(other.Type))</span>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (ShowDocuments && _files.Count > 0)
+            {
+                <tr>
+                    <th scope="row">@L["DocumentsTitle"]</th>
+                    <td>
+                        @foreach (var file in _files)
+                        {
+                            <div>@(string.IsNullOrWhiteSpace(file.Metadata.Label) ? file.Metadata.FileName : $"{file.Metadata.Label} ({file.Metadata.FileName})")</div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+</div>
+
+@code {
+    private List<VaultItem> _linked = [];
+    private List<VaultFile> _files = [];
+
+    [Parameter, EditorRequired] public VaultItem Item { get; set; } = default!;
+
+    [Parameter] public bool ShowTitle { get; set; }
+
+    /// <summary>Verweise als Links (nicht in der Druckansicht).</summary>
+    [Parameter] public bool Links { get; set; } = true;
+
+    [Parameter] public bool ShowDocuments { get; set; } = true;
+
+    protected override void OnParametersSet()
+    {
+        // Verknüpfungen in beide Richtungen (Entscheidung 40): eigene Links und Objekte, die hierher verweisen.
+        var outgoing = Item.Payload.Links.Select(Vault.Find).OfType<VaultItem>().Where(i => !i.IsDeleted);
+        _linked = [.. outgoing.Concat(Vault.ReferencesTo(Item.Id)).DistinctBy(i => i.Id).OrderBy(i => i.Title, StringComparer.CurrentCultureIgnoreCase)];
+        _files = [.. Vault.FilesOf(Item.Id).Where(f => !f.IsDeleted)];
+    }
+}

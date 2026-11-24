@@ -1,0 +1,191 @@
+@* Formular aus dem Objekttyp-Schema (Architektur 6.2). Bearbeitet die übergebene Nutzlast direkt; geprüft wird beim Speichern. *@
+@using System.Globalization
+@using FieldType = MyLife.Shared.Vault.FieldType
+@inject IStringLocalizer<SharedResource> L
+@inject SchemaText Text
+@inject VaultService Vault
+
+<MudStack Spacing="3">
+    <MudTextField T="string" Value="Payload.Title" ValueChanged="v => Payload.Title = v ?? string.Empty" Label="@L["CommonTitle"]"
+                  Variant="Variant.Outlined" Required MaxLength="200" Error="@Has("title")" ErrorText="@ErrorOf("title")"
+                  UserAttributes="@TitleAttributes" />
+
+    <MudGrid Spacing="2">
+        @foreach (var field in Type.Fields.Where(f => FieldValues.IsVisible(f, Payload)))
+        {
+            <MudItem xs="12" sm="@(field.Type == FieldType.LongText ? 12 : 6)">
+                @RenderField(field)
+            </MudItem>
+        }
+    </MudGrid>
+
+    <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="mt-2"><b>@L["CommonSection"]</b></MudText>
+    <MudGrid Spacing="2">
+        <MudItem xs="12" sm="6">
+            <MudDatePicker Label="@Text.Expiry(Type)" Date="@ToDateTime(Payload.ExpiresOn)" DateChanged="d => Payload.ExpiresOn = ToDateOnly(d)"
+                           Variant="Variant.Outlined" Editable Clearable HelperText="@L["CommonExpiryHelp"]" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" @bind-Value="Payload.OriginalLocation" Label="@L["CommonOriginalLocation"]" Variant="Variant.Outlined"
+                          Required="Type.OriginalLocationRequired" Error="@Has("originalLocation")" ErrorText="@ErrorOf("originalLocation")"
+                          MaxLength="@FieldValues.MaxTextLength" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="Guid?" Value="Payload.ContactId" ValueChanged="v => Payload.ContactId = v" Label="@L["CommonContact"]"
+                       Variant="Variant.Outlined" Clearable>
+                @foreach (var contact in Options(["contact"]))
+                {
+                    <MudSelectItem T="Guid?" Value="@contact.Id">@contact.Title</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        @if (Type.Wishes.Count > 0)
+        {
+            <MudItem xs="12" sm="6">
+                <MudSelect T="string" Value="Payload.Wish" ValueChanged="v => Payload.Wish = v" Label="@L["CommonWish"]" Variant="Variant.Outlined" Clearable>
+                    @foreach (var wish in Type.Wishes)
+                    {
+                        <MudSelectItem T="string" Value="@wish">@Text.Wish(wish)</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+        }
+        <MudItem xs="12">
+            <MudTextField T="string" @bind-Value="Payload.WishNote" Label="@L["CommonWishNote"]" Variant="Variant.Outlined" Lines="2" Sizing="InputSizing.Auto"
+                          HelperText="@L["CommonWishNoteHelp"]" MaxLength="@FieldValues.MaxLongTextLength" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudSelect T="Guid" SelectedValues="Payload.Links" SelectedValuesChanged="v => Payload.Links = [.. v]" MultiSelection
+                       Label="@L["CommonLinks"]" HelperText="@L["CommonLinksHelp"]" Variant="Variant.Outlined" Clearable
+                       ToStringFunc="@(id => Vault.TitleOf(id) ?? string.Empty)">
+                @foreach (var other in Options([]))
+                {
+                    <MudSelectItem T="Guid" Value="@other.Id">@other.Title (@Text.Type(other.Type))</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField T="string" @bind-Value="Payload.Notes" Label="@L["CommonNotes"]" Variant="Variant.Outlined" Lines="3" Sizing="InputSizing.Auto"
+                          MaxLength="@FieldValues.MaxLongTextLength" />
+        </MudItem>
+    </MudGrid>
+
+    <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="mt-2"><b>@L["CommonCustomFields"]</b></MudText>
+    @for (var i = 0; i < Payload.CustomFields.Count; i++)
+    {
+        var index = i;
+        var custom = Payload.CustomFields[index];
+        <MudStack Row AlignItems="AlignItems.Start" Spacing="2">
+            <MudTextField T="string" Value="custom.Label" ValueChanged="v => Payload.CustomFields[index] = Payload.CustomFields[index] with { Label = v ?? string.Empty }"
+                          Label="@L["CommonCustomLabel"]" Variant="Variant.Outlined" Margin="Margin.Dense" MaxLength="100" Style="max-width: 16rem" />
+            <MudTextField T="string" Value="custom.Value" ValueChanged="v => Payload.CustomFields[index] = Payload.CustomFields[index] with { Value = v ?? string.Empty }"
+                          Label="@L["CommonCustomValue"]" Variant="Variant.Outlined" Margin="Margin.Dense" Sizing="InputSizing.Auto" MaxLength="@FieldValues.MaxLongTextLength" />
+            <MudTooltip Text="@L["Delete"]">
+                <MudIconButton Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" aria-label="@L["Delete"]" Class="mt-2"
+                               OnClick="() => Payload.CustomFields.RemoveAt(index)" />
+            </MudTooltip>
+        </MudStack>
+    }
+    <div>
+        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add" OnClick="@(() => Payload.CustomFields.Add(new CustomField(string.Empty, string.Empty)))">
+            @L["CommonAddCustomField"]
+        </MudButton>
+    </div>
+</MudStack>
+
+@code {
+    private static readonly Dictionary<string, object> TitleAttributes = new() { ["data-testid"] = "object-title" };
+
+    [Parameter, EditorRequired] public ObjectTypeDefinition Type { get; set; } = default!;
+
+    [Parameter, EditorRequired] public VaultPayload Payload { get; set; } = default!;
+
+    /// <summary>ID des bearbeiteten Objekts (wird bei Verweisen ausgeschlossen).</summary>
+    [Parameter] public Guid? ObjectId { get; set; }
+
+    [Parameter] public IReadOnlyDictionary<string, string> Errors { get; set; } = new Dictionary<string, string>();
+
+    private bool Has(string key) => Errors.ContainsKey(key);
+
+    private string? ErrorOf(string key) => Errors.TryGetValue(key, out var code) ? Text.Error(code) : null;
+
+    private IEnumerable<VaultItem> Options(IReadOnlyList<string> types) => Vault.Current
+        .Where(i => i.Id != ObjectId && (types.Count == 0 || types.Contains(i.Type.Key)))
+        .OrderBy(i => i.Title, StringComparer.CurrentCultureIgnoreCase);
+
+    private static DateTime? ToDateTime(DateOnly? date) => date?.ToDateTime(TimeOnly.MinValue);
+
+    private static DateOnly? ToDateOnly(DateTime? date) => date is { } d ? DateOnly.FromDateTime(d) : null;
+
+    private static DateTime? ParseDate(string value) => FieldValues.TryDate(value, out var date) ? date.ToDateTime(TimeOnly.MinValue) : null;
+
+    private static decimal? ParseNumber(string value) => FieldValues.TryNumber(value, out var number) ? number : null;
+
+    private RenderFragment RenderField(FieldDefinition field) => __builder =>
+    {
+        var label = Text.Field(Type, field);
+        var value = Payload.Get(field.Key);
+        var hint = Text.Hint(field);
+        var testId = new Dictionary<string, object> { ["data-testid"] = $"field-{field.Key}" };
+        switch (field.Type)
+        {
+            case FieldType.Number:
+            case FieldType.Money:
+            case FieldType.Percent:
+                <MudNumericField T="decimal?" Value="@ParseNumber(value)" ValueChanged="v => Payload.Set(field.Key, FieldValues.FromNumber(v))"
+                                 Label="@label" Variant="Variant.Outlined" Required="field.Required" HideSpinButtons Culture="CultureInfo.CurrentCulture"
+                                 Adornment="@(field.Type == FieldType.Number ? Adornment.None : Adornment.End)"
+                                 AdornmentText="@(field.Type == FieldType.Money ? "€" : field.Type == FieldType.Percent ? "%" : null)"
+                                 Error="@Has(field.Key)" ErrorText="@ErrorOf(field.Key)" HelperText="@hint" UserAttributes="@testId" />
+                break;
+            case FieldType.Date:
+                <MudDatePicker Label="@label" Date="@ParseDate(value)" DateChanged="d => Payload.Set(field.Key, FieldValues.FromDate(ToDateOnly(d)))"
+                               Variant="Variant.Outlined" Editable Clearable Required="field.Required" Error="@Has(field.Key)" ErrorText="@ErrorOf(field.Key)"
+                               HelperText="@hint" />
+                break;
+            case FieldType.Choice:
+                <MudSelect T="string" Value="@(value.Length == 0 ? null : value)" ValueChanged="v => Payload.Set(field.Key, v)" Label="@label"
+                           Variant="Variant.Outlined" Clearable="!field.Required" Required="field.Required" Error="@Has(field.Key)"
+                           ErrorText="@ErrorOf(field.Key)" HelperText="@hint" UserAttributes="@testId">
+                    @foreach (var option in ObjectCatalog.OptionSets[field.OptionSet!])
+                    {
+                        <MudSelectItem T="string" Value="@option">@Text.Option(field.OptionSet!, option)</MudSelectItem>
+                    }
+                </MudSelect>
+                break;
+            case FieldType.YesNo:
+                <MudSelect T="string" Value="@(value.Length == 0 ? null : value)" ValueChanged="v => Payload.Set(field.Key, v)" Label="@label"
+                           Variant="Variant.Outlined" Clearable HelperText="@hint">
+                    <MudSelectItem T="string" Value="@("true")">@L["Yes"]</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("false")">@L["No"]</MudSelectItem>
+                </MudSelect>
+                break;
+            case FieldType.Reference:
+                <MudSelect T="Guid?" Value="@(Guid.TryParse(value, out var id) ? id : null)" ValueChanged="v => Payload.Set(field.Key, v?.ToString())"
+                           Label="@label" Variant="Variant.Outlined" Clearable HelperText="@(hint ?? L["ReferenceHelp", string.Join(", ", field.ReferenceTypes.Select(Text.Type))].Value)"
+                           Error="@Has(field.Key)" ErrorText="@ErrorOf(field.Key)">
+                    @foreach (var option in Options(field.ReferenceTypes))
+                    {
+                        <MudSelectItem T="Guid?" Value="@option.Id">@option.Title</MudSelectItem>
+                    }
+                </MudSelect>
+                break;
+            case FieldType.LongText:
+                <MudTextField T="string" Value="@value" ValueChanged="v => Payload.Set(field.Key, v)" Label="@label" Variant="Variant.Outlined"
+                              Lines="3" Sizing="InputSizing.Auto" Required="field.Required" Error="@Has(field.Key)" ErrorText="@ErrorOf(field.Key)" HelperText="@hint"
+                              MaxLength="@FieldValues.MaxLongTextLength" UserAttributes="@testId" />
+                break;
+            case FieldType.Iban:
+                <MudTextField T="string" Value="@(value.Length == 0 ? value : FieldValues.GroupIban(value))" ValueChanged="v => Payload.Set(field.Key, FieldValues.NormalizeIban(v))"
+                              Label="@label" Variant="Variant.Outlined" Required="field.Required" Error="@Has(field.Key)" ErrorText="@ErrorOf(field.Key)"
+                              HelperText="@hint" MaxLength="42" UserAttributes="@testId" />
+                break;
+            default:
+                <MudTextField T="string" Value="@value" ValueChanged="v => Payload.Set(field.Key, v)" Label="@label" Variant="Variant.Outlined"
+                              Required="field.Required" Error="@Has(field.Key)" ErrorText="@ErrorOf(field.Key)" HelperText="@hint"
+                              InputType="@(field.Type switch { FieldType.Email => InputType.Email, FieldType.Phone => InputType.Telephone, FieldType.Url => InputType.Url, _ => InputType.Text })"
+                              MaxLength="@(field.Type == FieldType.Last4 ? 4 : FieldValues.MaxTextLength)" UserAttributes="@testId" />
+                break;
+        }
+    };
+}

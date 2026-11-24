@@ -52,6 +52,11 @@ builder.Services.AddSingleton<PendingTokens>();
 builder.Services.AddSingleton<LoginAttempts>();
 builder.Services.AddSingleton<PreloginDecoy>();
 builder.Services.AddSingleton<PasskeyService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AuditLog>();
+builder.Services.AddSingleton<FileStore>();
+builder.Services.AddSingleton<TrashPurgeService>();
+builder.Services.AddHostedService(services => services.GetRequiredService<TrashPurgeService>());
 
 // Sitzungs-Cookie (Architektur 4.4): HttpOnly, SameSite=Strict, gleitende Laufzeit wie die automatische Abmeldung.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -79,6 +84,9 @@ builder.Services.AddRateLimiter(limiter =>
     limiter.AddPolicy(AuthEndpoints.RateLimitPolicy, context => RateLimitPartition.GetFixedWindowLimiter(
         context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
         _ => new FixedWindowRateLimiterOptions { PermitLimit = options.AuthRequestsPerMinute, Window = TimeSpan.FromMinutes(1) }));
+    limiter.AddPolicy(VaultEndpoints.RateLimitPolicy, context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = options.VaultRequestsPerMinute, Window = TimeSpan.FromMinutes(1) }));
 });
 
 builder.Services.AddRazorComponents()
@@ -113,6 +121,7 @@ app.MapInfoEndpoints();
 app.MapSetupEndpoints();
 app.MapAuthEndpoints();
 app.MapAccountEndpoints();
+app.MapVaultEndpoints();
 
 app.MapStaticAssets();
 // Die Seiten sind nur die leere Hülle (kein Prerendering); [Authorize] prüft der Client. Ohne AllowAnonymous

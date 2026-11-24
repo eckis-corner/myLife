@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M1.3:** Einrichtung, Anmeldung mit zweitem Faktor (TOTP oder Passkey), Passwort ändern und Wiederherstellung funktionieren. Die Tresorinhalte folgen. Bitte noch keine echten Daten erfassen.
+> **Stand M1:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Notfallordner-PDF, JSON-Export und Protokoll funktionieren. Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
 
 ## 1. Ordner anlegen
 
@@ -60,10 +60,11 @@ Kontrolle im LAN: `http://<IP-der-Synology>:8089/health/ready` liefert `Healthy`
 | --- | --- |
 | Details | Domain Names: `mylife.eckis-corner.de` · Scheme: `http` · Forward Hostname/IP: IP der Synology · Forward Port: `8089` · *Block Common Exploits* an · *Websockets Support* an |
 | SSL | *Request a new SSL Certificate* (Let's Encrypt) · *Force SSL* an · *HTTP/2 Support* an · *HSTS Enabled* an |
+| Advanced | `client_max_body_size 30m;` – Dokumente sind bis 25 MB groß, verschlüsselt etwas mehr. Ohne diese Zeile lehnt nginx größere Uploads ab. |
 
 Die App nimmt `X-Forwarded-*`-Header nur aus privaten Netzen an (10.x, 172.16–31.x, 192.168.x). Läuft der Proxy in einem anderen Netz, dieses zusätzlich über die Umgebungsvariable `MyLife__TrustedProxyNetworks__5=<Netz/Präfix>` in der Compose-Datei eintragen.
 
-Danach `https://mylife.eckis-corner.de` öffnen. Die Startseite zeigt „Server erreichbar“ und die Version.
+Danach `https://mylife.eckis-corner.de` öffnen. Ohne Konto startet der Einrichtungsassistent (Abschnitt 6).
 
 ## 6. Ersteinrichtung
 

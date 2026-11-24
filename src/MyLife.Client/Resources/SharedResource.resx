@@ -7,6 +7,67 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppName" xml:space="preserve"><value>myLife</value></data>
   <data name="AppTagline" xml:space="preserve"><value>Dein digitaler Notfallordner</value></data>
+  <data name="Area" xml:space="preserve"><value>Bereich</value></data>
+  <data name="AreaEmpty" xml:space="preserve"><value>Noch keine Einträge in diesem Bereich.</value></data>
+  <data name="AreaNotAvailable" xml:space="preserve"><value>Dieser Bereich folgt in einer späteren Version.</value></data>
+  <data name="AreaText_0" xml:space="preserve"><value>Persönliche Daten und Ausweisdokumente.</value></data>
+  <data name="AreaText_1" xml:space="preserve"><value>Konten, Depots und Schließfächer mit Vollmachten.</value></data>
+  <data name="AreaText_10" xml:space="preserve"><value>Steuerberatung, Notariat, Ärzte und alle, die benachrichtigt werden sollen.</value></data>
+  <data name="AreaText_11" xml:space="preserve"><value>Bestattung, Organspende, Haustiere und persönliche Briefe.</value></data>
+  <data name="AreaText_12" xml:space="preserve"><value>Aufgaben für die Hinterbliebenen (folgt mit M3).</value></data>
+  <data name="AreaText_13" xml:space="preserve"><value>Arbeitgeber, Altersvorsorge und Steuern.</value></data>
+  <data name="AreaText_2" xml:space="preserve"><value>Karten ohne vollständige Nummer, ohne PIN und ohne Prüfziffer.</value></data>
+  <data name="AreaText_3" xml:space="preserve"><value>Was du schuldest und was dir geschuldet wird.</value></data>
+  <data name="AreaText_4" xml:space="preserve"><value>Policen, Bezugsberechtigte und Meldefristen im Todesfall.</value></data>
+  <data name="AreaText_5" xml:space="preserve"><value>Strom, Internet, Mitgliedschaften, Miete und alles, was gekündigt oder übernommen werden muss.</value></data>
+  <data name="AreaText_6" xml:space="preserve"><value>Urkunden, Testament und Vollmachten: wo liegt das Original?</value></data>
+  <data name="AreaText_7" xml:space="preserve"><value>Häuser, Wohnungen, Fahrzeuge und Wertgegenstände.</value></data>
+  <data name="AreaText_8" xml:space="preserve"><value>Online-Konten, Domains, Krypto-Wallets und Geräte, ohne Passwörter.</value></data>
+  <data name="AreaText_9" xml:space="preserve"><value>Wie die Hinterbliebenen an deinen Passwortmanager kommen. Keine einzelnen Passwörter.</value></data>
+  <data name="Area_0" xml:space="preserve"><value>Über mich</value></data>
+  <data name="Area_1" xml:space="preserve"><value>Bankkonten &amp; Depots</value></data>
+  <data name="Area_10" xml:space="preserve"><value>Wichtige Kontakte</value></data>
+  <data name="Area_11" xml:space="preserve"><value>Persönliche Wünsche</value></data>
+  <data name="Area_12" xml:space="preserve"><value>Checkliste</value></data>
+  <data name="Area_13" xml:space="preserve"><value>Einkommen, Rente &amp; Steuern</value></data>
+  <data name="Area_2" xml:space="preserve"><value>Kreditkarten</value></data>
+  <data name="Area_3" xml:space="preserve"><value>Kredite &amp; Darlehen</value></data>
+  <data name="Area_4" xml:space="preserve"><value>Versicherungen</value></data>
+  <data name="Area_5" xml:space="preserve"><value>Verträge &amp; Abos</value></data>
+  <data name="Area_6" xml:space="preserve"><value>Urkunden &amp; Dokumente</value></data>
+  <data name="Area_7" xml:space="preserve"><value>Immobilien, Fahrzeuge &amp; Vermögen</value></data>
+  <data name="Area_8" xml:space="preserve"><value>Digitaler Nachlass</value></data>
+  <data name="Area_9" xml:space="preserve"><value>Passwortmanager</value></data>
+  <data name="AuditAction" xml:space="preserve"><value>Aktion</value></data>
+  <data name="AuditActor" xml:space="preserve"><value>Durch</value></data>
+  <data name="AuditAt" xml:space="preserve"><value>Zeitpunkt</value></data>
+  <data name="AuditEmpty" xml:space="preserve"><value>Noch keine Einträge.</value></data>
+  <data name="AuditIp" xml:space="preserve"><value>IP (gekürzt)</value></data>
+  <data name="AuditTarget" xml:space="preserve"><value>Betrifft</value></data>
+  <data name="AuditText" xml:space="preserve"><value>Wer wann was in deinem Tresor getan hat. Das Protokoll enthält keine Inhalte; Titel ergänzt dein Browser.</value></data>
+  <data name="Audit_area-created" xml:space="preserve"><value>Bereich angelegt</value></data>
+  <data name="Audit_area-reviewed" xml:space="preserve"><value>Bereich geprüft</value></data>
+  <data name="Audit_document-deleted" xml:space="preserve"><value>Dokument in den Papierkorb</value></data>
+  <data name="Audit_document-downloaded" xml:space="preserve"><value>Dokument abgerufen</value></data>
+  <data name="Audit_document-purged" xml:space="preserve"><value>Dokument endgültig gelöscht</value></data>
+  <data name="Audit_document-restored" xml:space="preserve"><value>Dokument wiederhergestellt</value></data>
+  <data name="Audit_document-uploaded" xml:space="preserve"><value>Dokument hochgeladen</value></data>
+  <data name="Audit_export-json" xml:space="preserve"><value>JSON-Export</value></data>
+  <data name="Audit_export-pdf" xml:space="preserve"><value>PDF-Export</value></data>
+  <data name="Audit_export-print" xml:space="preserve"><value>Druckansicht gedruckt</value></data>
+  <data name="Audit_import-json" xml:space="preserve"><value>JSON-Import</value></data>
+  <data name="Audit_login" xml:space="preserve"><value>Anmeldung</value></data>
+  <data name="Audit_login-failed" xml:space="preserve"><value>Fehlgeschlagene Anmeldung</value></data>
+  <data name="Audit_logout" xml:space="preserve"><value>Abmeldung</value></data>
+  <data name="Audit_object-created" xml:space="preserve"><value>Eintrag angelegt</value></data>
+  <data name="Audit_object-deleted" xml:space="preserve"><value>In den Papierkorb</value></data>
+  <data name="Audit_object-purged" xml:space="preserve"><value>Endgültig gelöscht</value></data>
+  <data name="Audit_object-restored" xml:space="preserve"><value>Wiederhergestellt</value></data>
+  <data name="Audit_object-updated" xml:space="preserve"><value>Eintrag geändert</value></data>
+  <data name="Audit_passkey-added" xml:space="preserve"><value>Passkey hinzugefügt</value></data>
+  <data name="Audit_passkey-removed" xml:space="preserve"><value>Passkey entfernt</value></data>
+  <data name="Audit_password-changed" xml:space="preserve"><value>Passwort geändert</value></data>
+  <data name="Audit_recovered" xml:space="preserve"><value>Wiederherstellung</value></data>
   <data name="AuthError_auth-crypto-failed" xml:space="preserve"><value>Die Schlüssel konnten im Browser nicht verarbeitet werden.</value></data>
   <data name="AuthError_auth-expired" xml:space="preserve"><value>Die Anmeldung hat zu lange gedauert. Bitte beginne von vorn.</value></data>
   <data name="AuthError_auth-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
@@ -22,17 +83,307 @@
   <data name="AuthError_auth-wrong-password" xml:space="preserve"><value>Das Master-Passwort stimmt nicht.</value></data>
   <data name="BackToHome" xml:space="preserve"><value>Zur Übersicht</value></data>
   <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="CommonAddCustomField" xml:space="preserve"><value>Zusatzfeld hinzufügen</value></data>
+  <data name="CommonContact" xml:space="preserve"><value>Ansprechpartner</value></data>
+  <data name="CommonCustomField" xml:space="preserve"><value>Zusatzfeld</value></data>
+  <data name="CommonCustomFields" xml:space="preserve"><value>Zusatzfelder</value></data>
+  <data name="CommonCustomLabel" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="CommonCustomValue" xml:space="preserve"><value>Wert</value></data>
+  <data name="CommonExpiryHelp" xml:space="preserve"><value>Grundlage für Erinnerungen (folgen mit M3).</value></data>
+  <data name="CommonLinks" xml:space="preserve"><value>Verknüpft mit</value></data>
+  <data name="CommonLinksHelp" xml:space="preserve"><value>Im Datenblatt in beide Richtungen sichtbar.</value></data>
+  <data name="CommonNotes" xml:space="preserve"><value>Notizen</value></data>
+  <data name="CommonOriginalLocation" xml:space="preserve"><value>Ablageort des Originals</value></data>
+  <data name="CommonReviewedOn" xml:space="preserve"><value>Zuletzt geprüft</value></data>
+  <data name="CommonSection" xml:space="preserve"><value>Für alle Einträge</value></data>
+  <data name="CommonTitle" xml:space="preserve"><value>Titel</value></data>
+  <data name="CommonWish" xml:space="preserve"><value>Wunsch für die Hinterbliebenen</value></data>
+  <data name="CommonWishNote" xml:space="preserve"><value>Hinweis zum Wunsch</value></data>
+  <data name="CommonWishNoteHelp" xml:space="preserve"><value>Etwa an wen etwas übergeben werden soll.</value></data>
+  <data name="ContentWarningEdit" xml:space="preserve"><value>Zurück zum Bearbeiten</value></data>
+  <data name="ContentWarningQuestion" xml:space="preserve"><value>Trotzdem speichern?</value></data>
+  <data name="ContentWarningTitle" xml:space="preserve"><value>Gehört das wirklich hinein?</value></data>
+  <data name="ContentWarning_card-number" xml:space="preserve"><value>Es sieht nach einer vollständigen Kartennummer aus. Hinterlege nur die letzten vier Ziffern.</value></data>
+  <data name="ContentWarning_secret" xml:space="preserve"><value>Es sieht nach einer PIN, TAN oder einem Passwort aus. Diese gehören in den Passwortmanager, nicht hierher.</value></data>
+  <data name="ContentWarning_seed-phrase" xml:space="preserve"><value>Es sieht nach einer Seed-Phrase aus. Hinterlege nur, wo sie aufbewahrt wird.</value></data>
+  <data name="DatasheetPdf" xml:space="preserve"><value>Datenblatt als PDF</value></data>
+  <data name="DatasheetTitle" xml:space="preserve"><value>Datenblatt</value></data>
   <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="DeleteForever" xml:space="preserve"><value>Endgültig löschen</value></data>
+  <data name="DeleteForeverText" xml:space="preserve"><value>„{0}“ wird sofort und unwiderruflich gelöscht.</value></data>
+  <data name="DeleteForeverTitle" xml:space="preserve"><value>Endgültig löschen?</value></data>
+  <data name="DeleteObjectText" xml:space="preserve"><value>„{0}“ kommt mit seinen Dokumenten in den Papierkorb und wird nach 30 Tagen endgültig gelöscht.</value></data>
+  <data name="DeleteObjectTitle" xml:space="preserve"><value>In den Papierkorb?</value></data>
+  <data name="DeleteObjectsText" xml:space="preserve"><value>{0} Einträge kommen mit ihren Dokumenten in den Papierkorb und werden nach 30 Tagen endgültig gelöscht.</value></data>
+  <data name="DeleteObjectsTitle" xml:space="preserve"><value>In den Papierkorb?</value></data>
+  <data name="DeletedForever" xml:space="preserve"><value>Endgültig gelöscht.</value></data>
+  <data name="Document" xml:space="preserve"><value>Dokument</value></data>
+  <data name="DocumentAdd" xml:space="preserve"><value>Datei hinzufügen</value></data>
+  <data name="DocumentDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="DocumentDeleteText" xml:space="preserve"><value>„{0}“ wird nach 30 Tagen endgültig gelöscht.</value></data>
+  <data name="DocumentDeleteTitle" xml:space="preserve"><value>Dokument in den Papierkorb?</value></data>
+  <data name="DocumentDownload" xml:space="preserve"><value>Speichern</value></data>
+  <data name="DocumentLabel" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="DocumentLimit" xml:space="preserve"><value>Bis {0} MB je Datei. Die Datei wird in deinem Browser verschlüsselt.</value></data>
+  <data name="DocumentPhoto" xml:space="preserve"><value>Foto aufnehmen</value></data>
+  <data name="DocumentPreview" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="DocumentPreviewHint" xml:space="preserve"><value>Zeigt dein Browser keine Vorschau, speichere die Datei stattdessen.</value></data>
+  <data name="DocumentSize" xml:space="preserve"><value>Größe</value></data>
+  <data name="DocumentUpload" xml:space="preserve"><value>Verschlüsseln und hochladen</value></data>
+  <data name="DocumentUploaded" xml:space="preserve"><value>Dokument verschlüsselt gespeichert.</value></data>
+  <data name="DocumentsEmpty" xml:space="preserve"><value>Noch keine Dokumente.</value></data>
+  <data name="DocumentsTitle" xml:space="preserve"><value>Dokumente</value></data>
+  <data name="Edit" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="EditObject" xml:space="preserve"><value>„{0}“ bearbeiten</value></data>
   <data name="ErrorUnhandled" xml:space="preserve"><value>Ein unerwarteter Fehler ist aufgetreten.</value></data>
+  <data name="Expiry_card" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="Expiry_contract" xml:space="preserve"><value>Mindestlaufzeit bis</value></data>
+  <data name="Expiry_default" xml:space="preserve"><value>Ablaufdatum</value></data>
+  <data name="Expiry_domain" xml:space="preserve"><value>Registriert bis</value></data>
+  <data name="Expiry_idDocument" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="Expiry_insurance" xml:space="preserve"><value>Ablauf</value></data>
+  <data name="Expiry_legalDocument" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="Expiry_loan" xml:space="preserve"><value>Zinsbindung bis</value></data>
+  <data name="ExportAreas" xml:space="preserve"><value>Bereiche</value></data>
+  <data name="ExportFolderText" xml:space="preserve"><value>Alle oder ausgewählte Bereiche als PDF mit Passwort oder als druckfertige Ansicht für den Papierordner. Entsteht vollständig in deinem Browser.</value></data>
+  <data name="ExportFolderTitle" xml:space="preserve"><value>Notfallordner</value></data>
+  <data name="ExportIncludeEnded" xml:space="preserve"><value>Beendete Einträge aufnehmen</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>Export herunterladen</value></data>
+  <data name="ExportJsonText" xml:space="preserve"><value>Offenes, verschlüsseltes Format mit allen Einträgen und Dokumenten. Öffnen lässt es sich mit deinem jetzigen Master-Passwort oder deinem Wiederherstellungsschlüssel, auch ohne diesen Server.</value></data>
+  <data name="ExportJsonTitle" xml:space="preserve"><value>Datensicherung (JSON)</value></data>
+  <data name="ExportPdf" xml:space="preserve"><value>PDF erstellen</value></data>
+  <data name="ExportPrintView" xml:space="preserve"><value>Druckansicht</value></data>
+  <data name="ExportWarning" xml:space="preserve"><value>Ein Export ohne Passwort und jeder Ausdruck enthält deine Daten im Klartext. Bewahre ihn so sicher auf wie die Originale.</value></data>
+  <data name="ExportWithDocuments" xml:space="preserve"><value>Dokumente einschließen</value></data>
+  <data name="ExportWorking" xml:space="preserve"><value>Wird erstellt …</value></data>
+  <data name="FieldError_bic" xml:space="preserve"><value>Keine gültige BIC (8 oder 11 Zeichen)</value></data>
+  <data name="FieldError_date" xml:space="preserve"><value>Kein gültiges Datum</value></data>
+  <data name="FieldError_email" xml:space="preserve"><value>Keine gültige E-Mail-Adresse</value></data>
+  <data name="FieldError_iban" xml:space="preserve"><value>Keine gültige IBAN (Prüfziffer stimmt nicht)</value></data>
+  <data name="FieldError_invalid" xml:space="preserve"><value>Ungültiger Wert</value></data>
+  <data name="FieldError_last4" xml:space="preserve"><value>Genau vier Ziffern</value></data>
+  <data name="FieldError_number" xml:space="preserve"><value>Keine gültige Zahl</value></data>
+  <data name="FieldError_phone" xml:space="preserve"><value>Keine gültige Telefonnummer</value></data>
+  <data name="FieldError_required" xml:space="preserve"><value>Pflichtfeld</value></data>
+  <data name="FieldError_too-long" xml:space="preserve"><value>Zu lang</value></data>
+  <data name="FieldError_url" xml:space="preserve"><value>Keine gültige Adresse (https://…)</value></data>
+  <data name="FieldHint_deathNotificationPeriod" xml:space="preserve"><value>Bei Lebensversicherungen oft 24 bis 72 Stunden.</value></data>
+  <data name="FieldHint_last4" xml:space="preserve"><value>Nie die vollständige Nummer, PIN oder Prüfziffer.</value></data>
+  <data name="FieldHint_masterPasswordLocation" xml:space="preserve"><value>Nur der Ort, nicht das Passwort.</value></data>
+  <data name="FieldHint_recipients" xml:space="preserve"><value>Vertrauenspersonen als Empfänger mit eigener Freigabe folgen mit M2. Bis dahin hier die Namen.</value></data>
+  <data name="FieldHint_seedLocation" xml:space="preserve"><value>Nur den Ort, nie die Seed-Phrase selbst.</value></data>
+  <data name="FieldHint_username" xml:space="preserve"><value>Kein Passwort eintragen.</value></data>
+  <data name="Field_account" xml:space="preserve"><value>Konto / E-Mail</value></data>
+  <data name="Field_accountKind" xml:space="preserve"><value>Kontoart</value></data>
+  <data name="Field_acquisitionYear" xml:space="preserve"><value>Erwerbsjahr</value></data>
+  <data name="Field_additionalCards" xml:space="preserve"><value>Zusatzkarten</value></data>
+  <data name="Field_address" xml:space="preserve"><value>Anschrift</value></data>
+  <data name="Field_annualFee" xml:space="preserve"><value>Jahresgebühr</value></data>
+  <data name="Field_approxValue" xml:space="preserve"><value>Ungefährer Wert</value></data>
+  <data name="Field_assetKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_authority" xml:space="preserve"><value>Ausstellende Behörde</value></data>
+  <data name="Field_authorizedPersons" xml:space="preserve"><value>Zugangsberechtigte</value></data>
+  <data name="Field_bank" xml:space="preserve"><value>Bank</value></data>
+  <data name="Field_bankAccount_holder" xml:space="preserve"><value>Kontoinhaber</value></data>
+  <data name="Field_beneficiaries" xml:space="preserve"><value>Bezugsberechtigte</value></data>
+  <data name="Field_bic" xml:space="preserve"><value>BIC</value></data>
+  <data name="Field_birthDate" xml:space="preserve"><value>Geburtsdatum</value></data>
+  <data name="Field_birthName" xml:space="preserve"><value>Geburtsname</value></data>
+  <data name="Field_birthPlace" xml:space="preserve"><value>Geburtsort</value></data>
+  <data name="Field_blockHotline" xml:space="preserve"><value>Sperr-Hotline</value></data>
+  <data name="Field_borrower" xml:space="preserve"><value>Kreditnehmer</value></data>
+  <data name="Field_boxNumber" xml:space="preserve"><value>Fachnummer</value></data>
+  <data name="Field_branch" xml:space="preserve"><value>Filiale</value></data>
+  <data name="Field_broker" xml:space="preserve"><value>Bank / Broker</value></data>
+  <data name="Field_buildingInsurance" xml:space="preserve"><value>Versicherung</value></data>
+  <data name="Field_burialKind" xml:space="preserve"><value>Art der Bestattung</value></data>
+  <data name="Field_cardKind" xml:space="preserve"><value>Kartentyp</value></data>
+  <data name="Field_cardLocation" xml:space="preserve"><value>Ablageort des Organspendeausweises</value></data>
+  <data name="Field_card_issuer" xml:space="preserve"><value>Herausgeber (Bank)</value></data>
+  <data name="Field_cardholder" xml:space="preserve"><value>Karteninhaber</value></data>
+  <data name="Field_caretaker" xml:space="preserve"><value>Wer es übernehmen soll</value></data>
+  <data name="Field_ceremony" xml:space="preserve"><value>Trauerfeier</value></data>
+  <data name="Field_coHolder" xml:space="preserve"><value>Mitinhaber</value></data>
+  <data name="Field_collateral" xml:space="preserve"><value>Sicherheit</value></data>
+  <data name="Field_company" xml:space="preserve"><value>Firma</value></data>
+  <data name="Field_contactRole" xml:space="preserve"><value>Rolle</value></data>
+  <data name="Field_contents" xml:space="preserve"><value>Inhalt (Stichworte)</value></data>
+  <data name="Field_contractKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_contractNumber" xml:space="preserve"><value>Vertragsnummer</value></data>
+  <data name="Field_contract_holder" xml:space="preserve"><value>Vertragsinhaber</value></data>
+  <data name="Field_copiesWith" xml:space="preserve"><value>Kopien bei</value></data>
+  <data name="Field_cost" xml:space="preserve"><value>Kosten</value></data>
+  <data name="Field_counterparty" xml:space="preserve"><value>Gläubiger bzw. Schuldner</value></data>
+  <data name="Field_creditLifeInsurance" xml:space="preserve"><value>Restschuldversicherung</value></data>
+  <data name="Field_creditLifeInsuranceRef" xml:space="preserve"><value>Restschuldversicherung (Verweis)</value></data>
+  <data name="Field_cryptoWallet_provider" xml:space="preserve"><value>Anbieter / Gerät</value></data>
+  <data name="Field_customerNumber" xml:space="preserve"><value>Kundennummer</value></data>
+  <data name="Field_deathNotificationPeriod" xml:space="preserve"><value>Meldefrist im Todesfall</value></data>
+  <data name="Field_debitAccount" xml:space="preserve"><value>Lastschriftkonto</value></data>
+  <data name="Field_decidedBy" xml:space="preserve"><value>Entscheidung durch</value></data>
+  <data name="Field_deposit" xml:space="preserve"><value>Kaution</value></data>
+  <data name="Field_depositAccount" xml:space="preserve"><value>Kautionskonto</value></data>
+  <data name="Field_depotNumber" xml:space="preserve"><value>Depotnummer</value></data>
+  <data name="Field_description" xml:space="preserve"><value>Beschreibung</value></data>
+  <data name="Field_deviceKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_deviceName" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="Field_disabilityPension" xml:space="preserve"><value>BU-Rente</value></data>
+  <data name="Field_documentKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_domainName" xml:space="preserve"><value>Domain</value></data>
+  <data name="Field_domain_customerNumber" xml:space="preserve"><value>Kundennummer beim Registrar</value></data>
+  <data name="Field_email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Field_emergencyContacts" xml:space="preserve"><value>Notfallkontakte beim Anbieter</value></data>
+  <data name="Field_employer" xml:space="preserve"><value>Arbeitgeber</value></data>
+  <data name="Field_employmentKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_financing" xml:space="preserve"><value>Finanzierung</value></data>
+  <data name="Field_frequency" xml:space="preserve"><value>Rhythmus</value></data>
+  <data name="Field_fullName" xml:space="preserve"><value>Name</value></data>
+  <data name="Field_funeralProvision" xml:space="preserve"><value>Bestattungsvorsorge</value></data>
+  <data name="Field_garage" xml:space="preserve"><value>Werkstatt</value></data>
+  <data name="Field_healthInsuranceNumber" xml:space="preserve"><value>Krankenversichertennummer</value></data>
+  <data name="Field_healthSystem" xml:space="preserve"><value>GKV / PKV</value></data>
+  <data name="Field_holder" xml:space="preserve"><value>Inhaber</value></data>
+  <data name="Field_iban" xml:space="preserve"><value>IBAN</value></data>
+  <data name="Field_idDocumentKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_idDocument_number" xml:space="preserve"><value>Ausweisnummer</value></data>
+  <data name="Field_includedInsurances" xml:space="preserve"><value>Enthaltene Versicherungen</value></data>
+  <data name="Field_installment" xml:space="preserve"><value>Rate</value></data>
+  <data name="Field_instructions" xml:space="preserve"><value>Anleitung für die Hinterbliebenen</value></data>
+  <data name="Field_insuranceKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_insuredNumber" xml:space="preserve"><value>Versichertennummer</value></data>
+  <data name="Field_insuredPerson" xml:space="preserve"><value>Versicherte Person</value></data>
+  <data name="Field_insurer" xml:space="preserve"><value>Versicherer</value></data>
+  <data name="Field_interestRate" xml:space="preserve"><value>Zinssatz</value></data>
+  <data name="Field_invitees" xml:space="preserve"><value>Wer eingeladen werden soll</value></data>
+  <data name="Field_issueDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="Field_issuer" xml:space="preserve"><value>Herausgeber</value></data>
+  <data name="Field_keeper" xml:space="preserve"><value>Halter</value></data>
+  <data name="Field_keyLocation" xml:space="preserve"><value>Ablageort des Schlüssels</value></data>
+  <data name="Field_landRegistry" xml:space="preserve"><value>Grundbuch (Amtsgericht, Blatt)</value></data>
+  <data name="Field_landlord" xml:space="preserve"><value>Vermieter</value></data>
+  <data name="Field_last4" xml:space="preserve"><value>Letzte 4 Ziffern</value></data>
+  <data name="Field_legacyContactSet" xml:space="preserve"><value>Nachlasskontakt beim Anbieter eingerichtet</value></data>
+  <data name="Field_legalDocument_issuer" xml:space="preserve"><value>Ausstellende Stelle</value></data>
+  <data name="Field_legalDocument_number" xml:space="preserve"><value>Nummer / Aktenzeichen</value></data>
+  <data name="Field_letterText" xml:space="preserve"><value>Text</value></data>
+  <data name="Field_licensePlate" xml:space="preserve"><value>Kennzeichen</value></data>
+  <data name="Field_loanDirection" xml:space="preserve"><value>Richtung</value></data>
+  <data name="Field_loanKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_mainDueDate" xml:space="preserve"><value>Hauptfälligkeit</value></data>
+  <data name="Field_makeModel" xml:space="preserve"><value>Marke / Modell</value></data>
+  <data name="Field_maritalStatus" xml:space="preserve"><value>Familienstand</value></data>
+  <data name="Field_masterPasswordLocation" xml:space="preserve"><value>Ablageort Master-Passwort / Emergency Kit</value></data>
+  <data name="Field_music" xml:space="preserve"><value>Musik</value></data>
+  <data name="Field_name" xml:space="preserve"><value>Name</value></data>
+  <data name="Field_nationality" xml:space="preserve"><value>Staatsangehörigkeit</value></data>
+  <data name="Field_noClaimsClass" xml:space="preserve"><value>SF-Klasse</value></data>
+  <data name="Field_noticePeriod" xml:space="preserve"><value>Kündigungsfrist</value></data>
+  <data name="Field_notifyOnDeath" xml:space="preserve"><value>Im Todesfall benachrichtigen</value></data>
+  <data name="Field_number" xml:space="preserve"><value>Nummer</value></data>
+  <data name="Field_obituary" xml:space="preserve"><value>Traueranzeige</value></data>
+  <data name="Field_onlineAccountKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_onlineBanking" xml:space="preserve"><value>Online-Banking vorhanden</value></data>
+  <data name="Field_organDecision" xml:space="preserve"><value>Entscheidung</value></data>
+  <data name="Field_originalAmount" xml:space="preserve"><value>Ursprungsbetrag</value></data>
+  <data name="Field_outstandingAmount" xml:space="preserve"><value>Restschuld</value></data>
+  <data name="Field_outstandingDate" xml:space="preserve"><value>Restschuld zum Stichtag</value></data>
+  <data name="Field_owner" xml:space="preserve"><value>Eigentümer</value></data>
+  <data name="Field_owners" xml:space="preserve"><value>Eigentümer und Anteile</value></data>
+  <data name="Field_particulars" xml:space="preserve"><value>Besonderheiten</value></data>
+  <data name="Field_passwordManagerEntry" xml:space="preserve"><value>Eintrag im Passwortmanager</value></data>
+  <data name="Field_paymentAccount" xml:space="preserve"><value>Zahlungskonto</value></data>
+  <data name="Field_pensionInsuranceNumber" xml:space="preserve"><value>Rentenversicherungsnummer</value></data>
+  <data name="Field_pensionKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_pension_provider" xml:space="preserve"><value>Träger</value></data>
+  <data name="Field_personnelNumber" xml:space="preserve"><value>Personalnummer</value></data>
+  <data name="Field_petName" xml:space="preserve"><value>Name</value></data>
+  <data name="Field_phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Field_place" xml:space="preserve"><value>Ort</value></data>
+  <data name="Field_pmEmergency" xml:space="preserve"><value>Notfallzugang</value></data>
+  <data name="Field_poaBeyondDeath" xml:space="preserve"><value>Vollmacht über den Tod hinaus</value></data>
+  <data name="Field_policyNumber" xml:space="preserve"><value>Policennummer</value></data>
+  <data name="Field_policyholder" xml:space="preserve"><value>Versicherungsnehmer</value></data>
+  <data name="Field_powerOfAttorney" xml:space="preserve"><value>Vollmacht für</value></data>
+  <data name="Field_premium" xml:space="preserve"><value>Beitrag</value></data>
+  <data name="Field_product" xml:space="preserve"><value>Produkt</value></data>
+  <data name="Field_proof" xml:space="preserve"><value>Nachweis</value></data>
+  <data name="Field_property" xml:space="preserve"><value>Immobilie</value></data>
+  <data name="Field_propertyKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_propertyManager" xml:space="preserve"><value>Hausverwaltung</value></data>
+  <data name="Field_provider" xml:space="preserve"><value>Anbieter</value></data>
+  <data name="Field_providerWaitingPeriod" xml:space="preserve"><value>Wartezeit beim Anbieter</value></data>
+  <data name="Field_recipients" xml:space="preserve"><value>Empfänger</value></data>
+  <data name="Field_recordsLocation" xml:space="preserve"><value>Ablageort der Unterlagen</value></data>
+  <data name="Field_referenceAccount" xml:space="preserve"><value>Referenzkonto</value></data>
+  <data name="Field_register" xml:space="preserve"><value>Registriert</value></data>
+  <data name="Field_registered" xml:space="preserve"><value>Im Organspende-Register eingetragen</value></data>
+  <data name="Field_registrar" xml:space="preserve"><value>Registrar</value></data>
+  <data name="Field_registrationNumber" xml:space="preserve"><value>Registriernummer</value></data>
+  <data name="Field_religion" xml:space="preserve"><value>Konfession</value></data>
+  <data name="Field_rentIncome" xml:space="preserve"><value>Miete</value></data>
+  <data name="Field_rented" xml:space="preserve"><value>Vermietet</value></data>
+  <data name="Field_salaryAccount" xml:space="preserve"><value>Gehalts- oder Rentenkonto</value></data>
+  <data name="Field_seedLocation" xml:space="preserve"><value>Aufbewahrungsort der Seed-Phrase</value></data>
+  <data name="Field_service" xml:space="preserve"><value>Dienst</value></data>
+  <data name="Field_settlementAccount" xml:space="preserve"><value>Verrechnungskonto</value></data>
+  <data name="Field_spareKey" xml:space="preserve"><value>Ersatzschlüssel</value></data>
+  <data name="Field_specialTerminationOnDeath" xml:space="preserve"><value>Sonderkündigungsrecht im Todesfall</value></data>
+  <data name="Field_species" xml:space="preserve"><value>Tierart</value></data>
+  <data name="Field_startDate" xml:space="preserve"><value>Beginn</value></data>
+  <data name="Field_storageLocation" xml:space="preserve"><value>Aufbewahrungsort</value></data>
+  <data name="Field_sumInsured" xml:space="preserve"><value>Versicherungssumme</value></data>
+  <data name="Field_survivorBenefit" xml:space="preserve"><value>Hinterbliebenenleistung</value></data>
+  <data name="Field_taxAdvisor" xml:space="preserve"><value>Steuerberater</value></data>
+  <data name="Field_taxId" xml:space="preserve"><value>Steuer-ID</value></data>
+  <data name="Field_taxNumber" xml:space="preserve"><value>Steuernummer</value></data>
+  <data name="Field_taxOffice" xml:space="preserve"><value>Finanzamt</value></data>
+  <data name="Field_tenant" xml:space="preserve"><value>Mieter</value></data>
+  <data name="Field_termUntil" xml:space="preserve"><value>Laufzeit bis</value></data>
+  <data name="Field_titleLocation" xml:space="preserve"><value>Ablageort Zulassungsbescheinigung Teil II</value></data>
+  <data name="Field_twoFactorDevice" xml:space="preserve"><value>Gerät für die Zwei-Faktor-Anmeldung</value></data>
+  <data name="Field_unlockEntry" xml:space="preserve"><value>Entsperrung über Passwortmanager-Eintrag</value></data>
+  <data name="Field_username" xml:space="preserve"><value>Benutzername / Konto-ID</value></data>
+  <data name="Field_valueDate" xml:space="preserve"><value>Wert zum Stichtag</value></data>
+  <data name="Field_vehicle" xml:space="preserve"><value>Fahrzeug</value></data>
+  <data name="Field_vehicleInsurance" xml:space="preserve"><value>Versicherung</value></data>
+  <data name="Field_vehicleKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_vet" xml:space="preserve"><value>Tierarzt</value></data>
+  <data name="Field_vin" xml:space="preserve"><value>Fahrzeug-Identifizierungsnummer</value></data>
+  <data name="Field_walletKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_wishText" xml:space="preserve"><value>Text</value></data>
+  <data name="FolderAsOf" xml:space="preserve"><value>Stand: {0}</value></data>
+  <data name="FolderContents" xml:space="preserve"><value>Inhalt</value></data>
+  <data name="FolderEmpty" xml:space="preserve"><value>Keine Einträge ausgewählt.</value></data>
+  <data name="FolderFileName" xml:space="preserve"><value>myLife-Notfallordner</value></data>
+  <data name="FolderIntro" xml:space="preserve"><value>Dieser Ordner fasst zusammen, was im Ernstfall wichtig ist: Konten, Versicherungen, Verträge, Urkunden, Kontakte und persönliche Wünsche. Die Originale liegen an den genannten Ablageorten.</value></data>
+  <data name="FolderSensitive" xml:space="preserve"><value>Vertraulich: Bewahre diesen Ordner so sicher auf wie die Originale.</value></data>
+  <data name="FolderTitle" xml:space="preserve"><value>Notfallordner</value></data>
+  <data name="FormHasErrors" xml:space="preserve"><value>Bitte prüfe die markierten Felder.</value></data>
+  <data name="HomeExpiringTitle" xml:space="preserve"><value>Läuft bald ab</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>Hier entsteht dein digitaler Notfallordner: Versicherungen, Konten, Verträge, Urkunden und Wünsche an einem sicheren Ort. Alles wird in deinem Browser verschlüsselt, sodass nur du und im Ernstfall deine Vertrauenspersonen die Daten lesen können.</value></data>
+  <data name="HomeLastReviewed" xml:space="preserve"><value>Zuletzt geprüft am {0}</value></data>
+  <data name="HomeMarkReviewed" xml:space="preserve"><value>Als geprüft markieren</value></data>
+  <data name="HomeNeverReviewed" xml:space="preserve"><value>Noch nie geprüft</value></data>
   <data name="HomeNextStepsText" xml:space="preserve"><value>Als Nächstes folgen die Objekttypen und der verschlüsselte Tresor.</value></data>
   <data name="HomeNextStepsTitle" xml:space="preserve"><value>Wie geht es weiter?</value></data>
+  <data name="HomeNotInVaultHint" xml:space="preserve"><value>PINs, Passwörter und Seed-Phrasen gehören nicht hinein.</value></data>
+  <data name="HomeObjectCount" xml:space="preserve"><value>{0} Einträge</value></data>
+  <data name="HomeReviewedSaved" xml:space="preserve"><value>„{0}“ als geprüft markiert.</value></data>
   <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Verschlüsselungsformat</value></data>
   <data name="HomeStatusReachable" xml:space="preserve"><value>Server erreichbar</value></data>
   <data name="HomeStatusTitle" xml:space="preserve"><value>Status der Instanz</value></data>
   <data name="HomeStatusUnreachable" xml:space="preserve"><value>Der Server ist nicht erreichbar. Bitte versuche es später erneut.</value></data>
   <data name="HomeStatusVersion" xml:space="preserve"><value>Version</value></data>
   <data name="HomeTitle" xml:space="preserve"><value>Willkommen bei myLife</value></data>
+  <data name="ImportChoose" xml:space="preserve"><value>Datei auswählen</value></data>
+  <data name="ImportDone" xml:space="preserve"><value>{0} Einträge und {1} Dokumente übernommen, {2} übersprungen, {3} nicht lesbar.</value></data>
+  <data name="ImportSecret" xml:space="preserve"><value>Master-Passwort oder Wiederherstellungsschlüssel</value></data>
+  <data name="ImportSecretHelp" xml:space="preserve"><value>Das Master-Passwort zum Zeitpunkt des Exports oder die 24 Wörter.</value></data>
+  <data name="ImportStart" xml:space="preserve"><value>Einspielen</value></data>
+  <data name="ImportSummary" xml:space="preserve"><value>Export von {0} vom {1}: {2} Einträge, {3} Dokumente.</value></data>
+  <data name="ImportText" xml:space="preserve"><value>Übernimmt Einträge und Dokumente aus einem myLife-Export in deinen Tresor. Was schon vorhanden ist, wird übersprungen.</value></data>
+  <data name="ImportTitle" xml:space="preserve"><value>Datensicherung einspielen</value></data>
   <data name="Language" xml:space="preserve"><value>Sprache</value></data>
   <data name="LanguageName_de" xml:space="preserve"><value>Deutsch</value></data>
   <data name="LanguageName_en" xml:space="preserve"><value>English</value></data>
@@ -49,11 +400,23 @@
   <data name="LoginTitle" xml:space="preserve"><value>Anmelden</value></data>
   <data name="LoginWithPasskey" xml:space="preserve"><value>Mit Passkey anmelden</value></data>
   <data name="Logout" xml:space="preserve"><value>Abmelden</value></data>
+  <data name="MoreActions" xml:space="preserve"><value>Weitere Aktionen</value></data>
+  <data name="MovedToTrash" xml:space="preserve"><value>In den Papierkorb verschoben.</value></data>
+  <data name="NavAreas" xml:space="preserve"><value>Bereiche</value></data>
+  <data name="NavAudit" xml:space="preserve"><value>Protokoll</value></data>
+  <data name="NavExport" xml:space="preserve"><value>Export &amp; Druck</value></data>
   <data name="NavHome" xml:space="preserve"><value>Übersicht</value></data>
+  <data name="NavSearch" xml:space="preserve"><value>Suche</value></data>
   <data name="NavSecurity" xml:space="preserve"><value>Sicherheit</value></data>
+  <data name="NavTrash" xml:space="preserve"><value>Papierkorb</value></data>
+  <data name="New" xml:space="preserve"><value>Neu</value></data>
+  <data name="NewObject" xml:space="preserve"><value>{0} anlegen</value></data>
+  <data name="No" xml:space="preserve"><value>Nein</value></data>
   <data name="NotFoundText" xml:space="preserve"><value>Die aufgerufene Seite gibt es nicht.</value></data>
   <data name="NotFoundTitle" xml:space="preserve"><value>Seite nicht gefunden</value></data>
   <data name="NotInVaultAcknowledge" xml:space="preserve"><value>Verstanden</value></data>
+  <data name="NotInVaultChecksText" xml:space="preserve"><value>Beim Speichern prüft dein Browser die Freitexte und warnt dich. Gespeichert wird nur, wenn du ausdrücklich bestätigst.</value></data>
+  <data name="NotInVaultChecksTitle" xml:space="preserve"><value>Was myLife prüft</value></data>
   <data name="NotInVaultIntro" xml:space="preserve"><value>myLife sagt deiner Familie, was es gibt und wo es liegt. Zugangsdaten, mit denen jemand sofort an Geld kommt, gehören nicht hinein:</value></data>
   <data name="NotInVaultOriginals" xml:space="preserve"><value>Originale von Urkunden, nur ihren Ablageort</value></data>
   <data name="NotInVaultPasswords" xml:space="preserve"><value>Einzelne Passwörter. Nenne stattdessen deinen Passwortmanager und wo sein Notfallzugang liegt.</value></data>
@@ -61,7 +424,198 @@
   <data name="NotInVaultSeeds" xml:space="preserve"><value>Seed-Phrasen von Kryptowährungen, nur den Ort, an dem sie liegen</value></data>
   <data name="NotInVaultTitle" xml:space="preserve"><value>Was gehört nicht in myLife?</value></data>
   <data name="NotInVaultWhy" xml:space="preserve"><value>myLife warnt dich, wenn eine Eingabe danach aussieht.</value></data>
+  <data name="ObjectEnd" xml:space="preserve"><value>Beenden</value></data>
+  <data name="ObjectInTrash" xml:space="preserve"><value>Dieser Eintrag liegt im Papierkorb.</value></data>
+  <data name="ObjectMarkReviewed" xml:space="preserve"><value>Als geprüft markieren</value></data>
+  <data name="ObjectNotFound" xml:space="preserve"><value>Diesen Eintrag gibt es nicht (mehr).</value></data>
+  <data name="ObjectReactivate" xml:space="preserve"><value>Reaktivieren</value></data>
+  <data name="ObjectReviewedSaved" xml:space="preserve"><value>Als geprüft markiert.</value></data>
+  <data name="ObjectStatus_Active" xml:space="preserve"><value>aktiv</value></data>
+  <data name="ObjectStatus_Ended" xml:space="preserve"><value>beendet</value></data>
+  <data name="ObjectSummary" xml:space="preserve"><value>Kurzinfo</value></data>
+  <data name="ObjectType" xml:space="preserve"><value>Objekttyp</value></data>
+  <data name="ObjectUpdated" xml:space="preserve"><value>Geändert</value></data>
+  <data name="Open" xml:space="preserve"><value>Öffnen</value></data>
   <data name="OpenMenu" xml:space="preserve"><value>Menü öffnen</value></data>
+  <data name="Option_accountKind_business" xml:space="preserve"><value>Geschäftskonto</value></data>
+  <data name="Option_accountKind_checking" xml:space="preserve"><value>Girokonto</value></data>
+  <data name="Option_accountKind_fixedDeposit" xml:space="preserve"><value>Festgeld</value></data>
+  <data name="Option_accountKind_joint" xml:space="preserve"><value>Gemeinschaftskonto</value></data>
+  <data name="Option_accountKind_overnight" xml:space="preserve"><value>Tagesgeld</value></data>
+  <data name="Option_accountKind_savingsBook" xml:space="preserve"><value>Sparbuch</value></data>
+  <data name="Option_assetKind_art" xml:space="preserve"><value>Kunst</value></data>
+  <data name="Option_assetKind_businessShare" xml:space="preserve"><value>Unternehmensbeteiligung</value></data>
+  <data name="Option_assetKind_cash" xml:space="preserve"><value>Bargeld</value></data>
+  <data name="Option_assetKind_collection" xml:space="preserve"><value>Sammlung</value></data>
+  <data name="Option_assetKind_jewelry" xml:space="preserve"><value>Schmuck</value></data>
+  <data name="Option_assetKind_other" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="Option_assetKind_preciousMetal" xml:space="preserve"><value>Edelmetall</value></data>
+  <data name="Option_burialKind_anonymous" xml:space="preserve"><value>Anonyme Bestattung</value></data>
+  <data name="Option_burialKind_cremation" xml:space="preserve"><value>Feuerbestattung</value></data>
+  <data name="Option_burialKind_earth" xml:space="preserve"><value>Erdbestattung</value></data>
+  <data name="Option_burialKind_sea" xml:space="preserve"><value>Seebestattung</value></data>
+  <data name="Option_burialKind_tree" xml:space="preserve"><value>Baumbestattung</value></data>
+  <data name="Option_cardKind_amex" xml:space="preserve"><value>American Express</value></data>
+  <data name="Option_cardKind_girocard" xml:space="preserve"><value>Girocard</value></data>
+  <data name="Option_cardKind_mastercard" xml:space="preserve"><value>Mastercard</value></data>
+  <data name="Option_cardKind_other" xml:space="preserve"><value>Sonstige</value></data>
+  <data name="Option_cardKind_prepaid" xml:space="preserve"><value>Prepaid</value></data>
+  <data name="Option_cardKind_visa" xml:space="preserve"><value>Visa</value></data>
+  <data name="Option_contactRole_bankAdvisor" xml:space="preserve"><value>Bankberater</value></data>
+  <data name="Option_contactRole_employer" xml:space="preserve"><value>Arbeitgeber</value></data>
+  <data name="Option_contactRole_friend" xml:space="preserve"><value>Freund / Bekannter</value></data>
+  <data name="Option_contactRole_gp" xml:space="preserve"><value>Hausarzt</value></data>
+  <data name="Option_contactRole_insuranceBroker" xml:space="preserve"><value>Versicherungsmakler</value></data>
+  <data name="Option_contactRole_landlord" xml:space="preserve"><value>Vermieter</value></data>
+  <data name="Option_contactRole_lawyer" xml:space="preserve"><value>Anwalt</value></data>
+  <data name="Option_contactRole_notary" xml:space="preserve"><value>Notar</value></data>
+  <data name="Option_contactRole_other" xml:space="preserve"><value>Sonstige</value></data>
+  <data name="Option_contactRole_pastor" xml:space="preserve"><value>Seelsorger</value></data>
+  <data name="Option_contactRole_propertyManager" xml:space="preserve"><value>Hausverwaltung</value></data>
+  <data name="Option_contactRole_specialist" xml:space="preserve"><value>Facharzt</value></data>
+  <data name="Option_contactRole_taxAdvisor" xml:space="preserve"><value>Steuerberater</value></data>
+  <data name="Option_contactRole_undertaker" xml:space="preserve"><value>Bestatter</value></data>
+  <data name="Option_contractKind_districtHeating" xml:space="preserve"><value>Fernwärme</value></data>
+  <data name="Option_contractKind_electricity" xml:space="preserve"><value>Strom</value></data>
+  <data name="Option_contractKind_gas" xml:space="preserve"><value>Gas</value></data>
+  <data name="Option_contractKind_gym" xml:space="preserve"><value>Fitnessstudio</value></data>
+  <data name="Option_contractKind_internet" xml:space="preserve"><value>Internet</value></data>
+  <data name="Option_contractKind_landline" xml:space="preserve"><value>Festnetz</value></data>
+  <data name="Option_contractKind_leasing" xml:space="preserve"><value>Leasing</value></data>
+  <data name="Option_contractKind_membership" xml:space="preserve"><value>Mitgliedschaft / Verein</value></data>
+  <data name="Option_contractKind_mobile" xml:space="preserve"><value>Mobilfunk</value></data>
+  <data name="Option_contractKind_newspaper" xml:space="preserve"><value>Zeitung / Zeitschrift</value></data>
+  <data name="Option_contractKind_other" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="Option_contractKind_rent" xml:space="preserve"><value>Miete</value></data>
+  <data name="Option_contractKind_software" xml:space="preserve"><value>Software / Cloud-Abo</value></data>
+  <data name="Option_contractKind_streaming" xml:space="preserve"><value>Streaming</value></data>
+  <data name="Option_contractKind_water" xml:space="preserve"><value>Wasser</value></data>
+  <data name="Option_deviceKind_laptop" xml:space="preserve"><value>Laptop</value></data>
+  <data name="Option_deviceKind_nas" xml:space="preserve"><value>NAS</value></data>
+  <data name="Option_deviceKind_pc" xml:space="preserve"><value>PC</value></data>
+  <data name="Option_deviceKind_smartHome" xml:space="preserve"><value>Smart Home</value></data>
+  <data name="Option_deviceKind_smartphone" xml:space="preserve"><value>Smartphone</value></data>
+  <data name="Option_deviceKind_tablet" xml:space="preserve"><value>Tablet</value></data>
+  <data name="Option_documentKind_birth" xml:space="preserve"><value>Geburtsurkunde</value></data>
+  <data name="Option_documentKind_careDirective" xml:space="preserve"><value>Betreuungsverfügung</value></data>
+  <data name="Option_documentKind_certificate" xml:space="preserve"><value>Zeugnis</value></data>
+  <data name="Option_documentKind_divorce" xml:space="preserve"><value>Scheidungsurteil</value></data>
+  <data name="Option_documentKind_generalProxy" xml:space="preserve"><value>Generalvollmacht</value></data>
+  <data name="Option_documentKind_healthcareProxy" xml:space="preserve"><value>Vorsorgevollmacht</value></data>
+  <data name="Option_documentKind_inheritanceContract" xml:space="preserve"><value>Erbvertrag</value></data>
+  <data name="Option_documentKind_landRegister" xml:space="preserve"><value>Grundbuchauszug</value></data>
+  <data name="Option_documentKind_livingWill" xml:space="preserve"><value>Patientenverfügung</value></data>
+  <data name="Option_documentKind_marriage" xml:space="preserve"><value>Heiratsurkunde</value></data>
+  <data name="Option_documentKind_other" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="Option_documentKind_pensionNotice" xml:space="preserve"><value>Rentenbescheid</value></data>
+  <data name="Option_documentKind_taxNotice" xml:space="preserve"><value>Steuerbescheid</value></data>
+  <data name="Option_documentKind_vehicleTitle" xml:space="preserve"><value>Zulassungsbescheinigung Teil II</value></data>
+  <data name="Option_documentKind_will" xml:space="preserve"><value>Testament</value></data>
+  <data name="Option_employmentKind_civilServant" xml:space="preserve"><value>Beamtet</value></data>
+  <data name="Option_employmentKind_employed" xml:space="preserve"><value>Angestellt</value></data>
+  <data name="Option_employmentKind_retired" xml:space="preserve"><value>Rente / Pension</value></data>
+  <data name="Option_employmentKind_selfEmployed" xml:space="preserve"><value>Selbstständig</value></data>
+  <data name="Option_frequency_halfYearly" xml:space="preserve"><value>halbjährlich</value></data>
+  <data name="Option_frequency_monthly" xml:space="preserve"><value>monatlich</value></data>
+  <data name="Option_frequency_once" xml:space="preserve"><value>einmalig</value></data>
+  <data name="Option_frequency_quarterly" xml:space="preserve"><value>vierteljährlich</value></data>
+  <data name="Option_frequency_yearly" xml:space="preserve"><value>jährlich</value></data>
+  <data name="Option_healthSystem_private" xml:space="preserve"><value>privat (PKV)</value></data>
+  <data name="Option_healthSystem_statutory" xml:space="preserve"><value>gesetzlich (GKV)</value></data>
+  <data name="Option_idDocumentKind_driversLicense" xml:space="preserve"><value>Führerschein</value></data>
+  <data name="Option_idDocumentKind_idCard" xml:space="preserve"><value>Personalausweis</value></data>
+  <data name="Option_idDocumentKind_passport" xml:space="preserve"><value>Reisepass</value></data>
+  <data name="Option_idDocumentKind_residencePermit" xml:space="preserve"><value>Aufenthaltstitel</value></data>
+  <data name="Option_insuranceKind_accident" xml:space="preserve"><value>Unfallversicherung</value></data>
+  <data name="Option_insuranceKind_building" xml:space="preserve"><value>Wohngebäude</value></data>
+  <data name="Option_insuranceKind_car" xml:space="preserve"><value>KFZ</value></data>
+  <data name="Option_insuranceKind_care" xml:space="preserve"><value>Pflege</value></data>
+  <data name="Option_insuranceKind_dental" xml:space="preserve"><value>Zahnzusatz</value></data>
+  <data name="Option_insuranceKind_disability" xml:space="preserve"><value>Berufsunfähigkeitsversicherung</value></data>
+  <data name="Option_insuranceKind_funeral" xml:space="preserve"><value>Sterbegeld</value></data>
+  <data name="Option_insuranceKind_health" xml:space="preserve"><value>Kranken</value></data>
+  <data name="Option_insuranceKind_household" xml:space="preserve"><value>Hausrat</value></data>
+  <data name="Option_insuranceKind_legal" xml:space="preserve"><value>Rechtsschutz</value></data>
+  <data name="Option_insuranceKind_liability" xml:space="preserve"><value>Privathaftpflicht</value></data>
+  <data name="Option_insuranceKind_life" xml:space="preserve"><value>Lebensversicherung</value></data>
+  <data name="Option_insuranceKind_other" xml:space="preserve"><value>Sonstige</value></data>
+  <data name="Option_insuranceKind_pension" xml:space="preserve"><value>Rentenversicherung</value></data>
+  <data name="Option_insuranceKind_petLiability" xml:space="preserve"><value>Tierhalterhaftpflicht</value></data>
+  <data name="Option_insuranceKind_termLife" xml:space="preserve"><value>Risikolebensversicherung</value></data>
+  <data name="Option_insuranceKind_travel" xml:space="preserve"><value>Reise</value></data>
+  <data name="Option_loanDirection_iOwe" xml:space="preserve"><value>Ich schulde</value></data>
+  <data name="Option_loanDirection_owedToMe" xml:space="preserve"><value>Mir wird geschuldet</value></data>
+  <data name="Option_loanKind_car" xml:space="preserve"><value>Autokredit</value></data>
+  <data name="Option_loanKind_installment" xml:space="preserve"><value>Ratenkredit</value></data>
+  <data name="Option_loanKind_leasing" xml:space="preserve"><value>Leasing</value></data>
+  <data name="Option_loanKind_mortgage" xml:space="preserve"><value>Immobiliendarlehen</value></data>
+  <data name="Option_loanKind_other" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="Option_loanKind_overdraft" xml:space="preserve"><value>Dispo</value></data>
+  <data name="Option_loanKind_private" xml:space="preserve"><value>Privatdarlehen</value></data>
+  <data name="Option_maritalStatus_divorced" xml:space="preserve"><value>geschieden</value></data>
+  <data name="Option_maritalStatus_married" xml:space="preserve"><value>verheiratet</value></data>
+  <data name="Option_maritalStatus_partnership" xml:space="preserve"><value>eingetragene Partnerschaft</value></data>
+  <data name="Option_maritalStatus_single" xml:space="preserve"><value>ledig</value></data>
+  <data name="Option_maritalStatus_widowed" xml:space="preserve"><value>verwitwet</value></data>
+  <data name="Option_onlineAccountKind_cloud" xml:space="preserve"><value>Cloud-Speicher</value></data>
+  <data name="Option_onlineAccountKind_email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Option_onlineAccountKind_gaming" xml:space="preserve"><value>Gaming</value></data>
+  <data name="Option_onlineAccountKind_messenger" xml:space="preserve"><value>Messenger</value></data>
+  <data name="Option_onlineAccountKind_other" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="Option_onlineAccountKind_payment" xml:space="preserve"><value>Bezahldienst</value></data>
+  <data name="Option_onlineAccountKind_shop" xml:space="preserve"><value>Online-Shop</value></data>
+  <data name="Option_onlineAccountKind_social" xml:space="preserve"><value>Social Media</value></data>
+  <data name="Option_organDecision_delegated" xml:space="preserve"><value>Entscheidung durch eine Person</value></data>
+  <data name="Option_organDecision_no" xml:space="preserve"><value>Nein</value></data>
+  <data name="Option_organDecision_partial" xml:space="preserve"><value>Teilweise</value></data>
+  <data name="Option_organDecision_yes" xml:space="preserve"><value>Ja</value></data>
+  <data name="Option_pensionKind_civilService" xml:space="preserve"><value>Beamtenversorgung</value></data>
+  <data name="Option_pensionKind_company" xml:space="preserve"><value>Betriebsrente</value></data>
+  <data name="Option_pensionKind_professional" xml:space="preserve"><value>Berufsständisches Versorgungswerk</value></data>
+  <data name="Option_pensionKind_riester" xml:space="preserve"><value>Riester</value></data>
+  <data name="Option_pensionKind_ruerup" xml:space="preserve"><value>Rürup</value></data>
+  <data name="Option_pensionKind_statutory" xml:space="preserve"><value>Gesetzliche Rente</value></data>
+  <data name="Option_pmEmergency_emergencyContact" xml:space="preserve"><value>Notfallkontakt-Funktion des Anbieters</value></data>
+  <data name="Option_pmEmergency_emergencyKit" xml:space="preserve"><value>Emergency Kit</value></data>
+  <data name="Option_pmEmergency_familyAccount" xml:space="preserve"><value>Familienkonto</value></data>
+  <data name="Option_pmEmergency_other" xml:space="preserve"><value>Sonstiges</value></data>
+  <data name="Option_propertyKind_apartment" xml:space="preserve"><value>Wohnung</value></data>
+  <data name="Option_propertyKind_garage" xml:space="preserve"><value>Garage</value></data>
+  <data name="Option_propertyKind_house" xml:space="preserve"><value>Haus</value></data>
+  <data name="Option_propertyKind_land" xml:space="preserve"><value>Grundstück</value></data>
+  <data name="Option_register_none" xml:space="preserve"><value>nein</value></data>
+  <data name="Option_register_provisionRegister" xml:space="preserve"><value>Zentrales Vorsorgeregister</value></data>
+  <data name="Option_register_testamentRegister" xml:space="preserve"><value>Zentrales Testamentsregister</value></data>
+  <data name="Option_vehicleKind_boat" xml:space="preserve"><value>Boot</value></data>
+  <data name="Option_vehicleKind_camper" xml:space="preserve"><value>Wohnmobil</value></data>
+  <data name="Option_vehicleKind_car" xml:space="preserve"><value>PKW</value></data>
+  <data name="Option_vehicleKind_motorcycle" xml:space="preserve"><value>Motorrad</value></data>
+  <data name="Option_vehicleKind_trailer" xml:space="preserve"><value>Anhänger</value></data>
+  <data name="Option_walletKind_exchange" xml:space="preserve"><value>Börsenkonto</value></data>
+  <data name="Option_walletKind_hardware" xml:space="preserve"><value>Hardware-Wallet</value></data>
+  <data name="Option_walletKind_software" xml:space="preserve"><value>Software-Wallet</value></data>
+  <data name="Option_wish_backup" xml:space="preserve"><value>Daten sichern</value></data>
+  <data name="Option_wish_cancel" xml:space="preserve"><value>kündigen</value></data>
+  <data name="Option_wish_claim" xml:space="preserve"><value>Leistung beantragen</value></data>
+  <data name="Option_wish_close" xml:space="preserve"><value>auflösen</value></data>
+  <data name="Option_wish_delete" xml:space="preserve"><value>löschen</value></data>
+  <data name="Option_wish_handOver" xml:space="preserve"><value>übergeben an …</value></data>
+  <data name="Option_wish_keep" xml:space="preserve"><value>behalten</value></data>
+  <data name="Option_wish_keepRunning" xml:space="preserve"><value>weiterlaufen lassen</value></data>
+  <data name="Option_wish_memorialize" xml:space="preserve"><value>in den Gedenkzustand versetzen</value></data>
+  <data name="Option_wish_reset" xml:space="preserve"><value>zurücksetzen</value></data>
+  <data name="Option_wish_sell" xml:space="preserve"><value>verkaufen</value></data>
+  <data name="Option_wish_takeOver" xml:space="preserve"><value>übernehmen</value></data>
+  <data name="PagerInfo" xml:space="preserve"><value>{first_item}–{last_item} von {all_items}</value></data>
+  <data name="PdfCreate" xml:space="preserve"><value>PDF erstellen</value></data>
+  <data name="PdfPage" xml:space="preserve"><value>Seite {0} von {1}</value></data>
+  <data name="PdfPassword" xml:space="preserve"><value>Passwort für das PDF</value></data>
+  <data name="PdfPasswordAscii" xml:space="preserve"><value>Bitte ohne Umlaute und Sonderbuchstaben, damit jedes PDF-Programm das Passwort versteht.</value></data>
+  <data name="PdfPasswordHelp" xml:space="preserve"><value>Mindestens 8 Zeichen: Buchstaben ohne Umlaute, Ziffern, Satzzeichen. Nicht dein Master-Passwort.</value></data>
+  <data name="PdfPasswordText" xml:space="preserve"><value>Das PDF wird mit AES-256 verschlüsselt. Ohne dieses Passwort lässt es sich nicht öffnen; myLife speichert es nicht.</value></data>
+  <data name="PdfPasswordTitle" xml:space="preserve"><value>PDF schützen</value></data>
+  <data name="PdfWithoutPassword" xml:space="preserve"><value>Ohne Passwort erstellen (Klartext)</value></data>
+  <data name="Print" xml:space="preserve"><value>Drucken</value></data>
   <data name="RecoverBackToLogin" xml:space="preserve"><value>Zur Anmeldung</value></data>
   <data name="RecoverDone" xml:space="preserve"><value>Dein neues Master-Passwort ist gesetzt. Melde dich jetzt damit und mit deinem zweiten Faktor an.</value></data>
   <data name="RecoverNewPassword" xml:space="preserve"><value>Neues Master-Passwort</value></data>
@@ -77,7 +631,20 @@
   <data name="RecoveryKitTitle" xml:space="preserve"><value>myLife – Wiederherstellungs-Kit</value></data>
   <data name="RecoveryKitWarning" xml:space="preserve"><value>Wer diese Wörter kennt, kann deinen Tresor öffnen. Nicht fotografieren und nicht digital speichern.</value></data>
   <data name="RecoveryKitWords" xml:space="preserve"><value>Wiederherstellungswörter</value></data>
+  <data name="ReferenceHelp" xml:space="preserve"><value>Verweis auf: {0}</value></data>
+  <data name="ReferenceMissing" xml:space="preserve"><value>(gelöschter Eintrag)</value></data>
   <data name="Reload" xml:space="preserve"><value>Neu laden</value></data>
+  <data name="Restore" xml:space="preserve"><value>Wiederherstellen</value></data>
+  <data name="Restored" xml:space="preserve"><value>Wiederhergestellt.</value></data>
+  <data name="RowsPerPage" xml:space="preserve"><value>Einträge je Seite</value></data>
+  <data name="Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="SaveAnyway" xml:space="preserve"><value>Trotzdem speichern</value></data>
+  <data name="Saved" xml:space="preserve"><value>Gespeichert.</value></data>
+  <data name="SearchCount" xml:space="preserve"><value>{0} Treffer</value></data>
+  <data name="SearchFound" xml:space="preserve"><value>Fundstelle</value></data>
+  <data name="SearchHint" xml:space="preserve"><value>Die Suche läuft nur in deinem Browser über die entschlüsselten Einträge. Der Inhalt von PDFs wird nicht durchsucht.</value></data>
+  <data name="SearchNoHits" xml:space="preserve"><value>Keine Treffer.</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Suchbegriff, etwa Bank, Policennummer oder Name</value></data>
   <data name="SecurityAddPasskey" xml:space="preserve"><value>Passkey hinzufügen</value></data>
   <data name="SecurityChangePassword" xml:space="preserve"><value>Passwort ändern</value></data>
   <data name="SecurityCurrentPassword" xml:space="preserve"><value>Aktuelles Master-Passwort</value></data>
@@ -95,6 +662,8 @@
   <data name="SecurityPasswordChanged" xml:space="preserve"><value>Das Master-Passwort wurde geändert.</value></data>
   <data name="SecurityPasswordText" xml:space="preserve"><value>Dein Tresor wird dabei nur neu verpackt, an den Daten ändert sich nichts. Andere angemeldete Geräte werden abgemeldet.</value></data>
   <data name="SecurityPasswordTitle" xml:space="preserve"><value>Master-Passwort ändern</value></data>
+  <data name="Select" xml:space="preserve"><value>Auswählen</value></data>
+  <data name="SelectedCount" xml:space="preserve"><value>{0} ausgewählt</value></data>
   <data name="SetupAccountText" xml:space="preserve"><value>Als Administrator verwaltest du Einstellungen und Benutzer. In fremde Tresore kannst du trotzdem nicht hineinsehen.</value></data>
   <data name="SetupAlreadyDone" xml:space="preserve"><value>myLife ist bereits eingerichtet.</value></data>
   <data name="SetupBack" xml:space="preserve"><value>Zurück</value></data>
@@ -153,9 +722,59 @@
   <data name="SetupTwoFactorSecret" xml:space="preserve"><value>Schlüssel zum manuellen Eingeben</value></data>
   <data name="SetupTwoFactorText" xml:space="preserve"><value>Zur Anmeldung brauchst du zusätzlich einen Code aus einer Authenticator-App, zum Beispiel Aegis, Google Authenticator, Microsoft Authenticator oder deinem Passwortmanager. Scanne den QR-Code und gib den angezeigten Code ein.</value></data>
   <data name="SetupWelcomeText" xml:space="preserve"><value>Diese Instanz ist noch nicht eingerichtet. Du legst jetzt das erste Konto an. Es wird Administrator und bekommt einen eigenen Tresor. Alle Schlüssel entstehen in deinem Browser, der Server sieht nur verschlüsselte Daten.</value></data>
+  <data name="ShowEnded" xml:space="preserve"><value>Beendete anzeigen</value></data>
+  <data name="SomeFailed" xml:space="preserve"><value>{0} Einträge konnten nicht geändert werden.</value></data>
+  <data name="SortBy" xml:space="preserve"><value>Sortieren nach</value></data>
   <data name="ToggleDarkMode" xml:space="preserve"><value>Hell/Dunkel umschalten</value></data>
+  <data name="TrashDays" xml:space="preserve"><value>{0} Tagen</value></data>
+  <data name="TrashDeletedAt" xml:space="preserve"><value>Gelöscht am</value></data>
+  <data name="TrashEmpty" xml:space="preserve"><value>Der Papierkorb ist leer.</value></data>
+  <data name="TrashRemaining" xml:space="preserve"><value>Wird entfernt in</value></data>
+  <data name="TrashText" xml:space="preserve"><value>Gelöschte Einträge und Dokumente bleiben {0} Tage hier und werden dann endgültig entfernt.</value></data>
+  <data name="Type_asset" xml:space="preserve"><value>Wertgegenstand / Vermögen</value></data>
+  <data name="Type_bankAccount" xml:space="preserve"><value>Bankkonto</value></data>
+  <data name="Type_card" xml:space="preserve"><value>Karte</value></data>
+  <data name="Type_contact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Type_contract" xml:space="preserve"><value>Vertrag / Abo</value></data>
+  <data name="Type_cryptoWallet" xml:space="preserve"><value>Krypto-Wallet</value></data>
+  <data name="Type_depot" xml:space="preserve"><value>Depot</value></data>
+  <data name="Type_device" xml:space="preserve"><value>Gerät</value></data>
+  <data name="Type_domain" xml:space="preserve"><value>Domain</value></data>
+  <data name="Type_employment" xml:space="preserve"><value>Arbeitgeber / Einkommen</value></data>
+  <data name="Type_funeral" xml:space="preserve"><value>Bestattung</value></data>
+  <data name="Type_idDocument" xml:space="preserve"><value>Ausweisdokument</value></data>
+  <data name="Type_insurance" xml:space="preserve"><value>Versicherung</value></data>
+  <data name="Type_legalDocument" xml:space="preserve"><value>Urkunde / Dokument</value></data>
+  <data name="Type_letter" xml:space="preserve"><value>Brief</value></data>
+  <data name="Type_loan" xml:space="preserve"><value>Kredit / Darlehen</value></data>
+  <data name="Type_onlineAccount" xml:space="preserve"><value>Online-Konto</value></data>
+  <data name="Type_organDonation" xml:space="preserve"><value>Organspende</value></data>
+  <data name="Type_otherWish" xml:space="preserve"><value>Sonstiger Wunsch</value></data>
+  <data name="Type_passwordManager" xml:space="preserve"><value>Passwortmanager</value></data>
+  <data name="Type_pension" xml:space="preserve"><value>Altersvorsorge</value></data>
+  <data name="Type_personal" xml:space="preserve"><value>Persönliche Daten</value></data>
+  <data name="Type_pet" xml:space="preserve"><value>Haustier</value></data>
+  <data name="Type_property" xml:space="preserve"><value>Immobilie</value></data>
+  <data name="Type_safeDeposit" xml:space="preserve"><value>Schließfach</value></data>
+  <data name="Type_taxes" xml:space="preserve"><value>Steuern</value></data>
+  <data name="Type_vehicle" xml:space="preserve"><value>Fahrzeug</value></data>
   <data name="UnlockSubmit" xml:space="preserve"><value>Entsperren</value></data>
   <data name="UnlockText" xml:space="preserve"><value>Hallo {0}, du bist noch angemeldet. Zum Entsperren des Tresors brauchen wir dein Master-Passwort.</value></data>
   <data name="UnlockTitle" xml:space="preserve"><value>Tresor entsperren</value></data>
   <data name="UserMenu" xml:space="preserve"><value>Konto</value></data>
+  <data name="VaultError_vault-area-key-exists" xml:space="preserve"><value>Der Bereich wurde gerade an anderer Stelle angelegt. Bitte versuche es erneut.</value></data>
+  <data name="VaultError_vault-area-key-missing" xml:space="preserve"><value>Der Bereich ist noch nicht angelegt.</value></data>
+  <data name="VaultError_vault-conflict" xml:space="preserve"><value>Der Eintrag wurde inzwischen an anderer Stelle geändert. Lade ihn neu und übernimm deine Änderungen erneut.</value></data>
+  <data name="VaultError_vault-decrypt" xml:space="preserve"><value>Die Datei ließ sich nicht entschlüsseln.</value></data>
+  <data name="VaultError_vault-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
+  <data name="VaultError_vault-file-too-large" xml:space="preserve"><value>Die Datei ist größer als {0} MB.</value></data>
+  <data name="VaultError_vault-import-invalid" xml:space="preserve"><value>Das ist keine gültige myLife-Exportdatei.</value></data>
+  <data name="VaultError_vault-import-wrong-secret" xml:space="preserve"><value>Passwort oder Wiederherstellungsschlüssel passen nicht zu diesem Export.</value></data>
+  <data name="VaultError_vault-invalid" xml:space="preserve"><value>Die Angaben wurden nicht angenommen.</value></data>
+  <data name="VaultError_vault-locked" xml:space="preserve"><value>Der Tresor ist gesperrt. Bitte melde dich erneut an.</value></data>
+  <data name="VaultError_vault-not-found" xml:space="preserve"><value>Der Eintrag existiert nicht mehr.</value></data>
+  <data name="VaultError_vault-too-large" xml:space="preserve"><value>Der Eintrag ist zu groß.</value></data>
+  <data name="VaultLoadFailed" xml:space="preserve"><value>Der Tresor konnte nicht geladen werden. Bitte lade die Seite neu.</value></data>
+  <data name="VaultUnreadable" xml:space="preserve"><value>{0} Einträge ließen sich nicht entschlüsseln und werden nicht angezeigt.</value></data>
+  <data name="Yes" xml:space="preserve"><value>Ja</value></data>
 </root>

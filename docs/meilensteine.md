@@ -19,13 +19,13 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 1. **Krypto-Kern:** `myLife.crypto.js` (Argon2id, HKDF, AES-GCM, ECIES, ECDSA), C#-Fassade, .NET-Referenzimplementierung, Testvektoren, Kreuztests ✅ (24.11.2026, [kryptoformat.md](kryptoformat.md))
 2. **Einrichtungsassistent:** erster Nutzer als Admin, Master-Passwort, Recovery-Kit (24 Wörter und QR-Code, druckbar), TOTP und/oder Passkey, Hinweis „Was gehört nicht hinein“ ✅ (24.11.2026; Einrichtungscode 51, Passkey mit M1.3, 52)
 3. **Anmeldung** mit zweitem Faktor, automatische Abmeldung, Passwort ändern, Wiederherstellung per Recovery-Key ✅ (24.11.2026; dazu Passkeys, Entscheidungen 54–58)
-4. **Schema-Motor:** Objekttyp-Schemata → Formular, Datenblatt, Suchindex
-5. **Alle Objekttypen der Bereiche 0–11 und 13** (siehe [objekttypen.md](objekttypen.md)): anlegen, bearbeiten, beenden, löschen (Papierkorb). Dazu Wünsche, Verweise, Zusatzfelder und die Prüfungen „Gehört nicht hinein“.
-6. **Dokumente** an jedem Objekt, bis 25 MB, verschlüsselt, Vorschau für PDF und Bilder, Foto direkt vom Smartphone
-7. **Dashboard:** Kacheln je Bereich mit Anzahl und „Zuletzt geprüft am“, Knopf „Als geprüft markieren“
-8. **Volltextsuche** im Browser
-9. **Exporte:** Datenblatt einzeln, Notfallordner-PDF mit Passwort, druckfertige HTML-Ansicht, JSON-Export und JSON-Import
-10. **Audit-Log** (eigener Tresor) und Sicherheits-Header
+4. **Schema-Motor:** Objekttyp-Schemata → Formular, Datenblatt, Suchindex ✅ (24.11.2026; 59)
+5. **Alle Objekttypen der Bereiche 0–11 und 13** (siehe [objekttypen.md](objekttypen.md)): anlegen, bearbeiten, beenden, löschen (Papierkorb). Dazu Wünsche, Verweise, Zusatzfelder und die Prüfungen „Gehört nicht hinein“. ✅ (24.11.2026; 60, 66)
+6. **Dokumente** an jedem Objekt, bis 25 MB, verschlüsselt, Vorschau für PDF und Bilder, Foto direkt vom Smartphone ✅ (24.11.2026; 61)
+7. **Dashboard:** Kacheln je Bereich mit Anzahl und „Zuletzt geprüft am“, Knopf „Als geprüft markieren“ ✅ (24.11.2026; 67)
+8. **Volltextsuche** im Browser ✅ (24.11.2026; 65)
+9. **Exporte:** Datenblatt einzeln, Notfallordner-PDF mit Passwort, druckfertige HTML-Ansicht, JSON-Export und JSON-Import ✅ (24.11.2026; 63, 64, [format.md](format.md))
+10. **Audit-Log** (eigener Tresor) und Sicherheits-Header ✅ (24.11.2026; 62)
 
 **Abnahme:** Echte Daten auf der DS1520+ erfasst. In der Datenbank steht nachweislich nur Chiffrat.
 

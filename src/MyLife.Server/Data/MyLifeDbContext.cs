@@ -10,6 +10,14 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<Passkey> Passkeys => Set<Passkey>();
 
+    public DbSet<VaultArea> Areas => Set<VaultArea>();
+
+    public DbSet<VaultObject> Objects => Set<VaultObject>();
+
+    public DbSet<VaultDocument> Documents => Set<VaultDocument>();
+
+    public DbSet<AuditEntry> AuditLog => Set<AuditEntry>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -73,6 +81,78 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.Name).HasColumnName("name").HasMaxLength(100);
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
             entity.Property(x => x.LastUsedAt).HasColumnName("last_used_at");
+        });
+
+        modelBuilder.Entity<VaultArea>(entity =>
+        {
+            entity.ToTable("areas");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.OwnerId, x.AreaKey }).IsUnique();
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.AreaKey).HasColumnName("area_key");
+            entity.Property(x => x.WrappedAreaKey).HasColumnName("wrapped_area_key");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.LastReviewedAt).HasColumnName("last_reviewed_at");
+        });
+
+        modelBuilder.Entity<VaultObject>(entity =>
+        {
+            entity.ToTable("objects");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.OwnerId, x.AreaKey });
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.AreaKey).HasColumnName("area_key");
+            entity.Property(x => x.TypeKey).HasColumnName("type_key").HasMaxLength(50);
+            entity.Property(x => x.Payload).HasColumnName("payload");
+            entity.Property(x => x.SchemaVersion).HasColumnName("schema_version");
+            entity.Property(x => x.Status).HasColumnName("status");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+            entity.Property(x => x.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(x => x.DeletedAt).HasColumnName("deleted_at");
+            entity.Property(x => x.Version).IsRowVersion();
+        });
+
+        modelBuilder.Entity<VaultDocument>(entity =>
+        {
+            entity.ToTable("documents");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => x.OwnerId);
+            entity.HasIndex(x => x.StorageKey).IsUnique();
+            entity.HasOne(x => x.Parent).WithMany(x => x.Documents).HasForeignKey(x => x.ObjectId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            entity.Property(x => x.ObjectId).HasColumnName("object_id");
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.WrappedFileKey).HasColumnName("wrapped_file_key");
+            entity.Property(x => x.Metadata).HasColumnName("metadata");
+            entity.Property(x => x.CipherSize).HasColumnName("cipher_size");
+            entity.Property(x => x.StorageKey).HasColumnName("storage_key").HasMaxLength(64);
+            entity.Property(x => x.CipherSha256).HasColumnName("cipher_sha256");
+            entity.Property(x => x.IsComplete).HasColumnName("is_complete");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.IsDeleted).HasColumnName("is_deleted");
+            entity.Property(x => x.DeletedAt).HasColumnName("deleted_at");
+        });
+
+        modelBuilder.Entity<AuditEntry>(entity =>
+        {
+            entity.ToTable("audit_log");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.OwnerId, x.At });
+            entity.HasIndex(x => x.At);
+            entity.Property(x => x.Id).HasColumnName("id").UseIdentityAlwaysColumn();
+            entity.Property(x => x.At).HasColumnName("at");
+            entity.Property(x => x.ActorId).HasColumnName("actor_id");
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.Action).HasColumnName("action").HasMaxLength(50);
+            entity.Property(x => x.TargetType).HasColumnName("target_type").HasMaxLength(50);
+            entity.Property(x => x.TargetId).HasColumnName("target_id");
+            entity.Property(x => x.Ip).HasColumnName("ip").HasMaxLength(64);
+            entity.Property(x => x.Details).HasColumnName("details").HasMaxLength(500);
         });
     }
 }

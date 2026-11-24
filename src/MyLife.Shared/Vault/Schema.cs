@@ -1,0 +1,101 @@
+namespace MyLife.Shared.Vault;
+
+/// <summary>Datentyp eines Felds. Werte liegen im verschlüsselten JSON immer als Zeichenkette in kanonischer Form vor.</summary>
+public enum FieldType
+{
+    /// <summary>Einzeilig.</summary>
+    Text,
+
+    /// <summary>Mehrzeilig.</summary>
+    LongText,
+
+    /// <summary>Zahl, invariant mit Punkt („1234.5“).</summary>
+    Number,
+
+    /// <summary>Betrag in Euro, invariant mit Punkt.</summary>
+    Money,
+
+    /// <summary>Prozentsatz, invariant mit Punkt.</summary>
+    Percent,
+
+    /// <summary>Datum „yyyy-MM-dd“.</summary>
+    Date,
+
+    /// <summary>IBAN ohne Leerzeichen, groß geschrieben, mit Prüfziffer.</summary>
+    Iban,
+
+    Bic,
+
+    Phone,
+
+    Email,
+
+    Url,
+
+    /// <summary>Ein Wert aus einer Auswahlliste (<see cref="FieldDefinition.OptionSet"/>).</summary>
+    Choice,
+
+    /// <summary>„true“ oder „false“.</summary>
+    YesNo,
+
+    /// <summary>Verweis auf ein anderes Objekt (Guid).</summary>
+    Reference,
+
+    /// <summary>Genau vier Ziffern, etwa die letzten Ziffern einer Karte.</summary>
+    Last4,
+}
+
+/// <summary>Ein Feld nur zeigen, wenn ein Auswahlfeld einen der Werte hat (etwa Kennzeichen nur bei KFZ-Versicherungen).</summary>
+public sealed record FieldCondition(string FieldKey, IReadOnlyList<string> Values);
+
+/// <summary>
+/// Ein Feld eines Objekttyps. Die Bezeichnung kommt aus den Ressourcen: zuerst <c>Field_{Typ}_{Key}</c>,
+/// sonst <c>Field_{Key}</c>; ein Hinweis aus <c>FieldHint_{Key}</c>, falls <see cref="HasHint"/>.
+/// </summary>
+public sealed record FieldDefinition(string Key, FieldType Type)
+{
+    public bool Required { get; init; }
+
+    /// <summary>Gehört zu einem vollständigen Datensatz (Vollständigkeitsanzeige, M3).</summary>
+    public bool Recommended { get; init; }
+
+    /// <summary>Auswahlliste bei <see cref="FieldType.Choice"/>; Texte unter <c>Option_{OptionSet}_{Wert}</c>.</summary>
+    public string? OptionSet { get; init; }
+
+    /// <summary>Erlaubte Objekttypen bei <see cref="FieldType.Reference"/>; leer heißt jeder Typ.</summary>
+    public IReadOnlyList<string> ReferenceTypes { get; init; } = [];
+
+    public FieldCondition? VisibleWhen { get; init; }
+
+    /// <summary>Vorschlag beim Anlegen, etwa die Sperr-Hotline 116 116.</summary>
+    public string? DefaultValue { get; init; }
+
+    public bool HasHint { get; init; }
+}
+
+/// <summary>Bereich, die Einheit für Verschlüsselung und Freigaben. Texte unter <c>Area_{Number}</c> und <c>AreaText_{Number}</c>.</summary>
+public sealed record AreaDefinition(int Number, string Key)
+{
+    /// <summary>Bereich 12 (Checkliste) folgt mit M3 und hat noch keine Objekttypen.</summary>
+    public bool IsAvailable { get; init; } = true;
+}
+
+/// <summary>
+/// Objekttyp (Entscheidung 29): Bereich, Felder, mögliche Wünsche. Aus dem Schema entstehen Formular, Datenblatt
+/// und Suchindex. Name unter <c>Type_{Key}</c>, Bedeutung des Ablaufdatums unter <c>Expiry_{Key}</c> (sonst <c>Expiry_default</c>).
+/// </summary>
+public sealed record ObjectTypeDefinition(string Key, int Area, IReadOnlyList<FieldDefinition> Fields)
+{
+    /// <summary>Wünsche für die Hinterbliebenen, Werte der Auswahlliste <c>wish</c>.</summary>
+    public IReadOnlyList<string> Wishes { get; init; } = [];
+
+    /// <summary>Bei Urkunden ist der Ablageort des Originals Pflicht.</summary>
+    public bool OriginalLocationRequired { get; init; }
+
+    /// <summary>Eigene Bezeichnung für das Ablaufdatum (<c>Expiry_{Key}</c>).</summary>
+    public bool HasExpiryLabel { get; init; }
+
+    public int SchemaVersion { get; init; } = 1;
+
+    public FieldDefinition? Field(string key) => Fields.FirstOrDefault(f => f.Key == key);
+}

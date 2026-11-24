@@ -1,0 +1,89 @@
+@page "/search"
+@attribute [Authorize]
+@inherits VaultPageBase
+@inject IStringLocalizer<SharedResource> L
+@inject VaultSearch Searcher
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L["NavSearch"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["NavSearch"]</MudText>
+    <MudTextField T="string" Value="_query" ValueChanged="QueryChanged" Placeholder="@L["SearchPlaceholder"]" Variant="Variant.Outlined" Immediate
+                  DebounceInterval="200" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" AutoFocus Clearable
+                  UserAttributes="@SearchAttributes" />
+    <MudSwitch T="bool" Value="_includeEnded" ValueChanged="IncludeEndedChanged" Color="Color.Primary" Label="@L["ShowEnded"]" />
+    <MudText Typo="Typo.caption" Class="mylife-muted">@L["SearchHint"]</MudText>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else if (!string.IsNullOrWhiteSpace(_query))
+    {
+        <MudTable T="SearchHit" Items="_hits" Hover Striped Dense="false" Elevation="1" RowsPerPage="100" OnRowClick="Open" RowClass="mylife-clickable"
+                  Breakpoint="Breakpoint.Sm" data-testid="search-results">
+            <ToolBarContent>
+                <MudText Typo="Typo.body2">@L["SearchCount", _hits.Count]</MudText>
+                <MudSpacer />
+                <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh><MudTableSortLabel T="SearchHit" SortBy="h => h.Item.Title">@L["CommonTitle"]</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="SearchHit" SortBy="h => Text.Type(h.Item.Type)">@L["ObjectType"]</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="SearchHit" SortBy="h => h.Item.Area">@L["Area"]</MudTableSortLabel></MudTh>
+                <MudTh>@L["SearchFound"]</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@L["CommonTitle"]"><b>@context.Item.Title</b></MudTd>
+                <MudTd DataLabel="@L["ObjectType"]">@Text.Type(context.Item.Type)</MudTd>
+                <MudTd DataLabel="@L["Area"]">@Text.Area(context.Item.Area)</MudTd>
+                <MudTd DataLabel="@L["SearchFound"]">@context.Snippet</MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText Typo="Typo.body2" Class="pa-4">@L["SearchNoHits"]</MudText>
+            </NoRecordsContent>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+            </PagerContent>
+        </MudTable>
+    }
+</MudStack>
+
+@code {
+    private static readonly int[] PageSizes = [25, 50, 100];
+    private static readonly Dictionary<string, object> SearchAttributes = new() { ["data-testid"] = "search-input", ["autocomplete"] = "off" };
+    private string? _query;
+    private bool _includeEnded = true;
+    private List<SearchHit> _hits = [];
+
+    [SupplyParameterFromQuery(Name = "q")] public string? Query { get; set; }
+
+    protected override void OnParametersSet() => _query ??= Query;
+
+    protected override void OnVaultReady() => _hits = [.. Searcher.Search(_query, _includeEnded)];
+
+    private void QueryChanged(string? value)
+    {
+        _query = value;
+        OnVaultReady();
+    }
+
+    private void IncludeEndedChanged(bool value)
+    {
+        _includeEnded = value;
+        OnVaultReady();
+    }
+
+    private void Open(TableRowClickEventArgs<SearchHit> args)
+    {
+        if (args.Item is not null)
+        {
+            Navigation.NavigateTo($"object/{args.Item.Item.Id}");
+        }
+    }
+}

@@ -1,0 +1,3 @@
+# Von EF Core erzeugte Migrationen: Analyzer-Regeln gelten hier nicht.
+[*.cs]
+generated_code = true

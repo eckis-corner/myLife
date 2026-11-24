@@ -43,6 +43,10 @@ public sealed record SessionDto
     public required int KdfIterations { get; init; }
     public required int KdfParallelism { get; init; }
     public required byte[] WrappedVmk { get; init; }
+
+    /// <summary>Tresorschlüssel, verpackt mit dem Recovery-Key; für den JSON-Export (öffnen auch mit den 24 Wörtern).</summary>
+    public byte[]? WrappedVmkByRecovery { get; init; }
+
     public required byte[] PublicEncryptionKey { get; init; }
     public required byte[] WrappedEncryptionPrivateKey { get; init; }
     public required byte[] PublicSigningKey { get; init; }

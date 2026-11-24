@@ -10,6 +10,7 @@ using MyLife.Server.Data;
 using MyLife.Server.Infrastructure;
 using MyLife.Server.Infrastructure.Auth;
 using MyLife.Shared.Auth;
+using MyLife.Shared.Vault;
 
 namespace MyLife.Server.Api;
 
@@ -72,7 +73,7 @@ internal static partial class AuthEndpoints
 
         if (!await AuthHashHasher.VerifyAsync(user.AuthHash, request.AuthHash))
         {
-            attempts.Failed(user);
+            attempts.Failed(user, db);
             await db.SaveChangesAsync(cancellationToken);
             var logger = loggers.CreateLogger(typeof(AuthEndpoints));
             LogLoginFailed(logger, user.Id);
@@ -102,7 +103,7 @@ internal static partial class AuthEndpoints
         // Jeder Code gilt nur einmal: Schritte bis zum zuletzt verwendeten werden abgelehnt.
         if (step is null || step <= user.TotpLastStep)
         {
-            attempts.Failed(user);
+            attempts.Failed(user, db);
             await db.SaveChangesAsync(cancellationToken);
             return ApiProblems.Create(StatusCodes.Status401Unauthorized, AuthErrors.InvalidCode);
         }
@@ -143,7 +144,7 @@ internal static partial class AuthEndpoints
         var passkey = await passkeys.CompleteLoginAsync(context, user, request.OptionsToken, request.AssertionJson, cancellationToken);
         if (passkey is null)
         {
-            attempts.Failed(user);
+            attempts.Failed(user, db);
             await db.SaveChangesAsync(cancellationToken);
             return ApiProblems.Create(StatusCodes.Status401Unauthorized, AuthErrors.PasskeyFailed);
         }
@@ -160,8 +161,14 @@ internal static partial class AuthEndpoints
         return user is null ? TypedResults.Unauthorized() : TypedResults.Ok(ToSession(user, options.Value));
     }
 
-    private static async Task<NoContent> LogoutAsync(HttpContext context)
+    private static async Task<NoContent> LogoutAsync(HttpContext context, MyLifeDbContext db, AuditLog audit)
     {
+        if (MyLifeClaims.UserId(context.User) is { } id)
+        {
+            audit.Own(AuditActions.Logout, id);
+            await db.SaveChangesAsync(context.RequestAborted);
+        }
+
         await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return TypedResults.NoContent();
     }
@@ -188,7 +195,7 @@ internal static partial class AuthEndpoints
 
         if (!await AuthHashHasher.VerifyAsync(user.RecoveryAuthHash, request.RecoveryAuthHash))
         {
-            attempts.Failed(user);
+            attempts.Failed(user, db);
             await db.SaveChangesAsync(cancellationToken);
             return InvalidCredentials();
         }
@@ -199,7 +206,8 @@ internal static partial class AuthEndpoints
     }
 
     private static async Task<Results<NoContent, ValidationProblem, ProblemHttpResult>> CompleteRecoveryAsync(
-        RecoveryCompleteRequest request, MyLifeDbContext db, LoginAttempts attempts, PendingTokens tokens, ILoggerFactory loggers, CancellationToken cancellationToken)
+        RecoveryCompleteRequest request, MyLifeDbContext db, LoginAttempts attempts, PendingTokens tokens, AuditLog audit, ILoggerFactory loggers,
+        CancellationToken cancellationToken)
     {
         var (user, problem) = await ReadPendingAsync(db, attempts, tokens, PendingPurpose.Recovery, request.Pending, cancellationToken);
         if (user is null)
@@ -215,6 +223,7 @@ internal static partial class AuthEndpoints
 
         await ApplyPasswordAsync(user, request.NewPassword);
         LoginAttempts.Succeeded(user);
+        audit.Add(AuditActions.Recovered, null, user.Id);
         await db.SaveChangesAsync(cancellationToken);
         var logger = loggers.CreateLogger(typeof(AuthEndpoints));
         LogRecoveryCompleted(logger, user.Id);
@@ -246,6 +255,7 @@ internal static partial class AuthEndpoints
         KdfIterations = user.KdfIterations,
         KdfParallelism = user.KdfParallelism,
         WrappedVmk = user.WrappedVmk,
+        WrappedVmkByRecovery = user.WrappedVmkByRecovery,
         PublicEncryptionKey = user.PublicEncryptionKey,
         WrappedEncryptionPrivateKey = user.WrappedEncryptionPrivateKey,
         PublicSigningKey = user.PublicSigningKey,
@@ -257,6 +267,7 @@ internal static partial class AuthEndpoints
     {
         LoginAttempts.Succeeded(user);
         user.LastLoginAt = time.GetUtcNow();
+        db.AuditLog.Add(AuditLog.Entry(AuditActions.Login, user.Id, user.Id, time.GetUtcNow(), context.Connection.RemoteIpAddress));
         await db.SaveChangesAsync(cancellationToken);
         await UserSignIn.SignInAsync(context, user);
         var logger = context.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(AuthEndpoints));

@@ -1,0 +1,212 @@
+@page "/export"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using Microsoft.AspNetCore.Components.Forms
+@inject IStringLocalizer<SharedResource> L
+@inject EmergencyFolder Folder
+@inject VaultExport Exporter
+@inject VaultClient Api
+@inject SessionService Session
+@inject BrowserFiles Files
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L["NavExport"]</PageTitle>
+
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["NavExport"]</MudText>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else
+    {
+        <MudGrid Spacing="3">
+            <MudItem xs="12" md="6">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.h6" HtmlTag="h2">@L["ExportFolderTitle"]</MudText>
+                        <MudText Typo="Typo.body2">@L["ExportFolderText"]</MudText>
+                        <MudText Typo="Typo.subtitle2">@L["ExportAreas"]</MudText>
+                        <MudGrid Spacing="0">
+                            @foreach (var area in ObjectCatalog.Areas.Where(a => a.IsAvailable))
+                            {
+                                var number = area.Number;
+                                <MudItem xs="12" sm="6">
+                                    <MudCheckBox T="bool" Value="_areas.Contains(number)" ValueChanged="v => Toggle(number, v)" Dense
+                                                 Label="@($"{Text.Area(number)} ({_counts.GetValueOrDefault(number)})")" />
+                                </MudItem>
+                            }
+                        </MudGrid>
+                        <MudSwitch T="bool" @bind-Value="_includeEnded" Color="Color.Primary" Label="@L["ExportIncludeEnded"]" />
+                        <MudStack Row Wrap="Wrap.Wrap" Justify="Justify.FlexEnd" Spacing="2">
+                            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Print" Disabled="@(_busy || _areas.Count == 0)" OnClick="OpenPrintView">
+                                @L["ExportPrintView"]
+                            </MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.PictureAsPdf" Disabled="@(_busy || _areas.Count == 0)"
+                                       OnClick="CreatePdfAsync" data-testid="export-pdf">@L["ExportPdf"]</MudButton>
+                        </MudStack>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudStack Spacing="2">
+                        <MudText Typo="Typo.h6" HtmlTag="h2">@L["ExportJsonTitle"]</MudText>
+                        <MudText Typo="Typo.body2">@L["ExportJsonText"]</MudText>
+                        <MudSwitch T="bool" @bind-Value="_withDocuments" Color="Color.Primary" Label="@L["ExportWithDocuments"]" />
+                        <MudStack Row Justify="Justify.FlexEnd">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Download" Disabled="_busy" OnClick="ExportJsonAsync"
+                                       data-testid="export-json">@L["ExportJson"]</MudButton>
+                        </MudStack>
+
+                        <MudDivider Class="my-2" />
+                        <MudText Typo="Typo.h6" HtmlTag="h2">@L["ImportTitle"]</MudText>
+                        <MudText Typo="Typo.body2">@L["ImportText"]</MudText>
+                        @if (_importFile is null)
+                        {
+                            <div>
+                                <MudButton HtmlTag="label" Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.UploadFile" for="import-input" Disabled="_busy">
+                                    @L["ImportChoose"]
+                                </MudButton>
+                                <InputFile id="import-input" class="mylife-hidden-input" accept=".json,application/json" OnChange="SelectImportAsync" />
+                            </div>
+                        }
+                        else
+                        {
+                            <MudAlert Severity="Severity.Info" Dense>
+                                @L["ImportSummary", _importFile.DisplayName, _importFile.CreatedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture), _importFile.Objects.Count, _importFile.Documents.Count]
+                            </MudAlert>
+                            <MudTextField T="string" @bind-Value="_secret" Label="@L["ImportSecret"]" HelperText="@L["ImportSecretHelp"]" Variant="Variant.Outlined"
+                                          InputType="InputType.Password" UserAttributes="@NoAutofill" />
+                            <MudStack Row Justify="Justify.FlexEnd" Spacing="2">
+                                <MudButton Variant="Variant.Text" Disabled="_busy" OnClick="() => _importFile = null">@L["Cancel"]</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Upload" Disabled="@(_busy || string.IsNullOrEmpty(_secret))"
+                                           OnClick="ImportAsync">@L["ImportStart"]</MudButton>
+                            </MudStack>
+                        }
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        @if (_busy)
+        {
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudProgressCircular Indeterminate Size="Size.Small" />
+                <MudText>@L["ExportWorking"]</MudText>
+            </MudStack>
+        }
+
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">@L["ExportWarning"]</MudAlert>
+    }
+</MudStack>
+
+@code {
+    private static readonly Dictionary<string, object> NoAutofill = new() { ["autocomplete"] = "off" };
+    private HashSet<int> _areas = [];
+    private Dictionary<int, int> _counts = [];
+    private bool _includeEnded;
+    private bool _withDocuments = true;
+    private bool _busy;
+    private ExportFile? _importFile;
+    private string? _secret;
+    private bool _initialized;
+
+    protected override void OnVaultReady()
+    {
+        _counts = Vault.Current.GroupBy(i => i.Area).ToDictionary(g => g.Key, g => g.Count());
+        if (!_initialized)
+        {
+            _areas = [.. _counts.Keys];
+            _initialized = true;
+        }
+    }
+
+    private void Toggle(int area, bool selected)
+    {
+        if (selected)
+        {
+            _areas.Add(area);
+        }
+        else
+        {
+            _areas.Remove(area);
+        }
+    }
+
+    private void OpenPrintView() =>
+        Navigation.NavigateTo($"export/print?areas={string.Join(',', _areas.Order())}&ended={_includeEnded.ToString().ToLowerInvariant()}");
+
+    private async Task CreatePdfAsync()
+    {
+        var dialog = await Dialogs.ShowAsync<PdfPasswordDialog>(L["PdfPasswordTitle"], new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        var result = await dialog.Result;
+        if (result is not { Canceled: false, Data: string password })
+        {
+            return;
+        }
+
+        await RunAsync(async () =>
+        {
+            var now = DateTimeOffset.Now;
+            var pdf = await Folder.CreatePdfAsync(_areas, _includeEnded, password, Session.Session?.DisplayName ?? string.Empty, now);
+            await Files.SaveAsync(pdf, BrowserFiles.DatedName(L["FolderFileName"], "pdf", now), "application/pdf");
+            await Api.ReportAsync(AuditActions.ExportPdf, string.IsNullOrEmpty(password) ? "unprotected" : "protected");
+        });
+    }
+
+    private Task ExportJsonAsync() => RunAsync(async () =>
+    {
+        var now = DateTimeOffset.Now;
+        var json = await Exporter.ExportAsync(_withDocuments, now);
+        await Files.SaveAsync(json, BrowserFiles.DatedName("myLife-Export", "mylife.json", now), "application/json");
+        await Api.ReportAsync(AuditActions.ExportJson, _withDocuments ? "with-documents" : "without-documents");
+    });
+
+    private async Task SelectImportAsync(InputFileChangeEventArgs args)
+    {
+        await RunAsync(async () =>
+        {
+            await using var stream = args.File.OpenReadStream(512L * 1024 * 1024);
+            using var buffer = new MemoryStream();
+            await stream.CopyToAsync(buffer);
+            _importFile = VaultExport.Parse(buffer.ToArray());
+            _secret = null;
+        });
+    }
+
+    private Task ImportAsync() => RunAsync(async () =>
+    {
+        var result = await Exporter.ImportAsync(_importFile!, _secret!);
+        _importFile = null;
+        _secret = null;
+        await Api.ReportAsync(AuditActions.ImportJson, $"{result.Objects}/{result.Documents}");
+        await Dialogs.ShowMessageBoxAsync(L["ImportTitle"], L["ImportDone", result.Objects, result.Documents, result.Skipped, result.Unreadable], yesText: L["Close"]);
+    });
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        _busy = true;
+        StateHasChanged();
+        try
+        {
+            await action();
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException or IOException or Microsoft.JSInterop.JSException or InvalidOperationException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

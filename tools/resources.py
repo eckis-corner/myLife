@@ -4,8 +4,12 @@ damit beide Sprachen immer dieselben Schlüssel haben.
 
 Aufruf: python3 tools/resources.py
 """
+import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import resources_vault  # noqa: E402
 
 TEXTS: dict[str, tuple[str, str]] = {
     "AppName": ("myLife", "myLife"),
@@ -333,6 +337,12 @@ TEXTS: dict[str, tuple[str, str]] = {
         "The keys could not be created in your browser. Please use an up-to-date browser.",
     ),
 }
+
+_VAULT = resources_vault.build()
+_DUPLICATES = sorted(set(TEXTS) & set(_VAULT))
+if _DUPLICATES:
+    raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
+TEXTS.update(_VAULT)
 
 HEADER = """<?xml version="1.0" encoding="utf-8"?>
 <!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->

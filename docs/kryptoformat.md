@@ -66,7 +66,8 @@ AAD       = 0x01 | 0x06 | uint32 BE (i) | letzter Block (0x00/0x01) | UTF-8(Kont
 
 - Weil die Nonce aus der Blocknummer kommt, gehört ein Dateischlüssel zu **genau einer Datei**. Jede neue oder geänderte Datei bekommt einen neuen Schlüssel.
 - Vertauschte Blöcke fallen über die Nummer auf, eine abgeschnittene Datei über die Markierung des letzten Blocks.
-- Den Dateikopf (Blockgröße, Metadaten) legt M1.6 fest.
+- Es gibt keinen Dateikopf (Entscheidung 61): Die Blockgröße ist fest 1 MiB, nur der letzte Block ist kürzer (auch leer möglich). Das Chiffrat einer Datei ist die Folge der Blöcke, jeder 16 Byte länger als sein Klartext.
+- Metadaten (Bezeichnung, Dateiname, Typ, Größe, Datum) liegen als eigener Datensatz der Art `Data` vor.
 
 ## 5. Umschläge (ECIES, P-256)
 
@@ -92,7 +93,21 @@ Signatur  = r | s (IEEE P1363, 64 Byte)
 - `sha256(daten)`, etwa für den Fingerprint eines öffentlichen Schlüssels.
 - `hmacSha256(schlüssel ≥ 16 Byte, daten)` für die Bindung an das Einladungsgeheimnis (Architektur 4.3).
 
-## 8. Tests
+## 8. Kontexte im Tresor (seit M1.4)
+
+| Kontext | Schlüssel | Inhalt |
+| --- | --- | --- |
+| `vmk` | KEK bzw. Recovery-Schlüssel | Tresorschlüssel |
+| `private-key:ecdh`, `private-key:ecdsa` | Tresorschlüssel | private Schlüssel |
+| `area:{n}` | Tresorschlüssel | Bereichsschlüssel 0–13 |
+| `object:{Typ}:{ID}` | Bereichsschlüssel | Objekt als JSON (`VaultPayload`) |
+| `file-key:{ID}` | Bereichsschlüssel | Dateischlüssel eines Dokuments |
+| `document-meta:{ID}` | Bereichsschlüssel | Metadaten eines Dokuments als JSON |
+| `document:{ID}` | Dateischlüssel | Blöcke eines Dokuments |
+
+IDs sind GUIDs in der Form `D` (klein geschrieben, mit Bindestrichen).
+
+## 9. Tests
 
 | Test | Prüft |
 | --- | --- |

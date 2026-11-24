@@ -55,12 +55,19 @@ internal sealed class AuthTestSupport : IAsyncDisposable
     /// <summary>Ein „Browser“: eigener HttpClient mit Cookies, eigenes Krypto-Register, eigene Sitzung.</summary>
     public (SessionService Session, AuthClient Api, HttpClient Http) NewBrowser()
     {
+        var (session, api, http, _) = NewBrowserWithCrypto();
+        return (session, api, http);
+    }
+
+    /// <summary>Wie <see cref="NewBrowser"/>, mit dem Krypto-Register des „Browsers“ (für den Tresor).</summary>
+    public (SessionService Session, AuthClient Api, HttpClient Http, ReferenceMyLifeCrypto Crypto) NewBrowserWithCrypto()
+    {
         var http = _server.CreateApiClient();
         var crypto = new ReferenceMyLifeCrypto();
         _disposables.Add(crypto);
         var api = new AuthClient(http);
         var webAuthn = new WebAuthnService(Authenticator.AsJsRuntime());
-        return (new SessionService(api, crypto, webAuthn), api, http);
+        return (new SessionService(api, crypto, webAuthn), api, http, crypto);
     }
 
     /// <summary>Stellt die Serveruhr auf den nächsten TOTP-Schritt und liefert dessen Code.</summary>

@@ -1,0 +1,211 @@
+@page "/area/{Number:int}"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject NavigationManager Navigation
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @Text.Area(Number)</PageTitle>
+
+@if (ObjectCatalog.FindArea(Number) is not { IsAvailable: true })
+{
+    <MudAlert Severity="Severity.Info">@L["AreaNotAvailable"]</MudAlert>
+}
+else
+{
+    <MudStack Spacing="3">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@AreaIcons.For(Number)" Color="Color.Primary" Size="Size.Large" />
+            <MudText Typo="Typo.h4" HtmlTag="h1">@Text.Area(Number)</MudText>
+        </MudStack>
+        <MudText Typo="Typo.body2" Class="mylife-muted">@Text.AreaText(Number)</MudText>
+
+        @if (Loading)
+        {
+            <MudProgressLinear Indeterminate Color="Color.Primary" />
+        }
+        else if (LoadFailed)
+        {
+            <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+        }
+        else
+        {
+            <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+                @if (_types.Count == 1)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="@($"object/new/{_types[0].Key}")"
+                               data-testid="new-object">@L["NewObject", Text.Type(_types[0])]</MudButton>
+                }
+                else
+                {
+                    <MudMenu Label="@L["New"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" data-testid="new-object">
+                        @foreach (var type in _types)
+                        {
+                            <MudMenuItem Href="@($"object/new/{type.Key}")">@Text.Type(type)</MudMenuItem>
+                        }
+                    </MudMenu>
+                }
+                <MudSpacer />
+                <MudSwitch T="bool" Value="_showEnded" ValueChanged="ShowEndedChanged" Color="Color.Primary" Label="@L["ShowEnded"]" />
+                <MudSwitch T="bool" Value="_selecting" ValueChanged="SelectingChanged" Color="Color.Primary" Label="@L["Select"]" data-testid="select-mode" />
+            </MudStack>
+
+            @if (_selecting && _selected.Count > 0)
+            {
+                <MudPaper Outlined Class="pa-2">
+                    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.body2">@L["SelectedCount", _selected.Count]</MudText>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Archive" Disabled="_busy" OnClick="() => SetStatusAsync(ObjectStatus.Ended)">@L["ObjectEnd"]</MudButton>
+                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Unarchive" Disabled="_busy" OnClick="() => SetStatusAsync(ObjectStatus.Active)">@L["ObjectReactivate"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" Disabled="_busy" OnClick="DeleteSelectedAsync"
+                                   data-testid="delete-selected">@L["Delete"]</MudButton>
+                    </MudStack>
+                </MudPaper>
+            }
+
+            <MudTable T="VaultItem" Items="_items" Hover Striped Dense="false" Elevation="1" RowsPerPage="100" MultiSelection="_selecting"
+                      @bind-SelectedItems="_selected" OnRowClick="RowClicked" RowClass="mylife-clickable" Breakpoint="Breakpoint.Sm"
+                      SortLabel="@L["SortBy"]" data-testid="objects-table">
+                <ToolBarContent>
+                    <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel T="VaultItem" SortBy="i => i.Title" InitialDirection="SortDirection.Ascending">@L["CommonTitle"]</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel T="VaultItem" SortBy="i => Text.Type(i.Type)">@L["ObjectType"]</MudTableSortLabel></MudTh>
+                    <MudTh>@L["ObjectSummary"]</MudTh>
+                    <MudTh><MudTableSortLabel T="VaultItem" SortBy="i => i.Payload.ExpiresOn ?? DateOnly.MaxValue">@L["Expiry_default"]</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel T="VaultItem" SortBy="i => i.UpdatedAt">@L["ObjectUpdated"]</MudTableSortLabel></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="@L["CommonTitle"]">
+                        <b>@context.Title</b>
+                        @if (context.Status == ObjectStatus.Ended)
+                        {
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="ml-2">@Text.Status(context.Status)</MudChip>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="@L["ObjectType"]">@Text.Type(context.Type)</MudTd>
+                    <MudTd DataLabel="@L["ObjectSummary"]">@Text.Summary(context, Vault.TitleOf)</MudTd>
+                    <MudTd DataLabel="@L["Expiry_default"]">@(context.Payload.ExpiresOn?.ToString("d", CultureInfo.CurrentCulture) ?? "–")</MudTd>
+                    <MudTd DataLabel="@L["ObjectUpdated"]">@context.UpdatedAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)</MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText Typo="Typo.body2" Class="pa-4">@L["AreaEmpty"]</MudText>
+                </NoRecordsContent>
+                <PagerContent>
+                    <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+                </PagerContent>
+            </MudTable>
+        }
+    </MudStack>
+}
+
+@code {
+    private static readonly int[] PageSizes = [25, 50, 100];
+    private List<ObjectTypeDefinition> _types = [];
+    private List<VaultItem> _items = [];
+    private HashSet<VaultItem> _selected = [];
+    private bool _selecting;
+    private bool _showEnded;
+    private bool _busy;
+
+    [Parameter] public int Number { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _types = [.. ObjectCatalog.TypesIn(Number)];
+        _selected.Clear();
+        _selecting = false;
+        if (Vault.IsLoaded)
+        {
+            OnVaultReady();
+        }
+    }
+
+    protected override void OnVaultReady() =>
+        _items = [.. Vault.Current.Where(i => i.Area == Number && (_showEnded || i.Status == ObjectStatus.Active))];
+
+    private void ShowEndedChanged(bool value)
+    {
+        _showEnded = value;
+        _selected.Clear();
+        OnVaultReady();
+    }
+
+    private void SelectingChanged(bool value)
+    {
+        _selecting = value;
+        _selected.Clear();
+    }
+
+    private void RowClicked(TableRowClickEventArgs<VaultItem> args)
+    {
+        if (!_selecting && args.Item is not null)
+        {
+            Navigation.NavigateTo($"object/{args.Item.Id}");
+        }
+    }
+
+    private async Task SetStatusAsync(ObjectStatus status)
+    {
+        _busy = true;
+        var failed = 0;
+        foreach (var item in _selected.Where(i => i.Status != status).ToList())
+        {
+            try
+            {
+                await Vault.UpdateAsync(item, item.Payload.Clone(), status);
+            }
+            catch (Exception exception) when (exception is VaultException or HttpRequestException)
+            {
+                failed++;
+            }
+        }
+
+        Finish(failed, L["Saved"]);
+    }
+
+    private async Task DeleteSelectedAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["DeleteObjectsTitle"], L["DeleteObjectsText", _selected.Count],
+            yesText: L["Delete"], cancelText: L["Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _busy = true;
+        var failed = 0;
+        foreach (var item in _selected.ToList())
+        {
+            try
+            {
+                await Vault.DeleteAsync(item.Id);
+            }
+            catch (Exception exception) when (exception is VaultException or HttpRequestException)
+            {
+                failed++;
+            }
+        }
+
+        Finish(failed, L["MovedToTrash"]);
+    }
+
+    private void Finish(int failed, string success)
+    {
+        _busy = false;
+        _selected.Clear();
+        OnVaultReady();
+        if (failed > 0)
+        {
+            Snackbar.Add(L["SomeFailed", failed], Severity.Warning);
+        }
+        else
+        {
+            Snackbar.Add(success, Severity.Success);
+        }
+    }
+}

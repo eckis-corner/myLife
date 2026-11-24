@@ -1,68 +1,123 @@
 @page "/"
 @attribute [Authorize]
+@inherits VaultPageBase
+@using System.Globalization
 @inject IStringLocalizer<SharedResource> L
-@inject AppInfoClient AppInfo
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
 
 <PageTitle>@L["AppName"] – @L["NavHome"]</PageTitle>
 
 <MudStack Spacing="4">
-    <MudText Typo="Typo.h4" HtmlTag="h1">@L["HomeTitle"]</MudText>
-    <MudText Typo="Typo.body1">@L["HomeIntro"]</MudText>
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["HomeTitle"]</MudText>
+        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.Search" Href="search">@L["NavSearch"]</MudButton>
+    </MudStack>
 
-    <MudGrid>
-        <MudItem xs="12" md="6">
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else
+    {
+        @if (Vault.UnreadableCount > 0)
+        {
+            <MudAlert Severity="Severity.Warning">@L["VaultUnreadable", Vault.UnreadableCount]</MudAlert>
+        }
+
+        @if (_expiring.Count > 0)
+        {
             <MudPaper Class="pa-4" Elevation="1">
-                <MudText Typo="Typo.h6" Class="mb-2">@L["HomeStatusTitle"]</MudText>
-                @if (_isLoading)
-                {
-                    <MudStack Row AlignItems="AlignItems.Center">
-                        <MudProgressCircular Indeterminate Size="Size.Small" />
-                        <MudText>@L["Loading"]</MudText>
-                    </MudStack>
-                }
-                else if (_info is null)
-                {
-                    <MudAlert Severity="Severity.Warning" Dense>@L["HomeStatusUnreachable"]</MudAlert>
-                }
-                else
-                {
-                    <MudStack Spacing="1" AlignItems="AlignItems.Start">
-                        <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small"
-                                 Icon="@Icons.Material.Filled.CheckCircle" data-testid="status-reachable">
-                            @L["HomeStatusReachable"]
-                        </MudChip>
-                        <MudText Typo="Typo.body2">@L["HomeStatusVersion"]: <b data-testid="app-version">@_info.Version</b></MudText>
-                        <MudText Typo="Typo.body2">@L["HomeStatusCryptoFormat"]: <b>v@_info.CryptoFormatVersion</b></MudText>
-                    </MudStack>
-                }
+                <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@L["HomeExpiringTitle"]</MudText>
+                <MudList T="string" Dense ReadOnly="false">
+                    @foreach (var item in _expiring)
+                    {
+                        <MudListItem T="string" Icon="@Icons.Material.Outlined.Event" OnClick="@(() => Navigation.NavigateTo($"object/{item.Id}"))">
+                            <b>@item.Title</b> · @Text.Expiry(item.Type): @item.Payload.ExpiresOn!.Value.ToString("d", CultureInfo.CurrentCulture)
+                        </MudListItem>
+                    }
+                </MudList>
             </MudPaper>
-        </MudItem>
-        <MudItem xs="12" md="6">
-            <MudPaper Class="pa-4" Elevation="1">
-                <MudText Typo="Typo.h6" Class="mb-2">@L["HomeNextStepsTitle"]</MudText>
-                <MudText Typo="Typo.body2">@L["HomeNextStepsText"]</MudText>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
+        }
+
+        <MudGrid Spacing="3">
+            @foreach (var area in ObjectCatalog.Areas.Where(a => a.IsAvailable))
+            {
+                var state = _states.GetValueOrDefault(area.Number);
+                var count = _counts.GetValueOrDefault(area.Number);
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="1" Class="mylife-area-card" data-testid="@($"area-tile-{area.Number}")">
+                        <MudCardHeader>
+                            <CardHeaderAvatar>
+                                <MudAvatar Color="Color.Primary" Variant="Variant.Outlined"><MudIcon Icon="@AreaIcons.For(area.Number)" /></MudAvatar>
+                            </CardHeaderAvatar>
+                            <CardHeaderContent>
+                                <MudLink Href="@($"area/{area.Number}")" Typo="Typo.subtitle1" Color="Color.Inherit"><b>@Text.Area(area.Number)</b></MudLink>
+                                <MudText Typo="Typo.body2" Class="mylife-muted">@L["HomeObjectCount", count]</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent Class="pt-0">
+                            <MudText Typo="Typo.caption" Class="mylife-muted">
+                                @(state?.LastReviewedAt is { } reviewed
+                                    ? L["HomeLastReviewed", reviewed.ToLocalTime().ToString("d", CultureInfo.CurrentCulture)]
+                                    : L["HomeNeverReviewed"])
+                            </MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Href="@($"area/{area.Number}")">@L["Open"]</MudButton>
+                            <MudSpacer />
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.TaskAlt" Disabled="_busy"
+                                       OnClick="() => MarkReviewedAsync(area.Number)" data-testid="@($"area-reviewed-{area.Number}")">
+                                @L["HomeMarkReviewed"]
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense>
+            @L["HomeNotInVaultHint"] <MudLink Href="hints/not-in-vault">@L["NotInVaultTitle"]</MudLink>
+        </MudAlert>
+    }
 </MudStack>
 
 @code {
-    private AppInfoDto? _info;
-    private bool _isLoading = true;
+    private Dictionary<int, AreaState> _states = [];
+    private Dictionary<int, int> _counts = [];
+    private List<VaultItem> _expiring = [];
+    private bool _busy;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnVaultReady()
     {
+        _states = Vault.Areas.ToDictionary(a => a.Area);
+        _counts = Vault.Current.Where(i => i.Status == ObjectStatus.Active).GroupBy(i => i.Area).ToDictionary(g => g.Key, g => g.Count());
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        _expiring = [.. Vault.Current
+            .Where(i => i.Status == ObjectStatus.Active && i.Payload.ExpiresOn is { } e && e <= today.AddDays(90))
+            .OrderBy(i => i.Payload.ExpiresOn)
+            .Take(10)];
+    }
+
+    private async Task MarkReviewedAsync(int area)
+    {
+        _busy = true;
         try
         {
-            _info = await AppInfo.GetAsync();
+            await Vault.MarkAreaReviewedAsync(area);
+            Snackbar.Add(L["HomeReviewedSaved", Text.Area(area)], Severity.Success);
         }
-        catch (HttpRequestException)
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
         {
-            _info = null;
+            Snackbar.Add(L[$"VaultError_{VaultErrors.Failed}"], Severity.Error);
         }
         finally
         {
-            _isLoading = false;
+            _busy = false;
         }
     }
 }

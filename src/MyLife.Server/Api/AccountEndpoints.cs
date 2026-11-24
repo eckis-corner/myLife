@@ -5,6 +5,7 @@ using MyLife.Server.Data;
 using MyLife.Server.Infrastructure;
 using MyLife.Server.Infrastructure.Auth;
 using MyLife.Shared.Auth;
+using MyLife.Shared.Vault;
 
 namespace MyLife.Server.Api;
 
@@ -26,7 +27,7 @@ internal static class AccountEndpoints
 
     private static async Task<Results<NoContent, ValidationProblem, ProblemHttpResult, UnauthorizedHttpResult>> ChangePasswordAsync(
         ChangePasswordRequest request, HttpContext context, ClaimsPrincipal principal, MyLifeDbContext db, LoginAttempts attempts,
-        CancellationToken cancellationToken)
+        AuditLog audit, CancellationToken cancellationToken)
     {
         var user = await CurrentUserAsync(principal, db, cancellationToken);
         if (user is null)
@@ -41,7 +42,7 @@ internal static class AccountEndpoints
 
         if (!KeyMaterialValidation.IsAuthHash(request.CurrentAuthHash) || !await AuthHashHasher.VerifyAsync(user.AuthHash, request.CurrentAuthHash))
         {
-            attempts.Failed(user);
+            attempts.Failed(user, db);
             await db.SaveChangesAsync(cancellationToken);
             return ApiProblems.Create(StatusCodes.Status400BadRequest, AuthErrors.InvalidCredentials);
         }
@@ -54,6 +55,7 @@ internal static class AccountEndpoints
 
         await AuthEndpoints.ApplyPasswordAsync(user, request.NewPassword);
         LoginAttempts.Succeeded(user);
+        audit.Own(AuditActions.PasswordChanged, user.Id);
         await db.SaveChangesAsync(cancellationToken);
         // Diese Sitzung bleibt mit dem neuen Stempel bestehen, alle anderen enden.
         await UserSignIn.SignInAsync(context, user);
@@ -84,7 +86,7 @@ internal static class AccountEndpoints
 
     private static async Task<Results<Created<PasskeyDto>, ProblemHttpResult, UnauthorizedHttpResult>> RegisterPasskeyAsync(
         PasskeyRegisterRequest request, HttpContext context, ClaimsPrincipal principal, MyLifeDbContext db, PasskeyService passkeys,
-        TimeProvider time, CancellationToken cancellationToken)
+        AuditLog audit, TimeProvider time, CancellationToken cancellationToken)
     {
         var user = await CurrentUserAsync(principal, db, cancellationToken);
         if (user is null)
@@ -110,16 +112,24 @@ internal static class AccountEndpoints
         passkey.Name = name;
         passkey.CreatedAt = time.GetUtcNow();
         db.Passkeys.Add(passkey);
+        audit.Own(AuditActions.PasskeyAdded, user.Id, "passkey", passkey.Id);
         await db.SaveChangesAsync(cancellationToken);
         return TypedResults.Created($"/api/account/passkeys/{passkey.Id}", new PasskeyDto(passkey.Id, passkey.Name, passkey.CreatedAt, null));
     }
 
     private static async Task<Results<NoContent, NotFound>> DeletePasskeyAsync(
-        Guid id, ClaimsPrincipal principal, MyLifeDbContext db, CancellationToken cancellationToken)
+        Guid id, ClaimsPrincipal principal, MyLifeDbContext db, AuditLog audit, CancellationToken cancellationToken)
     {
         var userId = MyLifeClaims.UserId(principal);
         var deleted = await db.Passkeys.Where(p => p.Id == id && p.UserId == userId).ExecuteDeleteAsync(cancellationToken);
-        return deleted == 0 ? TypedResults.NotFound() : TypedResults.NoContent();
+        if (deleted == 0 || userId is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        audit.Own(AuditActions.PasskeyRemoved, userId.Value, "passkey", id);
+        await db.SaveChangesAsync(cancellationToken);
+        return TypedResults.NoContent();
     }
 
     private static async Task<User?> CurrentUserAsync(ClaimsPrincipal principal, MyLifeDbContext db, CancellationToken cancellationToken)

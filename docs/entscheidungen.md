@@ -80,6 +80,20 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 57 | Fehlversuche und Abmeldung | Nach **5 Fehlversuchen** (Passwort, Code, Passkey oder Recovery-Key) ist das Konto **15 Minuten** gesperrt. Die Sperrmeldung verrät, dass es das Konto gibt; für eine Familieninstanz akzeptiert. Automatische Abmeldung nach **15 Minuten** Inaktivität, bis M2 über `MyLife__IdleTimeoutMinutes` einstellbar. |
 | 58 | Seiten ohne Serverprüfung | Die Seiten sind ohne Prerendering nur eine leere Hülle. Der Server liefert sie jedem aus (`AllowAnonymous`), `[Authorize]` prüft der Client. Geschützt sind die Daten: Jeder API-Endpunkt verlangt die Anmeldung selbst. |
 
+## Runde 5 (24.11.2026, Umsetzung M1.4 bis M1.10)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 59 | Schema und Feldwerte | Die Objekttypen stehen als Katalog in `MyLife.Shared/Vault/ObjectCatalog.cs`, die Texte in den Ressourcen. Feldwerte liegen im Chiffrat als Zeichenketten in fester Form (Zahl mit Punkt, Datum `yyyy-MM-dd`, IBAN ohne Leerzeichen). Neue Felder brauchen deshalb keine Migration. Schlüssel von Feldern und Auswahlwerten werden nie umbenannt, nur ergänzt. Bereich 12 (Checkliste) folgt mit M3. Beim Brief stehen die Empfänger bis M2 als Text. |
+| 60 | Objekt-IDs | Die ID eines Objekts vergibt der Browser, weil sie im Kontext der Verschlüsselung steckt (`object:{Typ}:{ID}`). Der Typ eines Objekts lässt sich deshalb nicht ändern. Gleichzeitige Änderungen erkennt der Server über `xmin` und antwortet mit 409; die Oberfläche bietet „Neu laden“ an. |
+| 61 | Dokumente | Kein eigener Dateikopf: Die Blockgröße ist fest 1 MiB, Bezeichnung, Dateiname, Typ, Größe und Datum liegen als eigenes Chiffrat mit dem Bereichsschlüssel vor. Der Inhalt eines Dokuments lässt sich nur einmal hochladen. Gelöschte Objekte und Dokumente bleiben 30 Tage im Papierkorb, abgebrochene Uploads verschwinden nach einem Tag (`TrashPurgeService`, stündlich). |
+| 62 | Audit-Log | Protokolliert werden Anmeldung, Fehlversuch, Abmeldung, Passwort, Wiederherstellung, Passkeys, alle Änderungen an Bereichen, Objekten und Dokumenten sowie Exporte (die meldet der Browser, nur aus einer festen Liste). Das eigene Öffnen von Dokumenten wird nicht protokolliert; Abrufe durch Vertrauenspersonen kommen mit M2. IP-Adressen werden gekürzt (IPv4 /24, IPv6 /48). |
+| 63 | PDF | Eigener, kleiner PDF-Erzeuger im Browser statt pdf-lib und qpdf-wasm: nur Text mit den Standardschriften Helvetica, keine Bilder. Der Passwortschutz folgt PDF 2.0 (AES-256, Revision 6). PDF-Passwörter dürfen nur ASCII-Zeichen enthalten, weil Apple Vorschau Umlaute anders kodiert als die Norm und andere Programme. Ohne Passwort geht es nur nach ausdrücklicher Bestätigung. |
+| 64 | JSON-Export | Der Export enthält das Chiffrat genau so, wie es auf dem Server liegt, dazu die verpackten Schlüssel ([format.md](format.md)). Öffnen lässt er sich mit dem Master-Passwort zum Zeitpunkt des Exports oder mit dem Recovery-Key. Der Papierkorb gehört nicht dazu. Beim Import behalten Objekte und Dokumente ihre IDs, Vorhandenes wird übersprungen. Objekte werden mit den eigenen Bereichsschlüsseln neu verschlüsselt, Dateischlüssel nur umgepackt. |
+| 65 | Suche | Ein Objekt trifft, wenn alle Suchbegriffe irgendwo vorkommen: Titel, Typ, Bereich, Felder, Wunsch, Notizen, Zusatzfelder, Bezeichnungen und Dateinamen der Dokumente. Groß- und Kleinschreibung und Akzente spielen keine Rolle. |
+| 66 | „Gehört nicht hinein“ | Geprüft werden alle Freitexte beim Speichern: Kartennummern mit gültiger Luhn-Prüfziffer, die Begriffe PIN, TAN, PUK, CVC und CVV, „Passwort:“ mit einem Wert dahinter und ab 12 aufeinanderfolgende BIP-39-Wörter. Es bleibt bei einer Warnung mit „Trotzdem speichern“. |
+| 67 | Als geprüft markieren | Je Bereich auf dem Dashboard (Zeitpunkt beim Server, eine Metadate wie „zuletzt geändert“) und je Objekt im Datenblatt (Datum im Chiffrat). |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

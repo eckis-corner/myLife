@@ -14,6 +14,52 @@ h1:focus {
     color: var(--mud-palette-text-secondary);
 }
 
+/* Tresor */
+.mylife-muted {
+    color: var(--mud-palette-text-secondary);
+}
+
+.mylife-clickable {
+    cursor: pointer;
+}
+
+.mylife-multiline {
+    white-space: pre-line;
+}
+
+.mylife-hidden-input {
+    display: none;
+}
+
+.mylife-datasheet-table th {
+    width: 35%;
+    font-weight: 600;
+    color: var(--mud-palette-text-secondary);
+    vertical-align: top;
+    text-align: left;
+}
+
+.mylife-datasheet-table td {
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+.mylife-preview-frame {
+    width: 100%;
+    height: 75vh;
+    border: 0;
+}
+
+.mylife-area-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.mylife-area-card .mud-card-actions {
+    margin-top: auto;
+}
+
 /* Beim Drucken nur den markierten Bereich zeigen (Wiederherstellungs-Kit, später Datenblätter). */
 @media print {
     body * {
@@ -23,6 +69,18 @@ h1:focus {
     .mylife-print,
     .mylife-print * {
         visibility: visible;
+    }
+
+    .mylife-no-print {
+        display: none !important;
+    }
+
+    .mylife-page-break {
+        break-before: page;
+    }
+
+    .mylife-avoid-break {
+        break-inside: avoid;
     }
 
     .mylife-print {

@@ -1,0 +1,133 @@
+@page "/trash"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L["NavTrash"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["NavTrash"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["TrashText", VaultLimits.TrashDays]</MudText>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else
+    {
+        <MudTable T="TrashEntry" Items="_entries" Hover Striped Dense="false" Elevation="1" RowsPerPage="100" Breakpoint="Breakpoint.Sm" data-testid="trash-table">
+            <ToolBarContent>
+                <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh><MudTableSortLabel T="TrashEntry" SortBy="e => e.Title">@L["CommonTitle"]</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="TrashEntry" SortBy="e => e.Kind">@L["ObjectType"]</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="TrashEntry" SortBy="e => e.DeletedAt" InitialDirection="SortDirection.Descending">@L["TrashDeletedAt"]</MudTableSortLabel></MudTh>
+                <MudTh>@L["TrashRemaining"]</MudTh>
+                <MudTh />
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@L["CommonTitle"]"><b>@context.Title</b></MudTd>
+                <MudTd DataLabel="@L["ObjectType"]">@context.Kind</MudTd>
+                <MudTd DataLabel="@L["TrashDeletedAt"]">@context.DeletedAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)</MudTd>
+                <MudTd DataLabel="@L["TrashRemaining"]">@L["TrashDays", Math.Max(0, VaultLimits.TrashDays - (int)(DateTimeOffset.Now - context.DeletedAt).TotalDays)]</MudTd>
+                <MudTd Style="white-space: nowrap; text-align: right">
+                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.RestoreFromTrash" Disabled="_busy" OnClick="() => RestoreAsync(context)"
+                               data-testid="restore">@L["Restore"]</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="_busy" OnClick="() => PurgeAsync(context)">
+                        @L["DeleteForever"]
+                    </MudButton>
+                </MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText Typo="Typo.body2" Class="pa-4">@L["TrashEmpty"]</MudText>
+            </NoRecordsContent>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+            </PagerContent>
+        </MudTable>
+    }
+</MudStack>
+
+@code {
+    private static readonly int[] PageSizes = [25, 50, 100];
+    private List<TrashEntry> _entries = [];
+    private bool _busy;
+
+    private sealed record TrashEntry(string Title, string Kind, DateTimeOffset DeletedAt, VaultItem? Item, VaultFile? File);
+
+    protected override void OnVaultReady()
+    {
+        var objects = Vault.Items.Where(i => i.IsDeleted)
+            .Select(i => new TrashEntry(i.Title, Text.Type(i.Type), i.DeletedAt ?? i.UpdatedAt, i, null));
+        // Dokumente gelöschter Objekte gehen mit dem Objekt; hier nur einzeln gelöschte.
+        var files = Vault.Files.Where(f => f.IsDeleted && Vault.Find(f.ObjectId) is { IsDeleted: false })
+            .Select(f => new TrashEntry(
+                string.IsNullOrWhiteSpace(f.Metadata.Label) ? f.Metadata.FileName : f.Metadata.Label,
+                $"{L["Document"]} · {Vault.TitleOf(f.ObjectId)}", f.DeletedAt ?? f.CreatedAt, null, f));
+        _entries = [.. objects.Concat(files).OrderByDescending(e => e.DeletedAt)];
+    }
+
+    private async Task RestoreAsync(TrashEntry entry)
+    {
+        await RunAsync(async () =>
+        {
+            if (entry.Item is not null)
+            {
+                await Vault.RestoreAsync(entry.Item.Id);
+            }
+            else
+            {
+                await Vault.RestoreFileAsync(entry.File!);
+            }
+        }, L["Restored"]);
+    }
+
+    private async Task PurgeAsync(TrashEntry entry)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["DeleteForeverTitle"], L["DeleteForeverText", entry.Title], yesText: L["DeleteForever"], cancelText: L["Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        await RunAsync(async () =>
+        {
+            if (entry.Item is not null)
+            {
+                await Vault.PurgeAsync(entry.Item.Id);
+            }
+            else
+            {
+                await Vault.PurgeFileAsync(entry.File!);
+            }
+        }, L["DeletedForever"]);
+    }
+
+    private async Task RunAsync(Func<Task> action, string success)
+    {
+        _busy = true;
+        try
+        {
+            await action();
+            Snackbar.Add(success, Severity.Success);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+            OnVaultReady();
+        }
+    }
+}

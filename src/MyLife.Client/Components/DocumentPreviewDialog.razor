@@ -1,0 +1,34 @@
+@* Vorschau eines entschlüsselten Dokuments über eine Blob-URL, die nur im Browser existiert. *@
+@inject IStringLocalizer<SharedResource> L
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+        {
+            <MudImage Src="@Url" Alt="@Title" Fluid ObjectFit="ObjectFit.Contain" Style="max-height: 75vh; display: block; margin: auto" />
+        }
+        else
+        {
+            <iframe src="@Url" title="@Title" class="mylife-preview-frame"></iframe>
+            <MudText Typo="Typo.caption" Class="mylife-muted">@L["DocumentPreviewHint"]</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">@L["Close"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
+
+    [Parameter] public string Url { get; set; } = string.Empty;
+
+    [Parameter] public string ContentType { get; set; } = string.Empty;
+
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    private void Close() => Dialog.Close();
+}

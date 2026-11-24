@@ -21,4 +21,7 @@ public sealed class MyLifeOptions
 
     /// <summary>Anfragen je Minute und IP an Anmeldung und Konto.</summary>
     public int AuthRequestsPerMinute { get; set; } = 60;
+
+    /// <summary>Anfragen je Minute und IP an den Tresor (Objekte, Dokumente, Audit-Log).</summary>
+    public int VaultRequestsPerMinute { get; set; } = 600;
 }

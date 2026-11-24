@@ -1,0 +1,316 @@
+@page "/object/new/{TypeKey}"
+@page "/object/{Id:guid}"
+@attribute [Authorize]
+@inherits VaultPageBase
+@inject IStringLocalizer<SharedResource> L
+@inject NavigationManager Navigation
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+@inject BrowserFiles Files
+@inject EmergencyFolder Folder
+
+<PageTitle>@L["AppName"] – @(_item?.Title ?? (_type is null ? L["NotFoundTitle"] : Text.Type(_type)))</PageTitle>
+
+@if (Loading)
+{
+    <MudProgressLinear Indeterminate Color="Color.Primary" />
+}
+else if (LoadFailed)
+{
+    <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+}
+else if (_type is null || (Id is not null && _item is null))
+{
+    <MudAlert Severity="Severity.Warning">@L["ObjectNotFound"]</MudAlert>
+}
+else
+{
+    <MudStack Spacing="3">
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2" Class="mylife-no-print">
+            <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="@($"area/{_type.Area}")">@Text.Area(_type.Area)</MudButton>
+            <MudSpacer />
+            @if (_item is not null && !_editing)
+            {
+                @if (_item.IsDeleted)
+                {
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.RestoreFromTrash" OnClick="RestoreAsync" Disabled="_busy">@L["Restore"]</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" OnClick="StartEdit" data-testid="edit">@L["Edit"]</MudButton>
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.TaskAlt" OnClick="MarkReviewedAsync" Disabled="_busy">@L["ObjectMarkReviewed"]</MudButton>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="@L["MoreActions"]" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                        <MudMenuItem Icon="@Icons.Material.Outlined.Print" OnClick="PrintAsync">@L["Print"]</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Outlined.PictureAsPdf" OnClick="PdfAsync">@L["DatasheetPdf"]</MudMenuItem>
+                        @if (_item.Status == ObjectStatus.Active)
+                        {
+                            <MudMenuItem Icon="@Icons.Material.Outlined.Archive" OnClick="() => SetStatusAsync(ObjectStatus.Ended)">@L["ObjectEnd"]</MudMenuItem>
+                        }
+                        else
+                        {
+                            <MudMenuItem Icon="@Icons.Material.Outlined.Unarchive" OnClick="() => SetStatusAsync(ObjectStatus.Active)">@L["ObjectReactivate"]</MudMenuItem>
+                        }
+                        <MudDivider />
+                        <MudMenuItem Icon="@Icons.Material.Outlined.Delete" IconColor="Color.Error" OnClick="DeleteAsync" data-testid="delete">@L["Delete"]</MudMenuItem>
+                    </MudMenu>
+                }
+            }
+        </MudStack>
+
+        @if (_editing)
+        {
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h5" HtmlTag="h1">@(_item is null ? L["NewObject", Text.Type(_type)] : L["EditObject", _item.Title])</MudText>
+                    @if (_conflict)
+                    {
+                        <MudAlert Severity="Severity.Warning">
+                            @L["VaultError_vault-conflict"]
+                            <MudButton Variant="Variant.Text" Color="Color.Warning" OnClick="ReloadAsync" Class="ml-2">@L["Reload"]</MudButton>
+                        </MudAlert>
+                    }
+                    <ObjectForm Type="_type" Payload="_draft!" ObjectId="_item?.Id" Errors="_errors" />
+                    @if (_errors.Count > 0)
+                    {
+                        <MudAlert Severity="Severity.Error" Dense>@L["FormHasErrors"]</MudAlert>
+                    }
+                    <MudStack Row Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Text" OnClick="Cancel" Disabled="_busy">@L["Cancel"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveAsync" Disabled="_busy"
+                                   data-testid="save">@L["Save"]</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        }
+        else if (_item is not null)
+        {
+            @if (_item.IsDeleted)
+            {
+                <MudAlert Severity="Severity.Warning">@L["ObjectInTrash"]</MudAlert>
+            }
+            <MudPaper Class="pa-4 mylife-print" Elevation="1">
+                <MudText Typo="Typo.h4" HtmlTag="h1" data-testid="object-heading">@_item.Title</MudText>
+                <ObjectDatasheet Item="_item" />
+            </MudPaper>
+            <MudPaper Class="pa-4 mylife-no-print" Elevation="1">
+                <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@L["DocumentsTitle"]</MudText>
+                <DocumentList ObjectId="_item.Id" ReadOnly="_item.IsDeleted" />
+            </MudPaper>
+        }
+    </MudStack>
+}
+
+@code {
+    private ObjectTypeDefinition? _type;
+    private VaultItem? _item;
+    private VaultPayload? _draft;
+    private ObjectStatus _status;
+    private Dictionary<string, string> _errors = [];
+    private bool _editing;
+    private bool _busy;
+    private bool _conflict;
+
+    [Parameter] public string? TypeKey { get; set; }
+
+    [Parameter] public Guid? Id { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _editing = false;
+        _conflict = false;
+        _errors = [];
+        if (Vault.IsLoaded)
+        {
+            Prepare();
+        }
+    }
+
+    protected override void OnVaultReady()
+    {
+        if (!_editing)
+        {
+            Prepare();
+        }
+    }
+
+    private void Prepare()
+    {
+        if (Id is { } id)
+        {
+            _item = Vault.Find(id);
+            _type = _item?.Type;
+            return;
+        }
+
+        _item = null;
+        _type = ObjectCatalog.Find(TypeKey);
+        if (_type is not null && ObjectCatalog.IsUsableArea(_type.Area))
+        {
+            _draft = new VaultPayload { Title = Text.Type(_type) };
+            foreach (var field in _type.Fields.Where(f => f.DefaultValue is not null))
+            {
+                _draft.Set(field.Key, field.DefaultValue);
+            }
+
+            _status = ObjectStatus.Active;
+            _editing = true;
+        }
+        else
+        {
+            _type = null;
+        }
+    }
+
+    private void StartEdit()
+    {
+        _draft = _item!.Payload.Clone();
+        _status = _item.Status;
+        _errors = [];
+        _conflict = false;
+        _editing = true;
+    }
+
+    private void Cancel()
+    {
+        if (_item is null)
+        {
+            Navigation.NavigateTo($"area/{_type!.Area}");
+            return;
+        }
+
+        _editing = false;
+        _draft = null;
+    }
+
+    private async Task SaveAsync()
+    {
+        _errors = FieldValues.ValidateObject(_type!, _draft!);
+        if (_errors.Count > 0)
+        {
+            return;
+        }
+
+        var warnings = ContentChecks.Check(_type!, _draft!);
+        if (warnings.Count > 0)
+        {
+            var text = string.Join(" ", warnings.Select(w => L[$"ContentWarning_{w}"].Value));
+            var proceed = await Dialogs.ShowMessageBoxAsync(L["ContentWarningTitle"], $"{text} {L["ContentWarningQuestion"]}",
+                yesText: L["SaveAnyway"], cancelText: L["ContentWarningEdit"]);
+            if (proceed != true)
+            {
+                return;
+            }
+        }
+
+        _busy = true;
+        try
+        {
+            if (_item is null)
+            {
+                var created = await Vault.CreateAsync(_type!.Key, _draft!, _status);
+                Snackbar.Add(L["Saved"], Severity.Success);
+                Navigation.NavigateTo($"object/{created.Id}");
+                return;
+            }
+
+            await Vault.UpdateAsync(_item, _draft!, _status);
+            _editing = false;
+            Snackbar.Add(L["Saved"], Severity.Success);
+        }
+        catch (VaultException exception) when (exception.Message == VaultErrors.Conflict)
+        {
+            _conflict = true;
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task ReloadAsync()
+    {
+        _editing = false;
+        _conflict = false;
+        await Vault.ReloadAsync();
+        Prepare();
+    }
+
+    private async Task MarkReviewedAsync()
+    {
+        var payload = _item!.Payload.Clone();
+        payload.ReviewedOn = DateOnly.FromDateTime(DateTime.Today);
+        await RunAsync(() => Vault.UpdateAsync(_item, payload, _item.Status), L["ObjectReviewedSaved"]);
+    }
+
+    private Task SetStatusAsync(ObjectStatus status) =>
+        RunAsync(() => Vault.UpdateAsync(_item!, _item!.Payload.Clone(), status), L["Saved"]);
+
+    private async Task DeleteAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["DeleteObjectTitle"], L["DeleteObjectText", _item!.Title], yesText: L["Delete"], cancelText: L["Cancel"]);
+        if (confirmed == true)
+        {
+            await RunAsync(() => Vault.DeleteAsync(_item.Id), L["MovedToTrash"]);
+            Navigation.NavigateTo($"area/{_item.Area}");
+        }
+    }
+
+    private Task RestoreAsync() => RunAsync(() => Vault.RestoreAsync(_item!.Id), L["Restored"]);
+
+    private async Task PrintAsync() => await Files.PrintAsync();
+
+    private async Task PdfAsync()
+    {
+        var dialog = await Dialogs.ShowAsync<PdfPasswordDialog>(L["PdfPasswordTitle"], new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        var result = await dialog.Result;
+        if (result is not { Canceled: false, Data: string password })
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            var now = DateTimeOffset.Now;
+            var pdf = await Folder.CreateDatasheetPdfAsync(_item!, password, now);
+            await Files.SaveAsync(pdf, BrowserFiles.DatedName(SafeName(_item!.Title), "pdf", now), "application/pdf");
+        }
+        catch (Exception exception) when (exception is Microsoft.JSInterop.JSException or InvalidOperationException)
+        {
+            Snackbar.Add(L[$"VaultError_{VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RunAsync(Func<Task> action, string success)
+    {
+        _busy = true;
+        try
+        {
+            await action();
+            Snackbar.Add(success, Severity.Success);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    internal static string SafeName(string title)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var cleaned = new string([.. title.Select(c => invalid.Contains(c) || c is '/' or '\\' or ':' ? '_' : c)]).Trim();
+        return cleaned.Length == 0 ? "myLife" : cleaned.Length > 60 ? cleaned[..60] : cleaned;
+    }
+}

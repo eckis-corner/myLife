@@ -1,0 +1,90 @@
+@page "/export/print"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject EmergencyFolder Folder
+@inject SessionService Session
+@inject BrowserFiles Files
+@inject VaultClient Api
+
+<PageTitle>@L["AppName"] – @L["FolderTitle"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2" Class="mylife-no-print">
+        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="export">@L["NavExport"]</MudButton>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Print" OnClick="PrintAsync" Disabled="Loading">@L["Print"]</MudButton>
+    </MudStack>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else
+    {
+        <MudPaper Class="pa-6 mylife-print mylife-folder" Elevation="1" data-testid="print-view">
+            <MudText Typo="Typo.h3" HtmlTag="h1">@L["FolderTitle"]</MudText>
+            <MudText Typo="Typo.h6">@Session.Session?.DisplayName</MudText>
+            <MudText Typo="Typo.body2" Class="mylife-muted">@L["FolderAsOf", DateTime.Now.ToString("D", CultureInfo.CurrentCulture)]</MudText>
+            <MudText Typo="Typo.body2" Class="mt-4">@L["FolderIntro"]</MudText>
+            <MudText Typo="Typo.body2" Class="mt-2"><b>@L["FolderSensitive"]</b></MudText>
+
+            <MudText Typo="Typo.h5" HtmlTag="h2" Class="mt-6">@L["FolderContents"]</MudText>
+            <ol>
+                @foreach (var area in _sections)
+                {
+                    <li>@Text.Area(area.Area) (@area.Items.Count)</li>
+                }
+            </ol>
+
+            @foreach (var section in _sections)
+            {
+                <section class="mylife-page-break">
+                    <MudText Typo="Typo.h4" HtmlTag="h2" Class="mt-6">@Text.Area(section.Area)</MudText>
+                    <MudText Typo="Typo.body2" Class="mylife-muted mb-3">@Text.AreaText(section.Area)</MudText>
+                    @foreach (var item in section.Items)
+                    {
+                        <div class="mylife-avoid-break mb-4">
+                            <ObjectDatasheet Item="item" ShowTitle Links="false" />
+                        </div>
+                    }
+                </section>
+            }
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    private List<(int Area, IReadOnlyList<VaultItem> Items)> _sections = [];
+
+    [SupplyParameterFromQuery(Name = "areas")] public string? Areas { get; set; }
+
+    [SupplyParameterFromQuery(Name = "ended")] public bool Ended { get; set; }
+
+    protected override void OnVaultReady()
+    {
+        var selected = (Areas ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(a => int.TryParse(a, NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) ? n : -1).ToHashSet();
+        _sections = [.. ObjectCatalog.Areas.Where(a => a.IsAvailable && (selected.Count == 0 || selected.Contains(a.Number)))
+            .Select(a => (a.Number, Folder.ItemsIn(a.Number, Ended)))
+            .Where(s => s.Item2.Count > 0)];
+    }
+
+    private async Task PrintAsync()
+    {
+        await Files.PrintAsync();
+        try
+        {
+            await Api.ReportAsync(AuditActions.ExportPrint);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            // Das Protokoll ist hier nur ein Hinweis; drucken geht trotzdem.
+        }
+    }
+}
