@@ -192,7 +192,11 @@ public sealed class PdfTests
     {
         var layout = new PdfLayout();
         layout.Title("Notfallordner");
-        layout.Paragraph("Daniel Example", 13, bold: true);
+        layout.Subtitle("Max Mustermann");
+        layout.Subtitle("Stand: 24. November 2026", 11);
+        layout.Body(string.Join(" ", Enumerable.Repeat("Dieser Ordner fasst alles zusammen, was Angehörige im Ernstfall brauchen.", 5)));
+        layout.Section("Inhalt");
+        layout.TocEntry("Bankkonten & Depots", 2);
         layout.Heading("Bankkonten & Depots");
         layout.Subheading("Girokonto Sparkasse");
         layout.Row("IBAN", "DE89 3704 0044 0532 0130 00");

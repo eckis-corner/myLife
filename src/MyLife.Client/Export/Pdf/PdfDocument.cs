@@ -12,21 +12,38 @@ public sealed class PdfPage
 }
 
 /// <summary>
-/// Setzt Text auf A4-Seiten: Überschriften, Absätze mit Umbruch, Zeilen „Bezeichnung – Wert“. Bewusst einfach:
-/// nur die Standardschriften, kein Bild, keine Tabelle über Seiten. Seiten entstehen beim Schreiben; die Fußzeile
-/// mit Seitenzahlen setzt <see cref="PdfWriter"/>.
+/// Setzt Text auf A4-Seiten im Design der Vorlage „docs/design/Vorlage - eckis-corner.docx“ (Entscheidung 68): Ränder, Titel
+/// zwischen zwei Linien, Untertitel, Überschriften in #355269, Fließtext 11 pt im Blocksatz. Statt Tahoma steht die
+/// Standardschrift Helvetica (Tahoma darf nicht eingebettet weitergegeben werden). Bewusst einfach: kein Bild, keine
+/// Tabelle über Seiten. Seiten entstehen beim Schreiben; die Fußzeile mit Seitenzahlen setzt <see cref="PdfWriter"/>.
 /// </summary>
 public sealed class PdfLayout
 {
     public const float PageWidth = 595.28f;
     public const float PageHeight = 841.89f;
-    public const float Margin = 56f;
-    public const float BottomMargin = 60f;
+
+    // Ränder der Vorlage (Twips / 20): links 1393, rechts 871, oben 1006; unten bleibt Platz für die Fußzeile.
+    public const float LeftMargin = 69.65f;
+    public const float RightMargin = 43.55f;
+    public const float TopMargin = 50.3f;
+    public const float BottomMargin = 85f;
+    public const float FooterBaseline = 45f;
     public const float LabelWidth = 165f;
+    public const float BodySize = 11f;
+
+    /// <summary>Akzentfarbe der Vorlage #355269 als PDF-RGB.</summary>
+    internal const string AccentColor = "0.208 0.322 0.412";
 
     private readonly List<PdfPage> _pages = [];
     private PdfPage? _page;
     private float _y;
+
+    private enum Tone
+    {
+        Normal,
+        Muted,
+        Accent,
+    }
 
     public IReadOnlyList<PdfPage> Pages => _pages;
 
@@ -40,23 +57,59 @@ public sealed class PdfLayout
         }
     }
 
-    private static float ContentWidth => PageWidth - (2 * Margin);
+    public static float ContentWidth => PageWidth - LeftMargin - RightMargin;
 
     public void NewPage()
     {
         _page = new PdfPage();
         _pages.Add(_page);
-        _y = PageHeight - Margin;
+        _y = PageHeight - TopMargin;
     }
 
-    public void Title(string text) => Block(text, 24, bold: true, before: 0, after: 10);
+    /// <summary>Titel der Vorlage: 28 pt fett, zentriert, zwischen zwei feinen Linien.</summary>
+    public void Title(string text)
+    {
+        const float size = 28;
+        const float indent = 8.5f;
+        var lines = Wrap(text, size, true, ContentWidth - (2 * indent) - 8);
+        var lineHeight = size * 1.5f;
+        EnsurePage();
+        if (_y < PageHeight - TopMargin)
+        {
+            _y -= 12;
+        }
 
-    public void Heading(string text) => Block(text, 16, bold: true, before: 6, after: 6, keepWithNext: 80);
+        Reserve((lineHeight * Math.Min(lines.Count, 2)) + 12);
+        HorizontalLine(LeftMargin + indent, PageWidth - RightMargin - indent, _y, 0.25f, "0 G");
+        _y -= 4;
+        foreach (var line in lines)
+        {
+            Reserve(lineHeight);
+            _y -= lineHeight;
+            Text(Centered(line, size, true), _y + ((lineHeight - (size * 0.7f)) / 2), line, size, true, Tone.Accent);
+        }
 
-    public void Subheading(string text) => Block(text, 12, bold: true, before: 10, after: 4, keepWithNext: 50);
+        HorizontalLine(LeftMargin + indent, PageWidth - RightMargin - indent, _y, 0.25f, "0 G");
+        _y -= 6;
+    }
 
-    public void Paragraph(string text, float size = 10, bool bold = false, bool muted = false) =>
-        Block(text, size, bold, before: 0, after: 4, muted: muted);
+    /// <summary>Untertitel der Vorlage: 18 pt, zentriert, Akzentfarbe.</summary>
+    public void Subtitle(string text, float size = 18) => Block(text, size, bold: false, before: 3, after: 6, Tone.Accent, centered: true);
+
+    /// <summary>Überschrift 1 der Vorlage (18 pt fett).</summary>
+    public void Heading(string text) => Block(text, 18, bold: true, before: 12, after: 6, Tone.Accent, keepWithNext: 80);
+
+    /// <summary>Überschrift 2 der Vorlage (16 pt fett).</summary>
+    public void Section(string text) => Block(text, 16, bold: true, before: 10, after: 6, Tone.Accent, keepWithNext: 60);
+
+    /// <summary>Überschrift 3 der Vorlage (14 pt fett).</summary>
+    public void Subheading(string text) => Block(text, 14, bold: true, before: 7, after: 4, Tone.Accent, keepWithNext: 50);
+
+    /// <summary>Textkörper der Vorlage: 11 pt, Zeilenabstand 1,2, Blocksatz, 14 pt Abstand danach.</summary>
+    public void Body(string text, bool bold = false) => Block(text, BodySize, bold, before: 0, after: 14, Tone.Normal, justify: true, lineFactor: 1.2f);
+
+    public void Paragraph(string text, float size = BodySize, bool bold = false, bool muted = false) =>
+        Block(text, size, bold, before: 0, after: 4, muted ? Tone.Muted : Tone.Normal);
 
     /// <summary>Zeile „Bezeichnung | Wert“; der Wert bricht in seiner Spalte um.</summary>
     public void Row(string label, string value, float size = 10)
@@ -71,12 +124,12 @@ public sealed class PdfLayout
             _y -= lineHeight;
             if (i < labelLines.Count)
             {
-                Text(Margin, _y, labelLines[i], size - 0.5f, bold: true, muted: true);
+                Text(LeftMargin, _y, labelLines[i], size - 0.5f, true, Tone.Muted);
             }
 
             if (i < valueLines.Count)
             {
-                Text(Margin + LabelWidth, _y, valueLines[i], size, bold: false, muted: false);
+                Text(LeftMargin + LabelWidth, _y, valueLines[i], size, false, Tone.Normal);
             }
         }
 
@@ -84,21 +137,21 @@ public sealed class PdfLayout
     }
 
     /// <summary>Eintrag im Inhaltsverzeichnis mit Seitenzahl rechts.</summary>
-    public void TocEntry(string text, int page, float size = 11)
+    public void TocEntry(string text, int page, float size = BodySize)
     {
         var lineHeight = size * 1.6f;
         Reserve(lineHeight);
         _y -= lineHeight;
         var number = page.ToString(CultureInfo.InvariantCulture);
-        Text(Margin, _y, text, size, false, false);
-        Text(PageWidth - Margin - PdfFonts.Measure(number, size, false), _y, number, size, false, false);
+        Text(LeftMargin, _y, text, size, false, Tone.Normal);
+        Text(PageWidth - RightMargin - PdfFonts.Measure(number, size, false), _y, number, size, false, Tone.Normal);
     }
 
     public void Rule()
     {
         Reserve(10);
         _y -= 5;
-        _page!.Content.Append(CultureInfo.InvariantCulture, $"0.8 G 0.5 w {Margin:0.##} {_y:0.##} m {PageWidth - Margin:0.##} {_y:0.##} l S 0 G\n");
+        HorizontalLine(LeftMargin, PageWidth - RightMargin, _y, 0.5f, "0.8 G");
         _y -= 5;
     }
 
@@ -109,9 +162,13 @@ public sealed class PdfLayout
     }
 
     /// <summary>Bricht einen Text auf die Breite um; zu lange Wörter werden zeichenweise getrennt.</summary>
-    public static List<string> Wrap(string text, float size, bool bold, float width)
+    public static List<string> Wrap(string text, float size, bool bold, float width) =>
+        [.. WrapParagraphs(text, size, bold, width).Select(l => l.Text)];
+
+    /// <summary>Wie <see cref="Wrap"/>, markiert aber die letzte Zeile jedes Absatzes (für den Blocksatz).</summary>
+    private static List<(string Text, bool EndsParagraph)> WrapParagraphs(string text, float size, bool bold, float width)
     {
-        var lines = new List<string>();
+        var lines = new List<(string, bool)>();
         foreach (var paragraph in (text ?? string.Empty).ReplaceLineEndings("\n").Split('\n'))
         {
             var line = new StringBuilder();
@@ -126,7 +183,7 @@ public sealed class PdfLayout
 
                 if (line.Length > 0)
                 {
-                    lines.Add(line.ToString());
+                    lines.Add((line.ToString(), false));
                     line.Clear();
                 }
 
@@ -139,39 +196,51 @@ public sealed class PdfLayout
                         take--;
                     }
 
-                    lines.Add(rest[..take]);
+                    lines.Add((rest[..take], false));
                     rest = rest[take..];
                 }
 
                 line.Append(rest);
             }
 
-            lines.Add(line.ToString());
+            lines.Add((line.ToString(), true));
         }
 
         return lines;
     }
 
-    private void Block(string text, float size, bool bold, float before, float after, bool muted = false, float keepWithNext = 0)
+    private void Block(string text, float size, bool bold, float before, float after, Tone tone, float keepWithNext = 0,
+        bool centered = false, bool justify = false, float lineFactor = 1.3f)
     {
-        var lines = Wrap(text, size, bold, ContentWidth);
-        var lineHeight = size * 1.3f;
+        var lines = WrapParagraphs(text, size, bold, ContentWidth);
+        var lineHeight = size * lineFactor;
         EnsurePage();
-        if (_y < PageHeight - Margin)
+        if (_y < PageHeight - TopMargin)
         {
             _y -= before;
         }
 
         Reserve((lineHeight * Math.Min(lines.Count, 2)) + keepWithNext);
-        foreach (var line in lines)
+        foreach (var (line, endsParagraph) in lines)
         {
             Reserve(lineHeight);
             _y -= lineHeight;
-            Text(Margin, _y, line, size, bold, muted);
+            var x = centered ? Centered(line, size, bold) : LeftMargin;
+            var spacing = justify && !endsParagraph ? WordSpacing(line, size, bold) : 0;
+            Text(x, _y, line, size, bold, tone, spacing);
         }
 
         _y -= after;
     }
+
+    /// <summary>Zusätzlicher Wortabstand (Tw), damit die Zeile die volle Breite füllt.</summary>
+    private static float WordSpacing(string line, float size, bool bold)
+    {
+        var spaces = line.Count(c => c == ' ');
+        return spaces == 0 ? 0 : (ContentWidth - PdfFonts.Measure(line, size, bold)) / spaces;
+    }
+
+    private static float Centered(string line, float size, bool bold) => LeftMargin + ((ContentWidth - PdfFonts.Measure(line, size, bold)) / 2);
 
     private void EnsurePage()
     {
@@ -191,7 +260,10 @@ public sealed class PdfLayout
         }
     }
 
-    private void Text(float x, float y, string text, float size, bool bold, bool muted)
+    private void HorizontalLine(float from, float to, float y, float width, string stroke) =>
+        _page!.Content.Append(CultureInfo.InvariantCulture, $"{stroke} {width:0.##} w {from:0.##} {y:0.##} m {to:0.##} {y:0.##} l S 0 G\n");
+
+    private void Text(float x, float y, string text, float size, bool bold, Tone tone, float wordSpacing = 0)
     {
         if (text.Length == 0)
         {
@@ -199,13 +271,18 @@ public sealed class PdfLayout
         }
 
         var content = _page!.Content;
-        if (muted)
+        content.Append(tone switch
         {
-            content.Append("0.35 g ");
-        }
+            Tone.Muted => "0.35 g ",
+            Tone.Accent => AccentColor + " rg ",
+            _ => string.Empty,
+        });
 
-        content.Append(CultureInfo.InvariantCulture, $"BT /{(bold ? "F2" : "F1")} {size:0.##} Tf {x:0.##} {y:0.##} Td <{Convert.ToHexString(PdfFonts.Encode(text))}> Tj ET");
-        content.Append(muted ? " 0 g\n" : "\n");
+        // Tw gehört zum Grafikzustand und gilt über ET hinaus: nach der Zeile zurücksetzen.
+        var spacing = wordSpacing > 0 ? string.Create(CultureInfo.InvariantCulture, $"{wordSpacing:0.###} Tw ") : string.Empty;
+        content.Append(CultureInfo.InvariantCulture, $"BT /{(bold ? "F2" : "F1")} {size:0.##} Tf {spacing}{x:0.##} {y:0.##} Td <{Convert.ToHexString(PdfFonts.Encode(text))}> Tj ET");
+        content.Append(wordSpacing > 0 ? " 0 Tw" : string.Empty);
+        content.Append(tone == Tone.Normal ? "\n" : " 0 g\n");
     }
 }
 
@@ -308,10 +385,15 @@ public static class PdfWriter
 
     private static string FooterOperators(string footer)
     {
+        // Wie die Fußzeile der Vorlage: linksbündig am Satzspiegel, darüber eine feine Linie in der Akzentfarbe.
         const float size = 8;
-        var width = PdfFonts.Measure(footer, size, false);
-        var x = (PdfLayout.PageWidth - width) / 2;
-        return string.Create(CultureInfo.InvariantCulture, $"0.45 g BT /F1 {size} Tf {x:0.##} 30 Td <{Convert.ToHexString(PdfFonts.Encode(footer))}> Tj ET 0 g\n");
+        var left = PdfLayout.LeftMargin;
+        var right = PdfLayout.PageWidth - PdfLayout.RightMargin;
+        var line = PdfLayout.FooterBaseline + 12;
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"{PdfLayout.AccentColor} RG 0.5 w {left:0.##} {line:0.##} m {right:0.##} {line:0.##} l S 0 G " +
+            $"0.45 g BT /F1 {size} Tf {left:0.##} {PdfLayout.FooterBaseline:0.##} Td <{Convert.ToHexString(PdfFonts.Encode(footer))}> Tj ET 0 g\n");
     }
 
     private static byte[] Compress(byte[] data)

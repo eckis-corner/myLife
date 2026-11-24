@@ -77,13 +77,12 @@ public sealed class EmergencyFolder(VaultService vault, SchemaText text, IString
     private void WriteFront(PdfLayout layout, string ownerName, DateTimeOffset now, List<(int Area, int PageIndex)> starts, int frontPages)
     {
         layout.Title(l["FolderTitle"]);
-        layout.Paragraph(ownerName, 13, bold: true);
-        layout.Paragraph(l["FolderAsOf", now.ToLocalTime().ToString("D", CultureInfo.CurrentCulture)], 10, muted: true);
-        layout.Space(12);
-        layout.Paragraph(l["FolderIntro"]);
-        layout.Paragraph(l["FolderSensitive"], 10, bold: true);
-        layout.Space(12);
-        layout.Subheading(l["FolderContents"]);
+        layout.Subtitle(ownerName);
+        layout.Subtitle(l["FolderAsOf", now.ToLocalTime().ToString("D", CultureInfo.CurrentCulture)], 11);
+        layout.Space(24);
+        layout.Body(l["FolderIntro"]);
+        layout.Body(l["FolderSensitive"], bold: true);
+        layout.Section(l["FolderContents"]);
         foreach (var (area, pageIndex) in starts)
         {
             layout.TocEntry(text.Area(area), pageIndex + frontPages + 1);
@@ -97,17 +96,20 @@ public sealed class EmergencyFolder(VaultService vault, SchemaText text, IString
 
     private void WriteItem(PdfLayout layout, VaultItem item, bool asTitle = false)
     {
+        var kind = text.Type(item.Type);
+        var caption = item.Status == ObjectStatus.Ended ? $"{kind} · {text.Status(item.Status)}" : kind;
         if (asTitle)
         {
             layout.Title(item.Title);
+            layout.Subtitle(caption);
+            layout.Space(8);
         }
         else
         {
             layout.Subheading(item.Title);
+            layout.Paragraph(caption, 9, muted: true);
         }
 
-        var kind = text.Type(item.Type);
-        layout.Paragraph(item.Status == ObjectStatus.Ended ? $"{kind} · {text.Status(item.Status)}" : kind, 9, muted: true);
         foreach (var row in text.Rows(item, vault.TitleOf))
         {
             layout.Row(row.Label, row.Value);
