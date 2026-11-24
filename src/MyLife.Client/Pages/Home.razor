@@ -1,0 +1,67 @@
+@page "/"
+@inject IStringLocalizer<SharedResource> L
+@inject AppInfoClient AppInfo
+
+<PageTitle>@L["AppName"] – @L["NavHome"]</PageTitle>
+
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["HomeTitle"]</MudText>
+    <MudText Typo="Typo.body1">@L["HomeIntro"]</MudText>
+
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["HomeStatusTitle"]</MudText>
+                @if (_isLoading)
+                {
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudProgressCircular Indeterminate Size="Size.Small" />
+                        <MudText>@L["Loading"]</MudText>
+                    </MudStack>
+                }
+                else if (_info is null)
+                {
+                    <MudAlert Severity="Severity.Warning" Dense>@L["HomeStatusUnreachable"]</MudAlert>
+                }
+                else
+                {
+                    <MudStack Spacing="1" AlignItems="AlignItems.Start">
+                        <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small"
+                                 Icon="@Icons.Material.Filled.CheckCircle" data-testid="status-reachable">
+                            @L["HomeStatusReachable"]
+                        </MudChip>
+                        <MudText Typo="Typo.body2">@L["HomeStatusVersion"]: <b data-testid="app-version">@_info.Version</b></MudText>
+                        <MudText Typo="Typo.body2">@L["HomeStatusCryptoFormat"]: <b>v@_info.CryptoFormatVersion</b></MudText>
+                    </MudStack>
+                }
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudText Typo="Typo.h6" Class="mb-2">@L["HomeNextStepsTitle"]</MudText>
+                <MudText Typo="Typo.body2">@L["HomeNextStepsText"]</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudStack>
+
+@code {
+    private AppInfoDto? _info;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _info = await AppInfo.GetAsync();
+        }
+        catch (HttpRequestException)
+        {
+            _info = null;
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

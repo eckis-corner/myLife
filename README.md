@@ -1,0 +1,61 @@
+# myLife
+
+**Dein digitaler Notfallordner – selbst gehostet und Ende-zu-Ende-verschlüsselt.**
+
+myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: Versicherungen, Konten, Kredite, Verträge, Urkunden, digitale Zugänge, Kontakte und persönliche Wünsche. Solange du lebst, kann niemand die Daten lesen, auch nicht der Betreiber des Servers. Wirst du handlungsunfähig oder stirbst du, erhalten deine Vertrauenspersonen über einen Notfallzugang (Dead-Man's-Switch) genau die Bereiche, die du für sie freigegeben hast.
+
+> **Status:** frühe Entwicklung (Meilenstein M0 – Grundgerüst). Noch nicht für echte Daten geeignet.
+
+## Merkmale (geplant)
+
+- **Zero-Knowledge:** Verschlüsselung im Browser (AES-256-GCM, Argon2id, ECDH P-256), der Server sieht nur Chiffrat
+- **Objekte mit Datenblatt:** Bankkonto, Versicherung, Vertrag, Urkunde, Immobilie, Online-Konto … jeweils mit typischen Feldern und beliebigen Dokumenten
+- **Familie:** jeder Nutzer hat einen eigenen Tresor und benennt andere als Vertrauenspersonen
+- **Notfallzugang:** Lebenszeichen per Login oder Mail-Link, gestufte Erinnerungen, Wartezeit, Antrag mit Widerspruch
+- **Notfallordner:** verschlüsseltes PDF, druckfertige Ansicht, offenes JSON-Format, Offline-Viewer
+- **Self-hosted:** Docker Compose mit PostgreSQL, z. B. auf einer Synology
+- Deutsch und Englisch
+
+## Dokumentation
+
+| Dokument | Inhalt |
+| --- | --- |
+| [docs/architektur.md](docs/architektur.md) | Komponenten, Schlüsselkonzept, Notfallzugang, Datenmodell |
+| [docs/objekttypen.md](docs/objekttypen.md) | Bereiche und Objekttypen mit Feldern |
+| [docs/meilensteine.md](docs/meilensteine.md) | Umsetzungsplan |
+| [docs/entscheidungen.md](docs/entscheidungen.md) | Entscheidungsprotokoll |
+| [docs/betrieb/installation.md](docs/betrieb/installation.md) | Installation auf Synology mit Nginx Proxy Manager |
+| [PROMPT.md](PROMPT.md) | Ursprüngliche Anforderung |
+
+## Entwickeln
+
+Voraussetzungen: .NET SDK 10, Docker (für PostgreSQL und die Integrationstests).
+
+```bash
+docker compose up -d db                      # PostgreSQL (Passwort in .env, siehe .env.example)
+dotnet run --project src/MyLife.Server       # http://localhost:5062
+dotnet test --solution MyLife.slnx           # Tests (nutzen Testcontainers)
+python3 tools/resources.py                   # Ressourcen-Dateien de/en neu erzeugen
+```
+
+Für die lokale Entwicklung erwartet `appsettings.json` PostgreSQL auf `localhost:5432` mit Benutzer und Passwort `mylife`. Andere Werte über `dotnet user-secrets` oder die Umgebungsvariable `ConnectionStrings__MyLife`.
+
+## Projektstruktur
+
+```text
+src/
+  MyLife.Client   Blazor WebAssembly (MudBlazor), gesamte Oberfläche, Verschlüsselung im Browser
+  MyLife.Server   ASP.NET Core: Auslieferung, API, Hintergrunddienste, PostgreSQL
+  MyLife.Shared   DTOs, Objekttyp-Schemata
+  MyLife.Crypto   Verschlüsselungsformate (C#-Fassade und Referenzimplementierung)
+tests/
+  MyLife.Tests    xUnit, bUnit, Integrationstests mit Testcontainers
+```
+
+## Sicherheit
+
+Bitte Sicherheitslücken **nicht** als öffentliches Issue melden, siehe [SECURITY.md](SECURITY.md).
+
+## Lizenz
+
+[GNU Affero General Public License v3.0](LICENSE) – wer myLife verändert als Dienst betreibt, muss den geänderten Quellcode offenlegen.

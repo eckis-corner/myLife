@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppName" xml:space="preserve"><value>myLife</value></data>
+  <data name="AppTagline" xml:space="preserve"><value>Your digital emergency folder</value></data>
+  <data name="BackToHome" xml:space="preserve"><value>Back to overview</value></data>
+  <data name="ErrorUnhandled" xml:space="preserve"><value>An unexpected error has occurred.</value></data>
+  <data name="HomeIntro" xml:space="preserve"><value>This is where your digital emergency folder takes shape: insurance policies, accounts, contracts, certificates and wishes in one safe place. Everything is encrypted in your browser, so only you and, in an emergency, your trusted persons can read it.</value></data>
+  <data name="HomeNextStepsText" xml:space="preserve"><value>Next up: initial setup, sign-in with a second factor and the encrypted vault.</value></data>
+  <data name="HomeNextStepsTitle" xml:space="preserve"><value>What comes next?</value></data>
+  <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Encryption format</value></data>
+  <data name="HomeStatusReachable" xml:space="preserve"><value>Server reachable</value></data>
+  <data name="HomeStatusTitle" xml:space="preserve"><value>Instance status</value></data>
+  <data name="HomeStatusUnreachable" xml:space="preserve"><value>The server cannot be reached. Please try again later.</value></data>
+  <data name="HomeStatusVersion" xml:space="preserve"><value>Version</value></data>
+  <data name="HomeTitle" xml:space="preserve"><value>Welcome to myLife</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="LanguageName_de" xml:space="preserve"><value>Deutsch</value></data>
+  <data name="LanguageName_en" xml:space="preserve"><value>English</value></data>
+  <data name="Loading" xml:space="preserve"><value>Loading …</value></data>
+  <data name="NavHome" xml:space="preserve"><value>Overview</value></data>
+  <data name="NotFoundText" xml:space="preserve"><value>The page you requested does not exist.</value></data>
+  <data name="NotFoundTitle" xml:space="preserve"><value>Page not found</value></data>
+  <data name="OpenMenu" xml:space="preserve"><value>Open menu</value></data>
+  <data name="Reload" xml:space="preserve"><value>Reload</value></data>
+  <data name="ToggleDarkMode" xml:space="preserve"><value>Toggle light/dark mode</value></data>
+</root>

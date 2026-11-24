@@ -1,0 +1,37 @@
+# myLife – Docker Compose für die Synology (Container Manager → Projekt).
+# TLS übernimmt der vorhandene Nginx Proxy Manager; die App lauscht nur auf MYLIFE_PORT.
+name: mylife
+
+services:
+  app:
+    image: ghcr.io/eckis-corner/mylife:${MYLIFE_VERSION:-latest}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__MyLife: "Host=db;Port=5432;Database=mylife;Username=mylife;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD fehlt in .env};Gss Encryption Mode=Disable"
+      MyLife__DataDirectory: /data
+      TZ: ${TZ:-Europe/Berlin}
+    ports:
+      - "${MYLIFE_PORT:-8080}:8080"
+    volumes:
+      - ${MYLIFE_DATA_DIR:-./data}/app:/data
+    mem_limit: 512m
+
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mylife
+      POSTGRES_USER: mylife
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD fehlt in .env}
+      TZ: ${TZ:-Europe/Berlin}
+    volumes:
+      - ${MYLIFE_DATA_DIR:-./data}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mylife -d mylife"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 512m

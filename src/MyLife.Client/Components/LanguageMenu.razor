@@ -1,0 +1,16 @@
+@inject IStringLocalizer<SharedResource> L
+@inject CultureService Cultures
+
+<MudMenu Icon="@Icons.Material.Filled.Translate"
+         Color="Color.Inherit"
+         AriaLabel="@L["Language"]"
+         AnchorOrigin="Origin.BottomRight"
+         TransformOrigin="Origin.TopRight">
+    @foreach (var culture in SupportedCultures.All)
+    {
+        <MudMenuItem OnClick="() => Cultures.ChangeAsync(culture)"
+                     Icon="@(culture == CultureService.Current ? Icons.Material.Filled.Check : null)">
+            @L[$"LanguageName_{culture}"]
+        </MudMenuItem>
+    }
+</MudMenu>

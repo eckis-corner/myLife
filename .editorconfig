@@ -1,0 +1,23 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.{json,yml,yaml,xml,csproj,props,slnx,resx}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:warning
+dotnet_sort_system_directives_first = true
+# Namespace "Shared" kollidiert nur mit einem VB-Schlüsselwort – für dieses Projekt irrelevant.
+dotnet_diagnostic.CA1716.severity = none
+# Kein ConfigureAwait in ASP.NET Core / Blazor nötig.
+dotnet_diagnostic.CA2007.severity = none

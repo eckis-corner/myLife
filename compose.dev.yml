@@ -1,0 +1,9 @@
+# Lokal bauen statt das Image aus ghcr.io zu ziehen:
+#   docker compose -f docker-compose.yml -f compose.dev.yml up -d --build
+services:
+  app:
+    image: mylife:dev
+    build:
+      context: .
+      args:
+        VERSION: 0.1.0-dev

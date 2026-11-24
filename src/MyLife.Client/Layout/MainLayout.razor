@@ -1,0 +1,67 @@
+@inherits LayoutComponentBase
+@inject IStringLocalizer<SharedResource> L
+
+<MudThemeProvider @ref="_themeProvider" Theme="_theme" @bind-IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                       Color="Color.Inherit"
+                       Edge="Edge.Start"
+                       aria-label="@L["OpenMenu"]"
+                       OnClick="ToggleDrawer" />
+        <MudIcon Icon="@Icons.Material.Outlined.FolderShared" Class="ml-2 mr-2" />
+        <MudText Typo="Typo.h6">@L["AppName"]</MudText>
+        <MudSpacer />
+        <LanguageMenu />
+        <MudTooltip Text="@L["ToggleDarkMode"]">
+            <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
+                           Color="Color.Inherit"
+                           aria-label="@L["ToggleDarkMode"]"
+                           OnClick="() => _isDarkMode = !_isDarkMode" />
+        </MudTooltip>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="1" Variant="DrawerVariant.Responsive">
+        <MudNavMenu>
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+            <ErrorBoundary>
+                <ChildContent>
+                    @Body
+                </ChildContent>
+                <ErrorContent>
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
+                        @L["ErrorUnhandled"]
+                        <MudButton Variant="Variant.Text" Color="Color.Error" Href="." Class="ml-2">@L["Reload"]</MudButton>
+                    </MudAlert>
+                </ErrorContent>
+            </ErrorBoundary>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private readonly MudTheme _theme = Theme.MyLifeTheme.Create();
+    private MudThemeProvider? _themeProvider;
+    private bool _isDarkMode;
+    private bool _drawerOpen = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _themeProvider is not null)
+        {
+            _isDarkMode = await _themeProvider.GetSystemDarkModeAsync();
+            StateHasChanged();
+        }
+    }
+
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+}

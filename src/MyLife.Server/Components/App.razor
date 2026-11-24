@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+    <base href="/" />
+    <title>myLife</title>
+    <link rel="stylesheet" href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" />
+    <link rel="stylesheet" href="@Assets["css/app.css"]" />
+    @* Kein <ImportMap />: Es wäre ein Inline-Skript und verstößt gegen die strikte CSP (script-src ohne unsafe-inline). *@
+    <HeadOutlet @rendermode="_renderMode" />
+</head>
+
+<body>
+    <Routes @rendermode="_renderMode" />
+    <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
+    <script src="@Assets["js/mylife.js"]"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>
+
+@code {
+    // Zero-Knowledge: ohne Prerendering entsteht nie Komponentenzustand auf dem Server.
+    private static readonly IComponentRenderMode _renderMode = new InteractiveWebAssemblyRenderMode(prerender: false);
+}

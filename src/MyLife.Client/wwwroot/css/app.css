@@ -1,0 +1,4 @@
+/* Ergänzungen zu MudBlazor. Fokus-Sprungziel nach Navigation (FocusOnNavigate) ohne sichtbaren Rahmen. */
+h1:focus {
+    outline: none;
+}

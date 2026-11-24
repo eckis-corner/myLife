@@ -1,0 +1,14 @@
+@page "/not-found"
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["AppName"] – @L["NotFoundTitle"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["NotFoundTitle"]</MudText>
+    <MudText>@L["NotFoundText"]</MudText>
+    <MudStack Row>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="" StartIcon="@Icons.Material.Filled.Home">
+            @L["BackToHome"]
+        </MudButton>
+    </MudStack>
+</MudStack>
