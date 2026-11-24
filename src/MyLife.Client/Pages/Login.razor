@@ -1,0 +1,99 @@
+@page "/login"
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["AppName"] – @L["LoginTitle"]</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="px-0">
+    <MudPaper Class="pa-4 pa-sm-6" Elevation="1">
+        <MudStack Spacing="4">
+            @if (_mode == Mode.Loading)
+            {
+                <MudProgressLinear Indeterminate Color="Color.Primary" />
+            }
+            else
+            {
+                <MudText Typo="Typo.h4" HtmlTag="h1" data-testid="login-title">@L[_mode == Mode.Unlock ? "UnlockTitle" : "LoginTitle"]</MudText>
+
+                @if (_info is not null)
+                {
+                    <MudAlert Severity="Severity.Info" data-testid="login-info">@L[_info]</MudAlert>
+                }
+
+                <MudForm @ref="_form" SuppressImplicitSubmission>
+                    <MudStack Spacing="3">
+                        @switch (_mode)
+                        {
+                            case Mode.Credentials:
+                                <MudTextField T="string" @bind-Value="_email" Label="@L["SetupEmail"]" Variant="Variant.Outlined"
+                                              InputType="InputType.Email" Required RequiredError="@L["SetupEmailInvalid"]" AutoFocus
+                                              UserAttributes="@EmailAttributes" />
+                                <MudTextField T="string" @bind-Value="_password" Label="@L["SetupPassword"]" Variant="Variant.Outlined"
+                                              InputType="InputType.Password" Required RequiredError="@L["LoginPasswordRequired"]"
+                                              UserAttributes="@CurrentPasswordAttributes" OnKeyUp="SubmitOnEnterAsync" />
+                                break;
+
+                            case Mode.SecondFactor:
+                                <MudText>@L["LoginSecondFactorText"]</MudText>
+                                @if (_challenge!.Totp)
+                                {
+                                    <MudTextField T="string" @bind-Value="_code" Label="@L["SetupTwoFactorCode"]" Variant="Variant.Outlined"
+                                                  InputMode="InputMode.numeric" MaxLength="7" Required RequiredError="@L["SetupTwoFactorCodeRequired"]"
+                                                  UserAttributes="@OneTimeCodeAttributes" AutoFocus OnKeyUp="SubmitOnEnterAsync" />
+                                }
+                                @if (_challenge.Passkey)
+                                {
+                                    <MudButton Variant="@(_challenge.Totp ? Variant.Outlined : Variant.Filled)" Color="Color.Primary"
+                                               StartIcon="@Icons.Material.Filled.Fingerprint" Disabled="_busy" OnClick="PasskeyAsync" data-testid="login-passkey">
+                                        @L["LoginWithPasskey"]
+                                    </MudButton>
+                                }
+                                break;
+
+                            case Mode.Unlock:
+                                <MudText>@L["UnlockText", CurrentSession.Session?.DisplayName ?? string.Empty]</MudText>
+                                <MudTextField T="string" @bind-Value="_password" Label="@L["SetupPassword"]" Variant="Variant.Outlined"
+                                              InputType="InputType.Password" Required RequiredError="@L["LoginPasswordRequired"]" AutoFocus
+                                              UserAttributes="@CurrentPasswordAttributes" OnKeyUp="SubmitOnEnterAsync" />
+                                break;
+                        }
+                    </MudStack>
+                </MudForm>
+
+                @if (_error is not null)
+                {
+                    <MudAlert Severity="Severity.Error" data-testid="login-error">@L[_error]</MudAlert>
+                }
+
+                @if (_busy)
+                {
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudProgressCircular Indeterminate Size="Size.Small" />
+                        <MudText>@L[_mode == Mode.SecondFactor ? "LoginOpening" : "LoginChecking"]</MudText>
+                    </MudStack>
+                }
+
+                <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                    @switch (_mode)
+                    {
+                        case Mode.Credentials:
+                            <MudLink Href="recover" Typo="Typo.body2">@L["LoginForgotPassword"]</MudLink>
+                            break;
+                        case Mode.SecondFactor:
+                            <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Disabled="_busy" OnClick="BackToCredentials">@L["SetupBack"]</MudButton>
+                            break;
+                        case Mode.Unlock:
+                            <MudButton Variant="Variant.Text" Disabled="_busy" OnClick="LogoutAsync">@L["Logout"]</MudButton>
+                            break;
+                    }
+                    @if (_mode != Mode.SecondFactor || _challenge!.Totp)
+                    {
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="SubmitAsync" data-testid="login-submit"
+                                   StartIcon="@(_mode == Mode.Credentials ? Icons.Material.Filled.Login : Icons.Material.Filled.LockOpen)">
+                            @L[_mode == Mode.Credentials ? "LoginSubmit" : _mode == Mode.Unlock ? "UnlockSubmit" : "LoginConfirm"]
+                        </MudButton>
+                    }
+                </MudStack>
+            }
+        </MudStack>
+    </MudPaper>
+</MudContainer>

@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M1.2:** Die App lässt sich einrichten (erstes Konto mit Tresor und zweitem Faktor). Anmeldung und Tresorinhalte folgen. Bitte noch keine echten Daten erfassen.
+> **Stand M1.3:** Einrichtung, Anmeldung mit zweitem Faktor (TOTP oder Passkey), Passwort ändern und Wiederherstellung funktionieren. Die Tresorinhalte folgen. Bitte noch keine echten Daten erfassen.
 
 ## 1. Ordner anlegen
 

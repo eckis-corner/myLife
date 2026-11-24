@@ -38,6 +38,7 @@ auth   = HKDF-SHA-256(ikm = mk, salt = leer, info = "mylife/auth", 32)     → a
 kek    = HKDF-SHA-256(ikm = mk, salt = leer, info = "mylife/kek", 32)      → AES-256, nur wrap/unwrap
 rk     = 32 Zufallsbytes (Recovery-Key, 24 Wörter)
 rkKey  = HKDF-SHA-256(ikm = rk, salt = leer, info = "mylife/recovery", 32) → AES-256, nur wrap/unwrap
+rkAuth = HKDF-SHA-256(ikm = rk, salt = leer, info = "mylife/recovery-auth", 32) → an den Server (Prüfwert bei der Wiederherstellung, seit M1.3)
 ```
 
 - Standard: m = 65536 KiB (64 MiB), t = 3, p = 1, Salt 16 Byte. Erlaubt sind m 64 MiB bis 1 GiB, t 3 bis 20, p 1 bis 8 und ein Salt von 16 bis 64 Byte. Die **Untergrenzen** prüft der Browser, damit ein manipulierter Server keine schwachen Parameter unterschieben kann, die das Erraten des Passworts aus dem Anmeldehash erleichtern.

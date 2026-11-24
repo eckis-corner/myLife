@@ -36,8 +36,8 @@ TEXTS: dict[str, tuple[str, str]] = {
     "HomeStatusCryptoFormat": ("Verschlüsselungsformat", "Encryption format"),
     "HomeNextStepsTitle": ("Wie geht es weiter?", "What comes next?"),
     "HomeNextStepsText": (
-        "Als Nächstes folgen die Anmeldung mit zweitem Faktor und der verschlüsselte Tresor.",
-        "Next up: sign-in with a second factor and the encrypted vault.",
+        "Als Nächstes folgen die Objekttypen und der verschlüsselte Tresor.",
+        "Next up: object types and the encrypted vault.",
     ),
     "NotFoundTitle": ("Seite nicht gefunden", "Page not found"),
     "NotFoundText": (
@@ -184,8 +184,8 @@ TEXTS: dict[str, tuple[str, str]] = {
     "SetupTwoFactorCode": ("6-stelliger Code", "6-digit code"),
     "SetupTwoFactorCodeRequired": ("Bitte den 6-stelligen Code eingeben.", "Please enter the 6-digit code."),
     "SetupTwoFactorPasskeyLater": (
-        "Einen Passkey kannst du nach der ersten Anmeldung zusätzlich einrichten.",
-        "You can add a passkey after you first sign in.",
+        "Einen Passkey kannst du nach der ersten Anmeldung unter „Sicherheit“ zusätzlich einrichten.",
+        "You can add a passkey under “Security” after you first sign in.",
     ),
     "SetupFinishText": (
         "Alles bereit. Beim Anlegen erzeugt dein Browser die Schlüssel. Das dauert einige Sekunden.",
@@ -217,6 +217,116 @@ TEXTS: dict[str, tuple[str, str]] = {
     "SetupError_setup-failed": (
         "Die Einrichtung ist fehlgeschlagen. Bitte versuche es erneut.",
         "Setup failed. Please try again.",
+    ),
+    # Anmeldung und Konto (M1.3)
+    "UserMenu": ("Konto", "Account"),
+    "NavSecurity": ("Sicherheit", "Security"),
+    "Logout": ("Abmelden", "Sign out"),
+    "Delete": ("Löschen", "Delete"),
+    "Cancel": ("Abbrechen", "Cancel"),
+    "LoginTitle": ("Anmelden", "Sign in"),
+    "UnlockTitle": ("Tresor entsperren", "Unlock vault"),
+    "UnlockText": (
+        "Hallo {0}, du bist noch angemeldet. Zum Entsperren des Tresors brauchen wir dein Master-Passwort.",
+        "Hello {0}, you are still signed in. Enter your master password to unlock your vault.",
+    ),
+    "LoginPasswordRequired": ("Bitte das Master-Passwort eingeben.", "Please enter your master password."),
+    "LoginSecondFactorText": (
+        "Bestätige die Anmeldung mit dem Code aus deiner Authenticator-App oder mit einem Passkey.",
+        "Confirm the sign-in with the code from your authenticator app or with a passkey.",
+    ),
+    "LoginWithPasskey": ("Mit Passkey anmelden", "Sign in with passkey"),
+    "LoginChecking": ("Passwort wird geprüft …", "Checking password …"),
+    "LoginOpening": ("Tresor wird geöffnet …", "Opening vault …"),
+    "LoginForgotPassword": ("Passwort vergessen?", "Forgot password?"),
+    "LoginSubmit": ("Anmelden", "Sign in"),
+    "LoginConfirm": ("Bestätigen", "Confirm"),
+    "UnlockSubmit": ("Entsperren", "Unlock"),
+    "LoginInfoTimeout": (
+        "Du wurdest nach längerer Inaktivität abgemeldet. Die Schlüssel wurden aus dem Speicher entfernt.",
+        "You were signed out after a period of inactivity. The keys have been removed from memory.",
+    ),
+    "LoginInfoExpired": ("Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.", "Your session has expired. Please sign in again."),
+    "RecoverTitle": ("Zugang wiederherstellen", "Recover access"),
+    "RecoverText": (
+        "Mit den 24 Wörtern aus deinem Wiederherstellungs-Kit vergibst du ein neues Master-Passwort. Dein Tresor "
+        "bleibt dabei unverändert. Zur Anmeldung brauchst du danach weiterhin deinen zweiten Faktor.",
+        "Use the 24 words from your recovery kit to set a new master password. Your vault stays unchanged. You "
+        "will still need your second factor to sign in afterwards.",
+    ),
+    "RecoverWordsHelp": (
+        "Durch Leerzeichen oder Zeilen getrennt. Die ersten vier Buchstaben jedes Worts genügen.",
+        "Separated by spaces or lines. The first four letters of each word are enough.",
+    ),
+    "RecoverWordsRequired": ("Bitte die 24 Wörter eingeben.", "Please enter the 24 words."),
+    "RecoverNewPassword": ("Neues Master-Passwort", "New master password"),
+    "RecoverBackToLogin": ("Zur Anmeldung", "Back to sign-in"),
+    "RecoverSubmit": ("Neues Passwort setzen", "Set new password"),
+    "RecoverDone": (
+        "Dein neues Master-Passwort ist gesetzt. Melde dich jetzt damit und mit deinem zweiten Faktor an.",
+        "Your new master password has been set. Sign in with it and your second factor now.",
+    ),
+    "SecurityPasswordTitle": ("Master-Passwort ändern", "Change master password"),
+    "SecurityPasswordText": (
+        "Dein Tresor wird dabei nur neu verpackt, an den Daten ändert sich nichts. Andere angemeldete Geräte werden abgemeldet.",
+        "Only the key wrapping changes; your data stays the same. Other signed-in devices are signed out.",
+    ),
+    "SecurityCurrentPassword": ("Aktuelles Master-Passwort", "Current master password"),
+    "SecurityChangePassword": ("Passwort ändern", "Change password"),
+    "SecurityPasswordChanged": ("Das Master-Passwort wurde geändert.", "Your master password has been changed."),
+    "SecurityPasskeysTitle": ("Passkeys", "Passkeys"),
+    "SecurityPasskeysText": (
+        "Ein Passkey ersetzt bei der Anmeldung den Code aus der Authenticator-App, etwa mit Fingerabdruck, Gesicht "
+        "oder einem Sicherheitsschlüssel. Das Master-Passwort brauchst du weiterhin.",
+        "A passkey replaces the authenticator code when signing in, for example with your fingerprint, face or a "
+        "security key. You still need your master password.",
+    ),
+    "SecurityNoPasskeys": ("Noch kein Passkey eingerichtet.", "No passkey set up yet."),
+    "SecurityPasskeyName": ("Bezeichnung", "Name"),
+    "SecurityPasskeyNamePlaceholder": ("z. B. Laptop oder Smartphone", "e.g. laptop or phone"),
+    "SecurityPasskeyCreated": ("Eingerichtet", "Added"),
+    "SecurityPasskeyLastUsed": ("Zuletzt verwendet", "Last used"),
+    "SecurityAddPasskey": ("Passkey hinzufügen", "Add passkey"),
+    "SecurityPasskeyAdded": ("Der Passkey wurde hinzugefügt.", "The passkey has been added."),
+    "SecurityPasskeyDeleted": ("Der Passkey wurde gelöscht.", "The passkey has been deleted."),
+    "SecurityDeletePasskeyTitle": ("Passkey löschen", "Delete passkey"),
+    "SecurityDeletePasskeyText": (
+        "Soll der Passkey „{0}“ gelöscht werden? Mit ihm ist danach keine Anmeldung mehr möglich.",
+        "Delete the passkey “{0}”? It can no longer be used to sign in.",
+    ),
+    "AuthError_auth-invalid-credentials": (
+        "E-Mail-Adresse oder Master-Passwort stimmen nicht.",
+        "The email address or master password is not correct.",
+    ),
+    "AuthError_auth-locked": (
+        "Zu viele Fehlversuche. Das Konto ist für 15 Minuten gesperrt.",
+        "Too many failed attempts. The account is locked for 15 minutes.",
+    ),
+    "AuthError_auth-expired": (
+        "Die Anmeldung hat zu lange gedauert. Bitte beginne von vorn.",
+        "The sign-in took too long. Please start again.",
+    ),
+    "AuthError_auth-invalid-code": (
+        "Der Code stimmt nicht oder wurde schon verwendet. Bitte warte auf den nächsten Code.",
+        "The code is not correct or has already been used. Please wait for the next code.",
+    ),
+    "AuthError_auth-passkey-failed": ("Der Passkey konnte nicht geprüft werden.", "The passkey could not be verified."),
+    "AuthError_auth-passkey-cancelled": (
+        "Der Passkey wurde nicht verwendet oder der Vorgang abgebrochen.",
+        "The passkey was not used or the process was cancelled.",
+    ),
+    "AuthError_auth-passkey-unsupported": ("Dieser Browser unterstützt keine Passkeys.", "This browser does not support passkeys."),
+    "AuthError_auth-invalid-input": ("Einige Angaben sind ungültig.", "Some entries are invalid."),
+    "AuthError_auth-rate-limited": ("Zu viele Anfragen. Bitte warte eine Minute.", "Too many requests. Please wait a minute."),
+    "AuthError_auth-failed": ("Das hat nicht geklappt. Bitte versuche es erneut.", "That did not work. Please try again."),
+    "AuthError_auth-wrong-password": ("Das Master-Passwort stimmt nicht.", "The master password is not correct."),
+    "AuthError_auth-invalid-recovery-words": (
+        "Die Wörter ergeben keinen gültigen Wiederherstellungsschlüssel. Bitte prüfe Reihenfolge und Schreibweise.",
+        "These words do not form a valid recovery key. Please check the order and spelling.",
+    ),
+    "AuthError_auth-crypto-failed": (
+        "Die Schlüssel konnten im Browser nicht verarbeitet werden.",
+        "The keys could not be processed in your browser.",
     ),
     "SetupErrorCrypto": (
         "Die Schlüssel konnten im Browser nicht erzeugt werden. Bitte verwende einen aktuellen Browser.",

@@ -22,6 +22,55 @@ namespace MyLife.Server.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("MyLife.Server.Data.Passkey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<byte[]>("CredentialId")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("credential_id");
+
+                    b.Property<DateTimeOffset?>("LastUsedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_used_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<byte[]>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("public_key");
+
+                    b.Property<long>("SignCount")
+                        .HasColumnType("bigint")
+                        .HasColumnName("sign_count");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CredentialId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("passkeys", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.SystemSetting", b =>
                 {
                     b.Property<string>("Key")
@@ -75,6 +124,10 @@ namespace MyLife.Server.Data.Migrations
                         .HasColumnType("character varying(254)")
                         .HasColumnName("email");
 
+                    b.Property<int>("FailedLoginCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("failed_login_count");
+
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("boolean")
                         .HasColumnName("is_admin");
@@ -110,6 +163,10 @@ namespace MyLife.Server.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_login_at");
 
+                    b.Property<DateTimeOffset?>("LockoutUntil")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lockout_until");
+
                     b.Property<byte[]>("PublicEncryptionKey")
                         .IsRequired()
                         .HasColumnType("bytea")
@@ -120,9 +177,26 @@ namespace MyLife.Server.Data.Migrations
                         .HasColumnType("bytea")
                         .HasColumnName("public_signing_key");
 
+                    b.Property<string>("RecoveryAuthHash")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("recovery_auth_hash");
+
+                    b.Property<string>("SecurityStamp")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasDefaultValue("initial")
+                        .HasColumnName("security_stamp");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer")
                         .HasColumnName("status");
+
+                    b.Property<long?>("TotpLastStep")
+                        .HasColumnType("bigint")
+                        .HasColumnName("totp_last_step");
 
                     b.Property<string>("TotpSecret")
                         .HasColumnType("text")
@@ -160,6 +234,22 @@ namespace MyLife.Server.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.Passkey", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", "User")
+                        .WithMany("Passkeys")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.User", b =>
+                {
+                    b.Navigation("Passkeys");
                 });
 #pragma warning restore 612, 618
         }

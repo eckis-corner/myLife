@@ -137,6 +137,11 @@ Grenze: Versendet der Server die Einladungsmail selbst, könnte ein **in diesem 
 4. Danach setzt der Server ein Sitzungs-Cookie (`HttpOnly`, `Secure`, `SameSite=Strict`) mit gleitender Laufzeit. Dazu kommen Antiforgery-Schutz, Rate-Limiting und eine Sperre nach mehreren Fehlversuchen.
 5. Der Browser entpackt den VMK als **nicht exportierbaren** CryptoKey. Schlüssel liegen nur im Arbeitsspeicher, nie im Local Storage.
 6. **Automatische Abmeldung** nach Inaktivität (Zeit vom Admin vorgegeben). Dabei werden alle Schlüssel und entschlüsselten Daten im Speicher verworfen.
+7. **Neuladen:** Die Sitzung bleibt, der Tresor ist gesperrt. Entsperren nur mit dem Passwort, geprüft im Browser (55).
+8. **Fehlversuche:** Nach 5 Fehlversuchen 15 Minuten Sperre (57). Jeder TOTP-Code gilt nur einmal. Zwischenschritte (Passwort geprüft, zweiter Faktor fehlt) tragen ein geschütztes Token mit 5 Minuten Laufzeit; der Server hält dafür keinen Zustand.
+9. **Wiederherstellung:** Der Browser beweist mit einem Prüfwert aus dem Recovery-Key, dass er die 24 Wörter kennt, und packt den VMK auf ein neues Passwort um. Der zweite Faktor bleibt (54).
+10. **Passkeys** (WebAuthn über Fido2NetLib) ersetzen den TOTP-Code als zweiten Faktor. Relying Party ist der Host hinter dem Proxy.
+11. **CSRF:** Schreibende API-Aufrufe brauchen den Header `X-MyLife-Request` (56).
 
 ## 5. Notfallzugang
 

@@ -1,4 +1,5 @@
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -7,6 +8,7 @@ using MyLife.Server.Api;
 using MyLife.Server.Components;
 using MyLife.Server.Data;
 using MyLife.Server.Infrastructure;
+using MyLife.Server.Infrastructure.Auth;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +48,27 @@ builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<SetupTokenService>();
 builder.Services.AddHostedService<SetupTokenIssuer>();
+builder.Services.AddSingleton<PendingTokens>();
+builder.Services.AddSingleton<LoginAttempts>();
+builder.Services.AddSingleton<PreloginDecoy>();
+builder.Services.AddSingleton<PasskeyService>();
+
+// Sitzungs-Cookie (Architektur 4.4): HttpOnly, SameSite=Strict, gleitende Laufzeit wie die automatische Abmeldung.
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(cookie =>
+    {
+        cookie.Cookie.Name = "mylife.session";
+        cookie.Cookie.HttpOnly = true;
+        cookie.Cookie.SameSite = SameSiteMode.Strict;
+        cookie.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+        cookie.ExpireTimeSpan = TimeSpan.FromMinutes(options.IdleTimeoutMinutes);
+        cookie.SlidingExpiration = true;
+        cookie.Events.OnValidatePrincipal = UserSignIn.ValidateAsync;
+        // Die API antwortet mit 401/403 statt auf eine Anmeldeseite umzuleiten.
+        cookie.Events.OnRedirectToLogin = context => WriteStatusAsync(context.Response, StatusCodes.Status401Unauthorized, "auth-required");
+        cookie.Events.OnRedirectToAccessDenied = context => WriteStatusAsync(context.Response, StatusCodes.Status403Forbidden, "auth-forbidden");
+    });
+builder.Services.AddAuthorization();
 
 builder.Services.AddRateLimiter(limiter =>
 {
@@ -53,6 +76,9 @@ builder.Services.AddRateLimiter(limiter =>
     limiter.AddPolicy(SetupEndpoints.RateLimitPolicy, context => RateLimitPartition.GetFixedWindowLimiter(
         context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
         _ => new FixedWindowRateLimiterOptions { PermitLimit = 30, Window = TimeSpan.FromMinutes(1) }));
+    limiter.AddPolicy(AuthEndpoints.RateLimitPolicy, context => RateLimitPartition.GetFixedWindowLimiter(
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = options.AuthRequestsPerMinute, Window = TimeSpan.FromMinutes(1) }));
 });
 
 builder.Services.AddRazorComponents()
@@ -75,6 +101,9 @@ else
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+app.UseMiddleware<CsrfHeaderMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseRateLimiter();
 app.UseAntiforgery();
 
@@ -82,15 +111,27 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => fa
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
 app.MapInfoEndpoints();
 app.MapSetupEndpoints();
+app.MapAuthEndpoints();
+app.MapAccountEndpoints();
 
 app.MapStaticAssets();
+// Die Seiten sind nur die leere Hülle (kein Prerendering); [Authorize] prüft der Client. Ohne AllowAnonymous
+// würde der Server die Hülle geschützter Seiten verweigern und der Browser käme nie zur Anmeldung.
+// Geschützt sind die Daten: Jeder API-Endpunkt verlangt die Anmeldung selbst.
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(MyLife.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(MyLife.Client._Imports).Assembly)
+    .AllowAnonymous();
 
 await DatabaseMigrator.MigrateAsync(app.Services);
 
 await app.RunAsync();
+
+static Task WriteStatusAsync(HttpResponse response, int status, string code)
+{
+    response.StatusCode = status;
+    return response.WriteAsJsonAsync(new { title = code, status });
+}
 
 /// <summary>Für WebApplicationFactory in den Tests.</summary>
 public partial class Program;

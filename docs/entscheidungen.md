@@ -74,6 +74,11 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 51 | Schutz der Ersteinrichtung | Solange es keinen Nutzer gibt, verlangt der Assistent einen **Einrichtungscode**. Der Server erzeugt ihn bei jedem Start neu und schreibt ihn ins Container-Protokoll. Sonst würde Administrator, wer die offene URL zuerst aufruft. |
 | 52 | Passkey | Die Einrichtung eines Passkeys kommt mit der Anmeldung in **M1.3** (Registrierung und Anmeldung zusammen, damit beides gemeinsam getestet wird). Der Assistent richtet TOTP ein. |
 | 53 | Anmeldehash auf dem Server | Argon2id mit m = 19 MiB, t = 2, p = 1 über den Anmeldehash aus dem Browser. Die Eingabe hat bereits 256 Bit Entropie; moderate Parameter schonen die Synology. |
+| 54 | Wiederherstellung | Aus dem Recovery-Key leitet der Browser einen **Prüfwert** ab (HKDF, `mylife/recovery-auth`), den der Server wie den Anmeldehash nur als Argon2id-Hash speichert. Die Wiederherstellung setzt ein neues Master-Passwort; **der zweite Faktor bleibt**, und der Recovery-Key bleibt gültig. Einen neuen Recovery-Key auf Wunsch gibt es später in den Sicherheitseinstellungen. Konten aus der Zeit vor M1.3 haben keinen Prüfwert. |
+| 55 | Neuladen der Seite | Die Sitzung beim Server bleibt bestehen, der Tresor ist danach **gesperrt**. Entsperren verlangt nur das Master-Passwort und läuft im Browser: Es ist richtig, wenn sich der Tresorschlüssel entpacken lässt. |
+| 56 | CSRF | Zusätzlich zu `SameSite=Strict` verlangt jeder schreibende API-Aufruf den Header `X-MyLife-Request: 1`. Fremde Seiten können ihn ohne CORS-Freigabe nicht setzen. |
+| 57 | Fehlversuche und Abmeldung | Nach **5 Fehlversuchen** (Passwort, Code, Passkey oder Recovery-Key) ist das Konto **15 Minuten** gesperrt. Die Sperrmeldung verrät, dass es das Konto gibt; für eine Familieninstanz akzeptiert. Automatische Abmeldung nach **15 Minuten** Inaktivität, bis M2 über `MyLife__IdleTimeoutMinutes` einstellbar. |
+| 58 | Seiten ohne Serverprüfung | Die Seiten sind ohne Prerendering nur eine leere Hülle. Der Server liefert sie jedem aus (`AllowAnonymous`), `[Authorize]` prüft der Client. Geschützt sind die Daten: Jeder API-Endpunkt verlangt die Anmeldung selbst. |
 
 ### Abweichungen vom MudBlazor-Projekt-Skill
 

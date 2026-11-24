@@ -53,6 +53,9 @@ check("password NFC normalization", hex(await c.deriveAuthHash(masterNfd)) === v
 
 const kek = await c.deriveKeyEncryptionKey(master);
 const recovery = await c.importRecoveryKey(bin(v.recoveryKey));
+if (v.recoveryAuthHash) {
+    check("recovery auth hash", hex(await c.deriveRecoveryAuthHash(bin(v.recoveryKey))) === v.recoveryAuthHash);
+}
 
 for (const [name, vmk] of [
     ["kek", await c.unwrapKey(kek, bin(v.wrappedVmkByKek), VMK)],
@@ -165,6 +168,7 @@ const produced = {
     argon2: v.argon2,
     authHash: hex(await c.deriveAuthHash(jsMaster)),
     recoveryKey: hex(recoveryKey),
+    recoveryAuthHash: hex(await c.deriveRecoveryAuthHash(recoveryKey)),
     wrappedVmkByKek: hex(jsVmk.wrappedKeys[0]),
     wrappedVmkByRecovery: hex(jsVmk.wrappedKeys[1]),
     wrappedAreaKey: hex(jsArea.wrappedKeys[0]),

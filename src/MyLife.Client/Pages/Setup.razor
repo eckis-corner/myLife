@@ -80,19 +80,7 @@
 
                                 case StepPassword:
                                     <MudText>@L["SetupPasswordText"]</MudText>
-                                    <MudTextField T="string" @bind-Value="_password" Label="@L["SetupPassword"]"
-                                                  HelperText="@L["SetupPasswordHelp", SetupLimits.MinPasswordLength]" Variant="Variant.Outlined"
-                                                  InputType="@(_showPassword ? InputType.Text : InputType.Password)" Immediate AutoFocus
-                                                  Adornment="Adornment.End" AdornmentIcon="@(_showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
-                                                  AdornmentAriaLabel="@L["SetupShowPassword"]" OnAdornmentClick="() => _showPassword = !_showPassword"
-                                                  Validation="@(new Func<string, string?>(ValidatePassword))" UserAttributes="@NewPasswordAttributes" />
-                                    <MudStack Spacing="1">
-                                        <MudProgressLinear Value="@PasswordScore" Max="3" Color="@PasswordColor" Rounded />
-                                        <MudText Typo="Typo.caption">@L["SetupPasswordStrength", L[PasswordStrengthKey]]</MudText>
-                                    </MudStack>
-                                    <MudTextField T="string" @bind-Value="_passwordRepeat" Label="@L["SetupPasswordRepeat"]" Variant="Variant.Outlined"
-                                                  InputType="@(_showPassword ? InputType.Text : InputType.Password)" Immediate
-                                                  Validation="@(new Func<string, string?>(ValidatePasswordRepeat))" UserAttributes="@NewPasswordAttributes" />
+                                    <NewPasswordFields @bind-Password="_password" AutoFocus />
                                     <MudCheckBox T="bool" @bind-Value="_passwordAcknowledged" Label="@L["SetupPasswordAcknowledge"]" Color="Color.Primary" />
                                     break;
 

@@ -1,0 +1,101 @@
+@page "/recover"
+@inject IStringLocalizer<SharedResource> L
+@inject RecoveryService Recovery
+
+<PageTitle>@L["AppName"] – @L["RecoverTitle"]</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="px-0">
+    <MudPaper Class="pa-4 pa-sm-6" Elevation="1">
+        <MudStack Spacing="4">
+            <MudText Typo="Typo.h4" HtmlTag="h1">@L["RecoverTitle"]</MudText>
+
+            @if (_done)
+            {
+                <MudAlert Severity="Severity.Success" data-testid="recover-done">@L["RecoverDone"]</MudAlert>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="login">@L["LoginSubmit"]</MudButton>
+            }
+            else
+            {
+                <MudText>@L["RecoverText"]</MudText>
+                <MudForm @ref="_form" SuppressImplicitSubmission>
+                    <MudStack Spacing="3">
+                        <MudTextField T="string" @bind-Value="_email" Label="@L["SetupEmail"]" Variant="Variant.Outlined" InputType="InputType.Email"
+                                      Required RequiredError="@L["SetupEmailInvalid"]" AutoFocus UserAttributes="@EmailAttributes" />
+                        <MudTextField T="string" @bind-Value="_words" Label="@L["RecoveryKitWords"]" HelperText="@L["RecoverWordsHelp"]"
+                                      Variant="Variant.Outlined" Lines="4" Required RequiredError="@L["RecoverWordsRequired"]"
+                                      Validation="@(new Func<string, string?>(ValidateWords))" UserAttributes="@NoAutofillAttributes"
+                                      Class="mylife-recovery-word" />
+                        <NewPasswordFields @bind-Password="_password" Label="@L["RecoverNewPassword"]" />
+                    </MudStack>
+                </MudForm>
+
+                @if (_error is not null)
+                {
+                    <MudAlert Severity="Severity.Error" data-testid="recover-error">@L[_error]</MudAlert>
+                }
+
+                @if (_busy)
+                {
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudProgressCircular Indeterminate Size="Size.Small" />
+                        <MudText>@L["SetupFinishCreating"]</MudText>
+                    </MudStack>
+                }
+
+                <MudStack Row Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap">
+                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="login">@L["RecoverBackToLogin"]</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="SubmitAsync" data-testid="recover-submit">@L["RecoverSubmit"]</MudButton>
+                </MudStack>
+            }
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private static readonly Dictionary<string, object> EmailAttributes = new() { ["autocomplete"] = "username" };
+    private static readonly Dictionary<string, object> NoAutofillAttributes = new() { ["autocomplete"] = "off", ["spellcheck"] = "false", ["data-testid"] = "recover-words" };
+    private MudForm? _form;
+    private string _email = string.Empty;
+    private string _words = string.Empty;
+    private string _password = string.Empty;
+    private bool _busy;
+    private bool _done;
+    private string? _error;
+
+    private string? ValidateWords(string value) =>
+        string.IsNullOrWhiteSpace(value) || MyLife.Crypto.Bip39.TryDecode(value, out _) ? null : L["AuthError_auth-invalid-recovery-words"].Value;
+
+    private async Task SubmitAsync()
+    {
+        if (_form is not null)
+        {
+            await _form.ValidateAsync();
+            if (!_form.IsValid)
+            {
+                return;
+            }
+        }
+
+        _error = null;
+        _busy = true;
+        StateHasChanged();
+        try
+        {
+            await Recovery.RecoverAsync(_email, _words, _password);
+            _words = _password = string.Empty;
+            _done = true;
+        }
+        catch (AuthException exception)
+        {
+            _error = $"AuthError_{exception.Message}";
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Security.Cryptography.CryptographicException)
+        {
+            _error = $"AuthError_{AuthErrors.Failed}";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

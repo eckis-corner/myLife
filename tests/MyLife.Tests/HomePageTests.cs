@@ -43,17 +43,6 @@ public sealed class HomePageTests : BunitContext
             Assert.Contains("Der Server ist nicht erreichbar", page.Markup, StringComparison.Ordinal));
     }
 
-    [Fact]
-    public void RedirectsToSetupWhenInstanceIsNotSetUp()
-    {
-        UseServer(HttpStatusCode.OK, new AppInfoDto("1.2.3", 1), setupRequired: true);
-        var navigation = Services.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
-
-        Render<Home>();
-
-        Assert.EndsWith("/setup", navigation.Uri, StringComparison.Ordinal);
-    }
-
     private void UseServer(HttpStatusCode status, AppInfoDto? body, bool setupRequired = false)
     {
         var http = new HttpClient(new StubHandler(status, body, setupRequired)) { BaseAddress = new Uri("http://localhost/") };

@@ -1,0 +1,208 @@
+@page "/account/security"
+@attribute [Authorize]
+@inject IStringLocalizer<SharedResource> L
+@inject SessionService Session
+@inject AuthClient Api
+@inject WebAuthnService WebAuthn
+@inject ISnackbar Snackbar
+@inject IDialogService Dialogs
+
+<PageTitle>@L["AppName"] – @L["NavSecurity"]</PageTitle>
+
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["NavSecurity"]</MudText>
+
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h6" HtmlTag="h2">@L["SecurityPasswordTitle"]</MudText>
+                    <MudText Typo="Typo.body2">@L["SecurityPasswordText"]</MudText>
+                    <MudForm @ref="_passwordForm" SuppressImplicitSubmission>
+                        <MudStack Spacing="3">
+                            <MudTextField T="string" @bind-Value="_currentPassword" Label="@L["SecurityCurrentPassword"]" Variant="Variant.Outlined"
+                                          InputType="InputType.Password" Required RequiredError="@L["LoginPasswordRequired"]"
+                                          UserAttributes="@CurrentPasswordAttributes" />
+                            <NewPasswordFields @ref="_newPasswordFields" @bind-Password="_newPassword" Label="@L["RecoverNewPassword"]" />
+                        </MudStack>
+                    </MudForm>
+                    @if (_passwordError is not null)
+                    {
+                        <MudAlert Severity="Severity.Error" Dense>@L[_passwordError]</MudAlert>
+                    }
+                    <MudStack Row Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="ChangePasswordAsync"
+                                   StartIcon="@Icons.Material.Filled.Save" data-testid="change-password">@L["SecurityChangePassword"]</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.h6" HtmlTag="h2">@L["SecurityPasskeysTitle"]</MudText>
+                    <MudText Typo="Typo.body2">@L["SecurityPasskeysText"]</MudText>
+
+                    @if (_passkeys is null)
+                    {
+                        <MudProgressLinear Indeterminate />
+                    }
+                    else if (_passkeys.Count == 0)
+                    {
+                        <MudText Typo="Typo.body2"><i>@L["SecurityNoPasskeys"]</i></MudText>
+                    }
+                    else
+                    {
+                        <MudTable Items="_passkeys" Hover Striped Dense="false" Elevation="0">
+                            <HeaderContent>
+                                <MudTh>@L["SecurityPasskeyName"]</MudTh>
+                                <MudTh>@L["SecurityPasskeyCreated"]</MudTh>
+                                <MudTh>@L["SecurityPasskeyLastUsed"]</MudTh>
+                                <MudTh />
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="@L["SecurityPasskeyName"]">@context.Name</MudTd>
+                                <MudTd DataLabel="@L["SecurityPasskeyCreated"]">@context.CreatedAt.ToLocalTime().ToString("d")</MudTd>
+                                <MudTd DataLabel="@L["SecurityPasskeyLastUsed"]">@(context.LastUsedAt?.ToLocalTime().ToString("g") ?? "–")</MudTd>
+                                <MudTd>
+                                    <MudTooltip Text="@L["Delete"]">
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                                       aria-label="@L["Delete"]" Disabled="_busy" OnClick="() => DeletePasskeyAsync(context)" />
+                                    </MudTooltip>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    }
+
+                    <MudStack Row AlignItems="AlignItems.Start" Wrap="Wrap.Wrap">
+                        <MudTextField T="string" @bind-Value="_passkeyName" Label="@L["SecurityPasskeyName"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                      MaxLength="100" Placeholder="@L["SecurityPasskeyNamePlaceholder"]" Style="min-width: 200px; flex: 1;" />
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Fingerprint" Class="mt-1"
+                                   Disabled="@(_busy || string.IsNullOrWhiteSpace(_passkeyName))" OnClick="AddPasskeyAsync">@L["SecurityAddPasskey"]</MudButton>
+                    </MudStack>
+                    @if (_passkeyError is not null)
+                    {
+                        <MudAlert Severity="Severity.Error" Dense>@L[_passkeyError]</MudAlert>
+                    }
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudStack>
+
+@code {
+    private static readonly Dictionary<string, object> CurrentPasswordAttributes = new() { ["autocomplete"] = "current-password", ["data-testid"] = "current-password" };
+    private MudForm? _passwordForm;
+    private NewPasswordFields? _newPasswordFields;
+    private string _currentPassword = string.Empty;
+    private string _newPassword = string.Empty;
+    private string? _passwordError;
+    private List<PasskeyDto>? _passkeys;
+    private string _passkeyName = string.Empty;
+    private string? _passkeyError;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync() => await LoadPasskeysAsync();
+
+    private async Task LoadPasskeysAsync()
+    {
+        try
+        {
+            _passkeys = [.. await Api.GetPasskeysAsync()];
+        }
+        catch (HttpRequestException)
+        {
+            _passkeys = [];
+            _passkeyError = $"AuthError_{AuthErrors.Failed}";
+        }
+    }
+
+    private async Task ChangePasswordAsync()
+    {
+        if (_passwordForm is not null)
+        {
+            await _passwordForm.ValidateAsync();
+            if (!_passwordForm.IsValid)
+            {
+                return;
+            }
+        }
+
+        _passwordError = null;
+        _busy = true;
+        try
+        {
+            await Session.ChangePasswordAsync(_currentPassword, _newPassword);
+            _currentPassword = _newPassword = string.Empty;
+            _newPasswordFields?.Reset();
+            await _passwordForm!.ResetAsync();
+            Snackbar.Add(L["SecurityPasswordChanged"], Severity.Success);
+        }
+        catch (AuthException exception)
+        {
+            _passwordError = $"AuthError_{exception.Message}";
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Security.Cryptography.CryptographicException)
+        {
+            _passwordError = $"AuthError_{AuthErrors.Failed}";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task AddPasskeyAsync()
+    {
+        _passkeyError = null;
+        _busy = true;
+        try
+        {
+            var options = await Api.PasskeyRegistrationOptionsAsync();
+            var attestation = await WebAuthn.CreateAsync(options.OptionsJson);
+            await Api.RegisterPasskeyAsync(_passkeyName.Trim(), options.OptionsToken, attestation);
+            _passkeyName = string.Empty;
+            await LoadPasskeysAsync();
+            Snackbar.Add(L["SecurityPasskeyAdded"], Severity.Success);
+        }
+        catch (AuthException exception)
+        {
+            _passkeyError = $"AuthError_{exception.Message}";
+        }
+        catch (HttpRequestException)
+        {
+            _passkeyError = $"AuthError_{AuthErrors.Failed}";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task DeletePasskeyAsync(PasskeyDto passkey)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            L["SecurityDeletePasskeyTitle"], L["SecurityDeletePasskeyText", passkey.Name], yesText: L["Delete"], cancelText: L["Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            await Api.DeletePasskeyAsync(passkey.Id);
+            await LoadPasskeysAsync();
+            Snackbar.Add(L["SecurityPasskeyDeleted"], Severity.Success);
+        }
+        catch (Exception exception) when (exception is AuthException or HttpRequestException)
+        {
+            _passkeyError = $"AuthError_{AuthErrors.Failed}";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

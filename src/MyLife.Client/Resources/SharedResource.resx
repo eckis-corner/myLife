@@ -7,10 +7,25 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <data name="AppName" xml:space="preserve"><value>myLife</value></data>
   <data name="AppTagline" xml:space="preserve"><value>Dein digitaler Notfallordner</value></data>
+  <data name="AuthError_auth-crypto-failed" xml:space="preserve"><value>Die Schlüssel konnten im Browser nicht verarbeitet werden.</value></data>
+  <data name="AuthError_auth-expired" xml:space="preserve"><value>Die Anmeldung hat zu lange gedauert. Bitte beginne von vorn.</value></data>
+  <data name="AuthError_auth-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
+  <data name="AuthError_auth-invalid-code" xml:space="preserve"><value>Der Code stimmt nicht oder wurde schon verwendet. Bitte warte auf den nächsten Code.</value></data>
+  <data name="AuthError_auth-invalid-credentials" xml:space="preserve"><value>E-Mail-Adresse oder Master-Passwort stimmen nicht.</value></data>
+  <data name="AuthError_auth-invalid-input" xml:space="preserve"><value>Einige Angaben sind ungültig.</value></data>
+  <data name="AuthError_auth-invalid-recovery-words" xml:space="preserve"><value>Die Wörter ergeben keinen gültigen Wiederherstellungsschlüssel. Bitte prüfe Reihenfolge und Schreibweise.</value></data>
+  <data name="AuthError_auth-locked" xml:space="preserve"><value>Zu viele Fehlversuche. Das Konto ist für 15 Minuten gesperrt.</value></data>
+  <data name="AuthError_auth-passkey-cancelled" xml:space="preserve"><value>Der Passkey wurde nicht verwendet oder der Vorgang abgebrochen.</value></data>
+  <data name="AuthError_auth-passkey-failed" xml:space="preserve"><value>Der Passkey konnte nicht geprüft werden.</value></data>
+  <data name="AuthError_auth-passkey-unsupported" xml:space="preserve"><value>Dieser Browser unterstützt keine Passkeys.</value></data>
+  <data name="AuthError_auth-rate-limited" xml:space="preserve"><value>Zu viele Anfragen. Bitte warte eine Minute.</value></data>
+  <data name="AuthError_auth-wrong-password" xml:space="preserve"><value>Das Master-Passwort stimmt nicht.</value></data>
   <data name="BackToHome" xml:space="preserve"><value>Zur Übersicht</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
   <data name="ErrorUnhandled" xml:space="preserve"><value>Ein unerwarteter Fehler ist aufgetreten.</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>Hier entsteht dein digitaler Notfallordner: Versicherungen, Konten, Verträge, Urkunden und Wünsche an einem sicheren Ort. Alles wird in deinem Browser verschlüsselt, sodass nur du und im Ernstfall deine Vertrauenspersonen die Daten lesen können.</value></data>
-  <data name="HomeNextStepsText" xml:space="preserve"><value>Als Nächstes folgen die Anmeldung mit zweitem Faktor und der verschlüsselte Tresor.</value></data>
+  <data name="HomeNextStepsText" xml:space="preserve"><value>Als Nächstes folgen die Objekttypen und der verschlüsselte Tresor.</value></data>
   <data name="HomeNextStepsTitle" xml:space="preserve"><value>Wie geht es weiter?</value></data>
   <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Verschlüsselungsformat</value></data>
   <data name="HomeStatusReachable" xml:space="preserve"><value>Server erreichbar</value></data>
@@ -22,7 +37,20 @@
   <data name="LanguageName_de" xml:space="preserve"><value>Deutsch</value></data>
   <data name="LanguageName_en" xml:space="preserve"><value>English</value></data>
   <data name="Loading" xml:space="preserve"><value>Wird geladen …</value></data>
+  <data name="LoginChecking" xml:space="preserve"><value>Passwort wird geprüft …</value></data>
+  <data name="LoginConfirm" xml:space="preserve"><value>Bestätigen</value></data>
+  <data name="LoginForgotPassword" xml:space="preserve"><value>Passwort vergessen?</value></data>
+  <data name="LoginInfoExpired" xml:space="preserve"><value>Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.</value></data>
+  <data name="LoginInfoTimeout" xml:space="preserve"><value>Du wurdest nach längerer Inaktivität abgemeldet. Die Schlüssel wurden aus dem Speicher entfernt.</value></data>
+  <data name="LoginOpening" xml:space="preserve"><value>Tresor wird geöffnet …</value></data>
+  <data name="LoginPasswordRequired" xml:space="preserve"><value>Bitte das Master-Passwort eingeben.</value></data>
+  <data name="LoginSecondFactorText" xml:space="preserve"><value>Bestätige die Anmeldung mit dem Code aus deiner Authenticator-App oder mit einem Passkey.</value></data>
+  <data name="LoginSubmit" xml:space="preserve"><value>Anmelden</value></data>
+  <data name="LoginTitle" xml:space="preserve"><value>Anmelden</value></data>
+  <data name="LoginWithPasskey" xml:space="preserve"><value>Mit Passkey anmelden</value></data>
+  <data name="Logout" xml:space="preserve"><value>Abmelden</value></data>
   <data name="NavHome" xml:space="preserve"><value>Übersicht</value></data>
+  <data name="NavSecurity" xml:space="preserve"><value>Sicherheit</value></data>
   <data name="NotFoundText" xml:space="preserve"><value>Die aufgerufene Seite gibt es nicht.</value></data>
   <data name="NotFoundTitle" xml:space="preserve"><value>Seite nicht gefunden</value></data>
   <data name="NotInVaultAcknowledge" xml:space="preserve"><value>Verstanden</value></data>
@@ -34,6 +62,14 @@
   <data name="NotInVaultTitle" xml:space="preserve"><value>Was gehört nicht in myLife?</value></data>
   <data name="NotInVaultWhy" xml:space="preserve"><value>myLife warnt dich, wenn eine Eingabe danach aussieht.</value></data>
   <data name="OpenMenu" xml:space="preserve"><value>Menü öffnen</value></data>
+  <data name="RecoverBackToLogin" xml:space="preserve"><value>Zur Anmeldung</value></data>
+  <data name="RecoverDone" xml:space="preserve"><value>Dein neues Master-Passwort ist gesetzt. Melde dich jetzt damit und mit deinem zweiten Faktor an.</value></data>
+  <data name="RecoverNewPassword" xml:space="preserve"><value>Neues Master-Passwort</value></data>
+  <data name="RecoverSubmit" xml:space="preserve"><value>Neues Passwort setzen</value></data>
+  <data name="RecoverText" xml:space="preserve"><value>Mit den 24 Wörtern aus deinem Wiederherstellungs-Kit vergibst du ein neues Master-Passwort. Dein Tresor bleibt dabei unverändert. Zur Anmeldung brauchst du danach weiterhin deinen zweiten Faktor.</value></data>
+  <data name="RecoverTitle" xml:space="preserve"><value>Zugang wiederherstellen</value></data>
+  <data name="RecoverWordsHelp" xml:space="preserve"><value>Durch Leerzeichen oder Zeilen getrennt. Die ersten vier Buchstaben jedes Worts genügen.</value></data>
+  <data name="RecoverWordsRequired" xml:space="preserve"><value>Bitte die 24 Wörter eingeben.</value></data>
   <data name="RecoveryKitAccount" xml:space="preserve"><value>Konto</value></data>
   <data name="RecoveryKitCreated" xml:space="preserve"><value>Erstellt am</value></data>
   <data name="RecoveryKitInstance" xml:space="preserve"><value>Instanz</value></data>
@@ -42,6 +78,23 @@
   <data name="RecoveryKitWarning" xml:space="preserve"><value>Wer diese Wörter kennt, kann deinen Tresor öffnen. Nicht fotografieren und nicht digital speichern.</value></data>
   <data name="RecoveryKitWords" xml:space="preserve"><value>Wiederherstellungswörter</value></data>
   <data name="Reload" xml:space="preserve"><value>Neu laden</value></data>
+  <data name="SecurityAddPasskey" xml:space="preserve"><value>Passkey hinzufügen</value></data>
+  <data name="SecurityChangePassword" xml:space="preserve"><value>Passwort ändern</value></data>
+  <data name="SecurityCurrentPassword" xml:space="preserve"><value>Aktuelles Master-Passwort</value></data>
+  <data name="SecurityDeletePasskeyText" xml:space="preserve"><value>Soll der Passkey „{0}“ gelöscht werden? Mit ihm ist danach keine Anmeldung mehr möglich.</value></data>
+  <data name="SecurityDeletePasskeyTitle" xml:space="preserve"><value>Passkey löschen</value></data>
+  <data name="SecurityNoPasskeys" xml:space="preserve"><value>Noch kein Passkey eingerichtet.</value></data>
+  <data name="SecurityPasskeyAdded" xml:space="preserve"><value>Der Passkey wurde hinzugefügt.</value></data>
+  <data name="SecurityPasskeyCreated" xml:space="preserve"><value>Eingerichtet</value></data>
+  <data name="SecurityPasskeyDeleted" xml:space="preserve"><value>Der Passkey wurde gelöscht.</value></data>
+  <data name="SecurityPasskeyLastUsed" xml:space="preserve"><value>Zuletzt verwendet</value></data>
+  <data name="SecurityPasskeyName" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="SecurityPasskeyNamePlaceholder" xml:space="preserve"><value>z. B. Laptop oder Smartphone</value></data>
+  <data name="SecurityPasskeysText" xml:space="preserve"><value>Ein Passkey ersetzt bei der Anmeldung den Code aus der Authenticator-App, etwa mit Fingerabdruck, Gesicht oder einem Sicherheitsschlüssel. Das Master-Passwort brauchst du weiterhin.</value></data>
+  <data name="SecurityPasskeysTitle" xml:space="preserve"><value>Passkeys</value></data>
+  <data name="SecurityPasswordChanged" xml:space="preserve"><value>Das Master-Passwort wurde geändert.</value></data>
+  <data name="SecurityPasswordText" xml:space="preserve"><value>Dein Tresor wird dabei nur neu verpackt, an den Daten ändert sich nichts. Andere angemeldete Geräte werden abgemeldet.</value></data>
+  <data name="SecurityPasswordTitle" xml:space="preserve"><value>Master-Passwort ändern</value></data>
   <data name="SetupAccountText" xml:space="preserve"><value>Als Administrator verwaltest du Einstellungen und Benutzer. In fremde Tresore kannst du trotzdem nicht hineinsehen.</value></data>
   <data name="SetupAlreadyDone" xml:space="preserve"><value>myLife ist bereits eingerichtet.</value></data>
   <data name="SetupBack" xml:space="preserve"><value>Zurück</value></data>
@@ -96,9 +149,13 @@
   <data name="SetupTokenRequired" xml:space="preserve"><value>Bitte den Einrichtungscode eingeben.</value></data>
   <data name="SetupTwoFactorCode" xml:space="preserve"><value>6-stelliger Code</value></data>
   <data name="SetupTwoFactorCodeRequired" xml:space="preserve"><value>Bitte den 6-stelligen Code eingeben.</value></data>
-  <data name="SetupTwoFactorPasskeyLater" xml:space="preserve"><value>Einen Passkey kannst du nach der ersten Anmeldung zusätzlich einrichten.</value></data>
+  <data name="SetupTwoFactorPasskeyLater" xml:space="preserve"><value>Einen Passkey kannst du nach der ersten Anmeldung unter „Sicherheit“ zusätzlich einrichten.</value></data>
   <data name="SetupTwoFactorSecret" xml:space="preserve"><value>Schlüssel zum manuellen Eingeben</value></data>
   <data name="SetupTwoFactorText" xml:space="preserve"><value>Zur Anmeldung brauchst du zusätzlich einen Code aus einer Authenticator-App, zum Beispiel Aegis, Google Authenticator, Microsoft Authenticator oder deinem Passwortmanager. Scanne den QR-Code und gib den angezeigten Code ein.</value></data>
   <data name="SetupWelcomeText" xml:space="preserve"><value>Diese Instanz ist noch nicht eingerichtet. Du legst jetzt das erste Konto an. Es wird Administrator und bekommt einen eigenen Tresor. Alle Schlüssel entstehen in deinem Browser, der Server sieht nur verschlüsselte Daten.</value></data>
   <data name="ToggleDarkMode" xml:space="preserve"><value>Hell/Dunkel umschalten</value></data>
+  <data name="UnlockSubmit" xml:space="preserve"><value>Entsperren</value></data>
+  <data name="UnlockText" xml:space="preserve"><value>Hallo {0}, du bist noch angemeldet. Zum Entsperren des Tresors brauchen wir dein Master-Passwort.</value></data>
+  <data name="UnlockTitle" xml:space="preserve"><value>Tresor entsperren</value></data>
+  <data name="UserMenu" xml:space="preserve"><value>Konto</value></data>
 </root>

@@ -5,6 +5,7 @@
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<IdleMonitor />
 
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -17,6 +18,7 @@
         <MudText Typo="Typo.h6">@L["AppName"]</MudText>
         <MudSpacer />
         <LanguageMenu />
+        <UserMenu />
         <MudTooltip Text="@L["ToggleDarkMode"]">
             <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
                            Color="Color.Inherit"
@@ -26,9 +28,14 @@
     </MudAppBar>
 
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="1" Variant="DrawerVariant.Responsive">
-        <MudNavMenu>
-            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
-        </MudNavMenu>
+        <AuthorizeView>
+            <Authorized>
+                <MudNavMenu>
+                    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
+                    <MudNavLink Href="account/security" Icon="@Icons.Material.Outlined.Security">@L["NavSecurity"]</MudNavLink>
+                </MudNavMenu>
+            </Authorized>
+        </AuthorizeView>
     </MudDrawer>
 
     <MudMainContent>

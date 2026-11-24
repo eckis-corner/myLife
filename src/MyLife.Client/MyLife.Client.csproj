@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Localization" />
     <PackageReference Include="MudBlazor" />
     <PackageReference Include="QRCoder" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyLife.Shared\MyLife.Shared.csproj" />

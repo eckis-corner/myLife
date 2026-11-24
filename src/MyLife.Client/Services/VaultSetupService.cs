@@ -47,6 +47,7 @@ public sealed class VaultSetupService(IMyLifeCrypto crypto)
                 AuthHash = authHash,
                 WrappedVmk = vmk.WrappedKeys[0],
                 WrappedVmkByRecovery = vmk.WrappedKeys[1],
+                RecoveryAuthHash = await crypto.DeriveRecoveryAuthHashAsync(recoveryKey),
                 PublicEncryptionKey = encryption.PublicKey,
                 WrappedEncryptionPrivateKey = encryption.WrappedPrivateKey,
                 PublicSigningKey = signing.PublicKey,

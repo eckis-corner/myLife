@@ -1,4 +1,3 @@
-using System.Net.Mail;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -6,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MyLife.Crypto;
 using MyLife.Server.Data;
 using MyLife.Server.Infrastructure;
+using MyLife.Server.Infrastructure.Auth;
 using MyLife.Shared;
 using MyLife.Shared.Setup;
 
@@ -104,7 +104,7 @@ internal static partial class SetupEndpoints
         var user = new User
         {
             Id = Guid.CreateVersion7(now),
-            Email = NormalizeEmail(request.Email),
+            Email = KeyMaterialValidation.NormalizeEmail(request.Email),
             DisplayName = request.DisplayName.Trim(),
             IsAdmin = true,
             Status = UserStatus.Active,
@@ -116,6 +116,8 @@ internal static partial class SetupEndpoints
             KdfParallelism = request.KdfParallelism,
             WrappedVmk = request.WrappedVmk,
             WrappedVmkByRecovery = request.WrappedVmkByRecovery,
+            RecoveryAuthHash = await AuthHashHasher.HashAsync(request.RecoveryAuthHash),
+            SecurityStamp = SecurityStamps.New(),
             PublicEncryptionKey = request.PublicEncryptionKey,
             WrappedEncryptionPrivateKey = request.WrappedEncryptionPrivateKey,
             PublicSigningKey = request.PublicSigningKey,
@@ -162,8 +164,7 @@ internal static partial class SetupEndpoints
     private static Task<bool> AnyUserAsync(MyLifeDbContext db, CancellationToken cancellationToken) =>
         db.Users.IgnoreQueryFilters().AnyAsync(cancellationToken);
 
-    private static ProblemHttpResult Problem(int status, string code) =>
-        TypedResults.Problem(statusCode: status, title: code, type: $"urn:mylife:problem:{code}");
+    private static ProblemHttpResult Problem(int status, string code) => ApiProblems.Create(status, code);
 
     private static string? Unprotect(IDataProtectionProvider protection, string purpose, string? value)
     {
@@ -182,8 +183,6 @@ internal static partial class SetupEndpoints
         }
     }
 
-    internal static string NormalizeEmail(string email) => email.Trim().ToLowerInvariant();
-
     /// <summary>Prüft Eingaben und den Aufbau des Schlüsselmaterials. Inhalte kann der Server nicht prüfen, nur die Form.</summary>
     internal static Dictionary<string, string[]> Validate(SetupCompleteRequest request)
     {
@@ -196,56 +195,23 @@ internal static partial class SetupEndpoints
             }
         }
 
-        var email = request.Email?.Trim() ?? string.Empty;
-        Check(email.Length <= SetupLimits.MaxEmailLength && MailAddress.TryCreate(email, out var address) && address.Address == email && email.Contains('.', StringComparison.Ordinal),
-            nameof(request.Email), "invalid-email");
+        Check(KeyMaterialValidation.IsEmail(request.Email), nameof(request.Email), "invalid-email");
         var displayName = request.DisplayName?.Trim() ?? string.Empty;
         Check(displayName.Length is > 0 and <= SetupLimits.MaxDisplayNameLength, nameof(request.DisplayName), "invalid-display-name");
         Check(SupportedCultures.All.Contains(request.Language), nameof(request.Language), "invalid-language");
 
-        Check(request.KdfSalt is { Length: >= CryptoFormat.MinSaltBytes and <= CryptoFormat.MaxSaltBytes }, nameof(request.KdfSalt), "invalid-salt");
+        Check(KeyMaterialValidation.IsSalt(request.KdfSalt), nameof(request.KdfSalt), "invalid-salt");
         Check(new Argon2Parameters(request.KdfMemoryKiB, request.KdfIterations, request.KdfParallelism).IsValid, nameof(request.KdfMemoryKiB), "invalid-kdf-parameters");
-        Check(request.AuthHash is { Length: CryptoFormat.KeyLength }, nameof(request.AuthHash), "invalid-auth-hash");
+        Check(KeyMaterialValidation.IsAuthHash(request.AuthHash), nameof(request.AuthHash), "invalid-auth-hash");
+        Check(KeyMaterialValidation.IsAuthHash(request.RecoveryAuthHash), nameof(request.RecoveryAuthHash), "invalid-auth-hash");
 
-        Check(IsWrappedSecretKey(request.WrappedVmk), nameof(request.WrappedVmk), "invalid-wrapped-key");
-        Check(IsWrappedSecretKey(request.WrappedVmkByRecovery), nameof(request.WrappedVmkByRecovery), "invalid-wrapped-key");
-        Check(IsWrappedPrivateKey(request.WrappedEncryptionPrivateKey, CryptoKind.WrappedEcdhKey), nameof(request.WrappedEncryptionPrivateKey), "invalid-wrapped-key");
-        Check(IsWrappedPrivateKey(request.WrappedSigningPrivateKey, CryptoKind.WrappedEcdsaKey), nameof(request.WrappedSigningPrivateKey), "invalid-wrapped-key");
-        Check(IsPublicKey(request.PublicEncryptionKey), nameof(request.PublicEncryptionKey), "invalid-public-key");
-        Check(IsPublicKey(request.PublicSigningKey), nameof(request.PublicSigningKey), "invalid-public-key");
+        Check(KeyMaterialValidation.IsWrappedSecretKey(request.WrappedVmk), nameof(request.WrappedVmk), "invalid-wrapped-key");
+        Check(KeyMaterialValidation.IsWrappedSecretKey(request.WrappedVmkByRecovery), nameof(request.WrappedVmkByRecovery), "invalid-wrapped-key");
+        Check(KeyMaterialValidation.IsWrappedPrivateKey(request.WrappedEncryptionPrivateKey, CryptoKind.WrappedEcdhKey), nameof(request.WrappedEncryptionPrivateKey), "invalid-wrapped-key");
+        Check(KeyMaterialValidation.IsWrappedPrivateKey(request.WrappedSigningPrivateKey, CryptoKind.WrappedEcdsaKey), nameof(request.WrappedSigningPrivateKey), "invalid-wrapped-key");
+        Check(KeyMaterialValidation.IsPublicKey(request.PublicEncryptionKey), nameof(request.PublicEncryptionKey), "invalid-public-key");
+        Check(KeyMaterialValidation.IsPublicKey(request.PublicSigningKey), nameof(request.PublicSigningKey), "invalid-public-key");
         return errors;
-    }
-
-    private static bool HasHeader(byte[]? data, CryptoKind kind) =>
-        data is { Length: > 2 } && data[0] == CryptoFormat.CurrentVersion && data[1] == (byte)kind;
-
-    private static bool IsWrappedSecretKey(byte[]? data) =>
-        HasHeader(data, CryptoKind.WrappedKey) && data!.Length == 2 + CryptoFormat.NonceLength + CryptoFormat.KeyLength + CryptoFormat.TagLength;
-
-    // PKCS#8 für P-256 ist je nach Implementierung etwa 67 bis 138 Byte lang.
-    private static bool IsWrappedPrivateKey(byte[]? data, CryptoKind kind) =>
-        HasHeader(data, kind) && data!.Length is >= 2 + CryptoFormat.NonceLength + CryptoFormat.TagLength + 60 and <= 2 + CryptoFormat.NonceLength + CryptoFormat.TagLength + 200;
-
-    private static bool IsPublicKey(byte[]? key)
-    {
-        if (key is not { Length: CryptoFormat.PublicKeyLength } || key[0] != 0x04)
-        {
-            return false;
-        }
-
-        try
-        {
-            using var ecdh = ECDiffieHellman.Create(new ECParameters
-            {
-                Curve = ECCurve.NamedCurves.nistP256,
-                Q = new ECPoint { X = key[1..33], Y = key[33..65] },
-            });
-            return true;
-        }
-        catch (CryptographicException)
-        {
-            return false;
-        }
     }
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Einrichtung abgeschlossen, erster Administrator {UserId} angelegt")]

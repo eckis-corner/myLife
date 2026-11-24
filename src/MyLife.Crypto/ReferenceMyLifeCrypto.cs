@@ -72,6 +72,16 @@ public sealed class ReferenceMyLifeCrypto : IMyLifeCrypto
         return Task.FromResult(Store(KeyEntry.Secret(KeyType.Wrap, key)));
     }
 
+    public Task<byte[]> DeriveRecoveryAuthHashAsync(byte[] recoveryKey)
+    {
+        if (recoveryKey is not { Length: CryptoFormat.KeyLength })
+        {
+            throw new CryptographicException("mylife:invalid-recovery-key");
+        }
+
+        return Task.FromResult(Hkdf(recoveryKey, CryptoFormat.InfoRecoveryAuth));
+    }
+
     public Task<CreatedKey> CreateKeyAsync(IReadOnlyList<KeyWrapping> wrappings)
     {
         if (wrappings is not { Count: > 0 })

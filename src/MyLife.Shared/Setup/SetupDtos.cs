@@ -38,6 +38,9 @@ public sealed record SetupCompleteRequest
 
     public required byte[] WrappedVmk { get; init; }
     public required byte[] WrappedVmkByRecovery { get; init; }
+
+    /// <summary>HKDF(Recovery-Key, "mylife/recovery-auth"); der Server speichert davon nur einen eigenen Argon2id-Hash.</summary>
+    public required byte[] RecoveryAuthHash { get; init; }
     public required byte[] PublicEncryptionKey { get; init; }
     public required byte[] WrappedEncryptionPrivateKey { get; init; }
     public required byte[] PublicSigningKey { get; init; }

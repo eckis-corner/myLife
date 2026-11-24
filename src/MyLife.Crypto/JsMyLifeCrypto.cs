@@ -34,6 +34,9 @@ public sealed class JsMyLifeCrypto(IJSRuntime js) : IMyLifeCrypto
     public async Task<CryptoKeyHandle> ImportRecoveryKeyAsync(byte[] recoveryKey) =>
         new(await CallAsync<string>(JsFunctions.ImportRecoveryKey, recoveryKey));
 
+    public Task<byte[]> DeriveRecoveryAuthHashAsync(byte[] recoveryKey) =>
+        CallAsync<byte[]>(JsFunctions.DeriveRecoveryAuthHash, recoveryKey);
+
     public async Task<CreatedKey> CreateKeyAsync(IReadOnlyList<KeyWrapping> wrappings)
     {
         ArgumentNullException.ThrowIfNull(wrappings);
@@ -184,6 +187,7 @@ internal static class JsFunctions
     public const string DeriveAuthHash = "deriveAuthHash";
     public const string DeriveKeyEncryptionKey = "deriveKeyEncryptionKey";
     public const string ImportRecoveryKey = "importRecoveryKey";
+    public const string DeriveRecoveryAuthHash = "deriveRecoveryAuthHash";
     public const string CreateKey = "createKey";
     public const string UnwrapKey = "unwrapKey";
     public const string RewrapKey = "rewrapKey";

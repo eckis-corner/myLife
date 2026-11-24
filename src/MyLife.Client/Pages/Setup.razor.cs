@@ -31,7 +31,6 @@ public sealed partial class Setup
         "SetupStepRecovery", "SetupStepTwoFactor", "SetupStepFinish",
     ];
 
-    private static readonly Dictionary<string, object> NewPasswordAttributes = new() { ["autocomplete"] = "new-password" };
     private static readonly Dictionary<string, object> NoAutofillAttributes = new() { ["autocomplete"] = "off", ["spellcheck"] = "false" };
     private static readonly Dictionary<string, object> OneTimeCodeAttributes = new() { ["autocomplete"] = "one-time-code" };
 
@@ -50,8 +49,6 @@ public sealed partial class Setup
     private string _language = CultureService.Current;
     private bool _notInVaultAcknowledged;
     private string _password = string.Empty;
-    private string _passwordRepeat = string.Empty;
-    private bool _showPassword;
     private bool _passwordAcknowledged;
     private byte[]? _recoveryKey;
     private IReadOnlyList<string> _words = [];
@@ -80,30 +77,6 @@ public sealed partial class Setup
 
     private bool RecoveryWordsConfirmed =>
         _confirmPositions.Length == RecoveryChecks && Enumerable.Range(0, RecoveryChecks).All(i => IsRecoveryWordCorrect(i, _confirmInputs[i]));
-
-    private int PasswordScore
-    {
-        get
-        {
-            var password = _password ?? string.Empty;
-            if (password.Length < SetupLimits.MinPasswordLength)
-            {
-                return password.Length == 0 ? 0 : 1;
-            }
-
-            var classes = new[] { password.Any(char.IsLower), password.Any(char.IsUpper), password.Any(char.IsDigit), password.Any(c => !char.IsLetterOrDigit(c)) }.Count(x => x);
-            return password.Length >= 20 || (password.Length >= 16 && classes >= 3) ? 3 : 2;
-        }
-    }
-
-    private Color PasswordColor => PasswordScore switch { 3 => Color.Success, 2 => Color.Warning, _ => Color.Error };
-
-    private string PasswordStrengthKey => PasswordScore switch
-    {
-        3 => "SetupPasswordStrengthStrong",
-        2 => "SetupPasswordStrengthFair",
-        _ => "SetupPasswordStrengthWeak",
-    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -250,7 +223,7 @@ public sealed partial class Setup
     /// <summary>Passwort, Recovery-Key und Wörter nach dem Anlegen aus dem Speicher der Seite entfernen.</summary>
     private void ForgetSecrets()
     {
-        _password = _passwordRepeat = string.Empty;
+        _password = string.Empty;
         if (_recoveryKey is not null)
         {
             CryptographicOperations.ZeroMemory(_recoveryKey);
@@ -274,12 +247,6 @@ public sealed partial class Setup
                     && address.Address == email && email.Contains('.', StringComparison.Ordinal);
         return valid ? null : L["SetupEmailInvalid"].Value;
     }
-
-    private string? ValidatePassword(string value) =>
-        (value?.Length ?? 0) < SetupLimits.MinPasswordLength ? L["SetupPasswordTooShort", SetupLimits.MinPasswordLength].Value : null;
-
-    private string? ValidatePasswordRepeat(string value) =>
-        value == _password ? null : L["SetupPasswordMismatch"].Value;
 
     private bool IsRecoveryWordCorrect(int slot, string? value) =>
         !string.IsNullOrWhiteSpace(value) && Bip39.IndexOf(value) is var index and >= 0 && Bip39.Words[index] == _words[_confirmPositions[slot]];

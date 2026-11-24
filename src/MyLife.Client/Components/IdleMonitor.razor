@@ -1,0 +1,63 @@
+@* Automatische Abmeldung nach Inaktivität (Architektur 4.4): verwirft die Schlüssel und beendet die Sitzung.
+   Solange der Nutzer aktiv ist, wird die gleitende Sitzung beim Server alle paar Minuten verlängert. *@
+@implements IDisposable
+@inject SessionService Session
+@inject IJSRuntime Js
+@inject NavigationManager Navigation
+
+@code {
+    private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(15);
+    private static readonly TimeSpan RefreshInterval = TimeSpan.FromMinutes(3);
+    private readonly CancellationTokenSource _stop = new();
+    private DateTimeOffset _lastRefresh = DateTimeOffset.UtcNow;
+
+    protected override void OnInitialized() => _ = WatchAsync();
+
+    public void Dispose()
+    {
+        _stop.Cancel();
+        _stop.Dispose();
+    }
+
+    private async Task WatchAsync()
+    {
+        using var timer = new PeriodicTimer(CheckInterval);
+        try
+        {
+            while (await timer.WaitForNextTickAsync(_stop.Token))
+            {
+                await CheckAsync();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Layout wird verworfen.
+        }
+    }
+
+    private async Task CheckAsync()
+    {
+        if (Session.State != SessionState.Unlocked || Session.Session is null)
+        {
+            return;
+        }
+
+        var idle = TimeSpan.FromSeconds(await Js.InvokeAsync<int>("myLife.getIdleSeconds"));
+        if (idle >= TimeSpan.FromMinutes(Session.Session.IdleTimeoutMinutes))
+        {
+            await Session.LogoutAsync("timeout");
+            Navigation.NavigateTo("login");
+            return;
+        }
+
+        if (idle < CheckInterval * 4 && DateTimeOffset.UtcNow - _lastRefresh >= RefreshInterval)
+        {
+            _lastRefresh = DateTimeOffset.UtcNow;
+            if (!await Session.RefreshAsync())
+            {
+                await Session.LogoutAsync("expired");
+                Navigation.NavigateTo("login");
+            }
+        }
+    }
+}

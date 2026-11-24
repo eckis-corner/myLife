@@ -1,8 +1,7 @@
 @page "/"
+@attribute [Authorize]
 @inject IStringLocalizer<SharedResource> L
 @inject AppInfoClient AppInfo
-@inject SetupClient SetupApi
-@inject NavigationManager Navigation
 
 <PageTitle>@L["AppName"] – @L["NavHome"]</PageTitle>
 
@@ -55,12 +54,6 @@
     {
         try
         {
-            if (await SetupApi.IsRequiredAsync())
-            {
-                Navigation.NavigateTo("setup");
-                return;
-            }
-
             _info = await AppInfo.GetAsync();
         }
         catch (HttpRequestException)

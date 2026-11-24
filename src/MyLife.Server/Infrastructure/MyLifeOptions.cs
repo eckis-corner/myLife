@@ -9,4 +9,16 @@ public sealed class MyLifeOptions
 
     /// <summary>Netze, deren X-Forwarded-*-Header angenommen werden (Reverse Proxy). Standard: private Netze.</summary>
     public IList<string> TrustedProxyNetworks { get; set; } = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8", "::1/128"];
+
+    /// <summary>Automatische Abmeldung nach Inaktivität in Minuten (ab M2 vom Administrator einstellbar).</summary>
+    public int IdleTimeoutMinutes { get; set; } = 15;
+
+    /// <summary>Fehlversuche, nach denen ein Konto vorübergehend gesperrt wird.</summary>
+    public int LockoutThreshold { get; set; } = 5;
+
+    /// <summary>Dauer der Sperre nach zu vielen Fehlversuchen in Minuten.</summary>
+    public int LockoutMinutes { get; set; } = 15;
+
+    /// <summary>Anfragen je Minute und IP an Anmeldung und Konto.</summary>
+    public int AuthRequestsPerMinute { get; set; } = 60;
 }

@@ -8,6 +8,8 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<Passkey> Passkeys => Set<Passkey>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -43,12 +45,34 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.WrappedEncryptionPrivateKey).HasColumnName("wrapped_encryption_private_key");
             entity.Property(x => x.PublicSigningKey).HasColumnName("public_signing_key");
             entity.Property(x => x.WrappedSigningPrivateKey).HasColumnName("wrapped_signing_private_key");
+            entity.Property(x => x.RecoveryAuthHash).HasColumnName("recovery_auth_hash").HasMaxLength(200);
             entity.Property(x => x.TotpSecret).HasColumnName("totp_secret");
+            entity.Property(x => x.TotpLastStep).HasColumnName("totp_last_step");
+            entity.Property(x => x.SecurityStamp).HasColumnName("security_stamp").HasMaxLength(64).HasDefaultValue("initial");
+            entity.Property(x => x.FailedLoginCount).HasColumnName("failed_login_count");
+            entity.Property(x => x.LockoutUntil).HasColumnName("lockout_until");
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
             entity.Property(x => x.LastLoginAt).HasColumnName("last_login_at");
             entity.Property(x => x.IsDeleted).HasColumnName("is_deleted");
             entity.Property(x => x.DeletedAt).HasColumnName("deleted_at");
             entity.Property(x => x.Version).IsRowVersion();
+        });
+
+        modelBuilder.Entity<Passkey>(entity =>
+        {
+            entity.ToTable("passkeys");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => x.CredentialId).IsUnique();
+            entity.HasOne(x => x.User).WithMany(x => x.Passkeys).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasQueryFilter(x => !x.User!.IsDeleted);
+            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.UserId).HasColumnName("user_id");
+            entity.Property(x => x.CredentialId).HasColumnName("credential_id");
+            entity.Property(x => x.PublicKey).HasColumnName("public_key");
+            entity.Property(x => x.SignCount).HasColumnName("sign_count");
+            entity.Property(x => x.Name).HasColumnName("name").HasMaxLength(100);
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.LastUsedAt).HasColumnName("last_used_at");
         });
     }
 }

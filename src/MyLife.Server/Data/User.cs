@@ -41,8 +41,23 @@ public sealed class User
 
     public required byte[] WrappedSigningPrivateKey { get; set; }
 
+    /// <summary>Argon2id-Hash (PHC) über den Prüfwert des Recovery-Keys; fehlt bei Konten aus der Zeit vor M1.3.</summary>
+    public string? RecoveryAuthHash { get; set; }
+
     /// <summary>TOTP-Geheimnis, mit ASP.NET Data Protection verschlüsselt.</summary>
     public string? TotpSecret { get; set; }
+
+    /// <summary>Zuletzt angenommener TOTP-Zeitschritt; ein Code gilt nur einmal.</summary>
+    public long? TotpLastStep { get; set; }
+
+    /// <summary>Ändert sich bei Passwortwechsel und Wiederherstellung und macht alle anderen Sitzungen ungültig.</summary>
+    public required string SecurityStamp { get; set; }
+
+    public int FailedLoginCount { get; set; }
+
+    public DateTimeOffset? LockoutUntil { get; set; }
+
+    public List<Passkey> Passkeys { get; } = [];
 
     public DateTimeOffset CreatedAt { get; set; }
 

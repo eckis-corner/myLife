@@ -27,6 +27,8 @@ public sealed record CryptoVectors
     public required Argon2Parameters Argon2 { get; init; }
     public required string AuthHash { get; init; }
     public required string RecoveryKey { get; init; }
+    /// <summary>Seit M1.3; fehlt in vectors-v1.json und wird nur geprüft, wenn vorhanden.</summary>
+    public string? RecoveryAuthHash { get; init; }
     public required string WrappedVmkByKek { get; init; }
     public required string WrappedVmkByRecovery { get; init; }
     public required string WrappedAreaKey { get; init; }
@@ -118,6 +120,7 @@ public sealed record CryptoVectors
             Argon2 = parameters,
             AuthHash = Hex(authHash),
             RecoveryKey = Hex(recoveryKey),
+            RecoveryAuthHash = Hex(await crypto.DeriveRecoveryAuthHashAsync(recoveryKey)),
             WrappedVmkByKek = Hex(vmk.WrappedKeys[0]),
             WrappedVmkByRecovery = Hex(vmk.WrappedKeys[1]),
             WrappedAreaKey = Hex(area.WrappedKeys[0]),
@@ -143,6 +146,10 @@ public sealed record CryptoVectors
         Assert.Equal(AuthHash, Hex(await crypto.DeriveAuthHashAsync(master)));
         var kek = await crypto.DeriveKeyEncryptionKeyAsync(master);
         var recovery = await crypto.ImportRecoveryKeyAsync(Hex(RecoveryKey));
+        if (RecoveryAuthHash is not null)
+        {
+            Assert.Equal(RecoveryAuthHash, Hex(await crypto.DeriveRecoveryAuthHashAsync(Hex(RecoveryKey))));
+        }
 
         foreach (var vmk in new[]
                  {

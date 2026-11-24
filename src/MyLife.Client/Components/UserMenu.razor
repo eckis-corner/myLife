@@ -1,0 +1,24 @@
+@* Konto-Menü in der Kopfzeile: Name, Sicherheit, Abmelden. Nur bei entsperrtem Tresor sichtbar. *@
+@inject IStringLocalizer<SharedResource> L
+@inject SessionService Session
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AriaLabel="@L["UserMenu"]"
+                 AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" data-testid="user-menu">
+            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>@context.User.Identity?.Name</b></MudText>
+            <MudDivider />
+            <MudMenuItem Icon="@Icons.Material.Outlined.Security" Href="account/security">@L["NavSecurity"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="LogoutAsync" data-testid="logout">@L["Logout"]</MudMenuItem>
+        </MudMenu>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private async Task LogoutAsync()
+    {
+        await Session.LogoutAsync();
+        Navigation.NavigateTo("login");
+    }
+}

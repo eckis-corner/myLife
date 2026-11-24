@@ -28,6 +28,7 @@ public static class CryptoFormat
     internal const string InfoAuth = "mylife/auth";
     internal const string InfoKek = "mylife/kek";
     internal const string InfoRecovery = "mylife/recovery";
+    internal const string InfoRecoveryAuth = "mylife/recovery-auth";
     internal const string InfoEcies = "mylife/ecies";
 
     internal static byte[] Header(CryptoKind kind) => [CurrentVersion, (byte)kind];

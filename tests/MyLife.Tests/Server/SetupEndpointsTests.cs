@@ -45,7 +45,7 @@ public sealed class SetupFlowTests(ServerFixture server) : IClassFixture<ServerF
     public async Task FirstUserBecomesAdminAndServerOnlyStoresCiphertext()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = server.CreateClient();
+        using var client = server.CreateApiClient();
         var api = new SetupClient(client);
         var token = SetupTestSupport.Token(server);
 
@@ -104,7 +104,7 @@ public sealed class SetupValidationTests(ServerFixture server) : IClassFixture<S
     public async Task EveryStepNeedsTheSetupToken()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = server.CreateClient();
+        using var client = server.CreateApiClient();
 
         foreach (var (uri, body) in new (string, object)[]
                  {
@@ -122,7 +122,7 @@ public sealed class SetupValidationTests(ServerFixture server) : IClassFixture<S
     public async Task ForgedTotpConfirmationIsRejected()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = server.CreateClient();
+        using var client = server.CreateApiClient();
         await using var crypto = new ReferenceMyLifeCrypto();
         var (request, _, _) = await SetupTestSupport.PrepareAsync(client, SetupTestSupport.Token(server), crypto, cancellationToken);
 
@@ -140,7 +140,7 @@ public sealed class SetupValidationTests(ServerFixture server) : IClassFixture<S
     public async Task MalformedKeyMaterialIsRejected()
     {
         var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = server.CreateClient();
+        using var client = server.CreateApiClient();
         await using var crypto = new ReferenceMyLifeCrypto();
         var (request, _, _) = await SetupTestSupport.PrepareAsync(client, SetupTestSupport.Token(server), crypto, cancellationToken);
         var notOnCurve = new byte[65];

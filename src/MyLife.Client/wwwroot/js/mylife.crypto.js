@@ -33,6 +33,7 @@ const MAX_SALT_BYTES = 64;
 const INFO_AUTH = "mylife/auth";
 const INFO_KEK = "mylife/kek";
 const INFO_RECOVERY = "mylife/recovery";
+const INFO_RECOVERY_AUTH = "mylife/recovery-auth";
 const INFO_ECIES = "mylife/ecies";
 
 /** Untergrenzen schützen vor einem Server, der schwache Parameter unterschiebt; Obergrenzen vor Überlast. */
@@ -258,6 +259,17 @@ export async function importRecoveryKey(recoveryKey) {
     const base = await subtle.importKey("raw", raw, "HKDF", false, ["deriveKey"]);
     const key = await subtle.deriveKey(hkdf(INFO_RECOVERY), base, AES, false, WRAP_USAGES);
     return store(key, KeyType.Wrap);
+}
+
+/**
+ * Prüfwert des Recovery-Keys für den Server: HKDF(Recovery-Key, info "mylife/recovery-auth"), 32 Byte.
+ * Damit beweist der Browser bei der Wiederherstellung, dass er die 24 Wörter kennt, ohne sie preiszugeben.
+ */
+export async function deriveRecoveryAuthHash(recoveryKey) {
+    const raw = bytes(recoveryKey, "recovery-key");
+    if (raw.length !== KEY_LENGTH) fail("invalid-recovery-key");
+    const base = await subtle.importKey("raw", raw, "HKDF", false, ["deriveBits"]);
+    return new Uint8Array(await subtle.deriveBits(hkdf(INFO_RECOVERY_AUTH), base, KEY_LENGTH * 8));
 }
 
 async function wrapSecretKey(extractableKey, wrapper, context) {
