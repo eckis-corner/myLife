@@ -51,6 +51,9 @@
 
     @if (!ReadOnly)
     {
+        @* Die Eingabefelder bleiben immer im DOM: Blazor liest die gewählte Datei erst beim Hochladen über das Element. *@
+        <InputFile id="@_fileInputId" class="mylife-hidden-input" OnChange="Select" data-testid="document-input" />
+        <InputFile id="@_photoInputId" class="mylife-hidden-input" OnChange="Select" accept="image/*" capture="environment" />
         @if (_selected is null)
         {
             <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
@@ -61,8 +64,6 @@
                     @L["DocumentPhoto"]
                 </MudButton>
             </MudStack>
-            <InputFile id="@_fileInputId" class="mylife-hidden-input" OnChange="Select" data-testid="document-input" />
-            <InputFile id="@_photoInputId" class="mylife-hidden-input" OnChange="Select" accept="image/*" capture="environment" />
             <MudText Typo="Typo.caption" Class="mylife-muted">@L["DocumentLimit", VaultLimits.MaxDocumentBytes / 1024 / 1024]</MudText>
         }
         else
@@ -152,7 +153,7 @@
             Refresh();
             Snackbar.Add(L["DocumentUploaded"], Severity.Success);
         }
-        catch (Exception exception) when (exception is VaultException or HttpRequestException or IOException or System.Security.Cryptography.CryptographicException)
+        catch (Exception exception) when (exception is VaultException or HttpRequestException or IOException or System.Security.Cryptography.CryptographicException or Microsoft.JSInterop.JSException)
         {
             Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}", VaultLimits.MaxDocumentBytes / 1024 / 1024], Severity.Error);
         }

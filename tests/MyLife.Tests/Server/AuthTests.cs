@@ -303,6 +303,13 @@ public sealed class PasskeyTests(ServerFixture server) : IClassFixture<ServerFix
     public async Task RegisteredPasskeyReplacesTheTotpCode()
     {
         var (session, api, _) = await _account.LoginAsync();
+
+        // Das Konto teilt sich die Klasse; ein Passkey aus einem anderen Test darf hier nicht mitzählen.
+        foreach (var leftover in await api.GetPasskeysAsync(Ct))
+        {
+            await api.DeletePasskeyAsync(leftover.Id, Ct);
+        }
+
         var webAuthn = new WebAuthnService(_account.Authenticator.AsJsRuntime());
         var options = await api.PasskeyRegistrationOptionsAsync(Ct);
         var created = await api.RegisterPasskeyAsync("Laptop", options.OptionsToken, await webAuthn.CreateAsync(options.OptionsJson), Ct);
