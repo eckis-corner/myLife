@@ -2,36 +2,82 @@ using MudBlazor;
 
 namespace MyLife.Client.Theme;
 
-/// <summary>Farbschema nach der Vorlage eckis-corner (#355269, Petrol #008080), passend zum Logo. Schriften aus dem System, damit keine Daten an Dritte (Font-CDN) gehen.</summary>
+/// <summary>
+/// Farbschema nach dem rixio-Template (Entscheidung 71): Graphit-Flächen, Stahlblau als Zweitfarbe und das
+/// riXio-Orange #FAA500 für Hauptaktionen. Schrift Titillium Web, selbst gehostet unter wwwroot/fonts, damit keine
+/// Daten an Dritte (Font-CDN) gehen.
+/// </summary>
 public static class MyLifeTheme
 {
-    private static readonly string[] SystemFonts =
-        ["system-ui", "-apple-system", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"];
+    public const string Orange = "#faa500";
+    private const string OrangeInk = "#241b0b";
+    private const string SteelBlue = "#587894";
+
+    private static readonly string[] Fonts =
+        ["Titillium Web", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"];
 
     public static MudTheme Create() => new()
     {
         PaletteLight = new PaletteLight
         {
-            Primary = "#355269",
-            Secondary = "#008080",
-            Tertiary = "#5B7A90",
-            AppbarBackground = "#355269",
-            Background = "#F7F7F4",
-            Surface = "#FFFFFF",
+            Primary = Orange,
+            PrimaryContrastText = OrangeInk,
+            Secondary = SteelBlue,
+            Tertiary = "#865500",
+            Background = "#f3f6f9",
+            BackgroundGray = "#eaf0f5",
+            Surface = "#ffffff",
+            AppbarBackground = "#f3f6f9",
+            AppbarText = "#53687a",
+            DrawerBackground = "#eaf0f5",
+            DrawerText = "#53687a",
+            DrawerIcon = "#53687a",
+            TextPrimary = "#202d39",
+            TextSecondary = "#53687a",
+            ActionDefault = "#4f6679",
+            LinesDefault = "#d5dfe7",
+            LinesInputs = "#b8cddd",
+            TableLines = "#d5dfe7",
+            TableStriped = "#f7fafc",
+            Divider = "#d5dfe7",
+            OverlayDark = "#23394c66",
         },
         PaletteDark = new PaletteDark
         {
-            Primary = "#9FB6CA",
-            Secondary = "#4DB8B8",
-            Tertiary = "#8FA9BE",
-            AppbarBackground = "#1C2A35",
-            Background = "#151B22",
-            Surface = "#1E2630",
+            Primary = Orange,
+            PrimaryContrastText = OrangeInk,
+            Secondary = SteelBlue,
+            Tertiary = "#f4d394",
+            Black = "#111519",
+            Background = "#111519",
+            BackgroundGray = "#171e25",
+            Surface = "#1a2026",
+            AppbarBackground = "#111519",
+            AppbarText = "#96a5b1",
+            DrawerBackground = "#151b21",
+            DrawerText = "#96a5b1",
+            DrawerIcon = "#96a5b1",
+            TextPrimary = "#edf2f6",
+            TextSecondary = "#96a5b1",
+            TextDisabled = "#96a5b173",
+            ActionDefault = "#aab6b8",
+            LinesDefault = "#2c3741",
+            LinesInputs = "#3c4e5e",
+            TableLines = "#2c3741",
+            TableStriped = "#ffffff05",
+            TableHover = "#ffffff0a",
+            Divider = "#2c3741",
+            DividerLight = "#2c374180",
+            OverlayDark = "#000000aa",
         },
         Typography = new Typography
         {
-            Default = new DefaultTypography { FontFamily = SystemFonts },
+            Default = new DefaultTypography { FontFamily = Fonts },
+            H4 = new H4Typography { FontFamily = Fonts, FontWeight = "600", LetterSpacing = "-1px", LineHeight = "1.2" },
+            H5 = new H5Typography { FontFamily = Fonts, FontWeight = "600" },
+            H6 = new H6Typography { FontFamily = Fonts, FontWeight = "600" },
+            Button = new ButtonTypography { FontFamily = Fonts, FontWeight = "600", TextTransform = "none" },
         },
-        LayoutProperties = new LayoutProperties { DefaultBorderRadius = "8px" },
+        LayoutProperties = new LayoutProperties { DefaultBorderRadius = "8px", DrawerWidthLeft = "248px", AppbarHeight = "64px" },
     };
 }

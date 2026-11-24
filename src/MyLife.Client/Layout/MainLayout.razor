@@ -8,8 +8,9 @@
 <MudSnackbarProvider />
 <IdleMonitor />
 
-<MudLayout>
-    <MudAppBar Elevation="1">
+@* Design nach dem rixio-Template (Entscheidung 71): flache Kopfzeile mit Trennlinie, Seitenleiste mit Orange-Akzent. *@
+<MudLayout Class="@(_isDarkMode ? "mylife-rixio mylife-rixio-dark" : "mylife-rixio mylife-rixio-light")">
+    <MudAppBar Elevation="0" Class="mylife-appbar">
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
                        Color="Color.Inherit"
                        Edge="Edge.Start"
@@ -27,10 +28,10 @@
         </MudTooltip>
     </MudAppBar>
 
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="1" Variant="DrawerVariant.Responsive">
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" Variant="DrawerVariant.Responsive" Class="mylife-drawer">
         <AuthorizeView>
             <Authorized>
-                <MudNavMenu>
+                <MudNavMenu Class="mylife-nav">
                     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
                     <MudNavLink Href="search" Icon="@Icons.Material.Outlined.Search">@L["NavSearch"]</MudNavLink>
                     <MudNavGroup Title="@L["NavAreas"]" Icon="@Icons.Material.Outlined.FolderOpen" Expanded>

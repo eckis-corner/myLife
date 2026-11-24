@@ -12,8 +12,9 @@ public sealed class PdfPage
 }
 
 /// <summary>
-/// Setzt Text auf A4-Seiten im Design der Vorlage „docs/design/Vorlage - eckis-corner.docx“ (Entscheidung 68): Ränder, Titel
-/// zwischen zwei Linien, Untertitel, Überschriften in #355269, Fließtext 11 pt im Blocksatz. Statt Tahoma steht die
+/// Setzt Text auf A4-Seiten im Satz der Vorlage „docs/design/Vorlage - eckis-corner.docx“ (Entscheidung 68): Ränder, Titel
+/// zwischen zwei Linien, Untertitel, Überschriften, Fließtext 11 pt im Blocksatz. Farben nach dem rixio-Design
+/// (Entscheidung 71): Überschriften in Graphit #202D39, Linien in Orange #FAA500. Statt Tahoma steht die
 /// Standardschrift Helvetica (Tahoma darf nicht eingebettet weitergegeben werden). Bewusst einfach: kein eingebettetes Bild
 /// (das Logo ist Vektorgrafik, <see cref="PdfLogo"/>), keine Tabelle über Seiten. Seiten entstehen beim Schreiben; die Fußzeile mit Seitenzahlen setzt <see cref="PdfWriter"/>.
 /// </summary>
@@ -31,8 +32,11 @@ public sealed class PdfLayout
     public const float LabelWidth = 165f;
     public const float BodySize = 11f;
 
-    /// <summary>Akzentfarbe der Vorlage #355269 als PDF-RGB.</summary>
-    internal const string AccentColor = "0.208 0.322 0.412";
+    /// <summary>Farbe für Titel und Überschriften: Graphit #202D39 (rixio-Textfarbe) als PDF-RGB.</summary>
+    internal const string AccentColor = "0.125 0.176 0.224";
+
+    /// <summary>Farbe für Linien: riXio-Orange #FAA500 als PDF-RGB (Strichfarbe).</summary>
+    internal const string RuleColor = "0.98 0.647 0";
 
     private readonly List<PdfPage> _pages = [];
     private PdfPage? _page;
@@ -94,7 +98,7 @@ public sealed class PdfLayout
         }
 
         Reserve((lineHeight * Math.Min(lines.Count, 2)) + 12);
-        HorizontalLine(LeftMargin + indent, PageWidth - RightMargin - indent, _y, 0.25f, "0 G");
+        HorizontalLine(LeftMargin + indent, PageWidth - RightMargin - indent, _y, 0.5f, RuleColor + " RG");
         _y -= 4;
         foreach (var line in lines)
         {
@@ -103,7 +107,7 @@ public sealed class PdfLayout
             Text(Centered(line, size, true), _y + ((lineHeight - (size * 0.7f)) / 2), line, size, true, Tone.Accent);
         }
 
-        HorizontalLine(LeftMargin + indent, PageWidth - RightMargin - indent, _y, 0.25f, "0 G");
+        HorizontalLine(LeftMargin + indent, PageWidth - RightMargin - indent, _y, 0.5f, RuleColor + " RG");
         _y -= 6;
     }
 
@@ -399,7 +403,7 @@ public static class PdfWriter
 
     private static string FooterOperators(string footer)
     {
-        // Wie die Fußzeile der Vorlage: linksbündig am Satzspiegel, darüber eine feine Linie in der Akzentfarbe;
+        // Wie die Fußzeile der Vorlage: linksbündig am Satzspiegel, darüber eine feine Linie in Orange;
         // rechts das Logo als kleines Icon.
         const float size = 8;
         const float icon = 12;
@@ -408,7 +412,7 @@ public static class PdfWriter
         var line = PdfLayout.FooterBaseline + 12;
         return string.Create(
             CultureInfo.InvariantCulture,
-            $"{PdfLayout.AccentColor} RG 0.5 w {left:0.##} {line:0.##} m {right:0.##} {line:0.##} l S 0 G " +
+            $"{PdfLayout.RuleColor} RG 0.5 w {left:0.##} {line:0.##} m {right:0.##} {line:0.##} l S 0 G " +
             $"0.45 g BT /F1 {size} Tf {left:0.##} {PdfLayout.FooterBaseline:0.##} Td <{Convert.ToHexString(PdfFonts.Encode(footer))}> Tj ET 0 g\n") +
             PdfLogo.Icon(right - icon, PdfLayout.FooterBaseline - 3, icon);
     }

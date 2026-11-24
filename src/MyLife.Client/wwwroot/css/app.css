@@ -113,7 +113,7 @@ h1:focus {
     }
 }
 
-/* Logo mit Schriftzug (Anmeldeseite) */
+/* Logo mit Schriftzug (Anmeldeseite, App-Leiste) */
 .mylife-logo {
     display: flex;
     align-items: center;
@@ -123,24 +123,25 @@ h1:focus {
 
 .mylife-logo img {
     display: block;
+    border-radius: 12px;
 }
 
 .mylife-logo-text {
     font-size: 2.6rem;
+    font-weight: 600;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
 }
 
 .mylife-logo-my {
-    color: var(--mud-palette-secondary);
+    color: var(--mylife-accent, var(--mud-palette-primary));
+    font-weight: 400;
 }
 
 .mylife-logo-life {
-    color: var(--mud-palette-primary);
-    font-weight: 700;
+    color: var(--mud-palette-text-primary);
 }
 
-/* Logo in der App-Leiste: hell auf dem dunklen Grund (#355269 bzw. #1C2A35) */
 .mylife-logo--appbar {
     justify-content: flex-start;
     gap: 10px;
@@ -149,17 +150,140 @@ h1:focus {
 
 .mylife-logo--appbar img {
     border-radius: 7px;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 0 1px var(--mud-palette-lines-default);
 }
 
 .mylife-logo--appbar .mylife-logo-text {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
 }
 
-.mylife-logo--appbar .mylife-logo-my {
-    color: #7FD1D1;
+/* ---------------------------------------------------------------------------------------------
+   rixio-Design (Entscheidung 71, nach rixio.de/template/static/style.css). Farben stehen in
+   MyLifeTheme.cs; hier nur Formen und Akzente, die MudBlazor nicht über das Theme abbildet.
+   --------------------------------------------------------------------------------------------- */
+
+/* Titillium Web (SIL Open Font License 1.1, siehe fonts/OFL-TitilliumWeb.txt), selbst gehostet. */
+@font-face {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(../fonts/TitilliumWeb-Regular.ttf) format('truetype');
 }
 
-.mylife-logo--appbar .mylife-logo-life {
-    color: #FFFFFF;
+@font-face {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url(../fonts/TitilliumWeb-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(../fonts/TitilliumWeb-Bold.ttf) format('truetype');
+}
+
+.mylife-rixio {
+    --mylife-accent: #faa500;
+    --mylife-accent-soft: #faa5000c;
+    --mylife-accent-line: #725618;
+}
+
+.mylife-rixio-light {
+    /* Orange als Text ist auf Weiß zu kontrastarm, das Template verwendet dort Bernstein. */
+    --mylife-accent: #865500;
+    --mylife-accent-soft: #fff0ce;
+    --mylife-accent-line: #e3ca91;
+}
+
+/* Kopfzeile: flach mit Trennlinie statt farbiger Leiste. */
+.mylife-rixio .mylife-appbar {
+    border-bottom: 1px solid var(--mud-palette-lines-default);
+}
+
+/* Seitenleiste */
+.mylife-rixio .mylife-drawer {
+    border-right: 1px solid var(--mud-palette-lines-default);
+}
+
+.mylife-nav {
+    padding: 16px 12px;
+}
+
+.mylife-nav .mud-nav-link {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    margin: 2px 0;
+    padding: 9px 12px;
+}
+
+.mylife-nav .mud-nav-link:hover:not(.active) {
+    background: color-mix(in srgb, var(--mud-palette-text-primary) 5%, transparent);
+    color: var(--mud-palette-text-primary);
+}
+
+.mylife-nav .mud-nav-link.active:not(.mud-nav-link-disabled) {
+    background: var(--mylife-accent-soft);
+    border-color: var(--mylife-accent-line);
+    color: var(--mylife-accent);
+}
+
+.mylife-nav .mud-nav-link.active .mud-nav-link-icon {
+    color: var(--mylife-accent);
+}
+
+/* Karten und Tabellen: Rahmen statt Schatten, 12px Radius. */
+.mylife-rixio .mud-main-content .mud-paper.mud-elevation-1,
+.mylife-rixio .mud-main-content .mud-paper.mud-elevation-2 {
+    box-shadow: none;
+    border: 1px solid var(--mud-palette-lines-default);
+    border-radius: 12px;
+}
+
+.mylife-rixio-dark .mud-main-content .mud-card.mud-elevation-1 {
+    background: linear-gradient(120deg, #202a33, #1a2026);
+}
+
+.mylife-rixio .mud-table-head .mud-table-cell {
+    background: var(--mud-palette-background-gray);
+    color: var(--mud-palette-text-secondary);
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+/* Akzenttexte im hellen Modus lesbar halten. */
+.mylife-rixio-light .mud-primary-text,
+.mylife-rixio-light .mud-button-text-primary,
+.mylife-rixio-light .mud-button-outlined-primary,
+.mylife-rixio-light .mud-link.mud-primary-text {
+    color: var(--mylife-accent) !important;
+}
+
+.mylife-rixio-light .mud-button-outlined-primary {
+    border-color: var(--mylife-accent-line);
+}
+
+/* Fokus wie im Template. */
+.mylife-rixio a:focus-visible,
+.mylife-rixio button:focus-visible {
+    outline: 2px solid var(--mylife-accent);
+    outline-offset: 2px;
+}
+
+/* Fußzeile mit Trennlinie */
+.mylife-rixio .mylife-footer {
+    border-top: 1px solid var(--mud-palette-lines-default);
+    margin: 24px 24px 0;
+    padding-top: 16px;
+}
+
+/* Buttons flach wie im Template. */
+.mylife-rixio .mud-button-filled,
+.mylife-rixio .mud-button-filled:hover {
+    box-shadow: none;
 }

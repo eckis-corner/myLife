@@ -1,12 +1,12 @@
-@* Logo mit Schriftzug wie docs/design/logo/logo.svg. Der Schriftzug ist HTML: auf der Seite in den Theme-Farben,
-   in der App-Leiste hell auf dem dunklen Grund, damit er in beiden Modi lesbar bleibt. *@
+@* Logo mit Schriftzug wie docs/design/logo/logo.svg. Der Schriftzug ist HTML in den Farben des rixio-Designs
+   („my“ im Akzent, „Life“ in der Textfarbe), damit er im hellen und dunklen Modus lesbar bleibt. *@
 <div class="@(InAppBar ? "mylife-logo mylife-logo--appbar" : "mylife-logo")" role="img" aria-label="myLife" data-testid="app-logo">
     <img src="favicon.svg" alt="" width="@IconSize" height="@IconSize" />
     <span class="mylife-logo-text" aria-hidden="true"><span class="mylife-logo-my">my</span><span class="mylife-logo-life">Life</span></span>
 </div>
 
 @code {
-    /// <summary>Kleine, helle Variante für die App-Leiste.</summary>
+    /// <summary>Kleine Variante für die App-Leiste.</summary>
     [Parameter] public bool InAppBar { get; set; }
 
     private int IconSize => InAppBar ? 32 : 56;

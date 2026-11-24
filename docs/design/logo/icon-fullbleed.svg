@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="myLife">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3F6079"/>
-      <stop offset="1" stop-color="#2A4254"/>
+      <stop offset="0" stop-color="#2B3641"/>
+      <stop offset="1" stop-color="#141A20"/>
     </linearGradient>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
   <g transform="translate(256 262) scale(0.95) translate(-256 -261)">
-    <path d="M96 196V156q0-26 26-26h82q12 0 20 8l24 24h142q26 0 26 26v8z" fill="#AEBFCD"/>
-  <rect x="96" y="186" width="320" height="206" rx="26" fill="#FFFFFF"/>
-  <circle cx="256" cy="262" r="27" fill="#008080"/>
-    <path d="M202 344v-8q0-38 54-38t54 38v8z" fill="#008080"/>
+    <path d="M96 196V156q0-26 26-26h82q12 0 20 8l24 24h142q26 0 26 26v8z" fill="#587894"/>
+  <rect x="96" y="186" width="320" height="206" rx="26" fill="#EDF2F6"/>
+  <circle cx="256" cy="262" r="27" fill="#FAA500"/>
+    <path d="M202 344v-8q0-38 54-38t54 38v8z" fill="#FAA500"/>
   </g>
 </svg>
