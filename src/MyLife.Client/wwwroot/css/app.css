@@ -93,3 +93,10 @@ h1:focus {
         background: #fff !important;
     }
 }
+
+/* Logo in der App-Leiste */
+.mylife-appbar-logo {
+    display: block;
+    border-radius: 7px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
