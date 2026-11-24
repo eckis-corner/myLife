@@ -32,11 +32,13 @@ myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: V
 Voraussetzungen: .NET SDK 10, Docker (für PostgreSQL und die Integrationstests).
 
 ```bash
-docker compose up -d db                      # PostgreSQL (Passwort in .env, siehe .env.example)
+docker compose -f docker-compose.yml -f compose.dev.yml up -d db   # PostgreSQL auf localhost:5432 (Passwort in .env)
 dotnet run --project src/MyLife.Server       # http://localhost:5062
 dotnet test --solution MyLife.slnx           # Tests (nutzen Testcontainers)
 python3 tools/resources.py                   # Ressourcen-Dateien de/en neu erzeugen
 ```
+
+**VS Code:** Mit F5 („myLife (Server)“) startet VS Code die Datenbank, baut den Server, startet ihn im Debugger und öffnet die App unter <http://localhost:5062>. Für Hot Reload gibt es die Aufgabe `watch`. Voraussetzung ist die Erweiterung C# Dev Kit.
 
 Für die lokale Entwicklung erwartet `appsettings.json` PostgreSQL auf `localhost:5432` mit Benutzer und Passwort `mylife`. Andere Werte über `dotnet user-secrets` oder die Umgebungsvariable `ConnectionStrings__MyLife`.
 

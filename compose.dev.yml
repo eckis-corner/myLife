@@ -1,5 +1,7 @@
 # Lokal bauen statt das Image aus ghcr.io zu ziehen:
 #   docker compose -f docker-compose.yml -f compose.dev.yml up -d --build
+# Nur die Datenbank für die Entwicklung (dotnet run / F5 in VS Code):
+#   docker compose -f docker-compose.yml -f compose.dev.yml up -d db
 services:
   app:
     image: mylife:dev
@@ -7,3 +9,8 @@ services:
       context: .
       args:
         VERSION: 0.1.0-dev
+
+  db:
+    # Nur auf localhost freigeben, damit der lokal gestartete Server die Datenbank erreicht.
+    ports:
+      - "127.0.0.1:5432:5432"

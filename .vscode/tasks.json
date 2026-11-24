@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "db: start",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f compose.dev.yml up -d --wait db",
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    },
+    {
+      "label": "db: stop",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.yml -f compose.dev.yml stop db",
+      "problemMatcher": []
+    },
+    {
+      "label": "build",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}/src/MyLife.Server/MyLife.Server.csproj", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary"],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "db + build",
+      "dependsOn": ["db: start", "build"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "watch",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["watch", "--project", "${workspaceFolder}/src/MyLife.Server", "--launch-profile", "http"],
+      "dependsOn": "db: start",
+      "isBackground": true,
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "test",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["test", "--solution", "${workspaceFolder}/MyLife.slnx"],
+      "group": "test",
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}
