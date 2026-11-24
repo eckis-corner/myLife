@@ -39,6 +39,8 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton<IPdfCrypto, MyLife.Tests.Export.DotNetPdfCrypto>();
         Services.AddSingleton<EmergencyFolder>();
         Services.AddSingleton(new VaultExport(_browser.Api, _browser.Vault, _browser.Session, _browser.Crypto));
+        Services.AddSingleton(new EmergencyClient(_browser.Http));
+        Services.AddSingleton(new AdminClient(_browser.Http));
         Render<MudBlazor.MudPopoverProvider>();
     }
 

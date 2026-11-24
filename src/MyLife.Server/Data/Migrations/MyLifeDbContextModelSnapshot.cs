@@ -22,6 +22,57 @@ namespace MyLife.Server.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("MyLife.Server.Data.AccessRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("DeadlineAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deadline_at");
+
+                    b.Property<DateTimeOffset?>("DecidedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("decided_at");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("integer")
+                        .HasColumnName("mode");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.Property<Guid?>("OwnerMailId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_mail_id");
+
+                    b.Property<DateTimeOffset?>("PausedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paused_at");
+
+                    b.Property<DateTimeOffset>("RequestedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("requested_at");
+
+                    b.Property<int>("State")
+                        .HasColumnType("integer")
+                        .HasColumnName("state");
+
+                    b.Property<Guid>("TrusteeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trustee_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrusteeId");
+
+                    b.HasIndex("OwnerId", "State");
+
+                    b.ToTable("access_requests", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.AuditEntry", b =>
                 {
                     b.Property<long>("Id")
@@ -75,6 +126,81 @@ namespace MyLife.Server.Data.Migrations
                     b.HasIndex("OwnerId", "At");
 
                     b.ToTable("audit_log", (string)null);
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.EmergencySwitch", b =>
+                {
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.Property<int>("IntervalDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("interval_days");
+
+                    b.Property<DateTimeOffset>("LastLifesignAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_lifesign_at");
+
+                    b.Property<string>("NtfyTopic")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("ntfy_topic");
+
+                    b.Property<DateTimeOffset?>("OverdueAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("overdue_at");
+
+                    b.Property<DateTimeOffset?>("ReleasedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("released_at");
+
+                    b.Property<int>("ReleasedModes")
+                        .HasColumnType("integer")
+                        .HasColumnName("released_modes");
+
+                    b.Property<int>("RequestWaitingDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("request_waiting_days");
+
+                    b.Property<string>("SecondEmail")
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("second_email");
+
+                    b.Property<int>("Stage")
+                        .HasColumnType("integer")
+                        .HasColumnName("stage");
+
+                    b.Property<Guid?>("StageMailId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("stage_mail_id");
+
+                    b.Property<DateTimeOffset?>("StageSentAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("stage_sent_at");
+
+                    b.Property<int>("State")
+                        .HasColumnType("integer")
+                        .HasColumnName("state");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<int>("WaitingDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("waiting_days");
+
+                    b.HasKey("OwnerId");
+
+                    b.ToTable("emergency_switches", (string)null);
                 });
 
             modelBuilder.Entity("MyLife.Server.Data.Grant", b =>
@@ -335,6 +461,10 @@ namespace MyLife.Server.Data.Migrations
                     b.Property<int>("Purpose")
                         .HasColumnType("integer")
                         .HasColumnName("purpose");
+
+                    b.Property<Guid?>("ReferenceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reference_id");
 
                     b.Property<byte[]>("TokenHash")
                         .IsRequired()
@@ -799,6 +929,30 @@ namespace MyLife.Server.Data.Migrations
                     b.HasIndex("OwnerId", "AreaKey");
 
                     b.ToTable("objects", (string)null);
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.AccessRequest", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("TrusteeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.EmergencySwitch", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithOne()
+                        .HasForeignKey("MyLife.Server.Data.EmergencySwitch", "OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyLife.Server.Data.Grant", b =>

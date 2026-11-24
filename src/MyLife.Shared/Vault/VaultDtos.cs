@@ -149,9 +149,21 @@ public static class AuditActions
     public const string SharedRead = "shared-read";
     public const string SharedDocumentRead = "shared-document-read";
 
+    // Notfallzugang (M2.4)
+    public const string Lifesign = "lifesign";
+    public const string LifesignRequested = "lifesign-requested";
+    public const string EmergencyWaiting = "emergency-waiting";
+    public const string EmergencyReleased = "emergency-released";
+    public const string EmergencySettingsChanged = "emergency-settings-changed";
+    public const string AccessRequested = "access-requested";
+    public const string AccessRequestPaused = "access-request-paused";
+    public const string AccessRequestContinued = "access-request-continued";
+    public const string AccessRequestObjected = "access-request-objected";
+    public const string AccessRequestWithdrawn = "access-request-withdrawn";
+
     /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
     public static bool IsSystem(string action) =>
-        action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch;
+        action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch or EmergencyReleased;
 
     /// <summary>Was der Browser selbst melden darf.</summary>
     public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ImportJson };

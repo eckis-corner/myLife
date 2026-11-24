@@ -46,6 +46,53 @@ Der Link gilt {days} Tage. Du brauchst etwa zehn Minuten, einen Drucker oder Sti
 
 Wenn du {inviter} nicht kennst, ignoriere diese Mail einfach.</value></data>
   <data name="Mail_invitation_subject" xml:space="preserve"><value>{inviter} lädt dich zu myLife ein</value></data>
+  <data name="Mail_lifesign-due_body" xml:space="preserve"><value>Hallo {name},
+
+dein Lebenszeichen bei myLife ist fällig. Ein Klick genügt, keine Anmeldung nötig:
+{link}
+
+Du kannst dich auch einfach bei myLife anmelden. Wenn du nicht reagierst, erinnert dich myLife noch {count} Mal. Erst danach und nach einer Wartezeit bekommen deine Vertrauenspersonen Zugang, frühestens am {date}.</value></data>
+  <data name="Mail_lifesign-due_subject" xml:space="preserve"><value>myLife: Bitte gib ein Lebenszeichen</value></data>
+  <data name="Mail_lifesign-reminder_body" xml:space="preserve"><value>Hallo {name},
+
+wir haben noch kein Lebenszeichen von dir. Ein Klick genügt:
+{link}
+
+Ohne Reaktion bekommen deine Vertrauenspersonen frühestens am {date} Zugang zu dem, was du für sie freigegeben hast.</value></data>
+  <data name="Mail_lifesign-reminder_subject" xml:space="preserve"><value>myLife: Erinnerung {stage} von {count} – bitte gib ein Lebenszeichen</value></data>
+  <data name="Mail_mode_death" xml:space="preserve"><value>verstorben</value></data>
+  <data name="Mail_mode_incapacity" xml:space="preserve"><value>handlungsunfähig</value></data>
+  <data name="Mail_released-owner_body" xml:space="preserve"><value>Hallo {name},
+
+dein Notfallzugang bei myLife wurde freigegeben ({mode}). Deine Vertrauenspersonen können jetzt lesen, was du für diesen Fall freigegeben hast.
+
+Wenn das ein Irrtum ist, melde dich bei myLife an.</value></data>
+  <data name="Mail_released-owner_subject" xml:space="preserve"><value>myLife: Dein Notfallzugang wurde freigegeben</value></data>
+  <data name="Mail_released-trustee_body" xml:space="preserve"><value>Hallo {name},
+
+der Notfallzugang von {owner} ist freigegeben ({mode}). Melde dich bei myLife an; unter „Mit mir geteilt“ findest du, was {owner} für dich hinterlegt hat.</value></data>
+  <data name="Mail_released-trustee_subject" xml:space="preserve"><value>myLife: Zugang zu {owner} freigegeben</value></data>
+  <data name="Mail_request-info_body" xml:space="preserve"><value>Hallo {name},
+
+{trustee} hat bei myLife Zugang zu {owner} beantragt, für den Fall „{mode}“. {owner} kann widersprechen. Du musst nichts tun; wenn du Zweifel hast, sprich mit {trustee} oder {owner}.</value></data>
+  <data name="Mail_request-info_subject" xml:space="preserve"><value>myLife: Antrag auf Zugang zu {owner}</value></data>
+  <data name="Mail_request-objected_body" xml:space="preserve"><value>Hallo {name},
+
+{owner} hat dem Antrag von {trustee} auf Zugang endgültig widersprochen. Es wird nichts freigegeben.</value></data>
+  <data name="Mail_request-objected_subject" xml:space="preserve"><value>myLife: {owner} hat dem Antrag widersprochen</value></data>
+  <data name="Mail_request-owner_body" xml:space="preserve"><value>Hallo {name},
+
+{trustee} hat bei myLife Zugang zu deinen Daten beantragt, für den Fall „{mode}“. Ohne Widerspruch wird der Zugang am {date} freigegeben.
+
+Wenn das nicht in deinem Sinn ist, öffne sofort diesen Link. Er hält den Antrag an:
+{link}
+
+Danach meldest du dich an und entscheidest, ob du endgültig widersprichst. Deine anderen Vertrauenspersonen wurden über den Antrag informiert.</value></data>
+  <data name="Mail_request-owner_subject" xml:space="preserve"><value>myLife: {trustee} hat Zugang beantragt</value></data>
+  <data name="Mail_request-paused_body" xml:space="preserve"><value>Hallo {name},
+
+{owner} hat deinen Antrag auf Zugang angehalten. Die Frist läuft vorerst nicht weiter.</value></data>
+  <data name="Mail_request-paused_subject" xml:space="preserve"><value>myLife: Dein Antrag ist angehalten</value></data>
   <data name="Mail_test_body" xml:space="preserve"><value>Hallo {name},
 
 diese Testnachricht zeigt, dass der Mailversand von myLife funktioniert.</value></data>

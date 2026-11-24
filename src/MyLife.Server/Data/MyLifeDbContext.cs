@@ -32,6 +32,10 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<Grant> Grants => Set<Grant>();
 
+    public DbSet<EmergencySwitch> EmergencySwitches => Set<EmergencySwitch>();
+
+    public DbSet<AccessRequest> AccessRequests => Set<AccessRequest>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -277,6 +281,49 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
         });
 
+        modelBuilder.Entity<EmergencySwitch>(entity =>
+        {
+            entity.ToTable("emergency_switches");
+            entity.HasKey(x => x.OwnerId);
+            entity.HasOne<User>().WithOne().HasForeignKey<EmergencySwitch>(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.IntervalDays).HasColumnName("interval_days");
+            entity.Property(x => x.WaitingDays).HasColumnName("waiting_days");
+            entity.Property(x => x.RequestWaitingDays).HasColumnName("request_waiting_days");
+            entity.Property(x => x.SecondEmail).HasColumnName("second_email").HasMaxLength(254);
+            entity.Property(x => x.NtfyTopic).HasColumnName("ntfy_topic").HasMaxLength(64);
+            entity.Property(x => x.LastLifesignAt).HasColumnName("last_lifesign_at");
+            entity.Property(x => x.State).HasColumnName("state");
+            entity.Property(x => x.OverdueAt).HasColumnName("overdue_at");
+            entity.Property(x => x.Stage).HasColumnName("stage");
+            entity.Property(x => x.StageMailId).HasColumnName("stage_mail_id");
+            entity.Property(x => x.StageSentAt).HasColumnName("stage_sent_at");
+            entity.Property(x => x.ReleasedModes).HasColumnName("released_modes");
+            entity.Property(x => x.ReleasedAt).HasColumnName("released_at");
+            entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+            entity.Property(x => x.Version).IsRowVersion();
+        });
+
+        modelBuilder.Entity<AccessRequest>(entity =>
+        {
+            entity.ToTable("access_requests");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.OwnerId, x.State });
+            entity.HasIndex(x => x.TrusteeId);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.TrusteeId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.TrusteeId).HasColumnName("trustee_id");
+            entity.Property(x => x.Mode).HasColumnName("mode");
+            entity.Property(x => x.State).HasColumnName("state");
+            entity.Property(x => x.RequestedAt).HasColumnName("requested_at");
+            entity.Property(x => x.OwnerMailId).HasColumnName("owner_mail_id");
+            entity.Property(x => x.DeadlineAt).HasColumnName("deadline_at");
+            entity.Property(x => x.PausedAt).HasColumnName("paused_at");
+            entity.Property(x => x.DecidedAt).HasColumnName("decided_at");
+        });
+
         modelBuilder.Entity<OneTimeToken>(entity =>
         {
             entity.ToTable("one_time_tokens");
@@ -288,6 +335,7 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.Purpose).HasColumnName("purpose");
             entity.Property(x => x.TokenHash).HasColumnName("token_hash");
             entity.Property(x => x.UserId).HasColumnName("user_id");
+            entity.Property(x => x.ReferenceId).HasColumnName("reference_id");
             entity.Property(x => x.CreatedBy).HasColumnName("created_by");
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
             entity.Property(x => x.ExpiresAt).HasColumnName("expires_at");

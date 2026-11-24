@@ -235,6 +235,11 @@ internal static partial class AdminEndpoints
             return ApiProblems.Create(StatusCodes.Status400BadRequest, AdminErrors.MailNotConfigured);
         }
 
+        if (await db.EmergencySwitches.AnyAsync(s => s.OwnerId == id && s.ReleasedModes != Shared.Emergency.ReleasedModes.None, cancellationToken))
+        {
+            return ApiProblems.Create(StatusCodes.Status400BadRequest, AdminErrors.Released);
+        }
+
         var baseUrl = stored.PublicUrl ?? $"{context.Request.Scheme}://{context.Request.Host}";
         return await ChangeUserAsync(id, principal, db, time, user =>
         {

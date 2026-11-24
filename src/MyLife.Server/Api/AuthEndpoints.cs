@@ -341,6 +341,8 @@ internal static partial class AuthEndpoints
     {
         LoginAttempts.Succeeded(user);
         user.LastLoginAt = time.GetUtcNow();
+        // Jede Anmeldung ist ein Lebenszeichen (Architektur 5.1).
+        await context.RequestServices.GetRequiredService<MyLife.Server.Infrastructure.Emergency.EmergencyEngine>().LifesignAsync(user, "login", cancellationToken);
         db.AuditLog.Add(AuditLog.Entry(AuditActions.Login, user.Id, user.Id, time.GetUtcNow(), context.Connection.RemoteIpAddress));
         await db.SaveChangesAsync(cancellationToken);
         await UserSignIn.SignInAsync(context, user);

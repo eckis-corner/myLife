@@ -21,6 +21,7 @@
   <data name="AdminError_admin-last-admin" xml:space="preserve"><value>Es muss immer mindestens einen aktiven Administrator geben.</value></data>
   <data name="AdminError_admin-mail-not-configured" xml:space="preserve"><value>Dafür muss zuerst der Mailversand eingerichtet sein.</value></data>
   <data name="AdminError_admin-not-found" xml:space="preserve"><value>Das Konto gibt es nicht mehr.</value></data>
+  <data name="AdminError_admin-released" xml:space="preserve"><value>Für dieses Konto ist der Notfallzugang freigegeben; es lässt sich nicht löschen.</value></data>
   <data name="AdminError_admin-self" xml:space="preserve"><value>Das geht nicht mit deinem eigenen Konto.</value></data>
   <data name="AdminError_admin-token-invalid" xml:space="preserve"><value>Der Link ist ungültig, abgelaufen oder schon verwendet.</value></data>
   <data name="AdminGrantRole" xml:space="preserve"><value>Zum Administrator machen</value></data>
@@ -156,6 +157,11 @@
   <data name="AuditIp" xml:space="preserve"><value>IP (gekürzt)</value></data>
   <data name="AuditTarget" xml:space="preserve"><value>Betrifft</value></data>
   <data name="AuditText" xml:space="preserve"><value>Wer wann was in deinem Tresor getan hat. Das Protokoll enthält keine Inhalte; Titel ergänzt dein Browser.</value></data>
+  <data name="Audit_access-request-continued" xml:space="preserve"><value>Antrag läuft weiter</value></data>
+  <data name="Audit_access-request-objected" xml:space="preserve"><value>Antrag widersprochen</value></data>
+  <data name="Audit_access-request-paused" xml:space="preserve"><value>Antrag angehalten</value></data>
+  <data name="Audit_access-request-withdrawn" xml:space="preserve"><value>Antrag zurückgezogen</value></data>
+  <data name="Audit_access-requested" xml:space="preserve"><value>Zugang beantragt</value></data>
   <data name="Audit_account-created" xml:space="preserve"><value>Konto angelegt</value></data>
   <data name="Audit_account-deleted" xml:space="preserve"><value>Konto gelöscht</value></data>
   <data name="Audit_admin-2fa-reset" xml:space="preserve"><value>Zwei-Faktor-Anmeldung zurückgesetzt</value></data>
@@ -178,6 +184,9 @@
   <data name="Audit_document-purged" xml:space="preserve"><value>Dokument endgültig gelöscht</value></data>
   <data name="Audit_document-restored" xml:space="preserve"><value>Dokument wiederhergestellt</value></data>
   <data name="Audit_document-uploaded" xml:space="preserve"><value>Dokument hochgeladen</value></data>
+  <data name="Audit_emergency-released" xml:space="preserve"><value>Notfallzugang freigegeben</value></data>
+  <data name="Audit_emergency-settings-changed" xml:space="preserve"><value>Fristen geändert</value></data>
+  <data name="Audit_emergency-waiting" xml:space="preserve"><value>Wartezeit begonnen</value></data>
   <data name="Audit_export-json" xml:space="preserve"><value>JSON-Export</value></data>
   <data name="Audit_export-pdf" xml:space="preserve"><value>PDF-Export</value></data>
   <data name="Audit_export-print" xml:space="preserve"><value>Druckansicht gedruckt</value></data>
@@ -189,6 +198,8 @@
   <data name="Audit_key-endorsed" xml:space="preserve"><value>Schlüssel gegengezeichnet</value></data>
   <data name="Audit_key-mismatch" xml:space="preserve"><value>Schlüssel passt nicht zur Einladung</value></data>
   <data name="Audit_key-verified" xml:space="preserve"><value>Schlüssel bestätigt</value></data>
+  <data name="Audit_lifesign" xml:space="preserve"><value>Lebenszeichen</value></data>
+  <data name="Audit_lifesign-requested" xml:space="preserve"><value>Erinnerung an das Lebenszeichen</value></data>
   <data name="Audit_login" xml:space="preserve"><value>Anmeldung</value></data>
   <data name="Audit_login-failed" xml:space="preserve"><value>Fehlgeschlagene Anmeldung</value></data>
   <data name="Audit_logout" xml:space="preserve"><value>Abmeldung</value></data>
@@ -223,6 +234,10 @@
   <data name="AuthError_auth-rate-limited" xml:space="preserve"><value>Zu viele Anfragen. Bitte warte eine Minute.</value></data>
   <data name="AuthError_auth-wrong-password" xml:space="preserve"><value>Das Master-Passwort stimmt nicht.</value></data>
   <data name="BackToHome" xml:space="preserve"><value>Zur Übersicht</value></data>
+  <data name="BannerMailProblem" xml:space="preserve"><value>Der Mailversand hat Probleme. Solange Mails hängen, laufen die Fristen des Notfallzugangs nicht weiter.</value></data>
+  <data name="BannerReleased" xml:space="preserve"><value>Dein Notfallzugang ist freigegeben.</value></data>
+  <data name="BannerRequest" xml:space="preserve"><value>Achtung: Zugang zu deinen Daten wurde beantragt von {0}.</value></data>
+  <data name="BannerTrustedReleased" xml:space="preserve"><value>Freigegeben für dich: {0}.</value></data>
   <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
   <data name="Close" xml:space="preserve"><value>Schließen</value></data>
   <data name="CommonAddCustomField" xml:space="preserve"><value>Zusatzfeld hinzufügen</value></data>
@@ -290,6 +305,54 @@
   <data name="DocumentsTitle" xml:space="preserve"><value>Dokumente</value></data>
   <data name="Edit" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="EditObject" xml:space="preserve"><value>„{0}“ bearbeiten</value></data>
+  <data name="EmergencyContinue" xml:space="preserve"><value>Weiterlaufen lassen</value></data>
+  <data name="EmergencyDisabled" xml:space="preserve"><value>Der Notfallzugang wird aktiv, sobald du mindestens eine Vertrauensperson benannt hast. Bis dahin gibt es keine Erinnerungen.</value></data>
+  <data name="EmergencyEarliestRelease" xml:space="preserve"><value>Freigabe ohne Reaktion frühestens</value></data>
+  <data name="EmergencyError_emergency-already-released" xml:space="preserve"><value>Dieser Fall ist schon freigegeben.</value></data>
+  <data name="EmergencyError_emergency-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
+  <data name="EmergencyError_emergency-invalid" xml:space="preserve"><value>Die Angaben sind ungültig.</value></data>
+  <data name="EmergencyError_emergency-not-allowed" xml:space="preserve"><value>Dafür fehlt dir das Recht.</value></data>
+  <data name="EmergencyError_emergency-not-found" xml:space="preserve"><value>Nicht gefunden.</value></data>
+  <data name="EmergencyError_emergency-pending" xml:space="preserve"><value>Es läuft schon ein Antrag für diesen Fall.</value></data>
+  <data name="EmergencyError_emergency-token-invalid" xml:space="preserve"><value>Der Link ist ungültig oder schon verwendet.</value></data>
+  <data name="EmergencyForOthers" xml:space="preserve"><value>Für andere</value></data>
+  <data name="EmergencyForOthersText" xml:space="preserve"><value>Personen, die dich als Vertrauensperson benannt haben. Einen Zugang beantragst du nur im Ernstfall; die Person und ihre anderen Vertrauenspersonen werden sofort informiert und können widersprechen.</value></data>
+  <data name="EmergencyLastLifesign" xml:space="preserve"><value>Letztes Lebenszeichen</value></data>
+  <data name="EmergencyLifesignButton" xml:space="preserve"><value>Lebenszeichen geben</value></data>
+  <data name="EmergencyLifesignDone" xml:space="preserve"><value>Danke, dein Lebenszeichen ist gespeichert.</value></data>
+  <data name="EmergencyLifesignHint" xml:space="preserve"><value>Jede Anmeldung zählt ebenfalls als Lebenszeichen.</value></data>
+  <data name="EmergencyMailDelayed" xml:space="preserve"><value>Die Erinnerungsmail konnte bisher nicht verschickt werden. Solange das so ist, laufen keine Fristen weiter; es wird nichts freigegeben. Der Administrator ist informiert.</value></data>
+  <data name="EmergencyMine" xml:space="preserve"><value>Dein Notfallzugang</value></data>
+  <data name="EmergencyMyRequestPaused" xml:space="preserve"><value>Dein Antrag ({0}) ist angehalten.</value></data>
+  <data name="EmergencyMyRequestPending" xml:space="preserve"><value>Dein Antrag ({0}) läuft; Freigabe ohne Widerspruch am {1}.</value></data>
+  <data name="EmergencyNextDue" xml:space="preserve"><value>Nächstes Lebenszeichen fällig</value></data>
+  <data name="EmergencyNextReminder" xml:space="preserve"><value>Nächste Erinnerung</value></data>
+  <data name="EmergencyNoRequestRight" xml:space="preserve"><value>Du darfst für diese Person keinen Zugang beantragen.</value></data>
+  <data name="EmergencyNtfyTopic" xml:space="preserve"><value>ntfy-Thema (optional)</value></data>
+  <data name="EmergencyNtfyTopicHint" xml:space="preserve"><value>Push-Nachricht aufs Smartphone, zusätzlich zur Mail.</value></data>
+  <data name="EmergencyObject" xml:space="preserve"><value>Endgültig widersprechen</value></data>
+  <data name="EmergencyObjectConfirm" xml:space="preserve"><value>Dem Antrag von {0} endgültig widersprechen? Es wird nichts freigegeben.</value></data>
+  <data name="EmergencyRange" xml:space="preserve"><value>zwischen {0} und {1} Tagen, Standard {2}</value></data>
+  <data name="EmergencyReleasedFor" xml:space="preserve"><value>Freigegeben ({0}) – ansehen</value></data>
+  <data name="EmergencyReleasedOwner" xml:space="preserve"><value>Dein Notfallzugang ist freigegeben ({0}) seit {1}. Deine Vertrauenspersonen können lesen, was du für diesen Fall hinterlegt hast. Die Rücknahme kommt mit dem nächsten Schritt (M2.6).</value></data>
+  <data name="EmergencyRequest" xml:space="preserve"><value>Zugang beantragen: {0}</value></data>
+  <data name="EmergencyRequestConfirm" xml:space="preserve"><value>Zugang zu {0} für den Fall „{1}“ beantragen? {0} und alle anderen Vertrauenspersonen bekommen sofort eine Mail.</value></data>
+  <data name="EmergencyRequestPaused" xml:space="preserve"><value>Der Antrag von {0} ({1}) ist angehalten. Entscheide jetzt: endgültig widersprechen oder weiterlaufen lassen.</value></data>
+  <data name="EmergencyRequestPending" xml:space="preserve"><value>{0} hat Zugang beantragt ({1}). Ohne Widerspruch wird er am {2} freigegeben.</value></data>
+  <data name="EmergencyRequestSubmit" xml:space="preserve"><value>Beantragen</value></data>
+  <data name="EmergencyRequested" xml:space="preserve"><value>Der Antrag ist gestellt.</value></data>
+  <data name="EmergencySecondEmail" xml:space="preserve"><value>Zweite E-Mail-Adresse (optional)</value></data>
+  <data name="EmergencySecondEmailHint" xml:space="preserve"><value>Erinnerungen und Anträge gehen zusätzlich dorthin.</value></data>
+  <data name="EmergencySettings" xml:space="preserve"><value>Deine Fristen</value></data>
+  <data name="EmergencySettingsText" xml:space="preserve"><value>Erinnerungen kommen {0} Tage nach Fälligkeit des Lebenszeichens. Die Werte wählst du innerhalb der Grenzen, die der Administrator festgelegt hat.</value></data>
+  <data name="EmergencyState_Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="EmergencyState_Disabled" xml:space="preserve"><value>Nicht aktiv</value></data>
+  <data name="EmergencyState_Overdue" xml:space="preserve"><value>Lebenszeichen fällig</value></data>
+  <data name="EmergencyState_Released" xml:space="preserve"><value>Freigegeben</value></data>
+  <data name="EmergencyState_Waiting" xml:space="preserve"><value>Wartezeit läuft</value></data>
+  <data name="EmergencyText" xml:space="preserve"><value>Wenn du dich längere Zeit nicht meldest oder eine Vertrauensperson einen Zugang beantragt und du nicht widersprichst, gibt myLife frei, was du für diesen Fall hinterlegt hast. Jede Anmeldung zählt als Lebenszeichen.</value></data>
+  <data name="EmergencyTitle" xml:space="preserve"><value>Notfallzugang</value></data>
+  <data name="EmergencyWithdraw" xml:space="preserve"><value>Zurückziehen</value></data>
   <data name="ErrorUnhandled" xml:space="preserve"><value>Ein unerwarteter Fehler ist aufgetreten.</value></data>
   <data name="Expiry_card" xml:space="preserve"><value>Gültig bis</value></data>
   <data name="Expiry_contract" xml:space="preserve"><value>Mindestlaufzeit bis</value></data>
@@ -609,6 +672,9 @@
   <data name="Language" xml:space="preserve"><value>Sprache</value></data>
   <data name="LanguageName_de" xml:space="preserve"><value>Deutsch</value></data>
   <data name="LanguageName_en" xml:space="preserve"><value>English</value></data>
+  <data name="LifesignDone" xml:space="preserve"><value>Danke, {0}. Dein Lebenszeichen ist gespeichert.</value></data>
+  <data name="LifesignInvalid" xml:space="preserve"><value>Dieser Link ist ungültig oder wurde schon verwendet. Melde dich einfach an; das zählt auch als Lebenszeichen.</value></data>
+  <data name="LifesignTitle" xml:space="preserve"><value>Lebenszeichen</value></data>
   <data name="Loading" xml:space="preserve"><value>Wird geladen …</value></data>
   <data name="LoginChecking" xml:space="preserve"><value>Passwort wird geprüft …</value></data>
   <data name="LoginConfirm" xml:space="preserve"><value>Bestätigen</value></data>
@@ -660,6 +726,10 @@
   <data name="ObjectSummary" xml:space="preserve"><value>Kurzinfo</value></data>
   <data name="ObjectType" xml:space="preserve"><value>Objekttyp</value></data>
   <data name="ObjectUpdated" xml:space="preserve"><value>Geändert</value></data>
+  <data name="ObjectionDone" xml:space="preserve"><value>Der Antrag von {0} ist angehalten. Es wird vorerst nichts freigegeben.</value></data>
+  <data name="ObjectionInvalid" xml:space="preserve"><value>Dieser Link ist ungültig oder der Antrag ist schon entschieden.</value></data>
+  <data name="ObjectionNext" xml:space="preserve"><value>Melde dich jetzt an und entscheide unter „Notfallzugang“, ob du endgültig widersprichst.</value></data>
+  <data name="ObjectionTitle" xml:space="preserve"><value>Antrag anhalten</value></data>
   <data name="Open" xml:space="preserve"><value>Öffnen</value></data>
   <data name="OpenMenu" xml:space="preserve"><value>Menü öffnen</value></data>
   <data name="Option_accountKind_business" xml:space="preserve"><value>Geschäftskonto</value></data>

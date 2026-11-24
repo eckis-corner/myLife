@@ -133,6 +133,18 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 90 | Neuer Bereichsschlüssel | Endet das sofortige Teilen (oder wird die Person entfernt), erzeugt der Browser einen neuen Bereichsschlüssel, verschlüsselt alle Objekte des Bereichs neu (Briefe: nur ihren Schlüssel neu verpackt), packt die Dateischlüssel um und versiegelt alle verbleibenden Umschläge des Bereichs neu. Der Server übernimmt das nur vollständig und unverändert (sonst 409). Abgebrochene Uploads des Bereichs entfallen dabei. |
 | 91 | Exportformat | Objekte tragen optional `wrappedKey` (Briefe). Ältere Exporte bleiben gültig; Version 1 bleibt. |
 
+## Runde 9 (24.11.2026, Umsetzung M2.4)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 92 | Wann der Notfallzugang läuft | Sobald ein Nutzer mindestens eine Vertrauensperson hat. Ohne Vertrauenspersonen gibt es keine Erinnerungen. Jede Anmeldung, der Knopf „Lebenszeichen geben“, das Speichern der eigenen Fristen und der Link in der Mail zählen als Lebenszeichen. |
+| 93 | Ablauf ohne Lebenszeichen | Nach dem Intervall kommt zuerst die Mail „Lebenszeichen fällig“, dann die Erinnerungen des Admins (Standard 3, 7, 14 Tage), jeweils gerechnet ab dem tatsächlichen Versand der vorigen Mail. Nach der letzten zugestellten Erinnerung läuft die Wartezeit; danach sind beide Modi frei (32). Mit Standardwerten frühestens 58 Tage nach dem letzten Lebenszeichen. Eigentümer und alle betroffenen Vertrauenspersonen bekommen eine Mail. |
+| 94 | Mailausfall | Keine Frist läuft, solange die zugehörige Mail nicht verschickt ist; das gilt für Erinnerungen und für die Antragsfrist. Gibt die Outbox eine Mail auf, schickt der Dienst dieselbe Stufe neu. So führt ein Ausfall nie zu einer Freigabe, und nach dem Ausfall geht es normal weiter. Eigentümer (Notfallzugang, Übersicht) und Admin (Übersicht) sehen einen Hinweis. |
+| 95 | Links | Lebenszeichen- und Widerspruchslinks sind Einmal-Tokens (256 Bit, nur der Hash gespeichert, 120 Tage gültig) im Fragment des Links. Der Lebenszeichenlink setzt nur das Lebenszeichen. Der Widerspruchslink hält den Antrag an; nach der Anmeldung widerspricht der Eigentümer endgültig oder lässt ihn weiterlaufen, die Frist verlängert sich dann um die Zeit des Anhaltens. |
+| 96 | Antrag | Nur mit Antragsrecht, nur für Modi, für die die Person Umschläge hat, je Eigentümer und Modus ein offener Antrag. Der Eigentümer bekommt Mail (und zweite Adresse, ntfy), alle anderen Vertrauenspersonen eine Information (33). Ein Antrag gibt nur seinen Modus frei. Ein Lebenszeichen beendet einen Antrag nicht; dafür gibt es den Widerspruch. |
+| 97 | Eigene Einstellungen | Jeder Nutzer wählt Intervall, Wartezeit und Antragsfrist innerhalb der Grenzen des Admins (43), dazu optional eine zweite Mail-Adresse und ein ntfy-Thema. Die Erinnerungstage gibt der Admin vor. |
+| 98 | Freigabe und Rücknahme | Freigegebene Umschläge liefert der Server unter „Mit mir geteilt“ aus. Eine spätere Anmeldung hebt eine Freigabe nicht auf; die Rücknahme mit neuen Bereichsschlüsseln folgt mit M2.6. Ein Konto mit Freigabe kann der Admin nicht löschen (44). |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

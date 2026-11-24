@@ -46,6 +46,53 @@ The link is valid for {days} days. You need about ten minutes, a printer or pen 
 
 If you do not know {inviter}, simply ignore this email.</value></data>
   <data name="Mail_invitation_subject" xml:space="preserve"><value>{inviter} invites you to myLife</value></data>
+  <data name="Mail_lifesign-due_body" xml:space="preserve"><value>Hello {name},
+
+your life sign on myLife is due. One click is enough, no sign-in needed:
+{link}
+
+You can also simply sign in to myLife. If you do not respond, myLife will remind you {count} more times. Only after that and a waiting period will your trusted persons get access, on {date} at the earliest.</value></data>
+  <data name="Mail_lifesign-due_subject" xml:space="preserve"><value>myLife: Please confirm you are well</value></data>
+  <data name="Mail_lifesign-reminder_body" xml:space="preserve"><value>Hello {name},
+
+we have not had a life sign from you yet. One click is enough:
+{link}
+
+Without a response, your trusted persons will get access to what you shared with them on {date} at the earliest.</value></data>
+  <data name="Mail_lifesign-reminder_subject" xml:space="preserve"><value>myLife: Reminder {stage} of {count} – please confirm you are well</value></data>
+  <data name="Mail_mode_death" xml:space="preserve"><value>deceased</value></data>
+  <data name="Mail_mode_incapacity" xml:space="preserve"><value>incapacitated</value></data>
+  <data name="Mail_released-owner_body" xml:space="preserve"><value>Hello {name},
+
+your emergency access on myLife has been released ({mode}). Your trusted persons can now read what you shared with them for this case.
+
+If this is a mistake, sign in to myLife.</value></data>
+  <data name="Mail_released-owner_subject" xml:space="preserve"><value>myLife: Your emergency access has been released</value></data>
+  <data name="Mail_released-trustee_body" xml:space="preserve"><value>Hello {name},
+
+{owner}'s emergency access has been released ({mode}). Sign in to myLife; under "Shared with me" you will find what {owner} left for you.</value></data>
+  <data name="Mail_released-trustee_subject" xml:space="preserve"><value>myLife: Access to {owner} released</value></data>
+  <data name="Mail_request-info_body" xml:space="preserve"><value>Hello {name},
+
+{trustee} has requested access to {owner} on myLife, for the case "{mode}". {owner} can object. You do not need to do anything; if in doubt, talk to {trustee} or {owner}.</value></data>
+  <data name="Mail_request-info_subject" xml:space="preserve"><value>myLife: Access request for {owner}</value></data>
+  <data name="Mail_request-objected_body" xml:space="preserve"><value>Hello {name},
+
+{owner} has objected to {trustee}'s access request for good. Nothing will be released.</value></data>
+  <data name="Mail_request-objected_subject" xml:space="preserve"><value>myLife: {owner} has objected to the request</value></data>
+  <data name="Mail_request-owner_body" xml:space="preserve"><value>Hello {name},
+
+{trustee} has requested access to your data on myLife, for the case "{mode}". Without an objection, access will be released on {date}.
+
+If this is not what you want, open this link right away. It pauses the request:
+{link}
+
+Then sign in and decide whether to object for good. Your other trusted persons have been informed about the request.</value></data>
+  <data name="Mail_request-owner_subject" xml:space="preserve"><value>myLife: {trustee} has requested access</value></data>
+  <data name="Mail_request-paused_body" xml:space="preserve"><value>Hello {name},
+
+{owner} has paused your access request. The waiting period does not continue for now.</value></data>
+  <data name="Mail_request-paused_subject" xml:space="preserve"><value>myLife: Your request has been paused</value></data>
   <data name="Mail_test_body" xml:space="preserve"><value>Hello {name},
 
 this test message shows that myLife can send emails.</value></data>

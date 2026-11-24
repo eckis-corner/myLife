@@ -37,6 +37,8 @@ public sealed class MailOutboxEntry
 public enum TokenPurpose
 {
     AccountDeletion = 0,
+    Lifesign = 1,
+    Objection = 2,
 }
 
 /// <summary>
@@ -52,6 +54,9 @@ public sealed class OneTimeToken
     public required byte[] TokenHash { get; set; }
 
     public Guid UserId { get; set; }
+
+    /// <summary>Worauf sich das Token bezieht, etwa der Antrag bei einem Widerspruchslink.</summary>
+    public Guid? ReferenceId { get; set; }
 
     /// <summary>Wer das Token ausgelöst hat (bei der Kontolöschung der Admin).</summary>
     public Guid? CreatedBy { get; set; }

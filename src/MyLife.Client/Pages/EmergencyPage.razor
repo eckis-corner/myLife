@@ -1,0 +1,298 @@
+@page "/emergency"
+@attribute [Authorize]
+@using System.Globalization
+@using MyLife.Shared.Admin
+@using MyLife.Shared.Emergency
+@using MyLife.Shared.Trust
+@inject IStringLocalizer<SharedResource> L
+@inject EmergencyClient Api
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["EmergencyTitle"]</PageTitle>
+
+@* Notfallzugang (M2.4, Architektur 5): eigener Stand, Lebenszeichen, Anträge auf mich, Einstellungen; dazu als
+   Vertrauensperson die Anträge für andere. *@
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["EmergencyTitle"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["EmergencyText"]</MudText>
+
+    @if (_status is null)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else
+    {
+        @if (_status.ReleasedModes != ReleasedModes.None)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled" data-testid="emergency-released">
+                @L["EmergencyReleasedOwner", Modes(_status.ReleasedModes), Date(_status.ReleasedAt)]
+            </MudAlert>
+        }
+
+        @foreach (var request in _status.Requests.Where(r => r.State is RequestState.Pending or RequestState.Paused))
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" data-testid="emergency-request">
+                <MudStack Spacing="2">
+                    <MudText>
+                        @L[request.State == RequestState.Paused ? "EmergencyRequestPaused" : "EmergencyRequestPending", request.TrusteeName,
+                            L[$"GrantMode_{request.Mode}"], Date(request.DeadlineAt)]
+                    </MudText>
+                    <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Block" Disabled="_busy"
+                                   OnClick="() => ObjectAsync(request)" data-testid="emergency-object">@L["EmergencyObject"]</MudButton>
+                        @if (request.State == RequestState.Paused)
+                        {
+                            <MudButton Variant="Variant.Outlined" Disabled="_busy" OnClick="() => ContinueAsync(request)">@L["EmergencyContinue"]</MudButton>
+                        }
+                    </MudStack>
+                </MudStack>
+            </MudAlert>
+        }
+
+        <MudPaper Outlined Class="pa-4">
+            <MudStack Spacing="2">
+                <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                    <MudText Typo="Typo.h6" HtmlTag="h2">@L["EmergencyMine"]</MudText>
+                    <MudChip T="string" Variant="Variant.Filled" Color="@StateColor(_status)" data-testid="emergency-state">
+                        @L[_status.Enabled ? $"EmergencyState_{_status.State}" : "EmergencyState_Disabled"]
+                    </MudChip>
+                </MudStack>
+                @if (!_status.Enabled)
+                {
+                    <MudText Typo="Typo.body2">@L["EmergencyDisabled"]</MudText>
+                    <div><MudButton Variant="Variant.Outlined" Href="trust" StartIcon="@Icons.Material.Outlined.VolunteerActivism">@L["TrustTitle"]</MudButton></div>
+                }
+                else
+                {
+                    <MudSimpleTable Dense Elevation="0">
+                        <tbody>
+                            <tr><th scope="row">@L["EmergencyLastLifesign"]</th><td>@Date(_status.LastLifesignAt)</td></tr>
+                            @if (_status.NextReminderAt is { } next)
+                            {
+                                <tr><th scope="row">@L[_status.State == EmergencyState.Active ? "EmergencyNextDue" : "EmergencyNextReminder"]</th><td>@Date(next)</td></tr>
+                            }
+                            @if (_status.ReleaseEarliestAt is { } release && _status.State != EmergencyState.Released)
+                            {
+                                <tr><th scope="row">@L["EmergencyEarliestRelease"]</th><td>@Date(release)</td></tr>
+                            }
+                        </tbody>
+                    </MudSimpleTable>
+                    @if (_status.MailDelayed)
+                    {
+                        <MudAlert Severity="Severity.Warning" Dense>@L["EmergencyMailDelayed"]</MudAlert>
+                    }
+                }
+                <div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Favorite" Disabled="_busy" OnClick="LifesignAsync"
+                               data-testid="emergency-lifesign">@L["EmergencyLifesignButton"]</MudButton>
+                </div>
+                <MudText Typo="Typo.caption" Class="mylife-muted">@L["EmergencyLifesignHint"]</MudText>
+            </MudStack>
+        </MudPaper>
+
+        <MudPaper Outlined Class="pa-4">
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h6" HtmlTag="h2">@L["EmergencySettings"]</MudText>
+                <MudText Typo="Typo.body2" Class="mylife-muted">@L["EmergencySettingsText", string.Join(", ", _status.Limits.ReminderDays)]</MudText>
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="4">
+                        <MudNumericField T="int" @bind-Value="_interval" Label="@L["AdminLifesign"]" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]"
+                                         Min="_status.Limits.LifesignIntervalDays.Min" Max="_status.Limits.LifesignIntervalDays.Max"
+                                         HelperText="@Range(_status.Limits.LifesignIntervalDays)" />
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <MudNumericField T="int" @bind-Value="_waiting" Label="@L["AdminWaiting"]" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]"
+                                         Min="_status.Limits.WaitingDays.Min" Max="_status.Limits.WaitingDays.Max" HelperText="@Range(_status.Limits.WaitingDays)" />
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <MudNumericField T="int" @bind-Value="_requestWaiting" Label="@L["AdminRequestWaiting"]" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]"
+                                         Min="_status.Limits.RequestWaitingDays.Min" Max="_status.Limits.RequestWaitingDays.Max" HelperText="@Range(_status.Limits.RequestWaitingDays)" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" @bind-Value="_secondEmail" Label="@L["EmergencySecondEmail"]" Variant="Variant.Outlined" InputType="InputType.Email"
+                                      HelperText="@L["EmergencySecondEmailHint"]" />
+                    </MudItem>
+                    @if (_status.NtfyAvailable)
+                    {
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_ntfyTopic" Label="@L["EmergencyNtfyTopic"]" Variant="Variant.Outlined" MaxLength="64"
+                                          HelperText="@L["EmergencyNtfyTopicHint"]" />
+                        </MudItem>
+                    }
+                </MudGrid>
+                <MudStack Row Justify="Justify.FlexEnd">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" Disabled="_busy" OnClick="SaveAsync">@L["Save"]</MudButton>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+
+        @if (_trusted.Count > 0)
+        {
+            <MudText Typo="Typo.h6" HtmlTag="h2" Class="mt-2">@L["EmergencyForOthers"]</MudText>
+            <MudText Typo="Typo.body2" Class="mylife-muted">@L["EmergencyForOthersText"]</MudText>
+            @foreach (var owner in _trusted)
+            {
+                <MudPaper Outlined Class="pa-3" data-testid="emergency-trusted">
+                    <MudStack Spacing="2">
+                        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                            <MudText Typo="Typo.subtitle1"><b>@owner.OwnerName</b></MudText>
+                            @if (owner.ReleasedModes != ReleasedModes.None)
+                            {
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="shared" StartIcon="@Icons.Material.Outlined.FolderShared">
+                                    @L["EmergencyReleasedFor", Modes(owner.ReleasedModes)]
+                                </MudButton>
+                            }
+                        </MudStack>
+                        @foreach (var request in owner.Requests.Where(r => r.State is RequestState.Pending or RequestState.Paused))
+                        {
+                            <MudStack Row AlignItems="AlignItems.Center" Wrap="Wrap.Wrap" Spacing="2">
+                                <MudText Typo="Typo.body2">
+                                    @L[request.State == RequestState.Paused ? "EmergencyMyRequestPaused" : "EmergencyMyRequestPending", L[$"GrantMode_{request.Mode}"], Date(request.DeadlineAt)]
+                                </MudText>
+                                <MudButton Variant="Variant.Text" Size="Size.Small" Disabled="_busy" OnClick="() => WithdrawAsync(request)">@L["EmergencyWithdraw"]</MudButton>
+                            </MudStack>
+                        }
+                        @if (owner.CanRequestAccess)
+                        {
+                            <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                                @foreach (var mode in RequestModes(owner))
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Warning" Disabled="_busy" OnClick="() => RequestAsync(owner, mode)"
+                                               data-testid="@($"emergency-request-{mode}")">@L["EmergencyRequest", L[$"GrantMode_{mode}"]]</MudButton>
+                                }
+                            </MudStack>
+                        }
+                        else if (owner.ReleasedModes == ReleasedModes.None)
+                        {
+                            <MudText Typo="Typo.caption" Class="mylife-muted">@L["EmergencyNoRequestRight"]</MudText>
+                        }
+                    </MudStack>
+                </MudPaper>
+            }
+        }
+    }
+</MudStack>
+
+@code {
+    private EmergencyStatusDto? _status;
+    private IReadOnlyList<TrustedOwnerDto> _trusted = [];
+    private int _interval;
+    private int _waiting;
+    private int _requestWaiting;
+    private string? _secondEmail;
+    private string? _ntfyTopic;
+    private bool _busy;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            _status = await Api.GetStatusAsync();
+            _trusted = await Api.GetTrustedAsync();
+            _interval = _status.Settings.IntervalDays;
+            _waiting = _status.Settings.WaitingDays;
+            _requestWaiting = _status.Settings.RequestWaitingDays;
+            _secondEmail = _status.Settings.SecondEmail;
+            _ntfyTopic = _status.Settings.NtfyTopic;
+        }
+        catch (Exception exception) when (exception is EmergencyException or HttpRequestException)
+        {
+            Snackbar.Add(L["EmergencyError_emergency-failed"], Severity.Error);
+        }
+    }
+
+    private static string Date(DateTimeOffset? value) => value?.ToLocalTime().ToString("D", CultureInfo.CurrentCulture) ?? "–";
+
+    private string Range(DayRange range) => L["EmergencyRange", range.Min, range.Max, range.Default];
+
+    private string Modes(ReleasedModes modes) => string.Join(", ", new[]
+    {
+        modes.HasFlag(ReleasedModes.Death) ? L["GrantMode_Death"].Value : null,
+        modes.HasFlag(ReleasedModes.Incapacity) ? L["GrantMode_Incapacity"].Value : null,
+    }.Where(m => m is not null));
+
+    private static Color StateColor(EmergencyStatusDto status) => !status.Enabled ? Color.Default : status.State switch
+    {
+        EmergencyState.Active => Color.Success,
+        EmergencyState.Overdue => Color.Warning,
+        _ => Color.Error,
+    };
+
+    private static IEnumerable<GrantMode> RequestModes(TrustedOwnerDto owner)
+    {
+        var open = owner.Requests.Where(r => r.State is RequestState.Pending or RequestState.Paused).Select(r => r.Mode).ToHashSet();
+        if (owner.HasIncapacityGrants && !owner.ReleasedModes.HasFlag(ReleasedModes.Incapacity) && !open.Contains(GrantMode.Incapacity))
+        {
+            yield return GrantMode.Incapacity;
+        }
+
+        if (owner.HasDeathGrants && !owner.ReleasedModes.HasFlag(ReleasedModes.Death) && !open.Contains(GrantMode.Death))
+        {
+            yield return GrantMode.Death;
+        }
+    }
+
+    private Task LifesignAsync() => RunAsync(async () =>
+    {
+        await Api.LifesignAsync();
+        Snackbar.Add(L["EmergencyLifesignDone"], Severity.Success);
+    });
+
+    private Task SaveAsync() => RunAsync(async () =>
+    {
+        await Api.SaveSettingsAsync(new EmergencySettingsDto(_interval, _waiting, _requestWaiting, _secondEmail, _ntfyTopic));
+        Snackbar.Add(L["SaveSuccessful"], Severity.Success);
+    });
+
+    private async Task ObjectAsync(AccessRequestDto request)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["EmergencyObject"], L["EmergencyObjectConfirm", request.TrusteeName], yesText: L["EmergencyObject"], cancelText: L["Cancel"]);
+        if (confirmed == true)
+        {
+            await RunAsync(() => Api.ObjectAsync(request.Id));
+        }
+    }
+
+    private Task ContinueAsync(AccessRequestDto request) => RunAsync(() => Api.ContinueAsync(request.Id));
+
+    private Task WithdrawAsync(AccessRequestDto request) => RunAsync(() => Api.WithdrawAsync(request.Id));
+
+    private async Task RequestAsync(TrustedOwnerDto owner, GrantMode mode)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["EmergencyRequest", L[$"GrantMode_{mode}"]], L["EmergencyRequestConfirm", owner.OwnerName, L[$"GrantMode_{mode}"]],
+            yesText: L["EmergencyRequestSubmit"], cancelText: L["Cancel"]);
+        if (confirmed == true)
+        {
+            await RunAsync(async () =>
+            {
+                await Api.RequestAsync(owner.OwnerId, mode);
+                Snackbar.Add(L["EmergencyRequested"], Severity.Info);
+            });
+        }
+    }
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        _busy = true;
+        try
+        {
+            await action();
+            await LoadAsync();
+        }
+        catch (EmergencyException exception)
+        {
+            Snackbar.Add(L[$"EmergencyError_{exception.Message}"], Severity.Error);
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(L["EmergencyError_emergency-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

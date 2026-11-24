@@ -1,0 +1,56 @@
+@page "/lifesign"
+@page "/objection"
+@inject IStringLocalizer<SharedResource> L
+@inject EmergencyClient Api
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L[IsObjection ? "ObjectionTitle" : "LifesignTitle"]</PageTitle>
+
+@* Links aus Mails (Architektur 5.1): Lebenszeichen und Widerspruch ohne Anmeldung. Das Token steht im Fragment. *@
+<MudContainer MaxWidth="MaxWidth.Small" Class="px-0">
+    <MudPaper Class="pa-4 pa-sm-6" Elevation="1">
+        <MudStack Spacing="4">
+            <AppLogo />
+            <MudText Typo="Typo.h4" HtmlTag="h1">@L[IsObjection ? "ObjectionTitle" : "LifesignTitle"]</MudText>
+            @if (_result is null && _error is null)
+            {
+                <MudProgressLinear Indeterminate Color="Color.Primary" />
+            }
+            else if (_error is not null)
+            {
+                <MudAlert Severity="Severity.Warning" data-testid="emergency-link-invalid">@L[IsObjection ? "ObjectionInvalid" : "LifesignInvalid"]</MudAlert>
+            }
+            else if (IsObjection)
+            {
+                <MudAlert Severity="Severity.Success" data-testid="objection-done">@L["ObjectionDone", _result!.TrusteeName ?? string.Empty]</MudAlert>
+                <MudText>@L["ObjectionNext"]</MudText>
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Success" data-testid="lifesign-done">@L["LifesignDone", _result!.OwnerName]</MudAlert>
+            }
+            <div><MudButton Variant="Variant.Filled" Color="Color.Primary" Href="emergency">@L["LoginTitle"]</MudButton></div>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MyLife.Shared.Emergency.EmergencyLinkResultDto? _result;
+    private string? _error;
+
+    private bool IsObjection => Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith("objection", StringComparison.OrdinalIgnoreCase);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = new Uri(Navigation.Uri).Fragment.TrimStart('#');
+        try
+        {
+            _result = token.Length == 0 ? null : IsObjection ? await Api.ObjectionLinkAsync(token) : await Api.LifesignLinkAsync(token);
+            _error = _result is null ? "invalid" : null;
+        }
+        catch (Exception exception) when (exception is EmergencyException or HttpRequestException)
+        {
+            _error = exception.Message;
+        }
+    }
+}

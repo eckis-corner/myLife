@@ -228,8 +228,8 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 | `objects` | Id, AreaId, TypeKey (bank_account, insurance, …), 🔒Payload (alle Felder, Wunsch, Verweise, Notizen als JSON), 🔒WrappedKey (nur Briefe: eigener Objektschlüssel), SchemaVersion, Status, CreatedAt, UpdatedAt, IsDeleted, DeletedAt, `xmin` |
 | `documents` | Id, ObjectId, 🔒WrappedFileKey, 🔒Metadata (Bezeichnung, Dateiname, Typ, Datum), CipherSize, StorageKey, CipherSha256, IsDeleted |
 | `grants` | Id, OwnerId, TrusteeId, Ressource (AreaId oder ObjectId bei Briefen), Mode (Live/Death/Incapacity), 🔒Envelope, Signatur des Eigentümers, Fingerprint der Person beim Versiegeln, CreatedAt |
-| `emergency_switches` | OwnerId, IntervalDays, ReminderOffsets, WaitingDays, RequestWaitingDays, LastLifesignAt, State, ReleasedModes, StateSince, NextActionAt |
-| `access_requests` | Id, OwnerId, TrusteeId, Mode, RequestedAt, DeadlineAt, State, PausedAt, DecidedAt |
+| `emergency_switches` | OwnerId, IntervalDays, WaitingDays, RequestWaitingDays, zweite Adresse, ntfy-Thema, LastLifesignAt, State, OverdueAt, Stufe, Mail der Stufe und ihr Versandzeitpunkt, ReleasedModes, ReleasedAt (Erinnerungstage gibt der Admin vor) |
+| `access_requests` | Id, OwnerId, TrusteeId, Mode, RequestedAt, Mail an den Eigentümer, DeadlineAt (ab deren Versand), State, PausedAt, DecidedAt |
 | `vault_deletion_votes` | OwnerId, TrusteeId, VotedAt |
 | `one_time_tokens` | Id, Zweck (Lifesign/Objection/Invite/PasswordReset…), TokenHash, UserId, ExpiresAt, UsedAt |
 | `checklist_progress` | OwnerId, ObjectId (Aufgabe), TrusteeId, DoneAt, 🔒Notiz |

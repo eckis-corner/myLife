@@ -140,6 +140,9 @@ public static class AdminErrors
     public const string MailNotConfigured = "admin-mail-not-configured";
     public const string Invalid = "admin-invalid";
     public const string TokenInvalid = "admin-token-invalid";
+
+    /// <summary>Konto mit freigegebenem Notfallzugang: nicht löschbar durch den Admin (Entscheidung 44).</summary>
+    public const string Released = "admin-released";
     public const string Failed = "admin-failed";
 }
 

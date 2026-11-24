@@ -105,7 +105,7 @@
     }
 
     private string Title(SharedGrantDto grant) =>
-        grant.Kind == GrantKind.Area ? Text.Area(grant.Area!.Value) : L["SharedLetter"];
+        $"{(grant.Kind == GrantKind.Area ? Text.Area(grant.Area!.Value) : L["SharedLetter"].Value)} · {L[$"GrantMode_{grant.Mode}"].Value}";
 
     private async Task OnExpandAsync(SharedOwner owner, SharedGrant grant, bool open)
     {

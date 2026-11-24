@@ -1,0 +1,71 @@
+@* Hinweise zum Notfallzugang auf der Übersicht: offene Anträge, Freigabe, fälliges Lebenszeichen, stockender
+   Mailversand; für Admins zusätzlich Probleme der Mail-Warteschlange (Architektur 5.1). *@
+@using MyLife.Shared.Emergency
+@inject IStringLocalizer<SharedResource> L
+@inject EmergencyClient Api
+@inject AdminClient Admin
+@inject SessionService CurrentSession
+
+@if (_status is { } status)
+{
+    @if (status.Requests.Any(r => r.State is RequestState.Pending or RequestState.Paused))
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" data-testid="banner-request">
+            @L["BannerRequest", string.Join(", ", status.Requests.Where(r => r.State is RequestState.Pending or RequestState.Paused).Select(r => r.TrusteeName).Distinct())]
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Href="emergency" Class="ml-2">@L["EmergencyTitle"]</MudButton>
+        </MudAlert>
+    }
+
+    @if (status.ReleasedModes != ReleasedModes.None)
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">
+            @L["BannerReleased"]
+            <MudButton Variant="Variant.Text" Href="emergency" Class="ml-2">@L["EmergencyTitle"]</MudButton>
+        </MudAlert>
+    }
+
+    @if (status.MailDelayed)
+    {
+        <MudAlert Severity="Severity.Warning">@L["EmergencyMailDelayed"]</MudAlert>
+    }
+}
+
+@if (_trustedReleased.Count > 0)
+{
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+        @L["BannerTrustedReleased", string.Join(", ", _trustedReleased)]
+        <MudButton Variant="Variant.Text" Href="shared" Class="ml-2">@L["SharedTitle"]</MudButton>
+    </MudAlert>
+}
+
+@if (_mailProblem)
+{
+    <MudAlert Severity="Severity.Warning" data-testid="banner-mail">
+        @L["BannerMailProblem"]
+        <MudButton Variant="Variant.Text" Href="admin/settings" Class="ml-2">@L["AdminSettingsTitle"]</MudButton>
+    </MudAlert>
+}
+
+@code {
+    private EmergencyStatusDto? _status;
+    private List<string> _trustedReleased = [];
+    private bool _mailProblem;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _status = await Api.GetStatusAsync();
+            _trustedReleased = [.. (await Api.GetTrustedAsync()).Where(o => o.ReleasedModes != ReleasedModes.None).Select(o => o.OwnerName)];
+            if (CurrentSession.Session?.IsAdmin == true)
+            {
+                var queue = await Admin.GetMailQueueAsync();
+                _mailProblem = queue.Failed > 0 || (queue.Pending > 0 && queue.LastError is not null);
+            }
+        }
+        catch (Exception exception) when (exception is EmergencyException or AdminException or HttpRequestException)
+        {
+            // Die Hinweise sind eine Ergänzung; ohne sie bleibt die Übersicht nutzbar.
+        }
+    }
+}

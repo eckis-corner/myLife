@@ -68,6 +68,10 @@ builder.Services.AddSingleton<MailOutboxService>();
 builder.Services.AddHostedService(services => services.GetRequiredService<MailOutboxService>());
 builder.Services.AddHttpClient(NtfyClient.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(30));
 builder.Services.AddSingleton<NtfyClient>();
+builder.Services.AddSingleton<MyLife.Server.Infrastructure.Emergency.KnownBaseUrl>();
+builder.Services.AddScoped<MyLife.Server.Infrastructure.Emergency.EmergencyEngine>();
+builder.Services.AddSingleton<MyLife.Server.Infrastructure.Emergency.EmergencySwitchService>();
+builder.Services.AddHostedService(services => services.GetRequiredService<MyLife.Server.Infrastructure.Emergency.EmergencySwitchService>());
 
 // Sitzungs-Cookie (Architektur 4.4): HttpOnly, SameSite=Strict, gleitende Laufzeit wie die automatische Abmeldung.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -122,6 +126,12 @@ app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseMiddleware<CsrfHeaderMiddleware>();
+// Merkt sich die Adresse der Instanz für Links in Mails, die der Hintergrunddienst verschickt.
+app.Use((context, next) =>
+{
+    context.RequestServices.GetRequiredService<MyLife.Server.Infrastructure.Emergency.KnownBaseUrl>().Remember(context.Request);
+    return next(context);
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
@@ -138,6 +148,7 @@ app.MapAdminEndpoints();
 app.MapAccountDeletionEndpoints();
 app.MapFamilyEndpoints();
 app.MapTrustEndpoints();
+app.MapEmergencyEndpoints();
 
 app.MapStaticAssets();
 // Die Seiten sind nur die leere Hülle (kein Prerendering); [Authorize] prüft der Client. Ohne AllowAnonymous

@@ -337,11 +337,18 @@ internal static class TrustEndpoints
         return TypedResults.File(stream, "application/octet-stream");
     }
 
-    /// <summary>Was der Server an mich ausliefern darf. M2.4 ergänzt hier die freigegebenen Modi.</summary>
+    /// <summary>
+    /// Was der Server an mich ausliefern darf (10a): „Sofort teilen“ immer, die Modi verstorben und
+    /// handlungsunfähig erst, wenn der Notfallzugang des Eigentümers dafür freigegeben ist (M2.4).
+    /// </summary>
     internal static IQueryable<Grant> Deliverable(MyLifeDbContext db, Guid trusteeId) =>
-        db.Grants.AsNoTracking().Where(g => g.TrusteeId == trusteeId && g.Mode == GrantMode.Live
+        db.Grants.AsNoTracking().Where(g => g.TrusteeId == trusteeId
             && db.TrustRelations.Any(r => r.OwnerId == g.OwnerId && r.TrusteeId == trusteeId)
-            && db.Users.Any(u => u.Id == g.OwnerId && u.Status == UserStatus.Active));
+            && db.Users.Any(u => u.Id == g.OwnerId && u.Status == UserStatus.Active)
+            && (g.Mode == GrantMode.Live
+                || db.EmergencySwitches.Any(s => s.OwnerId == g.OwnerId
+                    && ((g.Mode == GrantMode.Death && ((int)s.ReleasedModes & (int)Shared.Emergency.ReleasedModes.Death) != 0)
+                        || (g.Mode == GrantMode.Incapacity && ((int)s.ReleasedModes & (int)Shared.Emergency.ReleasedModes.Incapacity) != 0)))));
 
     private static GrantDto ToDto(Grant g) => new(g.Id, g.Kind, g.Kind == GrantKind.Area ? g.AreaKey : null, g.ObjectId, g.Mode, g.Fingerprint);
 

@@ -17,9 +17,20 @@ internal static class MailTemplate
     public const string Invitation = "invitation";
     public const string InvitationAccepted = "invitation-accepted";
     public const string TrusteeAdded = "trustee-added";
+    public const string LifesignDue = "lifesign-due";
+    public const string LifesignReminder = "lifesign-reminder";
+    public const string ReleasedOwner = "released-owner";
+    public const string ReleasedTrustee = "released-trustee";
+    public const string RequestOwner = "request-owner";
+    public const string RequestInfo = "request-info";
+    public const string RequestPaused = "request-paused";
+    public const string RequestObjected = "request-objected";
 
     public static IReadOnlyList<string> All { get; } =
-        [Test, AccountLocked, AccountUnlocked, TwoFactorReset, DeletionRequest, AccountDeleted, Invitation, InvitationAccepted, TrusteeAdded];
+    [
+        Test, AccountLocked, AccountUnlocked, TwoFactorReset, DeletionRequest, AccountDeleted, Invitation, InvitationAccepted, TrusteeAdded,
+        LifesignDue, LifesignReminder, ReleasedOwner, ReleasedTrustee, RequestOwner, RequestInfo, RequestPaused, RequestObjected,
+    ];
 }
 
 /// <summary>Fertig gesetzte Mail: Betreff, Text- und HTML-Fassung.</summary>
@@ -59,6 +70,13 @@ internal static class MailTemplates
         html.Append("</body></html>");
         return new RenderedMail(subject, string.Join("\n\n", paragraphs) + "\n", html.ToString());
     }
+
+    /// <summary>Ein einzelnes Wort aus den Mailtexten in der Sprache der Mail, etwa ein Modus (<c>Mail_mode_death</c>).</summary>
+    public static string Phrase(string key, string language) => Text(key, CultureInfo.GetCultureInfo(language is "en" ? "en" : "de"));
+
+    /// <summary>Datum in der Sprache der Mail, lang ausgeschrieben.</summary>
+    public static string Date(DateTimeOffset value, string language) =>
+        value.ToLocalTime().ToString("D", CultureInfo.GetCultureInfo(language is "en" ? "en" : "de"));
 
     private static string Text(string key, CultureInfo culture) =>
         Resources.GetString(key, culture) ?? throw new InvalidOperationException($"Mailtext fehlt: {key}");

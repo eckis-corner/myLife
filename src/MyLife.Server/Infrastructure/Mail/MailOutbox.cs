@@ -56,12 +56,14 @@ internal sealed class MailOutbox
         };
     }
 
-    public void Enqueue(string recipient, string language, string template, IReadOnlyDictionary<string, string> parameters)
+    /// <summary>Legt eine Mail in die Outbox; liefert ihre ID, etwa um den Versand zu verfolgen.</summary>
+    public Guid Enqueue(string recipient, string language, string template, IReadOnlyDictionary<string, string> parameters)
     {
         var json = JsonSerializer.Serialize(parameters);
+        var id = Guid.CreateVersion7();
         _db.MailOutbox.Add(new MailOutboxEntry
         {
-            Id = Guid.CreateVersion7(),
+            Id = id,
             Recipient = recipient,
             Language = language,
             Template = template,
@@ -70,13 +72,14 @@ internal sealed class MailOutbox
             NextAttemptAt = _time.GetUtcNow(),
         });
         _pending = true;
+        return id;
     }
 
-    public void Enqueue(User user, string template, IReadOnlyDictionary<string, string>? parameters = null)
+    public Guid Enqueue(User user, string template, IReadOnlyDictionary<string, string>? parameters = null)
     {
         ArgumentNullException.ThrowIfNull(user);
         var all = new Dictionary<string, string>(parameters ?? new Dictionary<string, string>(), StringComparer.Ordinal) { ["name"] = user.DisplayName };
-        Enqueue(user.Email, user.Language, template, all);
+        return Enqueue(user.Email, user.Language, template, all);
     }
 }
 

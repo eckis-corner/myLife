@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import resources_admin  # noqa: E402
 import resources_family  # noqa: E402
 import resources_trust  # noqa: E402
+import resources_emergency  # noqa: E402
 import resources_vault  # noqa: E402
 
 TEXTS: dict[str, tuple[str, str]] = {
@@ -358,7 +359,11 @@ _DUPLICATES = sorted(set(TEXTS) & set(resources_trust.CLIENT))
 if _DUPLICATES:
     raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
 TEXTS.update(resources_trust.CLIENT)
-MAIL = {**resources_admin.MAIL, **resources_family.MAIL, **resources_trust.MAIL}
+_DUPLICATES = sorted(set(TEXTS) & set(resources_emergency.CLIENT))
+if _DUPLICATES:
+    raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
+TEXTS.update(resources_emergency.CLIENT)
+MAIL = {**resources_admin.MAIL, **resources_family.MAIL, **resources_trust.MAIL, **resources_emergency.MAIL}
 
 HEADER = """<?xml version="1.0" encoding="utf-8"?>
 <!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->

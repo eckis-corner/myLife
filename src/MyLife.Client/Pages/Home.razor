@@ -14,6 +14,8 @@
         <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.Search" Href="search">@L["NavSearch"]</MudButton>
     </MudStack>
 
+    <EmergencyBanner />
+
     @if (Loading)
     {
         <MudProgressLinear Indeterminate Color="Color.Primary" />
