@@ -6,6 +6,7 @@
 <MudContainer MaxWidth="MaxWidth.Small" Class="px-0">
     <MudPaper Class="pa-4 pa-sm-6" Elevation="1">
         <MudStack Spacing="4">
+            <AppLogo />
             @if (_mode == Mode.Loading)
             {
                 <MudProgressLinear Indeterminate Color="Color.Primary" />

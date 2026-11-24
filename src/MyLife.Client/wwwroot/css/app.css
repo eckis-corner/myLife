@@ -94,13 +94,6 @@ h1:focus {
     }
 }
 
-/* Logo in der App-Leiste */
-.mylife-appbar-logo {
-    display: block;
-    border-radius: 7px;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
-}
-
 /* Fußzeile mit der App-Version */
 .mylife-main {
     display: flex;
@@ -118,4 +111,55 @@ h1:focus {
     .mylife-footer {
         display: none;
     }
+}
+
+/* Logo mit Schriftzug (Anmeldeseite) */
+.mylife-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.mylife-logo img {
+    display: block;
+}
+
+.mylife-logo-text {
+    font-size: 2.6rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.mylife-logo-my {
+    color: var(--mud-palette-secondary);
+}
+
+.mylife-logo-life {
+    color: var(--mud-palette-primary);
+    font-weight: 700;
+}
+
+/* Logo in der App-Leiste: hell auf dem dunklen Grund (#355269 bzw. #1C2A35) */
+.mylife-logo--appbar {
+    justify-content: flex-start;
+    gap: 10px;
+    margin-left: 8px;
+}
+
+.mylife-logo--appbar img {
+    border-radius: 7px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.mylife-logo--appbar .mylife-logo-text {
+    font-size: 1.4rem;
+}
+
+.mylife-logo--appbar .mylife-logo-my {
+    color: #7FD1D1;
+}
+
+.mylife-logo--appbar .mylife-logo-life {
+    color: #FFFFFF;
 }
