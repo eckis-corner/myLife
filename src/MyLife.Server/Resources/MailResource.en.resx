@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Mail_account-deleted_body" xml:space="preserve"><value>Hello {name},
+
+as you confirmed, your myLife account and vault have been deleted for good.</value></data>
+  <data name="Mail_account-deleted_subject" xml:space="preserve"><value>Your myLife account has been deleted</value></data>
+  <data name="Mail_account-locked_body" xml:space="preserve"><value>Hello {name},
+
+an administrator has locked your myLife account. You cannot sign in for now. Your data remains unchanged and encrypted.
+
+If you do not know why, please contact the administrator.</value></data>
+  <data name="Mail_account-locked_subject" xml:space="preserve"><value>Your myLife account has been locked</value></data>
+  <data name="Mail_account-unlocked_body" xml:space="preserve"><value>Hello {name},
+
+an administrator has unlocked your myLife account. You can sign in again.</value></data>
+  <data name="Mail_account-unlocked_subject" xml:space="preserve"><value>Your myLife account has been unlocked</value></data>
+  <data name="Mail_deletion-request_body" xml:space="preserve"><value>Hello {name},
+
+an administrator has requested to delete your myLife account. This deletes your vault with all entries and documents for good.
+
+Only if you agree, open this link and confirm there:
+{link}
+
+The link is valid for {days} days. If you do nothing, your account remains.</value></data>
+  <data name="Mail_deletion-request_subject" xml:space="preserve"><value>Please confirm: delete myLife account</value></data>
+  <data name="Mail_footer" xml:space="preserve"><value>This message was sent automatically by myLife ({instance}).</value></data>
+  <data name="Mail_test_body" xml:space="preserve"><value>Hello {name},
+
+this test message shows that myLife can send emails.</value></data>
+  <data name="Mail_test_subject" xml:space="preserve"><value>myLife: test message</value></data>
+  <data name="Mail_twofactor-reset_body" xml:space="preserve"><value>Hello {name},
+
+an administrator has reset the two-factor sign-in of your myLife account. The authenticator app and passkeys have been removed. At your next sign-in, after the master password, you set up an authenticator app again.
+
+If you did not ask for this, please contact the administrator immediately.</value></data>
+  <data name="Mail_twofactor-reset_subject" xml:space="preserve"><value>myLife: two-factor sign-in reset</value></data>
+</root>

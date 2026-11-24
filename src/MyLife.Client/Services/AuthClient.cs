@@ -17,6 +17,12 @@ public sealed class AuthClient(HttpClient http)
     public async Task<SessionDto> LoginTotpAsync(string pending, string code, CancellationToken cancellationToken = default) =>
         (await PostAsync<SessionDto>("api/auth/login/totp", new TotpLoginRequest(pending, code), cancellationToken))!;
 
+    public async Task<TotpLoginSetupDto> LoginTotpSetupAsync(string pending, CancellationToken cancellationToken = default) =>
+        (await PostAsync<TotpLoginSetupDto>("api/auth/login/totp/setup", new TotpLoginSetupRequest(pending), cancellationToken))!;
+
+    public async Task<SessionDto> LoginTotpEnrollAsync(string pending, string enrollment, string code, CancellationToken cancellationToken = default) =>
+        (await PostAsync<SessionDto>("api/auth/login/totp/enroll", new TotpLoginEnrollRequest(pending, enrollment, code), cancellationToken))!;
+
     public async Task<PasskeyOptionsDto> PasskeyLoginOptionsAsync(string pending, CancellationToken cancellationToken = default) =>
         (await PostAsync<PasskeyOptionsDto>("api/auth/login/passkey/options", new PasskeyLoginOptionsRequest(pending), cancellationToken))!;
 

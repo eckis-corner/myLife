@@ -9,6 +9,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import resources_admin  # noqa: E402
 import resources_vault  # noqa: E402
 
 TEXTS: dict[str, tuple[str, str]] = {
@@ -343,6 +344,10 @@ _DUPLICATES = sorted(set(TEXTS) & set(_VAULT))
 if _DUPLICATES:
     raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
 TEXTS.update(_VAULT)
+_DUPLICATES = sorted(set(TEXTS) & set(resources_admin.CLIENT))
+if _DUPLICATES:
+    raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
+TEXTS.update(resources_admin.CLIENT)
 
 HEADER = """<?xml version="1.0" encoding="utf-8"?>
 <!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->
@@ -354,10 +359,10 @@ HEADER = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 
-def write(path: Path, index: int) -> None:
+def write(path: Path, index: int, texts: dict[str, tuple[str, str]] = TEXTS) -> None:
     lines = [HEADER]
-    for key in sorted(TEXTS):
-        value = escape(TEXTS[key][index])
+    for key in sorted(texts):
+        value = escape(texts[key][index])
         lines.append(f'  <data name="{key}" xml:space="preserve"><value>{value}</value></data>\n')
     lines.append("</root>\n")
     path.write_text("".join(lines), encoding="utf-8")
@@ -368,3 +373,8 @@ if __name__ == "__main__":
     write(target / "SharedResource.resx", 0)
     write(target / "SharedResource.en.resx", 1)
     print(f"{len(TEXTS)} Texte geschrieben nach {target}")
+    server = Path(__file__).resolve().parent.parent / "src" / "MyLife.Server" / "Resources"
+    server.mkdir(exist_ok=True)
+    write(server / "MailResource.resx", 0, resources_admin.MAIL)
+    write(server / "MailResource.en.resx", 1, resources_admin.MAIL)
+    print(f"{len(resources_admin.MAIL)} Mailtexte geschrieben nach {server}")

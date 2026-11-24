@@ -14,10 +14,23 @@ public sealed record PreloginDto(byte[] KdfSalt, int KdfMemoryKiB, int KdfIterat
 
 public sealed record LoginRequest(string Email, byte[] AuthHash);
 
-/// <summary>Passwort stimmt; jetzt fehlt der zweite Faktor. <see cref="Pending"/> ist 5 Minuten gültig.</summary>
-public sealed record LoginChallengeDto(string Pending, bool Totp, bool Passkey);
+/// <summary>
+/// Passwort stimmt; jetzt fehlt der zweite Faktor. <see cref="Pending"/> ist 5 Minuten gültig. Hat der Admin die
+/// 2FA zurückgesetzt, gibt es weder TOTP noch Passkey: Dann richtet der Nutzer jetzt eine Authenticator-App ein.
+/// </summary>
+public sealed record LoginChallengeDto(string Pending, bool Totp, bool Passkey)
+{
+    public bool Enroll => !Totp && !Passkey;
+}
 
 public sealed record TotpLoginRequest(string Pending, string Code);
+
+public sealed record TotpLoginSetupRequest(string Pending);
+
+/// <summary>Neues TOTP-Geheimnis bei der Anmeldung: Klartext für den QR-Code, geschützt für die Bestätigung.</summary>
+public sealed record TotpLoginSetupDto(string Secret, string Enrollment);
+
+public sealed record TotpLoginEnrollRequest(string Pending, string Enrollment, string Code);
 
 public sealed record PasskeyLoginOptionsRequest(string Pending);
 
@@ -74,6 +87,9 @@ public static class AuthErrors
 {
     public const string InvalidCredentials = "auth-invalid-credentials";
     public const string Locked = "auth-locked";
+
+    /// <summary>Vom Administrator gesperrt (erst nach richtigem Passwort gemeldet).</summary>
+    public const string Disabled = "auth-disabled";
     public const string Expired = "auth-expired";
     public const string InvalidCode = "auth-invalid-code";
     public const string PasskeyFailed = "auth-passkey-failed";

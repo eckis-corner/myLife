@@ -45,6 +45,14 @@
                     <MudNavLink Href="account/audit" Icon="@Icons.Material.Outlined.History">@L["NavAudit"]</MudNavLink>
                     <MudNavLink Href="account/security" Icon="@Icons.Material.Outlined.Security">@L["NavSecurity"]</MudNavLink>
                     <MudNavLink Href="hints/not-in-vault" Icon="@Icons.Material.Outlined.Block">@L["NotInVaultTitle"]</MudNavLink>
+                    @if (context.User.IsInRole("admin"))
+                    {
+                        <MudNavGroup Title="@L["NavAdmin"]" Icon="@Icons.Material.Outlined.AdminPanelSettings" Expanded="false" data-testid="nav-admin">
+                            <MudNavLink Href="admin/settings" Icon="@Icons.Material.Outlined.Settings">@L["AdminSettingsTitle"]</MudNavLink>
+                            <MudNavLink Href="admin/users" Icon="@Icons.Material.Outlined.People">@L["AdminUsersTitle"]</MudNavLink>
+                            <MudNavLink Href="admin/audit" Icon="@Icons.Material.Outlined.ReceiptLong">@L["AdminAuditTitle"]</MudNavLink>
+                        </MudNavGroup>
+                    }
                 </MudNavMenu>
             </Authorized>
         </AuthorizeView>
@@ -64,12 +72,14 @@
                 </ErrorContent>
             </ErrorBoundary>
         </MudContainer>
-        @if (_version is not null)
-        {
-            <footer class="mylife-footer">
-                <MudText Typo="Typo.caption">@L["AppName"] · @L["HomeStatusVersion"] @_version</MudText>
-            </footer>
-        }
+        <footer class="mylife-footer">
+            <MudText Typo="Typo.caption">
+                @L["AppName"]@if (_version is not null)
+                {
+                    <text> · @L["HomeStatusVersion"] @_version</text>
+                } · <MudLink Href="privacy" Typo="Typo.caption" Color="Color.Inherit">@L["PrivacyTitle"]</MudLink>
+            </MudText>
+        </footer>
     </MudMainContent>
 </MudLayout>
 

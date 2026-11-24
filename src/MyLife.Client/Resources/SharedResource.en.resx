@@ -5,6 +5,116 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AccountStatus_Active" xml:space="preserve"><value>Active</value></data>
+  <data name="AccountStatus_Invited" xml:space="preserve"><value>Invited</value></data>
+  <data name="AccountStatus_Locked" xml:space="preserve"><value>Locked</value></data>
+  <data name="AdminAuditText" xml:space="preserve"><value>Administrative actions and system events. What users do in their vaults is only in their own log.</value></data>
+  <data name="AdminAuditTitle" xml:space="preserve"><value>System log</value></data>
+  <data name="AdminCancelDeletion" xml:space="preserve"><value>Withdraw deletion request</value></data>
+  <data name="AdminCancelDeletionConfirm" xml:space="preserve"><value>Withdraw the deletion request for {0} ({1})? The link in the email stops working.</value></data>
+  <data name="AdminDeadlinesText" xml:space="preserve"><value>Defaults and limits for emergency access. Each user later chooses their own values within the limits. You cannot force shorter deadlines on a user.</value></data>
+  <data name="AdminDeletedAccount" xml:space="preserve"><value>deleted account</value></data>
+  <data name="AdminDeletionPending" xml:space="preserve"><value>Deletion requested</value></data>
+  <data name="AdminDeletionRequested" xml:space="preserve"><value>Email to {0} is on its way.</value></data>
+  <data name="AdminError_admin-failed" xml:space="preserve"><value>That did not work. Please try again.</value></data>
+  <data name="AdminError_admin-invalid" xml:space="preserve"><value>The input is incomplete or invalid.</value></data>
+  <data name="AdminError_admin-last-admin" xml:space="preserve"><value>There must always be at least one active administrator.</value></data>
+  <data name="AdminError_admin-mail-not-configured" xml:space="preserve"><value>Email sending must be set up first.</value></data>
+  <data name="AdminError_admin-not-found" xml:space="preserve"><value>The account no longer exists.</value></data>
+  <data name="AdminError_admin-self" xml:space="preserve"><value>You cannot do this with your own account.</value></data>
+  <data name="AdminError_admin-token-invalid" xml:space="preserve"><value>The link is invalid, expired or already used.</value></data>
+  <data name="AdminGrantRole" xml:space="preserve"><value>Make administrator</value></data>
+  <data name="AdminGrantRoleConfirm" xml:space="preserve"><value>Make {0} ({1}) an administrator? They are signed out and get administration after the next sign-in, but no access to other people's vaults.</value></data>
+  <data name="AdminIdleTimeout" xml:space="preserve"><value>Automatic sign-out</value></data>
+  <data name="AdminIdleTimeoutHint" xml:space="preserve"><value>After this many minutes without activity. Applies from the next request.</value></data>
+  <data name="AdminInviteLater" xml:space="preserve"><value>New accounts are created through invitations. Inviting follows with the next step (M2.2).</value></data>
+  <data name="AdminLifesign" xml:space="preserve"><value>Life sign</value></data>
+  <data name="AdminLifesignHint" xml:space="preserve"><value>How often someone checks in, by signing in or via the link in an email.</value></data>
+  <data name="AdminLock" xml:space="preserve"><value>Lock</value></data>
+  <data name="AdminLockConfirm" xml:space="preserve"><value>Lock {0} ({1})? They are signed out immediately and cannot sign in until you unlock them. Their data is kept.</value></data>
+  <data name="AdminLocked" xml:space="preserve"><value>{0} is locked.</value></data>
+  <data name="AdminMailTemplate" xml:space="preserve"><value>Email "{0}"</value></data>
+  <data name="AdminMailText" xml:space="preserve"><value>myLife sends emails for notifications and later for life signs and emergency access. Without a mail server, emails wait in the queue.</value></data>
+  <data name="AdminNtfyServer" xml:space="preserve"><value>ntfy server</value></data>
+  <data name="AdminNtfyText" xml:space="preserve"><value>Optional: push notifications via an ntfy server, in addition to email. Topics for individual users come with emergency access.</value></data>
+  <data name="AdminNtfyToken" xml:space="preserve"><value>Access token (optional)</value></data>
+  <data name="AdminNtfyTopic" xml:space="preserve"><value>Topic for the test</value></data>
+  <data name="AdminNtfyTopicHint" xml:space="preserve"><value>Letters, digits, - and _; not stored.</value></data>
+  <data name="AdminPrivacyNotice" xml:space="preserve"><value>Privacy notice</value></data>
+  <data name="AdminPrivacyOpen" xml:space="preserve"><value>View privacy page</value></data>
+  <data name="AdminPrivacyText" xml:space="preserve"><value>This text appears on the privacy page, also without signing in. Leave empty for the built-in default text. Separate paragraphs with an empty line.</value></data>
+  <data name="AdminPublicUrl" xml:space="preserve"><value>Address of this instance</value></data>
+  <data name="AdminPublicUrlHint" xml:space="preserve"><value>Used for links in emails, e.g. https://mylife.example.org. Empty: the address you are using right now.</value></data>
+  <data name="AdminQueueFailed" xml:space="preserve"><value>{0} given up</value></data>
+  <data name="AdminQueueLastError" xml:space="preserve"><value>Last error: {0}</value></data>
+  <data name="AdminQueueLastSent" xml:space="preserve"><value>Last sent: {0}</value></data>
+  <data name="AdminQueueNotConfigured" xml:space="preserve"><value>Emails are waiting because no mail server is set up yet.</value></data>
+  <data name="AdminQueuePending" xml:space="preserve"><value>{0} waiting</value></data>
+  <data name="AdminQueueRetry" xml:space="preserve"><value>Retry now</value></data>
+  <data name="AdminQueueTitle" xml:space="preserve"><value>Queue</value></data>
+  <data name="AdminRangeDefault" xml:space="preserve"><value>Default</value></data>
+  <data name="AdminRangeError" xml:space="preserve"><value>Minimum ≤ default ≤ maximum, all between {0} and {1} days.</value></data>
+  <data name="AdminRangeMax" xml:space="preserve"><value>Maximum</value></data>
+  <data name="AdminRangeMin" xml:space="preserve"><value>Minimum</value></data>
+  <data name="AdminReminders" xml:space="preserve"><value>Reminders (days after expiry)</value></data>
+  <data name="AdminRemindersHint" xml:space="preserve"><value>Ascending, separated by commas, at most five, e.g. 3, 7, 14.</value></data>
+  <data name="AdminRequestDeletion" xml:space="preserve"><value>Request deletion</value></data>
+  <data name="AdminRequestDeletionConfirm" xml:space="preserve"><value>Request deletion of {0} ({1})? They receive an email with a link and must confirm the deletion themselves. Only then are the account and vault deleted for good.</value></data>
+  <data name="AdminRequestWaiting" xml:space="preserve"><value>Waiting period after a request</value></data>
+  <data name="AdminRequestWaitingHint" xml:space="preserve"><value>Between a trusted person's request and the release.</value></data>
+  <data name="AdminResetTwoFactor" xml:space="preserve"><value>Reset two-factor sign-in</value></data>
+  <data name="AdminResetTwoFactorConfirm" xml:space="preserve"><value>Reset two-factor sign-in for {0} ({1})? The authenticator app and passkeys are removed. At the next sign-in, after the master password, they set up an authenticator app again. Only do this if you are sure it is really them.</value></data>
+  <data name="AdminRetention" xml:space="preserve"><value>Log retention</value></data>
+  <data name="AdminRetentionHint" xml:space="preserve"><value>Older log entries are deleted automatically.</value></data>
+  <data name="AdminRevokeRole" xml:space="preserve"><value>Remove administrator rights</value></data>
+  <data name="AdminRevokeRoleConfirm" xml:space="preserve"><value>Remove administrator rights from {0} ({1})? They are signed out.</value></data>
+  <data name="AdminRole" xml:space="preserve"><value>Administrator</value></data>
+  <data name="AdminSecretHint" xml:space="preserve"><value>Leave empty to keep the stored value.</value></data>
+  <data name="AdminSecretRemove" xml:space="preserve"><value>Remove stored value</value></data>
+  <data name="AdminSecretStored" xml:space="preserve"><value>•••••• stored</value></data>
+  <data name="AdminSettingsInvalid" xml:space="preserve"><value>Please check the highlighted fields, including on the other tabs.</value></data>
+  <data name="AdminSettingsText" xml:space="preserve"><value>Settings for the whole instance. You cannot see vault contents here, not even as administrator.</value></data>
+  <data name="AdminSettingsTitle" xml:space="preserve"><value>Settings</value></data>
+  <data name="AdminSmtpFrom" xml:space="preserve"><value>Sender address</value></data>
+  <data name="AdminSmtpFromName" xml:space="preserve"><value>Sender name</value></data>
+  <data name="AdminSmtpHost" xml:space="preserve"><value>SMTP server</value></data>
+  <data name="AdminSmtpPassword" xml:space="preserve"><value>Password</value></data>
+  <data name="AdminSmtpPort" xml:space="preserve"><value>Port</value></data>
+  <data name="AdminSmtpSecurity" xml:space="preserve"><value>Encryption</value></data>
+  <data name="AdminSmtpSecurity_None" xml:space="preserve"><value>None (local network only)</value></data>
+  <data name="AdminSmtpSecurity_SslOnConnect" xml:space="preserve"><value>SSL/TLS (usually port 465)</value></data>
+  <data name="AdminSmtpSecurity_StartTls" xml:space="preserve"><value>STARTTLS (usually port 587)</value></data>
+  <data name="AdminSmtpUsername" xml:space="preserve"><value>User name</value></data>
+  <data name="AdminTabDeadlines" xml:space="preserve"><value>Deadlines</value></data>
+  <data name="AdminTabGeneral" xml:space="preserve"><value>General</value></data>
+  <data name="AdminTabMail" xml:space="preserve"><value>Email</value></data>
+  <data name="AdminTabNtfy" xml:space="preserve"><value>ntfy</value></data>
+  <data name="AdminTabPrivacy" xml:space="preserve"><value>Privacy</value></data>
+  <data name="AdminTestFailed" xml:space="preserve"><value>Sending failed: {0}</value></data>
+  <data name="AdminTestMail" xml:space="preserve"><value>Save and send test email</value></data>
+  <data name="AdminTestMailHint" xml:space="preserve"><value>The test email goes to your own address.</value></data>
+  <data name="AdminTestMailSent" xml:space="preserve"><value>Test email sent. Check your inbox.</value></data>
+  <data name="AdminTestNtfy" xml:space="preserve"><value>Save and send test</value></data>
+  <data name="AdminTestNtfySent" xml:space="preserve"><value>Test notification sent.</value></data>
+  <data name="AdminTwoFactorNone" xml:space="preserve"><value>none (set up at next sign-in)</value></data>
+  <data name="AdminTwoFactorPasskeys" xml:space="preserve"><value>{0} passkey(s)</value></data>
+  <data name="AdminTwoFactorTotp" xml:space="preserve"><value>Authenticator app</value></data>
+  <data name="AdminTwoFactorWasReset" xml:space="preserve"><value>Two-factor sign-in for {0} has been reset.</value></data>
+  <data name="AdminUnlock" xml:space="preserve"><value>Unlock</value></data>
+  <data name="AdminUnlockConfirm" xml:space="preserve"><value>Unlock {0} ({1})?</value></data>
+  <data name="AdminUnlocked" xml:space="preserve"><value>{0} is unlocked.</value></data>
+  <data name="AdminUserActions" xml:space="preserve"><value>Actions</value></data>
+  <data name="AdminUserEmail" xml:space="preserve"><value>Email</value></data>
+  <data name="AdminUserLastLogin" xml:space="preserve"><value>Last sign-in</value></data>
+  <data name="AdminUserMe" xml:space="preserve"><value>you</value></data>
+  <data name="AdminUserName" xml:space="preserve"><value>Name</value></data>
+  <data name="AdminUserStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="AdminUserTwoFactor" xml:space="preserve"><value>Second factor</value></data>
+  <data name="AdminUsersEmpty" xml:space="preserve"><value>No accounts.</value></data>
+  <data name="AdminUsersText" xml:space="preserve"><value>All accounts of this instance. You only see names, addresses and sign-in data, no vault contents. Every action is logged and the person concerned receives an email.</value></data>
+  <data name="AdminUsersTitle" xml:space="preserve"><value>Users</value></data>
+  <data name="AdminWaiting" xml:space="preserve"><value>Waiting period</value></data>
+  <data name="AdminWaitingHint" xml:space="preserve"><value>After the last unanswered reminder, until access is released.</value></data>
   <data name="AppName" xml:space="preserve"><value>myLife</value></data>
   <data name="AppTagline" xml:space="preserve"><value>Your digital emergency folder</value></data>
   <data name="Area" xml:space="preserve"><value>Area</value></data>
@@ -45,6 +155,18 @@
   <data name="AuditIp" xml:space="preserve"><value>IP (shortened)</value></data>
   <data name="AuditTarget" xml:space="preserve"><value>Concerns</value></data>
   <data name="AuditText" xml:space="preserve"><value>Who did what in your vault and when. The log contains no content; your browser adds titles.</value></data>
+  <data name="Audit_account-deleted" xml:space="preserve"><value>Account deleted</value></data>
+  <data name="Audit_admin-2fa-reset" xml:space="preserve"><value>Two-factor sign-in reset</value></data>
+  <data name="Audit_admin-deletion-cancelled" xml:space="preserve"><value>Deletion request withdrawn</value></data>
+  <data name="Audit_admin-deletion-requested" xml:space="preserve"><value>Deletion requested</value></data>
+  <data name="Audit_admin-mail-retried" xml:space="preserve"><value>Email sending retried</value></data>
+  <data name="Audit_admin-mail-tested" xml:space="preserve"><value>Test email sent</value></data>
+  <data name="Audit_admin-ntfy-tested" xml:space="preserve"><value>ntfy tested</value></data>
+  <data name="Audit_admin-role-granted" xml:space="preserve"><value>Made administrator</value></data>
+  <data name="Audit_admin-role-revoked" xml:space="preserve"><value>Administrator rights removed</value></data>
+  <data name="Audit_admin-settings-changed" xml:space="preserve"><value>Settings changed</value></data>
+  <data name="Audit_admin-user-locked" xml:space="preserve"><value>Account locked</value></data>
+  <data name="Audit_admin-user-unlocked" xml:space="preserve"><value>Account unlocked</value></data>
   <data name="Audit_area-created" xml:space="preserve"><value>Area created</value></data>
   <data name="Audit_area-reviewed" xml:space="preserve"><value>Area reviewed</value></data>
   <data name="Audit_document-deleted" xml:space="preserve"><value>Document moved to trash</value></data>
@@ -59,6 +181,7 @@
   <data name="Audit_login" xml:space="preserve"><value>Sign-in</value></data>
   <data name="Audit_login-failed" xml:space="preserve"><value>Failed sign-in</value></data>
   <data name="Audit_logout" xml:space="preserve"><value>Sign-out</value></data>
+  <data name="Audit_mail-failed" xml:space="preserve"><value>Email could not be delivered</value></data>
   <data name="Audit_object-created" xml:space="preserve"><value>Entry created</value></data>
   <data name="Audit_object-deleted" xml:space="preserve"><value>Moved to trash</value></data>
   <data name="Audit_object-purged" xml:space="preserve"><value>Permanently deleted</value></data>
@@ -68,7 +191,9 @@
   <data name="Audit_passkey-removed" xml:space="preserve"><value>Passkey removed</value></data>
   <data name="Audit_password-changed" xml:space="preserve"><value>Password changed</value></data>
   <data name="Audit_recovered" xml:space="preserve"><value>Recovery</value></data>
+  <data name="Audit_totp-enrolled" xml:space="preserve"><value>Authenticator app set up again</value></data>
   <data name="AuthError_auth-crypto-failed" xml:space="preserve"><value>The keys could not be processed in your browser.</value></data>
+  <data name="AuthError_auth-disabled" xml:space="preserve"><value>Your account is locked. Please contact the administrator.</value></data>
   <data name="AuthError_auth-expired" xml:space="preserve"><value>The sign-in took too long. Please start again.</value></data>
   <data name="AuthError_auth-failed" xml:space="preserve"><value>That did not work. Please try again.</value></data>
   <data name="AuthError_auth-invalid-code" xml:space="preserve"><value>The code is not correct or has already been used. Please wait for the next code.</value></data>
@@ -122,6 +247,15 @@
   <data name="DeleteObjectsText" xml:space="preserve"><value>{0} entries and their documents will be moved to the trash and permanently deleted after 30 days.</value></data>
   <data name="DeleteObjectsTitle" xml:space="preserve"><value>Move to trash?</value></data>
   <data name="DeletedForever" xml:space="preserve"><value>Permanently deleted.</value></data>
+  <data name="DeletionConfirm" xml:space="preserve"><value>Delete for good</value></data>
+  <data name="DeletionDone" xml:space="preserve"><value>Your account and vault have been deleted.</value></data>
+  <data name="DeletionExpires" xml:space="preserve"><value>The link is valid until {0}.</value></data>
+  <data name="DeletionInvalid" xml:space="preserve"><value>This link is invalid, has expired or has already been used. Your account remains.</value></data>
+  <data name="DeletionKeep" xml:space="preserve"><value>Keep account</value></data>
+  <data name="DeletionText" xml:space="preserve"><value>An administrator has requested to delete the account of {0} ({1}).</value></data>
+  <data name="DeletionTitle" xml:space="preserve"><value>Delete account</value></data>
+  <data name="DeletionUnderstood" xml:space="preserve"><value>I understand that everything will be deleted for good.</value></data>
+  <data name="DeletionWarning" xml:space="preserve"><value>Deleting removes your vault with all entries and documents for good. This cannot be undone. Export anything you want to keep first.</value></data>
   <data name="Document" xml:space="preserve"><value>Document</value></data>
   <data name="DocumentAdd" xml:space="preserve"><value>Add file</value></data>
   <data name="DocumentDate" xml:space="preserve"><value>Date</value></data>
@@ -399,6 +533,8 @@
   <data name="Loading" xml:space="preserve"><value>Loading …</value></data>
   <data name="LoginChecking" xml:space="preserve"><value>Checking password …</value></data>
   <data name="LoginConfirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="LoginEnrollSecret" xml:space="preserve"><value>Or enter this key manually:</value></data>
+  <data name="LoginEnrollText" xml:space="preserve"><value>The administrator has reset your two-factor sign-in. Set up an authenticator app again now: scan the QR code and enter the code it shows.</value></data>
   <data name="LoginForgotPassword" xml:space="preserve"><value>Forgot password?</value></data>
   <data name="LoginInfoExpired" xml:space="preserve"><value>Your session has expired. Please sign in again.</value></data>
   <data name="LoginInfoTimeout" xml:space="preserve"><value>You were signed out after a period of inactivity. The keys have been removed from memory.</value></data>
@@ -411,6 +547,7 @@
   <data name="Logout" xml:space="preserve"><value>Sign out</value></data>
   <data name="MoreActions" xml:space="preserve"><value>More actions</value></data>
   <data name="MovedToTrash" xml:space="preserve"><value>Moved to trash.</value></data>
+  <data name="NavAdmin" xml:space="preserve"><value>Administration</value></data>
   <data name="NavAreas" xml:space="preserve"><value>Areas</value></data>
   <data name="NavAudit" xml:space="preserve"><value>Activity log</value></data>
   <data name="NavExport" xml:space="preserve"><value>Export &amp; print</value></data>
@@ -625,6 +762,16 @@
   <data name="PdfPasswordTitle" xml:space="preserve"><value>Protect PDF</value></data>
   <data name="PdfWithoutPassword" xml:space="preserve"><value>Create without password (plain text)</value></data>
   <data name="Print" xml:space="preserve"><value>Print</value></data>
+  <data name="PrivacyDefault" xml:space="preserve"><value>This myLife instance is run privately for one family. The person who runs it is responsible; the administrator can give you their contact details.
+
+What is stored: your email address, your display name, your language, the times of sign-ins and changes, and a log with shortened IP addresses. The contents of your vault (entries, documents and notes) are encrypted in your browser. Neither the server nor the administrator can read them.
+
+What for: signing in, your trusted persons' emergency access and email notifications. There is no advertising, no analytics and no sharing with third parties; emails only go through the configured mail server.
+
+How long: The log is deleted after the configured period. If your account is deleted, your vault, your documents and your log are gone for good.
+
+Your rights: You can ask for access, correction and deletion at any time. Please contact the administrator of this instance.</value></data>
+  <data name="PrivacyTitle" xml:space="preserve"><value>Privacy</value></data>
   <data name="RecoverBackToLogin" xml:space="preserve"><value>Back to sign-in</value></data>
   <data name="RecoverDone" xml:space="preserve"><value>Your new master password has been set. Sign in with it and your second factor now.</value></data>
   <data name="RecoverNewPassword" xml:space="preserve"><value>New master password</value></data>
@@ -648,6 +795,7 @@
   <data name="RowsPerPage" xml:space="preserve"><value>Rows per page</value></data>
   <data name="Save" xml:space="preserve"><value>Save</value></data>
   <data name="SaveAnyway" xml:space="preserve"><value>Save anyway</value></data>
+  <data name="SaveSuccessful" xml:space="preserve"><value>Saved.</value></data>
   <data name="Saved" xml:space="preserve"><value>Saved.</value></data>
   <data name="SearchCount" xml:space="preserve"><value>{0} results</value></data>
   <data name="SearchFound" xml:space="preserve"><value>Match</value></data>
@@ -673,6 +821,12 @@
   <data name="SecurityPasswordTitle" xml:space="preserve"><value>Change master password</value></data>
   <data name="Select" xml:space="preserve"><value>Select</value></data>
   <data name="SelectedCount" xml:space="preserve"><value>{0} selected</value></data>
+  <data name="SettingsError_email" xml:space="preserve"><value>Not a valid email address</value></data>
+  <data name="SettingsError_order" xml:space="preserve"><value>Please list in ascending order</value></data>
+  <data name="SettingsError_range" xml:space="preserve"><value>Value out of range</value></data>
+  <data name="SettingsError_required" xml:space="preserve"><value>Required</value></data>
+  <data name="SettingsError_too-long" xml:space="preserve"><value>Too long</value></data>
+  <data name="SettingsError_url" xml:space="preserve"><value>Not a valid address (http:// or https://)</value></data>
   <data name="SetupAccountText" xml:space="preserve"><value>As administrator you manage settings and users. You still cannot look into anyone else's vault.</value></data>
   <data name="SetupAlreadyDone" xml:space="preserve"><value>myLife has already been set up.</value></data>
   <data name="SetupBack" xml:space="preserve"><value>Back</value></data>
@@ -767,6 +921,8 @@
   <data name="Type_safeDeposit" xml:space="preserve"><value>Safe deposit box</value></data>
   <data name="Type_taxes" xml:space="preserve"><value>Taxes</value></data>
   <data name="Type_vehicle" xml:space="preserve"><value>Vehicle</value></data>
+  <data name="UnitDays" xml:space="preserve"><value>days</value></data>
+  <data name="UnitMinutes" xml:space="preserve"><value>minutes</value></data>
   <data name="UnlockSubmit" xml:space="preserve"><value>Unlock</value></data>
   <data name="UnlockText" xml:space="preserve"><value>Hello {0}, you are still signed in. Enter your master password to unlock your vault.</value></data>
   <data name="UnlockTitle" xml:space="preserve"><value>Unlock vault</value></data>

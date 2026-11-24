@@ -1,0 +1,457 @@
+@page "/admin/settings"
+@attribute [Authorize(Roles = "admin")]
+@using System.Globalization
+@using MyLife.Shared.Admin
+@inject IStringLocalizer<SharedResource> L
+@inject AdminClient Api
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["AdminSettingsTitle"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["AdminSettingsTitle"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminSettingsText"]</MudText>
+
+    @if (_form is null)
+    {
+        @if (_loadError is not null)
+        {
+            <MudAlert Severity="Severity.Error">@L[_loadError]</MudAlert>
+        }
+        else
+        {
+            <MudProgressLinear Indeterminate Color="Color.Primary" />
+        }
+    }
+    else
+    {
+        <MudTabs Elevation="0" Rounded Border Class="mylife-admin-tabs" TabPanelsClass="pa-4" @bind-ActivePanelIndex="_tab" data-testid="settings-tabs">
+            <MudTabPanel Text="@L["AdminTabGeneral"]" Icon="@Icons.Material.Outlined.Tune">
+                <MudGrid Spacing="3">
+                    <MudItem xs="12">
+                        <MudTextField T="string" @bind-Value="_form.PublicUrl" Label="@L["AdminPublicUrl"]" HelperText="@L["AdminPublicUrlHint"]"
+                                      Variant="Variant.Outlined" Placeholder="https://mylife.example.org" Error="@HasError("publicUrl")" ErrorText="@ErrorFor("publicUrl")"
+                                      UserAttributes="@TestId("setting-public-url")" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudNumericField T="int" @bind-Value="_form.IdleTimeoutMinutes" Label="@L["AdminIdleTimeout"]" Variant="Variant.Outlined"
+                                         Min="AdminLimits.IdleMinMinutes" Max="AdminLimits.IdleMaxMinutes" Adornment="Adornment.End" AdornmentText="@L["UnitMinutes"]"
+                                         HelperText="@L["AdminIdleTimeoutHint"]" Error="@HasError("idleTimeout")" ErrorText="@ErrorFor("idleTimeout")"
+                                         UserAttributes="@TestId("setting-idle")" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudNumericField T="int" @bind-Value="_form.AuditRetentionDays" Label="@L["AdminRetention"]" Variant="Variant.Outlined"
+                                         Min="AdminLimits.RetentionMinDays" Max="AdminLimits.RetentionMaxDays" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]"
+                                         HelperText="@L["AdminRetentionHint"]" Error="@HasError("retention")" ErrorText="@ErrorFor("retention")" />
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@L["AdminTabMail"]" Icon="@Icons.Material.Outlined.Email">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminMailText"]</MudText>
+                    <MudGrid Spacing="3">
+                        <MudItem xs="12" sm="8">
+                            <MudTextField T="string" @bind-Value="_form.SmtpHost" Label="@L["AdminSmtpHost"]" Variant="Variant.Outlined" Placeholder="smtp.example.org"
+                                          Error="@HasError("smtp.host")" ErrorText="@ErrorFor("smtp.host")" UserAttributes="@TestId("setting-smtp-host")" />
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudNumericField T="int" @bind-Value="_form.SmtpPort" Label="@L["AdminSmtpPort"]" Variant="Variant.Outlined" Min="1" Max="65535"
+                                             HideSpinButtons Error="@HasError("smtp.port")" ErrorText="@ErrorFor("smtp.port")" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudSelect T="SmtpSecurity" @bind-Value="_form.SmtpSecurity" Label="@L["AdminSmtpSecurity"]" Variant="Variant.Outlined">
+                                @foreach (var option in Enum.GetValues<SmtpSecurity>())
+                                {
+                                    <MudSelectItem T="SmtpSecurity" Value="option">@L[$"AdminSmtpSecurity_{option}"]</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_form.SmtpUsername" Label="@L["AdminSmtpUsername"]" Variant="Variant.Outlined"
+                                          UserAttributes="@NoAutofill" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_form.SmtpPassword" Label="@L["AdminSmtpPassword"]" Variant="Variant.Outlined" InputType="InputType.Password"
+                                          Placeholder="@(_form.HasSmtpPassword ? L["AdminSecretStored"].Value : null)" HelperText="@L["AdminSecretHint"]"
+                                          Disabled="_form.ClearSmtpPassword" UserAttributes="@NewPasswordAttributes" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6" Class="d-flex align-center">
+                            @if (_form.HasSmtpPassword)
+                            {
+                                <MudCheckBox T="bool" @bind-Value="_form.ClearSmtpPassword" Label="@L["AdminSecretRemove"]" Color="Color.Error" />
+                            }
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_form.SmtpFromAddress" Label="@L["AdminSmtpFrom"]" Variant="Variant.Outlined" InputType="InputType.Email"
+                                          Error="@HasError("smtp.fromAddress")" ErrorText="@ErrorFor("smtp.fromAddress")" UserAttributes="@TestId("setting-smtp-from")" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_form.SmtpFromName" Label="@L["AdminSmtpFromName"]" Variant="Variant.Outlined"
+                                          Error="@HasError("smtp.fromName")" ErrorText="@ErrorFor("smtp.fromName")" />
+                        </MudItem>
+                    </MudGrid>
+                    <MudStack Row Wrap="Wrap.Wrap" Spacing="2" AlignItems="AlignItems.Center">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Send" Disabled="_busy" OnClick="TestMailAsync"
+                                   data-testid="test-mail">@L["AdminTestMail"]</MudButton>
+                        <MudText Typo="Typo.caption" Class="mylife-muted">@L["AdminTestMailHint"]</MudText>
+                    </MudStack>
+                    @if (_mailTest is not null)
+                    {
+                        <MudAlert Severity="@(_mailTest.Success ? Severity.Success : Severity.Error)" data-testid="test-mail-result">
+                            @(_mailTest.Success ? L["AdminTestMailSent"] : L["AdminTestFailed", _mailTest.Error ?? string.Empty])
+                        </MudAlert>
+                    }
+
+                    <MudDivider />
+                    <MudText Typo="Typo.h6" HtmlTag="h2">@L["AdminQueueTitle"]</MudText>
+                    @if (_queue is not null)
+                    {
+                        <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Schedule">@L["AdminQueuePending", _queue.Pending]</MudChip>
+                            <MudChip T="string" Variant="Variant.Outlined" Color="@(_queue.Failed > 0 ? Color.Error : Color.Default)" Icon="@Icons.Material.Outlined.ErrorOutline">
+                                @L["AdminQueueFailed", _queue.Failed]
+                            </MudChip>
+                            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.MarkEmailRead">
+                                @L["AdminQueueLastSent", _queue.LastSentAt?.ToLocalTime().ToString("g", CultureInfo.CurrentCulture) ?? "–"]
+                            </MudChip>
+                        </MudStack>
+                        @if (_queue.LastError is { } lastError)
+                        {
+                            <MudAlert Severity="Severity.Warning" Dense>
+                                @(lastError == "not-configured" ? L["AdminQueueNotConfigured"] : L["AdminQueueLastError", lastError])
+                            </MudAlert>
+                        }
+                        @if (_queue.Failed > 0 || _queue.Pending > 0)
+                        {
+                            <div>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Replay" Disabled="_busy" OnClick="RetryAsync">
+                                    @L["AdminQueueRetry"]
+                                </MudButton>
+                            </div>
+                        }
+                    }
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@L["AdminTabNtfy"]" Icon="@Icons.Material.Outlined.NotificationsActive">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminNtfyText"]</MudText>
+                    <MudGrid Spacing="3">
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_form.NtfyServerUrl" Label="@L["AdminNtfyServer"]" Variant="Variant.Outlined" Placeholder="https://ntfy.sh"
+                                          Error="@HasError("ntfy.serverUrl")" ErrorText="@ErrorFor("ntfy.serverUrl")" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_form.NtfyToken" Label="@L["AdminNtfyToken"]" Variant="Variant.Outlined" InputType="InputType.Password"
+                                          Placeholder="@(_form.HasNtfyToken ? L["AdminSecretStored"].Value : null)" HelperText="@L["AdminSecretHint"]"
+                                          Disabled="_form.ClearNtfyToken" UserAttributes="@NewPasswordAttributes" />
+                            @if (_form.HasNtfyToken)
+                            {
+                                <MudCheckBox T="bool" @bind-Value="_form.ClearNtfyToken" Label="@L["AdminSecretRemove"]" Color="Color.Error" />
+                            }
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" @bind-Value="_ntfyTopic" Label="@L["AdminNtfyTopic"]" Variant="Variant.Outlined" HelperText="@L["AdminNtfyTopicHint"]" MaxLength="64" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6" Class="d-flex align-center">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Send"
+                                       Disabled="@(_busy || string.IsNullOrWhiteSpace(_ntfyTopic) || string.IsNullOrWhiteSpace(_form.NtfyServerUrl))" OnClick="TestNtfyAsync">
+                                @L["AdminTestNtfy"]
+                            </MudButton>
+                        </MudItem>
+                    </MudGrid>
+                    @if (_ntfyTest is not null)
+                    {
+                        <MudAlert Severity="@(_ntfyTest.Success ? Severity.Success : Severity.Error)">
+                            @(_ntfyTest.Success ? L["AdminTestNtfySent"] : L["AdminTestFailed", _ntfyTest.Error ?? string.Empty])
+                        </MudAlert>
+                    }
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@L["AdminTabDeadlines"]" Icon="@Icons.Material.Outlined.Timer">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminDeadlinesText"]</MudText>
+                    @RangeRow("deadlines.lifesign", "AdminLifesign", _form.Lifesign, AdminLimits.LifesignMinDays, AdminLimits.LifesignMaxDays)
+                    <MudTextField T="string" @bind-Value="_form.Reminders" Label="@L["AdminReminders"]" HelperText="@L["AdminRemindersHint"]" Variant="Variant.Outlined"
+                                  Error="@HasError("deadlines.reminders")" ErrorText="@ErrorFor("deadlines.reminders")" UserAttributes="@TestId("setting-reminders")" />
+                    @RangeRow("deadlines.waiting", "AdminWaiting", _form.Waiting, AdminLimits.WaitingMinDays, AdminLimits.WaitingMaxDays)
+                    @RangeRow("deadlines.request", "AdminRequestWaiting", _form.RequestWaiting, AdminLimits.RequestWaitingMinDays, AdminLimits.RequestWaitingMaxDays)
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@L["AdminTabPrivacy"]" Icon="@Icons.Material.Outlined.PrivacyTip">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminPrivacyText"]</MudText>
+                    <MudTextField T="string" @bind-Value="_form.PrivacyNotice" Label="@L["AdminPrivacyNotice"]" Variant="Variant.Outlined" Lines="14"
+                                  MaxLength="AdminLimits.PrivacyMaxLength" Counter="AdminLimits.PrivacyMaxLength" Placeholder="@L["PrivacyDefault"]"
+                                  Error="@HasError("privacy")" ErrorText="@ErrorFor("privacy")" />
+                    <div>
+                        <MudButton Variant="Variant.Text" Href="privacy" Target="_blank" StartIcon="@Icons.Material.Outlined.OpenInNew">@L["AdminPrivacyOpen"]</MudButton>
+                    </div>
+                </MudStack>
+            </MudTabPanel>
+        </MudTabs>
+
+        @if (_errors.Count > 0)
+        {
+            <MudAlert Severity="Severity.Error" data-testid="settings-errors">@L["AdminSettingsInvalid"]</MudAlert>
+        }
+
+        <MudStack Row Justify="Justify.FlexEnd">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" Disabled="_busy" OnClick="SaveAsync" data-testid="settings-save">
+                @L["Save"]
+            </MudButton>
+        </MudStack>
+    }
+</MudStack>
+
+@code {
+    private static readonly Dictionary<string, object> NoAutofill = new() { ["autocomplete"] = "off" };
+    private static readonly Dictionary<string, object> NewPasswordAttributes = new() { ["autocomplete"] = "new-password" };
+    private SettingsForm? _form;
+    private Dictionary<string, string> _errors = [];
+    private MailQueueDto? _queue;
+    private SendTestResultDto? _mailTest;
+    private SendTestResultDto? _ntfyTest;
+    private string? _ntfyTopic;
+    private string? _loadError;
+    private bool _busy;
+    private int _tab;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _form = SettingsForm.From(await Api.GetSettingsAsync());
+            await LoadQueueAsync();
+        }
+        catch (Exception exception) when (exception is AdminException or HttpRequestException)
+        {
+            _loadError = "AdminError_admin-failed";
+        }
+    }
+
+    private static Dictionary<string, object> TestId(string id) => new() { ["data-testid"] = id };
+
+    private bool HasError(string field) => _errors.ContainsKey(field);
+
+    private string? ErrorFor(string field) => _errors.TryGetValue(field, out var code) ? L[$"SettingsError_{code}"].Value : null;
+
+    private RenderFragment RangeRow(string field, string label, RangeForm range, int min, int max) => __builder =>
+    {
+        <MudPaper Outlined Class="pa-3">
+            <MudText Typo="Typo.subtitle2">@L[label]</MudText>
+            <MudText Typo="Typo.caption" Class="mylife-muted">@L[$"{label}Hint"]</MudText>
+            <MudGrid Spacing="2" Class="mt-1">
+                <MudItem xs="12" sm="4">
+                    <MudNumericField T="int" @bind-Value="range.Default" Label="@L["AdminRangeDefault"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                     Min="min" Max="max" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]" Error="@HasError(field)" />
+                </MudItem>
+                <MudItem xs="6" sm="4">
+                    <MudNumericField T="int" @bind-Value="range.Min" Label="@L["AdminRangeMin"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                     Min="min" Max="max" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]" Error="@HasError(field)" />
+                </MudItem>
+                <MudItem xs="6" sm="4">
+                    <MudNumericField T="int" @bind-Value="range.Max" Label="@L["AdminRangeMax"]" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                     Min="min" Max="max" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]" Error="@HasError(field)" />
+                </MudItem>
+            </MudGrid>
+            @if (HasError(field))
+            {
+                <MudText Typo="Typo.caption" Color="Color.Error">@L["AdminRangeError", min, max]</MudText>
+            }
+        </MudPaper>
+    };
+
+    private async Task<bool> SaveAsync()
+    {
+        if (_form is null)
+        {
+            return false;
+        }
+
+        var dto = _form.ToDto();
+        _errors = dto is null
+            ? new Dictionary<string, string> { ["deadlines.reminders"] = SettingsErrors.Range }
+            : AdminSettingsValidation.Validate(dto);
+        if (_errors.Count > 0)
+        {
+            return false;
+        }
+
+        _busy = true;
+        try
+        {
+            _form = SettingsForm.From(await Api.SaveSettingsAsync(dto!));
+            Snackbar.Add(L["SaveSuccessful"], Severity.Success);
+            return true;
+        }
+        catch (AdminException exception)
+        {
+            _errors = exception.Fields.ToDictionary(f => f.Key, f => f.Value);
+            Snackbar.Add(L[$"AdminError_{exception.Message}"], Severity.Error);
+            return false;
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(L["AdminError_admin-failed"], Severity.Error);
+            return false;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    /// <summary>Speichert zuerst, damit der Test genau die angezeigten Einstellungen verwendet.</summary>
+    private async Task TestMailAsync()
+    {
+        _mailTest = null;
+        if (!await SaveAsync())
+        {
+            return;
+        }
+
+        await RunAsync(async () =>
+        {
+            _mailTest = await Api.TestMailAsync();
+            await LoadQueueAsync();
+        });
+    }
+
+    private async Task TestNtfyAsync()
+    {
+        _ntfyTest = null;
+        if (!await SaveAsync())
+        {
+            return;
+        }
+
+        await RunAsync(async () => _ntfyTest = await Api.TestNtfyAsync(_ntfyTopic!.Trim()));
+    }
+
+    private Task RetryAsync() => RunAsync(async () =>
+    {
+        await Api.RetryMailAsync();
+        await Task.Delay(1500);
+        await LoadQueueAsync();
+    });
+
+    private async Task LoadQueueAsync() => _queue = await Api.GetMailQueueAsync();
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        _busy = true;
+        try
+        {
+            await action();
+        }
+        catch (AdminException exception)
+        {
+            Snackbar.Add(L[$"AdminError_{exception.Message}"], Severity.Error);
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(L["AdminError_admin-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class RangeForm
+    {
+        public int Default { get; set; }
+        public int Min { get; set; }
+        public int Max { get; set; }
+
+        public static RangeForm From(DayRange range) => new() { Default = range.Default, Min = range.Min, Max = range.Max };
+
+        public DayRange ToDto() => new(Default, Min, Max);
+    }
+
+    /// <summary>Veränderbare Fassung der Einstellungen für die Eingabefelder.</summary>
+    private sealed class SettingsForm
+    {
+        public string? PublicUrl { get; set; }
+        public int IdleTimeoutMinutes { get; set; }
+        public int AuditRetentionDays { get; set; }
+        public string? SmtpHost { get; set; }
+        public int SmtpPort { get; set; }
+        public SmtpSecurity SmtpSecurity { get; set; }
+        public string? SmtpUsername { get; set; }
+        public string? SmtpPassword { get; set; }
+        public bool HasSmtpPassword { get; set; }
+        public bool ClearSmtpPassword { get; set; }
+        public string? SmtpFromAddress { get; set; }
+        public string? SmtpFromName { get; set; }
+        public string? NtfyServerUrl { get; set; }
+        public string? NtfyToken { get; set; }
+        public bool HasNtfyToken { get; set; }
+        public bool ClearNtfyToken { get; set; }
+        public RangeForm Lifesign { get; set; } = new();
+        public string? Reminders { get; set; }
+        public RangeForm Waiting { get; set; } = new();
+        public RangeForm RequestWaiting { get; set; } = new();
+        public string? PrivacyNotice { get; set; }
+
+        public static SettingsForm From(AdminSettingsDto dto) => new()
+        {
+            PublicUrl = dto.PublicUrl,
+            IdleTimeoutMinutes = dto.IdleTimeoutMinutes,
+            AuditRetentionDays = dto.AuditRetentionDays,
+            SmtpHost = dto.Smtp.Host,
+            SmtpPort = dto.Smtp.Port,
+            SmtpSecurity = dto.Smtp.Security,
+            SmtpUsername = dto.Smtp.Username,
+            HasSmtpPassword = dto.Smtp.HasPassword,
+            SmtpFromAddress = dto.Smtp.FromAddress,
+            SmtpFromName = dto.Smtp.FromName,
+            NtfyServerUrl = dto.Ntfy.ServerUrl,
+            HasNtfyToken = dto.Ntfy.HasAccessToken,
+            Lifesign = RangeForm.From(dto.Deadlines.LifesignIntervalDays),
+            Reminders = string.Join(", ", dto.Deadlines.ReminderDays),
+            Waiting = RangeForm.From(dto.Deadlines.WaitingDays),
+            RequestWaiting = RangeForm.From(dto.Deadlines.RequestWaitingDays),
+            PrivacyNotice = dto.PrivacyNotice,
+        };
+
+        /// <summary>Null, wenn die Erinnerungen keine Zahlenliste sind.</summary>
+        public AdminSettingsDto? ToDto()
+        {
+            var reminders = AdminSettingsValidation.ParseReminders(Reminders);
+            return reminders is null ? null : new AdminSettingsDto
+            {
+                PublicUrl = PublicUrl,
+                IdleTimeoutMinutes = IdleTimeoutMinutes,
+                AuditRetentionDays = AuditRetentionDays,
+                Smtp = new SmtpSettingsDto
+                {
+                    Host = SmtpHost ?? string.Empty,
+                    Port = SmtpPort,
+                    Security = SmtpSecurity,
+                    Username = SmtpUsername,
+                    Password = ClearSmtpPassword ? string.Empty : string.IsNullOrEmpty(SmtpPassword) ? null : SmtpPassword,
+                    FromAddress = SmtpFromAddress ?? string.Empty,
+                    FromName = SmtpFromName ?? string.Empty,
+                },
+                Ntfy = new NtfySettingsDto
+                {
+                    ServerUrl = NtfyServerUrl,
+                    AccessToken = ClearNtfyToken ? string.Empty : string.IsNullOrEmpty(NtfyToken) ? null : NtfyToken,
+                },
+                Deadlines = new DeadlineSettingsDto
+                {
+                    LifesignIntervalDays = Lifesign.ToDto(),
+                    ReminderDays = reminders,
+                    WaitingDays = Waiting.ToDto(),
+                    RequestWaitingDays = RequestWaiting.ToDto(),
+                },
+                PrivacyNotice = PrivacyNotice,
+            };
+        }
+    }
+}

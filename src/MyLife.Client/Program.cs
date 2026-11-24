@@ -28,6 +28,7 @@ builder.Services.AddScoped<WebAuthnService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<RecoveryService>();
 builder.Services.AddScoped<VaultClient>();
+builder.Services.AddScoped<AdminClient>();
 builder.Services.AddScoped<VaultService>();
 builder.Services.AddScoped<SchemaText>();
 builder.Services.AddScoped<VaultSearch>();

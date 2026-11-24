@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M1:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Notfallordner-PDF, JSON-Export und Protokoll funktionieren. Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
+> **Stand M2.1:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Notfallordner-PDF, JSON-Export, Protokoll und die Verwaltung mit Mailversand funktionieren. Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
 
 ## 1. Ordner anlegen
 
@@ -79,6 +79,16 @@ myLife ist noch nicht eingerichtet. Einrichtungscode für den Assistenten: ABCD-
 Nach jedem Neustart des Containers gilt ein neuer Code. Sobald das erste Konto angelegt ist, gibt es keinen Code mehr und der Assistent ist gesperrt.
 
 Der Assistent führt durch Konto, Master-Passwort, Wiederherstellungs-Kit (ausdrucken!) und die Authenticator-App. Die Schlüssel entstehen im Browser; das Anlegen dauert einige Sekunden.
+
+### Mailversand einrichten
+
+Nach der Anmeldung als Administrator: **Verwaltung → Einstellungen**.
+
+1. Reiter **Allgemein:** *Adresse der Instanz* `https://mylife.eckis-corner.de` eintragen. Sie steht in den Links der Mails.
+2. Reiter **E-Mail:** SMTP-Server, Port, Verschlüsselung (STARTTLS auf 587 oder SSL/TLS auf 465), Benutzername, Passwort und Absenderadresse eintragen, dann **Speichern und Testmail senden**. Die Testmail geht an deine eigene Adresse; ein Fehler erscheint sofort mit der Meldung des Mailservers.
+3. Optional Reiter **ntfy:** Server (etwa `https://ntfy.sh`) und Zugriffstoken für Push-Nachrichten.
+
+Das SMTP-Passwort liegt verschlüsselt mit den Schlüsseln aus `data/app/keys` in der Datenbank. Ohne diesen Ordner muss es nach einer Rücksicherung neu eingegeben werden.
 
 ## 7. Updates
 

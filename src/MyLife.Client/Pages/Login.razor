@@ -33,6 +33,21 @@
                                               UserAttributes="@CurrentPasswordAttributes" OnKeyUp="SubmitOnEnterAsync" />
                                 break;
 
+                            case Mode.SecondFactor when _challenge!.Enroll:
+                                <MudAlert Severity="Severity.Info" data-testid="login-enroll">@L["LoginEnrollText"]</MudAlert>
+                                @if (_enrollment is not null)
+                                {
+                                    <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                                        <MudImage Src="@_enrollmentQr" Alt="@L["SetupStepTwoFactor"]" Width="200" Height="200" />
+                                        <MudText Typo="Typo.caption" Class="mylife-muted">@L["LoginEnrollSecret"]</MudText>
+                                        <MudText Typo="Typo.body2" Style="font-family: monospace; word-break: break-all" data-testid="login-enroll-secret">@_enrollment.Secret</MudText>
+                                    </MudStack>
+                                    <MudTextField T="string" @bind-Value="_code" Label="@L["SetupTwoFactorCode"]" Variant="Variant.Outlined"
+                                                  InputMode="InputMode.numeric" MaxLength="7" Required RequiredError="@L["SetupTwoFactorCodeRequired"]"
+                                                  UserAttributes="@OneTimeCodeAttributes" AutoFocus OnKeyUp="SubmitOnEnterAsync" />
+                                }
+                                break;
+
                             case Mode.SecondFactor:
                                 <MudText>@L["LoginSecondFactorText"]</MudText>
                                 @if (_challenge!.Totp)
@@ -77,7 +92,10 @@
                     @switch (_mode)
                     {
                         case Mode.Credentials:
-                            <MudLink Href="recover" Typo="Typo.body2">@L["LoginForgotPassword"]</MudLink>
+                            <MudStack Row Spacing="3">
+                                <MudLink Href="recover" Typo="Typo.body2">@L["LoginForgotPassword"]</MudLink>
+                                <MudLink Href="privacy" Typo="Typo.body2">@L["PrivacyTitle"]</MudLink>
+                            </MudStack>
                             break;
                         case Mode.SecondFactor:
                             <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Disabled="_busy" OnClick="BackToCredentials">@L["SetupBack"]</MudButton>
@@ -86,7 +104,7 @@
                             <MudButton Variant="Variant.Text" Disabled="_busy" OnClick="LogoutAsync">@L["Logout"]</MudButton>
                             break;
                     }
-                    @if (_mode != Mode.SecondFactor || _challenge!.Totp)
+                    @if (_mode != Mode.SecondFactor || _challenge!.Totp || (_challenge.Enroll && _enrollment is not null))
                     {
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="SubmitAsync" data-testid="login-submit"
                                    StartIcon="@(_mode == Mode.Credentials ? Icons.Material.Filled.Login : Icons.Material.Filled.LockOpen)">

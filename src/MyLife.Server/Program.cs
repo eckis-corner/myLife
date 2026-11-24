@@ -8,7 +8,9 @@ using MyLife.Server.Api;
 using MyLife.Server.Components;
 using MyLife.Server.Data;
 using MyLife.Server.Infrastructure;
+using MyLife.Server.Infrastructure.Admin;
 using MyLife.Server.Infrastructure.Auth;
+using MyLife.Server.Infrastructure.Mail;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +59,15 @@ builder.Services.AddScoped<AuditLog>();
 builder.Services.AddSingleton<FileStore>();
 builder.Services.AddSingleton<TrashPurgeService>();
 builder.Services.AddHostedService(services => services.GetRequiredService<TrashPurgeService>());
+builder.Services.AddSingleton<SettingsStore>();
+builder.Services.AddSingleton<MailSignal>();
+builder.Services.AddSingleton<IMailTransport, SmtpMailTransport>();
+builder.Services.AddScoped<MailComposer>();
+builder.Services.AddScoped<MailOutbox>();
+builder.Services.AddSingleton<MailOutboxService>();
+builder.Services.AddHostedService(services => services.GetRequiredService<MailOutboxService>());
+builder.Services.AddHttpClient(NtfyClient.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(30));
+builder.Services.AddSingleton<NtfyClient>();
 
 // Sitzungs-Cookie (Architektur 4.4): HttpOnly, SameSite=Strict, gleitende Laufzeit wie die automatische Abmeldung.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -73,7 +84,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         cookie.Events.OnRedirectToLogin = context => WriteStatusAsync(context.Response, StatusCodes.Status401Unauthorized, "auth-required");
         cookie.Events.OnRedirectToAccessDenied = context => WriteStatusAsync(context.Response, StatusCodes.Status403Forbidden, "auth-forbidden");
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(AdminEndpoints.Policy, policy => policy.RequireRole("admin"));
 
 builder.Services.AddRateLimiter(limiter =>
 {
@@ -122,6 +134,8 @@ app.MapSetupEndpoints();
 app.MapAuthEndpoints();
 app.MapAccountEndpoints();
 app.MapVaultEndpoints();
+app.MapAdminEndpoints();
+app.MapAccountDeletionEndpoints();
 
 app.MapStaticAssets();
 // Die Seiten sind nur die leere Hülle (kein Prerendering); [Authorize] prüft der Client. Ohne AllowAnonymous
@@ -133,6 +147,8 @@ app.MapRazorComponents<App>()
     .AllowAnonymous();
 
 await DatabaseMigrator.MigrateAsync(app.Services);
+// Lädt die Einstellungen vorab; dabei gilt auch die vom Admin gewählte Abmeldezeit für das Sitzungs-Cookie.
+await app.Services.GetRequiredService<SettingsStore>().GetAsync();
 
 await app.RunAsync();
 

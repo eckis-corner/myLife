@@ -18,6 +18,10 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<AuditEntry> AuditLog => Set<AuditEntry>();
 
+    public DbSet<MailOutboxEntry> MailOutbox => Set<MailOutboxEntry>();
+
+    public DbSet<OneTimeToken> OneTimeTokens => Set<OneTimeToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -153,6 +157,41 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.TargetId).HasColumnName("target_id");
             entity.Property(x => x.Ip).HasColumnName("ip").HasMaxLength(64);
             entity.Property(x => x.Details).HasColumnName("details").HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<MailOutboxEntry>(entity =>
+        {
+            entity.ToTable("mail_outbox");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => x.NextAttemptAt).HasFilter("sent_at IS NULL AND failed_at IS NULL");
+            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.Recipient).HasColumnName("recipient").HasMaxLength(254);
+            entity.Property(x => x.Template).HasColumnName("template").HasMaxLength(50);
+            entity.Property(x => x.Language).HasColumnName("language").HasMaxLength(10);
+            entity.Property(x => x.Parameters).HasColumnName("parameters");
+            entity.Property(x => x.Attempts).HasColumnName("attempts");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.NextAttemptAt).HasColumnName("next_attempt_at");
+            entity.Property(x => x.SentAt).HasColumnName("sent_at");
+            entity.Property(x => x.FailedAt).HasColumnName("failed_at");
+            entity.Property(x => x.LastError).HasColumnName("last_error").HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<OneTimeToken>(entity =>
+        {
+            entity.ToTable("one_time_tokens");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => x.TokenHash).IsUnique();
+            entity.HasIndex(x => new { x.UserId, x.Purpose });
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.Purpose).HasColumnName("purpose");
+            entity.Property(x => x.TokenHash).HasColumnName("token_hash");
+            entity.Property(x => x.UserId).HasColumnName("user_id");
+            entity.Property(x => x.CreatedBy).HasColumnName("created_by");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.ExpiresAt).HasColumnName("expires_at");
+            entity.Property(x => x.UsedAt).HasColumnName("used_at");
         });
     }
 }

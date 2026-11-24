@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Mail_account-deleted_body" xml:space="preserve"><value>Hallo {name},
+
+wie von dir bestätigt sind dein myLife-Konto und dein Tresor endgültig gelöscht.</value></data>
+  <data name="Mail_account-deleted_subject" xml:space="preserve"><value>Dein myLife-Konto wurde gelöscht</value></data>
+  <data name="Mail_account-locked_body" xml:space="preserve"><value>Hallo {name},
+
+ein Administrator hat dein Konto bei myLife gesperrt. Du kannst dich vorerst nicht anmelden. Deine Daten bleiben unverändert und verschlüsselt.
+
+Wenn du nicht weißt, warum, wende dich bitte an den Administrator.</value></data>
+  <data name="Mail_account-locked_subject" xml:space="preserve"><value>Dein myLife-Konto wurde gesperrt</value></data>
+  <data name="Mail_account-unlocked_body" xml:space="preserve"><value>Hallo {name},
+
+ein Administrator hat dein Konto bei myLife wieder entsperrt. Du kannst dich wieder anmelden.</value></data>
+  <data name="Mail_account-unlocked_subject" xml:space="preserve"><value>Dein myLife-Konto ist wieder entsperrt</value></data>
+  <data name="Mail_deletion-request_body" xml:space="preserve"><value>Hallo {name},
+
+ein Administrator hat beantragt, dein Konto bei myLife zu löschen. Dabei werden dein Tresor mit allen Einträgen und Dokumenten endgültig gelöscht.
+
+Nur wenn du einverstanden bist, öffne diesen Link und bestätige dort:
+{link}
+
+Der Link gilt {days} Tage. Wenn du nichts tust, bleibt dein Konto bestehen.</value></data>
+  <data name="Mail_deletion-request_subject" xml:space="preserve"><value>Bitte bestätige: myLife-Konto löschen</value></data>
+  <data name="Mail_footer" xml:space="preserve"><value>Diese Nachricht hat myLife ({instance}) automatisch verschickt.</value></data>
+  <data name="Mail_test_body" xml:space="preserve"><value>Hallo {name},
+
+diese Testnachricht zeigt, dass der Mailversand von myLife funktioniert.</value></data>
+  <data name="Mail_test_subject" xml:space="preserve"><value>myLife: Testnachricht</value></data>
+  <data name="Mail_twofactor-reset_body" xml:space="preserve"><value>Hallo {name},
+
+ein Administrator hat die Zwei-Faktor-Anmeldung deines myLife-Kontos zurückgesetzt. Authenticator-App und Passkeys sind entfernt. Bei der nächsten Anmeldung richtest du nach dem Master-Passwort eine Authenticator-App neu ein.
+
+Wenn du das nicht veranlasst hast, melde dich bitte sofort beim Administrator.</value></data>
+  <data name="Mail_twofactor-reset_subject" xml:space="preserve"><value>myLife: Zwei-Faktor-Anmeldung zurückgesetzt</value></data>
+</root>

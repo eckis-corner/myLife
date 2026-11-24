@@ -7,9 +7,11 @@ namespace MyLife.Server.Infrastructure;
 
 /// <summary>
 /// Leert den Papierkorb: Objekte und Dokumente, die seit 30 Tagen gelöscht sind, werden endgültig entfernt
-/// (Architektur 6.3). Abgebrochene Uploads verschwinden nach einem Tag. Läuft stündlich und nach jedem Start.
+/// (Architektur 6.3). Abgebrochene Uploads verschwinden nach einem Tag. Dazu Aufbewahrungsfristen: Protokoll nach
+/// Einstellung des Admins, erledigte Mails nach 30 Tagen, abgelaufene Einmal-Tokens. Läuft stündlich und nach jedem Start.
 /// </summary>
-internal sealed partial class TrashPurgeService(IServiceScopeFactory scopes, TimeProvider time, ILogger<TrashPurgeService> logger) : BackgroundService
+internal sealed partial class TrashPurgeService(
+    IServiceScopeFactory scopes, MyLife.Server.Infrastructure.Admin.SettingsStore settings, TimeProvider time, ILogger<TrashPurgeService> logger) : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromHours(1);
 
@@ -68,6 +70,12 @@ internal sealed partial class TrashPurgeService(IServiceScopeFactory scopes, Tim
         }
 
         await db.SaveChangesAsync(cancellationToken);
+
+        var retention = now.AddDays(-(await settings.GetAsync(cancellationToken)).AuditRetentionDays);
+        await db.AuditLog.Where(a => a.At < retention).ExecuteDeleteAsync(cancellationToken);
+        var mailLimit = now.AddDays(-30);
+        await db.MailOutbox.Where(m => (m.SentAt != null && m.SentAt < mailLimit) || (m.FailedAt != null && m.FailedAt < mailLimit)).ExecuteDeleteAsync(cancellationToken);
+        await db.OneTimeTokens.Where(t => t.ExpiresAt < mailLimit || (t.UsedAt != null && t.UsedAt < mailLimit)).ExecuteDeleteAsync(cancellationToken);
         return objects.Count + documents.Count;
     }
 

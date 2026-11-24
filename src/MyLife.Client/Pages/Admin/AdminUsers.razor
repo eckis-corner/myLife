@@ -1,0 +1,201 @@
+@page "/admin/users"
+@attribute [Authorize(Roles = "admin")]
+@using System.Globalization
+@using MyLife.Shared.Admin
+@inject IStringLocalizer<SharedResource> L
+@inject AdminClient Api
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["AdminUsersTitle"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["AdminUsersTitle"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminUsersText"]</MudText>
+
+    <MudTable T="AdminUserDto" Items="_users" Loading="_loading" Hover Striped Dense="false" Elevation="1" Breakpoint="Breakpoint.Sm"
+              RowsPerPage="100" LoadingProgressColor="Color.Primary" data-testid="users-table">
+        <ToolBarContent>
+            <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel T="AdminUserDto" SortBy="u => u.DisplayName" InitialDirection="SortDirection.Ascending">@L["AdminUserName"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel T="AdminUserDto" SortBy="u => u.Email">@L["AdminUserEmail"]</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel T="AdminUserDto" SortBy="u => u.Status">@L["AdminUserStatus"]</MudTableSortLabel></MudTh>
+            <MudTh>@L["AdminUserTwoFactor"]</MudTh>
+            <MudTh><MudTableSortLabel T="AdminUserDto" SortBy="u => u.LastLoginAt ?? DateTimeOffset.MinValue">@L["AdminUserLastLogin"]</MudTableSortLabel></MudTh>
+            <MudTh />
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["AdminUserName"]">
+                <b>@context.DisplayName</b>
+                @if (context.IsMe)
+                {
+                    <span class="mylife-muted"> (@L["AdminUserMe"])</span>
+                }
+            </MudTd>
+            <MudTd DataLabel="@L["AdminUserEmail"]">@context.Email</MudTd>
+            <MudTd DataLabel="@L["AdminUserStatus"]">
+                <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="@StatusColor(context.Status)">@L[$"AccountStatus_{context.Status}"]</MudChip>
+                    @if (context.IsAdmin)
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@L["AdminRole"]</MudChip>
+                    }
+                    @if (context.DeletionPending)
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error">@L["AdminDeletionPending"]</MudChip>
+                    }
+                </MudStack>
+            </MudTd>
+            <MudTd DataLabel="@L["AdminUserTwoFactor"]">@TwoFactor(context)</MudTd>
+            <MudTd DataLabel="@L["AdminUserLastLogin"]">@(context.LastLoginAt?.ToLocalTime().ToString("g", CultureInfo.CurrentCulture) ?? "–")</MudTd>
+            <MudTd Style="text-align: right">
+                @if (!context.IsMe)
+                {
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Disabled="_busy"
+                             aria-label="@L["AdminUserActions"]" data-testid="@($"user-actions-{context.Email}")">
+                        @if (context.Status == AccountStatus.Locked)
+                        {
+                            <MudMenuItem Icon="@Icons.Material.Outlined.LockOpen" OnClick="() => UnlockAsync(context)" data-testid="action-unlock">@L["AdminUnlock"]</MudMenuItem>
+                        }
+                        else
+                        {
+                            <MudMenuItem Icon="@Icons.Material.Outlined.Block" OnClick="() => LockAsync(context)" data-testid="action-lock">@L["AdminLock"]</MudMenuItem>
+                        }
+                        <MudMenuItem Icon="@Icons.Material.Outlined.PhonelinkErase" OnClick="() => ResetTwoFactorAsync(context)" data-testid="action-reset-2fa">@L["AdminResetTwoFactor"]</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Outlined.AdminPanelSettings" OnClick="() => ToggleAdminAsync(context)">
+                            @L[context.IsAdmin ? "AdminRevokeRole" : "AdminGrantRole"]
+                        </MudMenuItem>
+                        @if (context.DeletionPending)
+                        {
+                            <MudMenuItem Icon="@Icons.Material.Outlined.Undo" OnClick="() => CancelDeletionAsync(context)">@L["AdminCancelDeletion"]</MudMenuItem>
+                        }
+                        else
+                        {
+                            <MudMenuItem Icon="@Icons.Material.Outlined.DeleteForever" IconColor="Color.Error" OnClick="() => RequestDeletionAsync(context)" data-testid="action-delete">
+                                @L["AdminRequestDeletion"]
+                            </MudMenuItem>
+                        }
+                    </MudMenu>
+                }
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2" Class="pa-4">@L["AdminUsersEmpty"]</MudText>
+        </NoRecordsContent>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+        </PagerContent>
+    </MudTable>
+
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">@L["AdminInviteLater"]</MudAlert>
+</MudStack>
+
+@code {
+    private static readonly int[] PageSizes = [25, 50, 100];
+    private List<AdminUserDto> _users = [];
+    private bool _loading = true;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        try
+        {
+            _users = [.. await Api.GetUsersAsync()];
+        }
+        catch (Exception exception) when (exception is AdminException or HttpRequestException)
+        {
+            Snackbar.Add(L["AdminError_admin-failed"], Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private static Color StatusColor(AccountStatus status) => status switch
+    {
+        AccountStatus.Active => Color.Success,
+        AccountStatus.Locked => Color.Error,
+        _ => Color.Default,
+    };
+
+    private string TwoFactor(AdminUserDto user)
+    {
+        var parts = new List<string>();
+        if (user.HasTotp)
+        {
+            parts.Add(L["AdminTwoFactorTotp"]);
+        }
+
+        if (user.PasskeyCount > 0)
+        {
+            parts.Add(L["AdminTwoFactorPasskeys", user.PasskeyCount]);
+        }
+
+        return parts.Count == 0 ? L["AdminTwoFactorNone"] : string.Join(", ", parts);
+    }
+
+    private Task LockAsync(AdminUserDto user) =>
+        ConfirmAndRunAsync("AdminLockConfirm", user, "AdminLock", () => Api.LockAsync(user.Id), "AdminLocked", danger: true);
+
+    private Task UnlockAsync(AdminUserDto user) =>
+        ConfirmAndRunAsync("AdminUnlockConfirm", user, "AdminUnlock", () => Api.UnlockAsync(user.Id), "AdminUnlocked");
+
+    private Task ResetTwoFactorAsync(AdminUserDto user) =>
+        ConfirmAndRunAsync("AdminResetTwoFactorConfirm", user, "AdminResetTwoFactor", () => Api.ResetTwoFactorAsync(user.Id), "AdminTwoFactorWasReset", danger: true);
+
+    private Task ToggleAdminAsync(AdminUserDto user) =>
+        ConfirmAndRunAsync(user.IsAdmin ? "AdminRevokeRoleConfirm" : "AdminGrantRoleConfirm", user, user.IsAdmin ? "AdminRevokeRole" : "AdminGrantRole",
+            () => Api.SetAdminAsync(user.Id, !user.IsAdmin), "SaveSuccessful");
+
+    private Task RequestDeletionAsync(AdminUserDto user) =>
+        ConfirmAndRunAsync("AdminRequestDeletionConfirm", user, "AdminRequestDeletion", () => Api.RequestDeletionAsync(user.Id), "AdminDeletionRequested", danger: true);
+
+    private Task CancelDeletionAsync(AdminUserDto user) =>
+        ConfirmAndRunAsync("AdminCancelDeletionConfirm", user, "AdminCancelDeletion", () => Api.CancelDeletionAsync(user.Id), "SaveSuccessful");
+
+    private async Task ConfirmAndRunAsync(string question, AdminUserDto user, string action, Func<Task<AdminUserDto>> call, string done, bool danger = false)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(new MessageBoxOptions
+        {
+            Title = L[action],
+            Message = L[question, user.DisplayName, user.Email],
+            YesText = L[action],
+            CancelText = L["Cancel"],
+        }, new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            var updated = await call();
+            var index = _users.FindIndex(u => u.Id == updated.Id);
+            if (index >= 0)
+            {
+                _users[index] = updated with { IsMe = false };
+            }
+
+            Snackbar.Add(L[done, user.DisplayName], danger ? Severity.Warning : Severity.Success);
+        }
+        catch (AdminException exception)
+        {
+            Snackbar.Add(L[$"AdminError_{exception.Message}"], Severity.Error);
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(L["AdminError_admin-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

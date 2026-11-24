@@ -25,6 +25,8 @@ public sealed partial class Login
     private string _password = string.Empty;
     private string _code = string.Empty;
     private LoginChallengeDto? _challenge;
+    private TotpLoginSetupDto? _enrollment;
+    private string? _enrollmentQr;
 
     private enum Mode
     {
@@ -105,7 +107,19 @@ public sealed partial class Login
                     _challenge = await CurrentSession.BeginLoginAsync(_email, _password);
                     _password = string.Empty;
                     _code = string.Empty;
+                    _enrollment = null;
+                    if (_challenge.Enroll)
+                    {
+                        // Der Admin hat die 2FA zurückgesetzt: Authenticator-App jetzt neu einrichten.
+                        _enrollment = await CurrentSession.BeginTotpEnrollmentAsync(_challenge.Pending);
+                        _enrollmentQr = QrCodeService.ToDataUri(QrCodeService.TotpUri("myLife", _email.Trim(), _enrollment.Secret));
+                    }
+
                     _mode = Mode.SecondFactor;
+                    break;
+                case Mode.SecondFactor when _challenge!.Enroll:
+                    await CurrentSession.CompleteLoginWithEnrollmentAsync(_challenge.Pending, _enrollment!.Enrollment, _code);
+                    NavigateBack();
                     break;
                 case Mode.SecondFactor:
                     await CurrentSession.CompleteLoginWithTotpAsync(_challenge!.Pending, _code);
@@ -137,6 +151,7 @@ public sealed partial class Login
     {
         _error = null;
         _challenge = null;
+        _enrollment = null;
         _mode = Mode.Credentials;
     }
 

@@ -1,0 +1,73 @@
+@page "/admin/audit"
+@attribute [Authorize(Roles = "admin")]
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject AdminClient Api
+
+<PageTitle>@L["AppName"] – @L["AdminAuditTitle"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["AdminAuditTitle"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminAuditText"]</MudText>
+
+    <MudTable T="AuditEntryDto" ServerData="LoadAsync" Hover Striped Dense="false" Elevation="1" RowsPerPage="50" Breakpoint="Breakpoint.Sm"
+              LoadingProgressColor="Color.Primary" data-testid="admin-audit-table">
+        <ToolBarContent>
+            <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>@L["AuditAt"]</MudTh>
+            <MudTh>@L["AuditAction"]</MudTh>
+            <MudTh>@L["AuditTarget"]</MudTh>
+            <MudTh>@L["AuditActor"]</MudTh>
+            <MudTh>@L["AuditIp"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["AuditAt"]">@context.At.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)</MudTd>
+            <MudTd DataLabel="@L["AuditAction"]">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@ActionColor(context.Action)">@L[$"Audit_{context.Action}"]</MudChip>
+            </MudTd>
+            <MudTd DataLabel="@L["AuditTarget"]">@Target(context)</MudTd>
+            <MudTd DataLabel="@L["AuditActor"]">@(context.ActorName ?? "–")</MudTd>
+            <MudTd DataLabel="@L["AuditIp"]">@(context.Ip ?? "–")</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2" Class="pa-4">@L["AuditEmpty"]</MudText>
+        </NoRecordsContent>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+        </PagerContent>
+    </MudTable>
+</MudStack>
+
+@code {
+    private static readonly int[] PageSizes = [25, 50, 100];
+
+    private async Task<TableData<AuditEntryDto>> LoadAsync(TableState state, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var page = await Api.GetAuditAsync(state.Page, state.PageSize, cancellationToken);
+            return new TableData<AuditEntryDto> { Items = page.Items, TotalItems = page.Total };
+        }
+        catch (Exception exception) when (exception is AdminException or HttpRequestException)
+        {
+            return new TableData<AuditEntryDto> { Items = [], TotalItems = 0 };
+        }
+    }
+
+    private static Color ActionColor(string action) => action switch
+    {
+        AuditActions.MailFailed or AuditActions.AccountDeleted or AuditActions.AdminUserLocked => Color.Error,
+        AuditActions.AdminTwoFactorReset or AuditActions.AdminDeletionRequested => Color.Warning,
+        _ => Color.Default,
+    };
+
+    // Bei Kontoaktionen liefert der Server den Namen des betroffenen Kontos in Details; gelöschte Konten haben keinen mehr.
+    private string Target(AuditEntryDto entry) => entry.TargetType switch
+    {
+        "user" => entry.Details ?? L["AdminDeletedAccount"],
+        "mail" => entry.Details is { } template ? L["AdminMailTemplate", template] : "–",
+        _ => "–",
+    };
+}

@@ -1,0 +1,110 @@
+@page "/account/delete"
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject AdminClient Api
+@inject SessionService CurrentSession
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L["DeletionTitle"]</PageTitle>
+
+@* Link aus der Mail (Entscheidung 44): Das Token steht im Fragment und geht nur im Rumpf eines POST an den Server. *@
+<MudContainer MaxWidth="MaxWidth.Small" Class="px-0">
+    <MudPaper Class="pa-4 pa-sm-6" Elevation="1">
+        <MudStack Spacing="4">
+            <AppLogo />
+            <MudText Typo="Typo.h4" HtmlTag="h1">@L["DeletionTitle"]</MudText>
+            @switch (_state)
+            {
+                case State.Loading:
+                    <MudProgressLinear Indeterminate Color="Color.Primary" />
+                    break;
+                case State.Invalid:
+                    <MudAlert Severity="Severity.Warning" data-testid="deletion-invalid">@L["DeletionInvalid"]</MudAlert>
+                    break;
+                case State.Ready:
+                    <MudText>@L["DeletionText", _info!.DisplayName, _info!.Email]</MudText>
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@L["DeletionWarning"]</MudAlert>
+                    <MudText Typo="Typo.body2" Class="mylife-muted">@L["DeletionExpires", _info!.ExpiresAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)]</MudText>
+                    <MudCheckBox T="bool" @bind-Value="_understood" Label="@L["DeletionUnderstood"]" Color="Color.Error" data-testid="deletion-understood" />
+                    @if (_error is not null)
+                    {
+                        <MudAlert Severity="Severity.Error">@L[_error]</MudAlert>
+                    }
+                    <MudStack Row Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap">
+                        <MudButton Variant="Variant.Text" Href=".">@L["DeletionKeep"]</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever" Disabled="@(!_understood || _busy)"
+                                   OnClick="ConfirmAsync" data-testid="deletion-confirm">@L["DeletionConfirm"]</MudButton>
+                    </MudStack>
+                    break;
+                case State.Done:
+                    <MudAlert Severity="Severity.Success" data-testid="deletion-done">@L["DeletionDone"]</MudAlert>
+                    break;
+            }
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private State _state = State.Loading;
+    private MyLife.Shared.Admin.AccountDeletionDto? _info;
+    private string? _token;
+    private string? _error;
+    private bool _understood;
+    private bool _busy;
+
+    private enum State
+    {
+        Loading,
+        Invalid,
+        Ready,
+        Done,
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _token = new Uri(Navigation.Uri).Fragment.TrimStart('#');
+        if (_token.Length == 0)
+        {
+            _state = State.Invalid;
+            return;
+        }
+
+        try
+        {
+            _info = await Api.GetDeletionAsync(_token);
+            _state = State.Ready;
+        }
+        catch (Exception exception) when (exception is AdminException or HttpRequestException)
+        {
+            _state = State.Invalid;
+        }
+    }
+
+    private async Task ConfirmAsync()
+    {
+        _busy = true;
+        _error = null;
+        try
+        {
+            await Api.ConfirmDeletionAsync(_token!);
+            _state = State.Done;
+            // Eine offene Sitzung desselben Browsers gehört zum gelöschten Konto: lokal beenden.
+            if (CurrentSession.State is SessionState.Locked or SessionState.Unlocked && CurrentSession.Session?.Email == _info!.Email)
+            {
+                await CurrentSession.LogoutAsync();
+            }
+        }
+        catch (AdminException exception)
+        {
+            _error = $"AdminError_{exception.Message}";
+        }
+        catch (HttpRequestException)
+        {
+            _error = "AdminError_admin-failed";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

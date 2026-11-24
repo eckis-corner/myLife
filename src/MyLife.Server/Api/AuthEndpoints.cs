@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using MyLife.Crypto;
 using MyLife.Server.Data;
 using MyLife.Server.Infrastructure;
+using MyLife.Server.Infrastructure.Admin;
 using MyLife.Server.Infrastructure.Auth;
 using MyLife.Shared.Auth;
 using MyLife.Shared.Vault;
@@ -28,6 +28,8 @@ internal static partial class AuthEndpoints
         group.MapPost("/prelogin", PreloginAsync);
         group.MapPost("/login", LoginAsync);
         group.MapPost("/login/totp", LoginTotpAsync);
+        group.MapPost("/login/totp/setup", LoginTotpSetupAsync);
+        group.MapPost("/login/totp/enroll", LoginTotpEnrollAsync);
         group.MapPost("/login/passkey/options", PasskeyOptionsAsync);
         group.MapPost("/login/passkey", LoginPasskeyAsync);
         group.MapGet("/session", GetSessionAsync).RequireAuthorization();
@@ -40,7 +42,7 @@ internal static partial class AuthEndpoints
     private static async Task<Ok<PreloginDto>> PreloginAsync(PreloginRequest request, MyLifeDbContext db, PreloginDecoy decoy, CancellationToken cancellationToken)
     {
         var email = KeyMaterialValidation.NormalizeEmail(request.Email ?? string.Empty);
-        var user = await FindActiveAsync(db, email, cancellationToken);
+        var user = await db.Users.SingleOrDefaultAsync(u => u.Email == email && u.Status != UserStatus.Invited, cancellationToken);
         if (user is null)
         {
             var parameters = Argon2Parameters.Default;
@@ -59,7 +61,7 @@ internal static partial class AuthEndpoints
         }
 
         var user = await db.Users.Include(u => u.Passkeys)
-            .SingleOrDefaultAsync(u => u.Email == KeyMaterialValidation.NormalizeEmail(request.Email ?? string.Empty) && u.Status == UserStatus.Active, cancellationToken);
+            .SingleOrDefaultAsync(u => u.Email == KeyMaterialValidation.NormalizeEmail(request.Email ?? string.Empty) && u.Status != UserStatus.Invited, cancellationToken);
         if (user is null)
         {
             await DummyAuthHash.BurnAsync(request.AuthHash);
@@ -80,12 +82,18 @@ internal static partial class AuthEndpoints
             return InvalidCredentials();
         }
 
+        // Erst nach dem richtigen Passwort: Ein gesperrtes Konto erfährt nur, wer das Passwort kennt.
+        if (user.Status == UserStatus.Locked)
+        {
+            return ApiProblems.Create(StatusCodes.Status403Forbidden, AuthErrors.Disabled);
+        }
+
         return TypedResults.Ok(new LoginChallengeDto(tokens.Issue(PendingPurpose.SecondFactor, user), user.TotpSecret is not null, user.Passkeys.Count > 0));
     }
 
     private static async Task<Results<Ok<SessionDto>, ProblemHttpResult>> LoginTotpAsync(
         TotpLoginRequest request, HttpContext context, MyLifeDbContext db, LoginAttempts attempts, PendingTokens tokens,
-        IDataProtectionProvider protection, TimeProvider time, IOptions<MyLifeOptions> options, CancellationToken cancellationToken)
+        IDataProtectionProvider protection, TimeProvider time, SettingsStore settings, CancellationToken cancellationToken)
     {
         var (user, problem) = await ReadPendingAsync(db, attempts, tokens, PendingPurpose.SecondFactor, request.Pending, cancellationToken);
         if (user is null)
@@ -109,7 +117,7 @@ internal static partial class AuthEndpoints
         }
 
         user.TotpLastStep = step;
-        return TypedResults.Ok(await CompleteSignInAsync(context, db, attempts, user, time, options.Value, cancellationToken));
+        return TypedResults.Ok(await CompleteSignInAsync(context, db, attempts, user, time, settings, cancellationToken));
     }
 
     private static async Task<Results<Ok<PasskeyOptionsDto>, ProblemHttpResult>> PasskeyOptionsAsync(
@@ -133,7 +141,7 @@ internal static partial class AuthEndpoints
 
     private static async Task<Results<Ok<SessionDto>, ProblemHttpResult>> LoginPasskeyAsync(
         PasskeyLoginRequest request, HttpContext context, MyLifeDbContext db, LoginAttempts attempts, PendingTokens tokens,
-        PasskeyService passkeys, TimeProvider time, IOptions<MyLifeOptions> options, CancellationToken cancellationToken)
+        PasskeyService passkeys, TimeProvider time, SettingsStore settings, CancellationToken cancellationToken)
     {
         var (user, problem) = await ReadPendingAsync(db, attempts, tokens, PendingPurpose.SecondFactor, request.Pending, cancellationToken);
         if (user is null)
@@ -150,15 +158,81 @@ internal static partial class AuthEndpoints
         }
 
         passkey.LastUsedAt = time.GetUtcNow();
-        return TypedResults.Ok(await CompleteSignInAsync(context, db, attempts, user, time, options.Value, cancellationToken));
+        return TypedResults.Ok(await CompleteSignInAsync(context, db, attempts, user, time, settings, cancellationToken));
     }
 
+    /// <summary>
+    /// Nach einem 2FA-Reset durch den Admin (weder TOTP noch Passkey): neues TOTP-Geheimnis für die Einrichtung
+    /// während der Anmeldung. Das Geheimnis ist geschützt an Nutzer und Stempel gebunden und 10 Minuten gültig.
+    /// </summary>
+    private static async Task<Results<Ok<TotpLoginSetupDto>, ProblemHttpResult>> LoginTotpSetupAsync(
+        TotpLoginSetupRequest request, MyLifeDbContext db, LoginAttempts attempts, PendingTokens tokens, IDataProtectionProvider protection,
+        CancellationToken cancellationToken)
+    {
+        var (user, problem) = await ReadPendingAsync(db, attempts, tokens, PendingPurpose.SecondFactor, request.Pending, cancellationToken);
+        if (user is null)
+        {
+            return problem!;
+        }
+
+        if (user.TotpSecret is not null || user.Passkeys.Count > 0)
+        {
+            return ApiProblems.Create(StatusCodes.Status400BadRequest, AuthErrors.InvalidInput);
+        }
+
+        var secret = Base32.Encode(Totp.NewSecret());
+        var enrollment = EnrollmentProtector(protection).Protect($"{user.Id:N}|{user.SecurityStamp}|{secret}", TimeSpan.FromMinutes(10));
+        return TypedResults.Ok(new TotpLoginSetupDto(secret, enrollment));
+    }
+
+    private static async Task<Results<Ok<SessionDto>, ProblemHttpResult>> LoginTotpEnrollAsync(
+        TotpLoginEnrollRequest request, HttpContext context, MyLifeDbContext db, LoginAttempts attempts, PendingTokens tokens,
+        IDataProtectionProvider protection, TimeProvider time, SettingsStore settings, AuditLog audit, CancellationToken cancellationToken)
+    {
+        var (user, problem) = await ReadPendingAsync(db, attempts, tokens, PendingPurpose.SecondFactor, request.Pending, cancellationToken);
+        if (user is null)
+        {
+            return problem!;
+        }
+
+        string[] parts;
+        try
+        {
+            parts = EnrollmentProtector(protection).Unprotect(request.Enrollment ?? string.Empty).Split('|', 3);
+        }
+        catch (System.Security.Cryptography.CryptographicException)
+        {
+            return ApiProblems.Create(StatusCodes.Status401Unauthorized, AuthErrors.Expired);
+        }
+
+        if (parts.Length != 3 || parts[0] != user.Id.ToString("N") || parts[1] != user.SecurityStamp || user.TotpSecret is not null || user.Passkeys.Count > 0)
+        {
+            return ApiProblems.Create(StatusCodes.Status401Unauthorized, AuthErrors.Expired);
+        }
+
+        var step = Totp.Verify(Base32.Decode(parts[2]), request.Code, time.GetUtcNow());
+        if (step is null)
+        {
+            attempts.Failed(user, db);
+            await db.SaveChangesAsync(cancellationToken);
+            return ApiProblems.Create(StatusCodes.Status401Unauthorized, AuthErrors.InvalidCode);
+        }
+
+        user.TotpSecret = protection.CreateProtector(SetupEndpoints.TotpSecretPurpose).Protect(parts[2]);
+        user.TotpLastStep = step;
+        audit.Own(AuditActions.TotpEnrolled, user.Id);
+        return TypedResults.Ok(await CompleteSignInAsync(context, db, attempts, user, time, settings, cancellationToken));
+    }
+
+    private static ITimeLimitedDataProtector EnrollmentProtector(IDataProtectionProvider protection) =>
+        protection.CreateProtector("MyLife.Auth.TotpReenrollment.v1").ToTimeLimitedDataProtector();
+
     private static async Task<Results<Ok<SessionDto>, UnauthorizedHttpResult>> GetSessionAsync(
-        ClaimsPrincipal principal, MyLifeDbContext db, IOptions<MyLifeOptions> options, CancellationToken cancellationToken)
+        ClaimsPrincipal principal, MyLifeDbContext db, SettingsStore settings, CancellationToken cancellationToken)
     {
         var id = MyLifeClaims.UserId(principal);
         var user = id is null ? null : await db.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
-        return user is null ? TypedResults.Unauthorized() : TypedResults.Ok(ToSession(user, options.Value));
+        return user is null ? TypedResults.Unauthorized() : TypedResults.Ok(ToSession(user, (await settings.GetAsync(cancellationToken)).IdleTimeoutMinutes));
     }
 
     private static async Task<NoContent> LogoutAsync(HttpContext context, MyLifeDbContext db, AuditLog audit)
@@ -242,14 +316,14 @@ internal static partial class AuthEndpoints
         user.SecurityStamp = SecurityStamps.New();
     }
 
-    internal static SessionDto ToSession(User user, MyLifeOptions options) => new()
+    internal static SessionDto ToSession(User user, int idleTimeoutMinutes) => new()
     {
         UserId = user.Id,
         Email = user.Email,
         DisplayName = user.DisplayName,
         IsAdmin = user.IsAdmin,
         Language = user.Language,
-        IdleTimeoutMinutes = options.IdleTimeoutMinutes,
+        IdleTimeoutMinutes = idleTimeoutMinutes,
         KdfSalt = user.KdfSalt,
         KdfMemoryKiB = user.KdfMemoryKiB,
         KdfIterations = user.KdfIterations,
@@ -263,7 +337,7 @@ internal static partial class AuthEndpoints
     };
 
     private static async Task<SessionDto> CompleteSignInAsync(
-        HttpContext context, MyLifeDbContext db, LoginAttempts attempts, User user, TimeProvider time, MyLifeOptions options, CancellationToken cancellationToken)
+        HttpContext context, MyLifeDbContext db, LoginAttempts attempts, User user, TimeProvider time, SettingsStore settings, CancellationToken cancellationToken)
     {
         LoginAttempts.Succeeded(user);
         user.LastLoginAt = time.GetUtcNow();
@@ -272,7 +346,7 @@ internal static partial class AuthEndpoints
         await UserSignIn.SignInAsync(context, user);
         var logger = context.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(AuthEndpoints));
         LogLoginSucceeded(logger, user.Id);
-        return ToSession(user, options);
+        return ToSession(user, (await settings.GetAsync(cancellationToken)).IdleTimeoutMinutes);
     }
 
     private static async Task<(User? User, ProblemHttpResult? Problem)> ReadPendingAsync(

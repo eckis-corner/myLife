@@ -109,6 +109,26 @@ public static class AuditActions
     public const string ExportPdf = "export-pdf";
     public const string ExportPrint = "export-print";
     public const string ImportJson = "import-json";
+    public const string TotpEnrolled = "totp-enrolled";
+
+    // Verwaltung (M2.1): Akteur ist der Admin, Eigentümer das betroffene Konto bzw. null bei Systemereignissen.
+    public const string AdminSettingsChanged = "admin-settings-changed";
+    public const string AdminMailTested = "admin-mail-tested";
+    public const string AdminNtfyTested = "admin-ntfy-tested";
+    public const string AdminMailRetried = "admin-mail-retried";
+    public const string AdminUserLocked = "admin-user-locked";
+    public const string AdminUserUnlocked = "admin-user-unlocked";
+    public const string AdminTwoFactorReset = "admin-2fa-reset";
+    public const string AdminRoleGranted = "admin-role-granted";
+    public const string AdminRoleRevoked = "admin-role-revoked";
+    public const string AdminDeletionRequested = "admin-deletion-requested";
+    public const string AdminDeletionCancelled = "admin-deletion-cancelled";
+    public const string AccountDeleted = "account-deleted";
+    public const string MailFailed = "mail-failed";
+
+    /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
+    public static bool IsSystem(string action) =>
+        action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed;
 
     /// <summary>Was der Browser selbst melden darf.</summary>
     public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ImportJson };

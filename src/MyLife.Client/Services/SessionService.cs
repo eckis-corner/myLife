@@ -100,6 +100,12 @@ public sealed class SessionService(AuthClient api, IMyLifeCrypto crypto, WebAuth
     public async Task CompleteLoginWithTotpAsync(string pending, string code) =>
         await OpenVaultAsync(await api.LoginTotpAsync(pending, code.Trim()));
 
+    /// <summary>Nach einem 2FA-Reset: neues TOTP-Geheimnis für die Einrichtung während der Anmeldung.</summary>
+    public Task<TotpLoginSetupDto> BeginTotpEnrollmentAsync(string pending) => api.LoginTotpSetupAsync(pending);
+
+    public async Task CompleteLoginWithEnrollmentAsync(string pending, string enrollment, string code) =>
+        await OpenVaultAsync(await api.LoginTotpEnrollAsync(pending, enrollment, code.Trim()));
+
     public async Task CompleteLoginWithPasskeyAsync(string pending)
     {
         var options = await api.PasskeyLoginOptionsAsync(pending);

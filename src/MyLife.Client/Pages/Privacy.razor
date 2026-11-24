@@ -1,0 +1,42 @@
+@page "/privacy"
+@inject IStringLocalizer<SharedResource> L
+@inject AdminClient Api
+
+<PageTitle>@L["AppName"] – @L["PrivacyTitle"]</PageTitle>
+
+@* Ohne Anmeldung erreichbar (Architektur 9): Text vom Administrator, sonst der mitgelieferte Standardtext. *@
+<MudStack Spacing="3" Class="mylife-reading">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["PrivacyTitle"]</MudText>
+    @if (_notice is null)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else
+    {
+        <div data-testid="privacy-text">
+            @foreach (var paragraph in Paragraphs(_notice.Text ?? L["PrivacyDefault"]))
+            {
+                <MudText Typo="Typo.body1" Class="mb-3" Style="white-space: pre-line">@paragraph</MudText>
+            }
+        </div>
+    }
+</MudStack>
+
+@code {
+    private MyLife.Shared.Admin.PrivacyNoticeDto? _notice;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _notice = await Api.GetPrivacyAsync();
+        }
+        catch (Exception exception) when (exception is AdminException or HttpRequestException)
+        {
+            _notice = new MyLife.Shared.Admin.PrivacyNoticeDto(null, true);
+        }
+    }
+
+    private static IEnumerable<string> Paragraphs(string text) =>
+        text.ReplaceLineEndings("\n").Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+}
