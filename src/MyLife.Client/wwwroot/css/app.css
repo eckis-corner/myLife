@@ -231,6 +231,19 @@ h1:focus {
     padding: 16px 12px;
 }
 
+/* Heller Modus: dunkle Seitenleiste. Akzent und Hover wie im dunklen Modus, damit sie auf dem dunklen Grund lesbar bleiben. */
+.mylife-rixio-light .mylife-drawer {
+    --mylife-accent: #faa500;
+    --mylife-accent-soft: #faa50014;
+    --mylife-accent-line: #8a6a24;
+    border-right-color: #2a4256;
+}
+
+.mylife-rixio-light .mylife-nav .mud-nav-link:hover:not(.active) {
+    background: #ffffff0f;
+    color: #ffffff;
+}
+
 .mylife-nav .mud-nav-link {
     border: 1px solid transparent;
     border-radius: 8px;
