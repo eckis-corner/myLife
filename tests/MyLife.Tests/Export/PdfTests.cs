@@ -188,9 +188,22 @@ public sealed class PdfTests
         }
     }
 
+    [Fact]
+    public async Task LogoIsDrawnOnTheCoverAndInEveryFooter()
+    {
+        var streams = PdfReader.Streams(await SampleAsync(null), null);
+
+        // Icon als Vektorgrafik: das vergrößerte Motiv (1.18) einmal auf dem Deckblatt und je Seite in der Fußzeile.
+        Assert.Equal(2, streams.Count);
+        Assert.Equal(3, streams.Sum(s => s.Split("1.18 0 0 1.18").Length - 1));
+        Assert.All(streams, s => Assert.Equal(Regex.Count(s, "(^|\n)q "), Regex.Count(s, "\nQ ")));
+        Assert.Contains("<4C696665> Tj", streams[0], StringComparison.Ordinal);
+    }
+
     private static async Task<byte[]> SampleAsync(string? password)
     {
         var layout = new PdfLayout();
+        layout.Logo();
         layout.Title("Notfallordner");
         layout.Subtitle("Max Mustermann");
         layout.Subtitle("Stand: 24. November 2026", 11);

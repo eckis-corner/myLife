@@ -76,6 +76,8 @@ public sealed class EmergencyFolder(VaultService vault, SchemaText text, IString
 
     private void WriteFront(PdfLayout layout, string ownerName, DateTimeOffset now, List<(int Area, int PageIndex)> starts, int frontPages)
     {
+        layout.Logo();
+        layout.Space(18);
         layout.Title(l["FolderTitle"]);
         layout.Subtitle(ownerName);
         layout.Subtitle(l["FolderAsOf", now.ToLocalTime().ToString("D", CultureInfo.CurrentCulture)], 11);

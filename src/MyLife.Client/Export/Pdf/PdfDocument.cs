@@ -14,8 +14,8 @@ public sealed class PdfPage
 /// <summary>
 /// Setzt Text auf A4-Seiten im Design der Vorlage „docs/design/Vorlage - eckis-corner.docx“ (Entscheidung 68): Ränder, Titel
 /// zwischen zwei Linien, Untertitel, Überschriften in #355269, Fließtext 11 pt im Blocksatz. Statt Tahoma steht die
-/// Standardschrift Helvetica (Tahoma darf nicht eingebettet weitergegeben werden). Bewusst einfach: kein Bild, keine
-/// Tabelle über Seiten. Seiten entstehen beim Schreiben; die Fußzeile mit Seitenzahlen setzt <see cref="PdfWriter"/>.
+/// Standardschrift Helvetica (Tahoma darf nicht eingebettet weitergegeben werden). Bewusst einfach: kein eingebettetes Bild
+/// (das Logo ist Vektorgrafik, <see cref="PdfLogo"/>), keine Tabelle über Seiten. Seiten entstehen beim Schreiben; die Fußzeile mit Seitenzahlen setzt <see cref="PdfWriter"/>.
 /// </summary>
 public sealed class PdfLayout
 {
@@ -64,6 +64,20 @@ public sealed class PdfLayout
         _page = new PdfPage();
         _pages.Add(_page);
         _y = PageHeight - TopMargin;
+    }
+
+    /// <summary>Logo mit Schriftzug, zentriert (Deckblatt).</summary>
+    public void Logo(float iconSize = 40, float textSize = 26)
+    {
+        Reserve(iconSize + 16);
+        var gap = iconSize * 0.3f;
+        var x = LeftMargin + ((ContentWidth - (iconSize + gap + PdfLogo.WordmarkWidth(textSize))) / 2);
+        var bottom = _y - iconSize;
+
+        // Grundlinie so, dass die Versalhöhe von Helvetica (0,718) mittig zum Icon steht.
+        var baseline = bottom + ((iconSize - (textSize * 0.718f)) / 2);
+        _page!.Content.Append(PdfLogo.Icon(x, bottom, iconSize)).Append(PdfLogo.Wordmark(x + iconSize + gap, baseline, textSize));
+        _y = bottom - 16;
     }
 
     /// <summary>Titel der Vorlage: 28 pt fett, zentriert, zwischen zwei feinen Linien.</summary>
@@ -385,15 +399,18 @@ public static class PdfWriter
 
     private static string FooterOperators(string footer)
     {
-        // Wie die Fußzeile der Vorlage: linksbündig am Satzspiegel, darüber eine feine Linie in der Akzentfarbe.
+        // Wie die Fußzeile der Vorlage: linksbündig am Satzspiegel, darüber eine feine Linie in der Akzentfarbe;
+        // rechts das Logo als kleines Icon.
         const float size = 8;
+        const float icon = 12;
         var left = PdfLayout.LeftMargin;
         var right = PdfLayout.PageWidth - PdfLayout.RightMargin;
         var line = PdfLayout.FooterBaseline + 12;
         return string.Create(
             CultureInfo.InvariantCulture,
             $"{PdfLayout.AccentColor} RG 0.5 w {left:0.##} {line:0.##} m {right:0.##} {line:0.##} l S 0 G " +
-            $"0.45 g BT /F1 {size} Tf {left:0.##} {PdfLayout.FooterBaseline:0.##} Td <{Convert.ToHexString(PdfFonts.Encode(footer))}> Tj ET 0 g\n");
+            $"0.45 g BT /F1 {size} Tf {left:0.##} {PdfLayout.FooterBaseline:0.##} Td <{Convert.ToHexString(PdfFonts.Encode(footer))}> Tj ET 0 g\n") +
+            PdfLogo.Icon(right - icon, PdfLayout.FooterBaseline - 3, icon);
     }
 
     private static byte[] Compress(byte[] data)
