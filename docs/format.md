@@ -53,11 +53,14 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601.
   "expiresOn": "2030-12-31",
   "notes": "…",
   "customFields": [ { "label": "…", "value": "…" } ],
-  "reviewedOn": "2026-11-24"
+  "reviewedOn": "2026-11-24",
+  "followUpOn": "2027-01-15",
+  "followUpNote": "…"
 }
 ```
 
 - `fields` enthält nur ausgefüllte Felder. Schlüssel und Auswahlwerte stehen in `src/MyLife.Shared/Vault/ObjectCatalog.cs`, ihre Bezeichnungen in `tools/resources_vault.py`.
+- Fehlt ein Wert (etwa keine Wiedervorlage), fehlt auch der Schlüssel.
 - Werte: Zahlen und Beträge invariant mit Punkt, Datum `yyyy-MM-dd`, Ja/Nein als `true`/`false`, Verweise als ID eines anderen Objekts.
 
 ## Metadaten eines Dokuments

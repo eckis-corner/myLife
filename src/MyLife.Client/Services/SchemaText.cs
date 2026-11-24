@@ -114,12 +114,26 @@ public sealed class SchemaText(IStringLocalizer<SharedResource> l)
             rows.Add(new DatasheetRow(l["CommonNotes"], payload.Notes, Multiline: true));
         }
 
+        if (payload.HasFollowUp)
+        {
+            rows.Add(new DatasheetRow(l["CommonFollowUp"], FollowUp(payload), Multiline: true));
+        }
+
         if (payload.ReviewedOn is { } reviewed)
         {
             rows.Add(new DatasheetRow(l["CommonReviewedOn"], reviewed.ToString("d", CultureInfo.CurrentCulture)));
         }
 
         return rows;
+    }
+
+    /// <summary>Wiedervorlage als Text: Datum und Hinweis, je nachdem, was gesetzt ist.</summary>
+    public static string FollowUp(VaultPayload payload)
+    {
+        ArgumentNullException.ThrowIfNull(payload);
+        var date = payload.FollowUpOn?.ToString("d", CultureInfo.CurrentCulture);
+        var note = string.IsNullOrWhiteSpace(payload.FollowUpNote) ? null : payload.FollowUpNote.Trim();
+        return date is null ? note ?? string.Empty : note is null ? date : $"{date} – {note}";
     }
 
     /// <summary>Kurzinfo für Listen: die ersten zwei ausgefüllten Pflicht- oder Auswahlfelder.</summary>

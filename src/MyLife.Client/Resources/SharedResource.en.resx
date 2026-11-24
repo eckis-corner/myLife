@@ -91,6 +91,10 @@
   <data name="CommonCustomLabel" xml:space="preserve"><value>Label</value></data>
   <data name="CommonCustomValue" xml:space="preserve"><value>Value</value></data>
   <data name="CommonExpiryHelp" xml:space="preserve"><value>Used for reminders (coming with M3).</value></data>
+  <data name="CommonFollowUp" xml:space="preserve"><value>Follow-up</value></data>
+  <data name="CommonFollowUpHelp" xml:space="preserve"><value>Optional. Shown on the overview from 14 days before.</value></data>
+  <data name="CommonFollowUpNote" xml:space="preserve"><value>Follow-up note</value></data>
+  <data name="CommonFollowUpOn" xml:space="preserve"><value>Follow up on</value></data>
   <data name="CommonLinks" xml:space="preserve"><value>Linked to</value></data>
   <data name="CommonLinksHelp" xml:space="preserve"><value>Visible in both directions on the data sheet.</value></data>
   <data name="CommonNotes" xml:space="preserve"><value>Notes</value></data>
@@ -359,8 +363,13 @@
   <data name="FolderIntro" xml:space="preserve"><value>This folder summarises what matters in an emergency: accounts, insurance, contracts, certificates, contacts and personal wishes. The originals are kept at the locations given.</value></data>
   <data name="FolderSensitive" xml:space="preserve"><value>Confidential: keep this folder as safe as the originals.</value></data>
   <data name="FolderTitle" xml:space="preserve"><value>Emergency folder</value></data>
+  <data name="FollowUpDone" xml:space="preserve"><value>Follow-up done</value></data>
+  <data name="FollowUpDoneSaved" xml:space="preserve"><value>Follow-up done.</value></data>
+  <data name="FollowUpDue" xml:space="preserve"><value>due</value></data>
+  <data name="FollowUpDueAlert" xml:space="preserve"><value>Follow-up due: {0}</value></data>
   <data name="FormHasErrors" xml:space="preserve"><value>Please check the highlighted fields.</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Expiring soon</value></data>
+  <data name="HomeFollowUpTitle" xml:space="preserve"><value>Follow-ups</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>This is where your digital emergency folder takes shape: insurance policies, accounts, contracts, certificates and wishes in one safe place. Everything is encrypted in your browser, so only you and, in an emergency, your trusted persons can read it.</value></data>
   <data name="HomeLastReviewed" xml:space="preserve"><value>Last reviewed on {0}</value></data>
   <data name="HomeMarkReviewed" xml:space="preserve"><value>Mark as reviewed</value></data>

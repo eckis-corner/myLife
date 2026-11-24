@@ -40,6 +40,18 @@ public sealed class VaultPayload
     /// <summary>Zuletzt geprüft („Als geprüft markieren“).</summary>
     public DateOnly? ReviewedOn { get; set; }
 
+    /// <summary>Wiedervorlage: Datum, an dem das Objekt wieder angesehen werden soll. Optional (Entscheidung 69).</summary>
+    public DateOnly? FollowUpOn { get; set; }
+
+    /// <summary>Hinweis zur Wiedervorlage, etwa „Beitrag vergleichen“. Optional.</summary>
+    public string? FollowUpNote { get; set; }
+
+    /// <summary>Hat das Objekt eine Wiedervorlage (Datum oder Hinweis)?</summary>
+    public bool HasFollowUp => FollowUpOn is not null || !string.IsNullOrWhiteSpace(FollowUpNote);
+
+    /// <summary>Ist die Wiedervorlage zum Stichtag fällig (Datum erreicht oder überschritten)?</summary>
+    public bool IsFollowUpDue(DateOnly today) => FollowUpOn is { } date && date <= today;
+
     public static JsonSerializerOptions JsonOptions { get; } = new(JsonSerializerDefaults.Web)
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

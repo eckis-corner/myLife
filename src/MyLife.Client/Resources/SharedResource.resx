@@ -91,6 +91,10 @@
   <data name="CommonCustomLabel" xml:space="preserve"><value>Bezeichnung</value></data>
   <data name="CommonCustomValue" xml:space="preserve"><value>Wert</value></data>
   <data name="CommonExpiryHelp" xml:space="preserve"><value>Grundlage für Erinnerungen (folgen mit M3).</value></data>
+  <data name="CommonFollowUp" xml:space="preserve"><value>Wiedervorlage</value></data>
+  <data name="CommonFollowUpHelp" xml:space="preserve"><value>Optional. Ab 14 Tagen vorher auf der Übersicht.</value></data>
+  <data name="CommonFollowUpNote" xml:space="preserve"><value>Hinweis zur Wiedervorlage</value></data>
+  <data name="CommonFollowUpOn" xml:space="preserve"><value>Wiedervorlage am</value></data>
   <data name="CommonLinks" xml:space="preserve"><value>Verknüpft mit</value></data>
   <data name="CommonLinksHelp" xml:space="preserve"><value>Im Datenblatt in beide Richtungen sichtbar.</value></data>
   <data name="CommonNotes" xml:space="preserve"><value>Notizen</value></data>
@@ -359,8 +363,13 @@
   <data name="FolderIntro" xml:space="preserve"><value>Dieser Ordner fasst zusammen, was im Ernstfall wichtig ist: Konten, Versicherungen, Verträge, Urkunden, Kontakte und persönliche Wünsche. Die Originale liegen an den genannten Ablageorten.</value></data>
   <data name="FolderSensitive" xml:space="preserve"><value>Vertraulich: Bewahre diesen Ordner so sicher auf wie die Originale.</value></data>
   <data name="FolderTitle" xml:space="preserve"><value>Notfallordner</value></data>
+  <data name="FollowUpDone" xml:space="preserve"><value>Wiedervorlage erledigt</value></data>
+  <data name="FollowUpDoneSaved" xml:space="preserve"><value>Wiedervorlage erledigt.</value></data>
+  <data name="FollowUpDue" xml:space="preserve"><value>fällig</value></data>
+  <data name="FollowUpDueAlert" xml:space="preserve"><value>Wiedervorlage fällig: {0}</value></data>
   <data name="FormHasErrors" xml:space="preserve"><value>Bitte prüfe die markierten Felder.</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Läuft bald ab</value></data>
+  <data name="HomeFollowUpTitle" xml:space="preserve"><value>Wiedervorlage</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>Hier entsteht dein digitaler Notfallordner: Versicherungen, Konten, Verträge, Urkunden und Wünsche an einem sicheren Ort. Alles wird in deinem Browser verschlüsselt, sodass nur du und im Ernstfall deine Vertrauenspersonen die Daten lesen können.</value></data>
   <data name="HomeLastReviewed" xml:space="preserve"><value>Zuletzt geprüft am {0}</value></data>
   <data name="HomeMarkReviewed" xml:space="preserve"><value>Als geprüft markieren</value></data>

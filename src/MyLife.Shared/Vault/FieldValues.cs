@@ -66,6 +66,11 @@ public static partial class FieldValues
             errors["originalLocation"] = "required";
         }
 
+        if (payload.FollowUpNote is { Length: > MaxLongTextLength })
+        {
+            errors["followUpNote"] = "too-long";
+        }
+
         foreach (var field in type.Fields.Where(f => IsVisible(f, payload)))
         {
             if (Validate(field, payload.Get(field.Key)) is { } error)

@@ -51,7 +51,7 @@ public static partial class ContentChecks
         ArgumentNullException.ThrowIfNull(payload);
         IEnumerable<string?> texts =
         [
-            payload.Title, payload.Notes, payload.WishNote, payload.OriginalLocation,
+            payload.Title, payload.Notes, payload.WishNote, payload.OriginalLocation, payload.FollowUpNote,
             .. type.Fields.Where(f => f.Type is FieldType.Text or FieldType.LongText).Select(f => payload.Get(f.Key)),
             .. payload.CustomFields.SelectMany(c => new[] { c.Label, c.Value }),
         ];

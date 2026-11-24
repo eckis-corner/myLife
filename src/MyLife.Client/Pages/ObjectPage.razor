@@ -39,6 +39,11 @@ else
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" OnClick="StartEdit" data-testid="edit">@L["Edit"]</MudButton>
                     <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.TaskAlt" OnClick="MarkReviewedAsync" Disabled="_busy">@L["ObjectMarkReviewed"]</MudButton>
+                    @if (_item.Payload.HasFollowUp)
+                    {
+                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.EventAvailable" OnClick="CompleteFollowUpAsync" Disabled="_busy"
+                                   data-testid="follow-up-done">@L["FollowUpDone"]</MudButton>
+                    }
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="@L["MoreActions"]" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                         <MudMenuItem Icon="@Icons.Material.Outlined.Print" OnClick="PrintAsync">@L["Print"]</MudMenuItem>
                         <MudMenuItem Icon="@Icons.Material.Outlined.PictureAsPdf" OnClick="PdfAsync">@L["DatasheetPdf"]</MudMenuItem>
@@ -87,6 +92,12 @@ else
             @if (_item.IsDeleted)
             {
                 <MudAlert Severity="Severity.Warning">@L["ObjectInTrash"]</MudAlert>
+            }
+            else if (_item.Payload.IsFollowUpDue(DateOnly.FromDateTime(DateTime.Today)))
+            {
+                <MudAlert Severity="Severity.Info" Icon="@Icons.Material.Outlined.EventRepeat" Class="mylife-no-print" data-testid="follow-up-due">
+                    @L["FollowUpDueAlert", SchemaText.FollowUp(_item.Payload)]
+                </MudAlert>
             }
             <MudPaper Class="pa-4 mylife-print" Elevation="1">
                 <MudText Typo="Typo.h4" HtmlTag="h1" data-testid="object-heading">@_item.Title</MudText>
@@ -244,6 +255,14 @@ else
         var payload = _item!.Payload.Clone();
         payload.ReviewedOn = DateOnly.FromDateTime(DateTime.Today);
         await RunAsync(() => Vault.UpdateAsync(_item, payload, _item.Status), L["ObjectReviewedSaved"]);
+    }
+
+    private async Task CompleteFollowUpAsync()
+    {
+        var payload = _item!.Payload.Clone();
+        payload.FollowUpOn = null;
+        payload.FollowUpNote = null;
+        await RunAsync(() => Vault.UpdateAsync(_item, payload, _item.Status), L["FollowUpDoneSaved"]);
     }
 
     private Task SetStatusAsync(ObjectStatus status) =>

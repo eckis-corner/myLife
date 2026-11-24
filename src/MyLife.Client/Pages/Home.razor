@@ -29,6 +29,27 @@
             <MudAlert Severity="Severity.Warning">@L["VaultUnreadable", Vault.UnreadableCount]</MudAlert>
         }
 
+        @if (_followUps.Count > 0)
+        {
+            <MudPaper Class="pa-4" Elevation="1" data-testid="follow-ups">
+                <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-2">@L["HomeFollowUpTitle"]</MudText>
+                <MudList T="string" Dense ReadOnly="false">
+                    @foreach (var item in _followUps)
+                    {
+                        var due = item.Payload.IsFollowUpDue(_today);
+                        <MudListItem T="string" Icon="@Icons.Material.Outlined.EventRepeat" IconColor="@(due ? Color.Warning : Color.Default)"
+                                     OnClick="@(() => Navigation.NavigateTo($"object/{item.Id}"))">
+                            <b>@item.Title</b> · @SchemaText.FollowUp(item.Payload)
+                            @if (due)
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined" Class="ml-2">@L["FollowUpDue"]</MudChip>
+                            }
+                        </MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+        }
+
         @if (_expiring.Count > 0)
         {
             <MudPaper Class="pa-4" Elevation="1">
@@ -87,16 +108,25 @@
 </MudStack>
 
 @code {
+    /// <summary>Wiedervorlagen, die in so vielen Tagen fällig werden, stehen schon auf dem Dashboard.</summary>
+    private const int FollowUpDays = 14;
+
     private Dictionary<int, AreaState> _states = [];
     private Dictionary<int, int> _counts = [];
     private List<VaultItem> _expiring = [];
+    private List<VaultItem> _followUps = [];
+    private DateOnly _today;
     private bool _busy;
 
     protected override void OnVaultReady()
     {
         _states = Vault.Areas.ToDictionary(a => a.Area);
         _counts = Vault.Current.Where(i => i.Status == ObjectStatus.Active).GroupBy(i => i.Area).ToDictionary(g => g.Key, g => g.Count());
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = _today = DateOnly.FromDateTime(DateTime.Today);
+        _followUps = [.. Vault.Current
+            .Where(i => i.Status == ObjectStatus.Active && i.Payload.FollowUpOn is { } f && f <= today.AddDays(FollowUpDays))
+            .OrderBy(i => i.Payload.FollowUpOn)
+            .Take(20)];
         _expiring = [.. Vault.Current
             .Where(i => i.Status == ObjectStatus.Active && i.Payload.ExpiresOn is { } e && e <= today.AddDays(90))
             .OrderBy(i => i.Payload.ExpiresOn)

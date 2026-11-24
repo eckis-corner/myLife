@@ -64,6 +64,15 @@
                 }
             </MudSelect>
         </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudDatePicker Label="@L["CommonFollowUpOn"]" Date="@ToDateTime(Payload.FollowUpOn)" DateChanged="d => Payload.FollowUpOn = ToDateOnly(d)"
+                           Variant="Variant.Outlined" Editable Clearable HelperText="@L["CommonFollowUpHelp"]" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" Value="Payload.FollowUpNote" ValueChanged="v => Payload.FollowUpNote = string.IsNullOrWhiteSpace(v) ? null : v"
+                          Label="@L["CommonFollowUpNote"]" Variant="Variant.Outlined" Sizing="InputSizing.Auto" MaxLength="@FieldValues.MaxLongTextLength"
+                          Error="@Has("followUpNote")" ErrorText="@ErrorOf("followUpNote")" UserAttributes="@FollowUpNoteAttributes" />
+        </MudItem>
         <MudItem xs="12">
             <MudTextField T="string" @bind-Value="Payload.Notes" Label="@L["CommonNotes"]" Variant="Variant.Outlined" Lines="3" Sizing="InputSizing.Auto"
                           MaxLength="@FieldValues.MaxLongTextLength" />
@@ -95,6 +104,7 @@
 
 @code {
     private static readonly Dictionary<string, object> TitleAttributes = new() { ["data-testid"] = "object-title" };
+    private static readonly Dictionary<string, object> FollowUpNoteAttributes = new() { ["data-testid"] = "follow-up-note" };
 
     [Parameter, EditorRequired] public ObjectTypeDefinition Type { get; set; } = default!;
 

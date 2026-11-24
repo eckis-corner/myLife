@@ -17,6 +17,7 @@ Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel
 | Verknüpfungen | Verweise auf andere Objekte, zum Beispiel Kredit ↔ Immobilie ↔ Gebäudeversicherung, im Datenblatt in beide Richtungen sichtbar (40) |
 | Ablageort des Originals | Wo liegt das Papier? (bei Urkunden Pflicht, sonst optional) |
 | **Ablaufdatum** | Bei jedem Objekt vorhanden (39). Bedeutung je Typ, zum Beispiel Vertragsende, Gültigkeit oder Zinsbindung. Grundlage der Erinnerungen. |
+| Wiedervorlage | Optional: Datum und Hinweis, wann und warum das Objekt wieder angesehen werden soll (69). Fällige Wiedervorlagen stehen auf der Übersicht. |
 | Notizen | Freitext |
 | Zusatzfelder | Frei benannte Felder mit Bezeichnung und Wert für alles, was der Katalog nicht abdeckt (Felderkatalog: Durchsicht offen, 47) |
 | Zuletzt geprüft | Datum, wird mit „Als geprüft markieren“ gesetzt |

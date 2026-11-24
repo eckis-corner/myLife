@@ -222,6 +222,29 @@ public sealed class FieldValueTests
         Assert.Equal([newAccount], copy.Links);
         Assert.Equal(newAccount.ToString(), copy.Get("debitAccount"));
     }
+
+    [Fact]
+    public void FollowUpIsOptional()
+    {
+        var type = ObjectCatalog.Find("contract")!;
+        var empty = new VaultPayload { Title = "Strom" };
+        Assert.False(empty.HasFollowUp);
+        Assert.False(empty.IsFollowUpDue(new DateOnly(2026, 11, 24)));
+        Assert.DoesNotContain("followUpOn", System.Text.Encoding.UTF8.GetString(empty.ToUtf8()), StringComparison.Ordinal);
+        Assert.False(FieldValues.ValidateObject(type, empty).ContainsKey("followUpNote"));
+
+        var payload = new VaultPayload { Title = "Strom", FollowUpOn = new DateOnly(2026, 12, 1), FollowUpNote = "Tarif vergleichen" };
+        var copy = VaultPayload.FromUtf8(payload.ToUtf8());
+        Assert.Equal(new DateOnly(2026, 12, 1), copy.FollowUpOn);
+        Assert.Equal("Tarif vergleichen", copy.FollowUpNote);
+        Assert.True(copy.HasFollowUp);
+        Assert.False(copy.IsFollowUpDue(new DateOnly(2026, 11, 30)));
+        Assert.True(copy.IsFollowUpDue(new DateOnly(2026, 12, 1)));
+
+        Assert.True(new VaultPayload { FollowUpNote = "nur Hinweis" }.HasFollowUp);
+        copy.FollowUpNote = new string('x', FieldValues.MaxLongTextLength + 1);
+        Assert.Equal("too-long", FieldValues.ValidateObject(type, copy)["followUpNote"]);
+    }
 }
 
 public sealed class ContentCheckTests
