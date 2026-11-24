@@ -205,6 +205,23 @@ h1:focus {
     border-bottom: 1px solid var(--mud-palette-lines-default);
 }
 
+/* Heller Modus: dunkle Kopfzeile. Das Logo braucht dort helle Farben statt Bernstein und Graphit. */
+.mylife-rixio-light .mylife-appbar {
+    border-bottom-color: #23394c;
+}
+
+.mylife-rixio-light .mylife-appbar .mylife-logo-my {
+    color: #faa500;
+}
+
+.mylife-rixio-light .mylife-appbar .mylife-logo-life {
+    color: #ffffff;
+}
+
+.mylife-rixio-light .mylife-appbar .mylife-logo--appbar img {
+    box-shadow: 0 0 0 1px #ffffff26;
+}
+
 /* Seitenleiste */
 .mylife-rixio .mylife-drawer {
     border-right: 1px solid var(--mud-palette-lines-default);
