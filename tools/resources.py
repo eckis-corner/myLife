@@ -10,6 +10,7 @@ from xml.sax.saxutils import escape
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import resources_admin  # noqa: E402
+import resources_family  # noqa: E402
 import resources_vault  # noqa: E402
 
 TEXTS: dict[str, tuple[str, str]] = {
@@ -348,6 +349,11 @@ _DUPLICATES = sorted(set(TEXTS) & set(resources_admin.CLIENT))
 if _DUPLICATES:
     raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
 TEXTS.update(resources_admin.CLIENT)
+_DUPLICATES = sorted(set(TEXTS) & set(resources_family.CLIENT))
+if _DUPLICATES:
+    raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
+TEXTS.update(resources_family.CLIENT)
+MAIL = {**resources_admin.MAIL, **resources_family.MAIL}
 
 HEADER = """<?xml version="1.0" encoding="utf-8"?>
 <!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->
@@ -375,6 +381,6 @@ if __name__ == "__main__":
     print(f"{len(TEXTS)} Texte geschrieben nach {target}")
     server = Path(__file__).resolve().parent.parent / "src" / "MyLife.Server" / "Resources"
     server.mkdir(exist_ok=True)
-    write(server / "MailResource.resx", 0, resources_admin.MAIL)
-    write(server / "MailResource.en.resx", 1, resources_admin.MAIL)
-    print(f"{len(resources_admin.MAIL)} Mailtexte geschrieben nach {server}")
+    write(server / "MailResource.resx", 0, MAIL)
+    write(server / "MailResource.en.resx", 1, MAIL)
+    print(f"{len(MAIL)} Mailtexte geschrieben nach {server}")

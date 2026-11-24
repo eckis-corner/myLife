@@ -5,6 +5,14 @@ window.myLife = {
     getBrowserLanguage: () => navigator.language || "de",
     setDocumentLanguage: (culture) => { document.documentElement.lang = culture; },
     print: () => window.print(),
+    copyText: async (text) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch {
+            return false;
+        }
+    },
     // Letzte Aktivität für die automatische Abmeldung (IdleMonitor).
     lastActivity: Date.now(),
     getIdleSeconds: () => Math.floor((Date.now() - window.myLife.lastActivity) / 1000),

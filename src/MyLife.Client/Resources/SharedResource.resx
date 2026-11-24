@@ -27,7 +27,7 @@
   <data name="AdminGrantRoleConfirm" xml:space="preserve"><value>{0} ({1}) zum Administrator machen? Die Person wird abgemeldet und hat nach der nächsten Anmeldung die Verwaltung, aber keinen Zugriff auf fremde Tresore.</value></data>
   <data name="AdminIdleTimeout" xml:space="preserve"><value>Automatische Abmeldung</value></data>
   <data name="AdminIdleTimeoutHint" xml:space="preserve"><value>Nach so vielen Minuten ohne Aktivität. Gilt ab der nächsten Anfrage.</value></data>
-  <data name="AdminInviteLater" xml:space="preserve"><value>Neue Konten entstehen über Einladungen. Das Einladen folgt mit dem nächsten Schritt (M2.2).</value></data>
+  <data name="AdminInvitedBy" xml:space="preserve"><value>Eingeladen von</value></data>
   <data name="AdminLifesign" xml:space="preserve"><value>Lebenszeichen</value></data>
   <data name="AdminLifesignHint" xml:space="preserve"><value>Wie oft sich jemand meldet, per Anmeldung oder Link in der Mail.</value></data>
   <data name="AdminLock" xml:space="preserve"><value>Sperren</value></data>
@@ -40,6 +40,7 @@
   <data name="AdminNtfyToken" xml:space="preserve"><value>Zugriffstoken (optional)</value></data>
   <data name="AdminNtfyTopic" xml:space="preserve"><value>Thema für den Test</value></data>
   <data name="AdminNtfyTopicHint" xml:space="preserve"><value>Buchstaben, Ziffern, - und _; wird nicht gespeichert.</value></data>
+  <data name="AdminOpenInvitations" xml:space="preserve"><value>Offene Einladungen</value></data>
   <data name="AdminPrivacyNotice" xml:space="preserve"><value>Datenschutzhinweis</value></data>
   <data name="AdminPrivacyOpen" xml:space="preserve"><value>Datenschutzseite ansehen</value></data>
   <data name="AdminPrivacyText" xml:space="preserve"><value>Dieser Text steht auf der Datenschutzseite, auch ohne Anmeldung. Leer lassen für den mitgelieferten Standardtext. Absätze trennst du mit einer Leerzeile.</value></data>
@@ -155,10 +156,12 @@
   <data name="AuditIp" xml:space="preserve"><value>IP (gekürzt)</value></data>
   <data name="AuditTarget" xml:space="preserve"><value>Betrifft</value></data>
   <data name="AuditText" xml:space="preserve"><value>Wer wann was in deinem Tresor getan hat. Das Protokoll enthält keine Inhalte; Titel ergänzt dein Browser.</value></data>
+  <data name="Audit_account-created" xml:space="preserve"><value>Konto angelegt</value></data>
   <data name="Audit_account-deleted" xml:space="preserve"><value>Konto gelöscht</value></data>
   <data name="Audit_admin-2fa-reset" xml:space="preserve"><value>Zwei-Faktor-Anmeldung zurückgesetzt</value></data>
   <data name="Audit_admin-deletion-cancelled" xml:space="preserve"><value>Löschantrag zurückgezogen</value></data>
   <data name="Audit_admin-deletion-requested" xml:space="preserve"><value>Löschen beantragt</value></data>
+  <data name="Audit_admin-invitation-revoked" xml:space="preserve"><value>Einladung zurückgezogen (Verwaltung)</value></data>
   <data name="Audit_admin-mail-retried" xml:space="preserve"><value>Mailversand erneut angestoßen</value></data>
   <data name="Audit_admin-mail-tested" xml:space="preserve"><value>Testmail verschickt</value></data>
   <data name="Audit_admin-ntfy-tested" xml:space="preserve"><value>ntfy getestet</value></data>
@@ -178,6 +181,13 @@
   <data name="Audit_export-pdf" xml:space="preserve"><value>PDF-Export</value></data>
   <data name="Audit_export-print" xml:space="preserve"><value>Druckansicht gedruckt</value></data>
   <data name="Audit_import-json" xml:space="preserve"><value>JSON-Import</value></data>
+  <data name="Audit_invitation-accepted" xml:space="preserve"><value>Einladung angenommen</value></data>
+  <data name="Audit_invitation-created" xml:space="preserve"><value>Person eingeladen</value></data>
+  <data name="Audit_invitation-renewed" xml:space="preserve"><value>Einladungslink erneuert</value></data>
+  <data name="Audit_invitation-revoked" xml:space="preserve"><value>Einladung zurückgezogen</value></data>
+  <data name="Audit_key-endorsed" xml:space="preserve"><value>Schlüssel gegengezeichnet</value></data>
+  <data name="Audit_key-mismatch" xml:space="preserve"><value>Schlüssel passt nicht zur Einladung</value></data>
+  <data name="Audit_key-verified" xml:space="preserve"><value>Schlüssel bestätigt</value></data>
   <data name="Audit_login" xml:space="preserve"><value>Anmeldung</value></data>
   <data name="Audit_login-failed" xml:space="preserve"><value>Fehlgeschlagene Anmeldung</value></data>
   <data name="Audit_logout" xml:space="preserve"><value>Abmeldung</value></data>
@@ -295,6 +305,40 @@
   <data name="ExportWarning" xml:space="preserve"><value>Ein Export ohne Passwort und jeder Ausdruck enthält deine Daten im Klartext. Bewahre ihn so sicher auf wie die Originale.</value></data>
   <data name="ExportWithDocuments" xml:space="preserve"><value>Dokumente einschließen</value></data>
   <data name="ExportWorking" xml:space="preserve"><value>Wird erstellt …</value></data>
+  <data name="FamilyAcceptedAt" xml:space="preserve"><value>angenommen am {0}</value></data>
+  <data name="FamilyEmpty" xml:space="preserve"><value>Noch niemand außer dir. Lade jemanden ein.</value></data>
+  <data name="FamilyError_family-account-exists" xml:space="preserve"><value>Für diese Adresse gibt es schon ein Konto.</value></data>
+  <data name="FamilyError_family-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
+  <data name="FamilyError_family-fingerprint" xml:space="preserve"><value>Die Gegenzeichnung passt nicht zum aktuellen Schlüssel.</value></data>
+  <data name="FamilyError_family-invalid" xml:space="preserve"><value>Die Angaben sind unvollständig oder ungültig.</value></data>
+  <data name="FamilyError_family-mail-not-configured" xml:space="preserve"><value>Der Mailversand ist noch nicht eingerichtet. Gib den Link selbst weiter oder bitte den Administrator, den Mailversand einzurichten.</value></data>
+  <data name="FamilyError_family-not-found" xml:space="preserve"><value>Die Einladung gibt es nicht mehr.</value></data>
+  <data name="FamilyError_family-pending" xml:space="preserve"><value>Diese Adresse ist schon von jemand anderem eingeladen.</value></data>
+  <data name="FamilyError_family-token-invalid" xml:space="preserve"><value>Der Einladungslink ist ungültig, abgelaufen oder wurde schon verwendet.</value></data>
+  <data name="FamilyError_family-totp-expired" xml:space="preserve"><value>Die Einrichtung der App hat zu lange gedauert. Bitte scanne den neuen QR-Code.</value></data>
+  <data name="FamilyError_family-totp-invalid" xml:space="preserve"><value>Der Code stimmt nicht. Prüfe die Uhrzeit auf dem Smartphone.</value></data>
+  <data name="FamilyFingerprint" xml:space="preserve"><value>Fingerprint</value></data>
+  <data name="FamilyInvitationDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="FamilyInvitations" xml:space="preserve"><value>Deine Einladungen</value></data>
+  <data name="FamilyInvitationsEmpty" xml:space="preserve"><value>Keine Einladungen.</value></data>
+  <data name="FamilyKey" xml:space="preserve"><value>Schlüssel</value></data>
+  <data name="FamilyKeyChangedWarning" xml:space="preserve"><value>Achtung: Bei mindestens einer Person stimmt der Schlüssel nicht mehr mit dem überein, den dein Browser bestätigt hat. Das kann ein Angriff auf den Server sein. Sprich mit der Person auf anderem Weg und wende dich an den Administrator.</value></data>
+  <data name="FamilyMyFingerprint" xml:space="preserve"><value>Dein eigener Fingerprint: {0}</value></data>
+  <data name="FamilyNewLink" xml:space="preserve"><value>Neuen Link zum Weitergeben</value></data>
+  <data name="FamilyResend" xml:space="preserve"><value>Neuen Link per Mail senden</value></data>
+  <data name="FamilyRevoke" xml:space="preserve"><value>Einladung zurückziehen</value></data>
+  <data name="FamilyRevokeConfirm" xml:space="preserve"><value>Einladung an {0} zurückziehen? Der Link funktioniert danach nicht mehr.</value></data>
+  <data name="FamilyText" xml:space="preserve"><value>Alle Personen dieser Instanz. myLife prüft ihre Schlüssel automatisch: Wen du eingeladen hast, bestätigt dein Browser nach der Annahme selbst; andere gelten als bestätigt, wenn jemand, dem du vertraust, sie gegengezeichnet hat. Nur an bestätigte Schlüssel gibt myLife später Freigaben heraus.</value></data>
+  <data name="FamilyTitle" xml:space="preserve"><value>Familie</value></data>
+  <data name="FamilyTrustHint_Changed" xml:space="preserve"><value>Der Server zeigt einen anderen Schlüssel als den, den dein Browser sich gemerkt hat. myLife erzeugt dafür keine Freigaben.</value></data>
+  <data name="FamilyTrustHint_Endorsed" xml:space="preserve"><value>Jemand, dessen Schlüssel du selbst bestätigt hast, hat diesen Schlüssel gegengezeichnet.</value></data>
+  <data name="FamilyTrustHint_Pinned" xml:space="preserve"><value>Dein Browser hat diesen Schlüssel selbst geprüft und sich gemerkt. Er ist unverändert.</value></data>
+  <data name="FamilyTrustHint_Unconfirmed" xml:space="preserve"><value>Noch hat niemand, dem du vertraust, diesen Schlüssel bestätigt. Das ist kein Fehler; es ändert sich, sobald jemand aus der Familie ihn gegenzeichnet.</value></data>
+  <data name="FamilyTrust_Changed" xml:space="preserve"><value>Schlüssel geändert!</value></data>
+  <data name="FamilyTrust_Endorsed" xml:space="preserve"><value>Bestätigt durch {0}</value></data>
+  <data name="FamilyTrust_Pinned" xml:space="preserve"><value>Von dir bestätigt</value></data>
+  <data name="FamilyTrust_Unconfirmed" xml:space="preserve"><value>Noch nicht bestätigt</value></data>
+  <data name="FamilyValidUntil" xml:space="preserve"><value>gültig bis {0}</value></data>
   <data name="FieldError_bic" xml:space="preserve"><value>Keine gültige BIC (8 oder 11 Zeichen)</value></data>
   <data name="FieldError_date" xml:space="preserve"><value>Kein gültiges Datum</value></data>
   <data name="FieldError_email" xml:space="preserve"><value>Keine gültige E-Mail-Adresse</value></data>
@@ -527,6 +571,29 @@
   <data name="ImportSummary" xml:space="preserve"><value>Export von {0} vom {1}: {2} Einträge, {3} Dokumente.</value></data>
   <data name="ImportText" xml:space="preserve"><value>Übernimmt Einträge und Dokumente aus einem myLife-Export in deinen Tresor. Was schon vorhanden ist, wird übersprungen.</value></data>
   <data name="ImportTitle" xml:space="preserve"><value>Datensicherung einspielen</value></data>
+  <data name="InvitationStatus_Accepted" xml:space="preserve"><value>Angenommen, Prüfung folgt</value></data>
+  <data name="InvitationStatus_Expired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="InvitationStatus_Mismatch" xml:space="preserve"><value>Schlüssel passt nicht!</value></data>
+  <data name="InvitationStatus_Pending" xml:space="preserve"><value>Offen</value></data>
+  <data name="InvitationStatus_Revoked" xml:space="preserve"><value>Zurückgezogen</value></data>
+  <data name="InvitationStatus_Verified" xml:space="preserve"><value>Angenommen und bestätigt</value></data>
+  <data name="InviteByLink" xml:space="preserve"><value>Link selbst weitergeben (etwa per Messenger)</value></data>
+  <data name="InviteByLinkHint" xml:space="preserve"><value>Am sichersten: Der Link mit dem Geheimnis entsteht nur in deinem Browser, der Server sieht ihn nie.</value></data>
+  <data name="InviteByMail" xml:space="preserve"><value>Per Mail von myLife senden</value></data>
+  <data name="InviteByMailHint" xml:space="preserve"><value>Bequem und der Normalfall. Der Server sieht den Link dabei einmal.</value></data>
+  <data name="InviteCopied" xml:space="preserve"><value>Kopiert.</value></data>
+  <data name="InviteCopy" xml:space="preserve"><value>Link kopieren</value></data>
+  <data name="InviteCopyFailed" xml:space="preserve"><value>Kopieren nicht erlaubt; bitte von Hand markieren.</value></data>
+  <data name="InviteDialogText" xml:space="preserve"><value>Die Person bekommt ein eigenes Konto mit eigenem Tresor. Später kannst du sie als Vertrauensperson einsetzen. Sie sieht von deinem Tresor nichts, solange du nichts freigibst.</value></data>
+  <data name="InviteDialogTitle" xml:space="preserve"><value>Person einladen</value></data>
+  <data name="InviteExpires" xml:space="preserve"><value>Der Link gilt bis {0}.</value></data>
+  <data name="InviteInvalid" xml:space="preserve"><value>Dieser Einladungslink ist ungültig, abgelaufen oder wurde schon verwendet. Bitte die einladende Person um einen neuen Link.</value></data>
+  <data name="InviteLanguage" xml:space="preserve"><value>Sprache der Einladung</value></data>
+  <data name="InviteLinkText" xml:space="preserve"><value>Schicke diesen Link auf eigenem Weg an die Person. Wer ihn hat, kann das Konto anlegen; gib ihn also nur an sie weiter.</value></data>
+  <data name="InviteMailQueued" xml:space="preserve"><value>Die Einladung ist unterwegs.</value></data>
+  <data name="InviteSubmit" xml:space="preserve"><value>Einladen</value></data>
+  <data name="InviteTitle" xml:space="preserve"><value>Einladung annehmen</value></data>
+  <data name="InviteWelcomeText" xml:space="preserve"><value>{0} lädt dich zu myLife ein, dem digitalen Notfallordner der Familie. Du richtest jetzt dein eigenes Konto mit einem eigenen, verschlüsselten Tresor ein. Dafür brauchst du etwa zehn Minuten, einen Drucker oder Stift und Papier und eine Authenticator-App auf dem Smartphone.</value></data>
   <data name="Language" xml:space="preserve"><value>Sprache</value></data>
   <data name="LanguageName_de" xml:space="preserve"><value>Deutsch</value></data>
   <data name="LanguageName_en" xml:space="preserve"><value>English</value></data>

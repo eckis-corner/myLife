@@ -1,0 +1,101 @@
+@* Person einladen (M2.2): Adresse und Sprache, Versand per Mail (Standard) oder Link selbst weitergeben. *@
+@inject IStringLocalizer<SharedResource> L
+@inject KeyTrustService Trust
+@inject NavigationManager Navigation
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@L["InviteDialogTitle"]</MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (_result is null)
+        {
+            <MudForm @ref="_form">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.body2">@L["InviteDialogText"]</MudText>
+                    <MudTextField T="string" @bind-Value="_email" Label="@L["SetupEmail"]" Variant="Variant.Outlined" InputType="InputType.Email"
+                                  Required RequiredError="@L["SetupEmailInvalid"]" Validation="@(new Func<string, string?>(ValidateEmail))"
+                                  AutoFocus UserAttributes="@EmailAttributes" />
+                    <MudSelect T="string" @bind-Value="_language" Label="@L["InviteLanguage"]" Variant="Variant.Outlined">
+                        @foreach (var culture in MyLife.Shared.SupportedCultures.All)
+                        {
+                            <MudSelectItem Value="@culture">@L[$"LanguageName_{culture}"]</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudRadioGroup T="bool" @bind-Value="_sendMail">
+                        <MudRadio T="bool" Value="true" Color="Color.Primary">@L["InviteByMail"]</MudRadio>
+                        <MudRadio T="bool" Value="false" Color="Color.Primary">@L["InviteByLink"]</MudRadio>
+                    </MudRadioGroup>
+                    <MudText Typo="Typo.caption" Class="mylife-muted">@L[_sendMail ? "InviteByMailHint" : "InviteByLinkHint"]</MudText>
+                    @if (_error is not null)
+                    {
+                        <MudAlert Severity="Severity.Error" data-testid="invite-error">@L[_error]</MudAlert>
+                    }
+                </MudStack>
+            </MudForm>
+        }
+        else
+        {
+            <InviteLinkResult Result="_result" />
+        }
+    </DialogContent>
+    <DialogActions>
+        @if (_result is null)
+        {
+            <MudButton Variant="Variant.Text" OnClick="() => Dialog.Cancel()" Disabled="_busy">@L["Cancel"]</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" Disabled="_busy" OnClick="InviteAsync"
+                       data-testid="invite-submit">@L["InviteSubmit"]</MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => Dialog.Close(DialogResult.Ok(true))">@L["Close"]</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private static readonly Dictionary<string, object> EmailAttributes = new() { ["data-testid"] = "invite-email", ["autocomplete"] = "off" };
+    private MudForm? _form;
+    private string _email = string.Empty;
+    private string _language = CultureService.Current;
+    private bool _sendMail = true;
+    private bool _busy;
+    private string? _error;
+    private InvitationLink? _result;
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+
+    private async Task InviteAsync()
+    {
+        if (_form is not null)
+        {
+            await _form.ValidateAsync();
+            if (!_form.IsValid)
+            {
+                return;
+            }
+        }
+
+        _busy = true;
+        _error = null;
+        try
+        {
+            _result = await Trust.InviteAsync(_email, _language, _sendMail, Navigation.BaseUri);
+        }
+        catch (FamilyException exception)
+        {
+            _error = $"FamilyError_{exception.Message}";
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Security.Cryptography.CryptographicException or Microsoft.JSInterop.JSException)
+        {
+            _error = "FamilyError_family-failed";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private string? ValidateEmail(string value) =>
+        MyLife.Shared.Admin.AdminSettingsValidation.IsEmail(value) ? null : L["SetupEmailInvalid"].Value;
+}

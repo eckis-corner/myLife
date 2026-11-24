@@ -4,6 +4,7 @@
 @using MyLife.Shared.Admin
 @inject IStringLocalizer<SharedResource> L
 @inject AdminClient Api
+@inject FamilyClient Family
 @inject IDialogService Dialogs
 @inject ISnackbar Snackbar
 
@@ -11,7 +12,10 @@
 
 <MudStack Spacing="3">
     <MudText Typo="Typo.h4" HtmlTag="h1">@L["AdminUsersTitle"]</MudText>
-    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminUsersText"]</MudText>
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminUsersText"]</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" Href="family?invite=true">@L["InviteDialogTitle"]</MudButton>
+    </MudStack>
 
     <MudTable T="AdminUserDto" Items="_users" Loading="_loading" Hover Striped Dense="false" Elevation="1" Breakpoint="Breakpoint.Sm"
               RowsPerPage="100" LoadingProgressColor="Color.Primary" data-testid="users-table">
@@ -89,12 +93,34 @@
         </PagerContent>
     </MudTable>
 
-    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">@L["AdminInviteLater"]</MudAlert>
+    <MudText Typo="Typo.h6" HtmlTag="h2" Class="mt-4">@L["AdminOpenInvitations"]</MudText>
+    <MudTable T="MyLife.Shared.Family.InvitationDto" Items="_invitations" Hover Striped Dense="false" Elevation="1" Breakpoint="Breakpoint.Sm" data-testid="admin-invitations">
+        <HeaderContent>
+            <MudTh>@L["AdminUserEmail"]</MudTh>
+            <MudTh>@L["AdminInvitedBy"]</MudTh>
+            <MudTh>@L["FamilyInvitationDate"]</MudTh>
+            <MudTh />
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["AdminUserEmail"]">@context.Email</MudTd>
+            <MudTd DataLabel="@L["AdminInvitedBy"]">@context.InviterName</MudTd>
+            <MudTd DataLabel="@L["FamilyInvitationDate"]">@L["FamilyValidUntil", context.ExpiresAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)]</MudTd>
+            <MudTd Style="text-align: right">
+                <MudTooltip Text="@L["FamilyRevoke"]">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Cancel" Color="Color.Error" aria-label="@L["FamilyRevoke"]" Disabled="_busy" OnClick="() => RevokeInvitationAsync(context)" />
+                </MudTooltip>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2" Class="pa-4">@L["FamilyInvitationsEmpty"]</MudText>
+        </NoRecordsContent>
+    </MudTable>
 </MudStack>
 
 @code {
     private static readonly int[] PageSizes = [25, 50, 100];
     private List<AdminUserDto> _users = [];
+    private IReadOnlyList<MyLife.Shared.Family.InvitationDto> _invitations = [];
     private bool _loading = true;
     private bool _busy;
 
@@ -106,14 +132,39 @@
         try
         {
             _users = [.. await Api.GetUsersAsync()];
+            _invitations = await Family.GetOpenInvitationsAsAdminAsync();
         }
-        catch (Exception exception) when (exception is AdminException or HttpRequestException)
+        catch (Exception exception) when (exception is AdminException or FamilyException or HttpRequestException)
         {
             Snackbar.Add(L["AdminError_admin-failed"], Severity.Error);
         }
         finally
         {
             _loading = false;
+        }
+    }
+
+    private async Task RevokeInvitationAsync(MyLife.Shared.Family.InvitationDto invitation)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["FamilyRevoke"], L["FamilyRevokeConfirm", invitation.Email], yesText: L["FamilyRevoke"], cancelText: L["Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            await Family.RevokeInvitationAsAdminAsync(invitation.Id);
+            _invitations = await Family.GetOpenInvitationsAsAdminAsync();
+        }
+        catch (Exception exception) when (exception is FamilyException or HttpRequestException)
+        {
+            Snackbar.Add(L["AdminError_admin-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
         }
     }
 

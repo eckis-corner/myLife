@@ -1,0 +1,17 @@
+@* Neuer Link für eine Einladung (erneut per Mail oder zum Weitergeben). *@
+@inject IStringLocalizer<SharedResource> L
+
+<MudDialog>
+    <DialogContent>
+        <InviteLinkResult Result="Result" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => Dialog.Close()">@L["Close"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+
+    [Parameter, EditorRequired] public InvitationLink Result { get; set; } = null!;
+}

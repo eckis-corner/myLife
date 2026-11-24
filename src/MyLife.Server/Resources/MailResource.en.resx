@@ -29,6 +29,23 @@ Only if you agree, open this link and confirm there:
 The link is valid for {days} days. If you do nothing, your account remains.</value></data>
   <data name="Mail_deletion-request_subject" xml:space="preserve"><value>Please confirm: delete myLife account</value></data>
   <data name="Mail_footer" xml:space="preserve"><value>This message was sent automatically by myLife ({instance}).</value></data>
+  <data name="Mail_invitation-accepted_body" xml:space="preserve"><value>Hello {name},
+
+{invitee} has accepted your invitation and created a myLife account.
+
+Sign in to myLife. Your browser then automatically checks that {invitee}'s key really belongs to your invitation.</value></data>
+  <data name="Mail_invitation-accepted_subject" xml:space="preserve"><value>{invitee} has accepted your invitation</value></data>
+  <data name="Mail_invitation_body" xml:space="preserve"><value>Hello,
+
+{inviter} invites you to myLife, the family's digital emergency folder. In it you record what your relatives need to know in an emergency, encrypted and readable only by you until you share something.
+
+Open this link to set up your account:
+{link}
+
+The link is valid for {days} days. You need about ten minutes, a printer or pen and paper, and an authenticator app on your phone.
+
+If you do not know {inviter}, simply ignore this email.</value></data>
+  <data name="Mail_invitation_subject" xml:space="preserve"><value>{inviter} invites you to myLife</value></data>
   <data name="Mail_test_body" xml:space="preserve"><value>Hello {name},
 
 this test message shows that myLife can send emails.</value></data>

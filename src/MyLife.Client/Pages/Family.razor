@@ -1,0 +1,237 @@
+@page "/family"
+@attribute [Authorize]
+@using System.Globalization
+@using MyLife.Crypto
+@using MyLife.Shared.Family
+@inject IStringLocalizer<SharedResource> L
+@inject KeyTrustService Trust
+@inject FamilyClient Api
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L["FamilyTitle"]</PageTitle>
+
+@* Familie (M2.2): Personen der Instanz mit dem Prüfstand ihrer Schlüssel (Architektur 4.3) und die eigenen Einladungen. *@
+<MudStack Spacing="3">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["FamilyTitle"]</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" OnClick="InviteAsync" data-testid="family-invite">
+            @L["InviteDialogTitle"]
+        </MudButton>
+    </MudStack>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["FamilyText"]</MudText>
+
+    @if (_people.Any(p => p.State == TrustState.Changed))
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" data-testid="family-key-changed">@L["FamilyKeyChangedWarning"]</MudAlert>
+    }
+
+    <MudTable T="PersonTrust" Items="_people" Loading="_loading" Hover Striped Dense="false" Elevation="1" Breakpoint="Breakpoint.Sm"
+              LoadingProgressColor="Color.Primary" data-testid="family-people">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel T="PersonTrust" SortBy="p => p.Person.DisplayName" InitialDirection="SortDirection.Ascending">@L["AdminUserName"]</MudTableSortLabel></MudTh>
+            <MudTh>@L["AdminUserEmail"]</MudTh>
+            <MudTh><MudTableSortLabel T="PersonTrust" SortBy="p => p.State">@L["FamilyKey"]</MudTableSortLabel></MudTh>
+            <MudTh>@L["FamilyFingerprint"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["AdminUserName"]"><b>@context.Person.DisplayName</b></MudTd>
+            <MudTd DataLabel="@L["AdminUserEmail"]">@context.Person.Email</MudTd>
+            <MudTd DataLabel="@L["FamilyKey"]">
+                <MudTooltip Text="@L[$"FamilyTrustHint_{context.State}"]">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="@TrustColor(context.State)" Icon="@TrustIcon(context.State)"
+                             data-testid="@($"trust-{context.Person.Email}")">
+                        @(context.State == TrustState.Endorsed ? L["FamilyTrust_Endorsed", context.ConfirmedBy ?? string.Empty] : L[$"FamilyTrust_{context.State}"])
+                    </MudChip>
+                </MudTooltip>
+            </MudTd>
+            <MudTd DataLabel="@L["FamilyFingerprint"]">
+                <MudTooltip Text="@KeyBinding.Format(context.Fingerprint)">
+                    <span class="mylife-fingerprint">@KeyBinding.Format(context.Fingerprint)[..19] …</span>
+                </MudTooltip>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2" Class="pa-4">@L["FamilyEmpty"]</MudText>
+        </NoRecordsContent>
+    </MudTable>
+
+    <MudText Typo="Typo.caption" Class="mylife-muted">@L["FamilyMyFingerprint", _myFingerprint ?? "…"]</MudText>
+
+    <MudText Typo="Typo.h6" HtmlTag="h2" Class="mt-4">@L["FamilyInvitations"]</MudText>
+    <MudTable T="InvitationDto" Items="_invitations" Loading="_loading" Hover Striped Dense="false" Elevation="1" Breakpoint="Breakpoint.Sm"
+              LoadingProgressColor="Color.Primary" data-testid="family-invitations">
+        <HeaderContent>
+            <MudTh>@L["AdminUserEmail"]</MudTh>
+            <MudTh>@L["AdminUserStatus"]</MudTh>
+            <MudTh>@L["FamilyInvitationDate"]</MudTh>
+            <MudTh />
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["AdminUserEmail"]">@context.Email</MudTd>
+            <MudTd DataLabel="@L["AdminUserStatus"]">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@InvitationColor(context.Status)">@L[$"InvitationStatus_{context.Status}"]</MudChip>
+            </MudTd>
+            <MudTd DataLabel="@L["FamilyInvitationDate"]">
+                @(context.AcceptedAt is { } accepted
+                    ? L["FamilyAcceptedAt", accepted.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)]
+                    : L["FamilyValidUntil", context.ExpiresAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)])
+            </MudTd>
+            <MudTd Style="text-align: right; white-space: nowrap">
+                @if (context.Status is InvitationStatus.Pending or InvitationStatus.Expired)
+                {
+                    <MudTooltip Text="@L["FamilyResend"]">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Send" aria-label="@L["FamilyResend"]" Disabled="_busy" OnClick="() => RenewAsync(context, true)" />
+                    </MudTooltip>
+                    <MudTooltip Text="@L["FamilyNewLink"]">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Link" aria-label="@L["FamilyNewLink"]" Disabled="_busy" OnClick="() => RenewAsync(context, false)" />
+                    </MudTooltip>
+                }
+                @if (context.Status == InvitationStatus.Pending)
+                {
+                    <MudTooltip Text="@L["FamilyRevoke"]">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Cancel" Color="Color.Error" aria-label="@L["FamilyRevoke"]" Disabled="_busy" OnClick="() => RevokeAsync(context)" />
+                    </MudTooltip>
+                }
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2" Class="pa-4">@L["FamilyInvitationsEmpty"]</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudStack>
+
+@code {
+    private IReadOnlyList<PersonTrust> _people = [];
+    private IReadOnlyList<InvitationDto> _invitations = [];
+    private string? _myFingerprint;
+    private bool _loading = true;
+    private bool _busy;
+
+    [SupplyParameterFromQuery(Name = "invite")] public bool OpenInvite { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync(sync: true);
+        if (OpenInvite)
+        {
+            await InviteAsync();
+        }
+    }
+
+    private async Task LoadAsync(bool sync)
+    {
+        _loading = true;
+        try
+        {
+            if (sync)
+            {
+                await Trust.SyncAsync();
+            }
+
+            _people = await Trust.GetPeopleAsync();
+            _invitations = await Api.GetInvitationsAsync();
+            if (CurrentKeys() is { } keys)
+            {
+                _myFingerprint = KeyBinding.Format(await Trust.FingerprintAsync(keys.Encryption, keys.Signing));
+            }
+        }
+        catch (Exception exception) when (exception is FamilyException or HttpRequestException or System.Security.Cryptography.CryptographicException
+                                              or InvalidOperationException or Microsoft.JSInterop.JSException)
+        {
+            Snackbar.Add(L["FamilyError_family-failed"], Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    [Inject] private SessionService Session { get; set; } = null!;
+
+    private (byte[] Encryption, byte[] Signing)? CurrentKeys() =>
+        Session.Session is { } current ? (current.PublicEncryptionKey, current.PublicSigningKey) : null;
+
+    private async Task InviteAsync()
+    {
+        var dialog = await Dialogs.ShowAsync<InviteDialog>(L["InviteDialogTitle"], new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            await LoadAsync(sync: false);
+        }
+    }
+
+    private async Task RenewAsync(InvitationDto invitation, bool sendMail)
+    {
+        _busy = true;
+        try
+        {
+            var link = await Trust.RenewAsync(invitation, sendMail, Navigation.BaseUri);
+            await Dialogs.ShowAsync<InviteLinkDialog>(L["FamilyNewLink"], new DialogParameters<InviteLinkDialog> { { x => x.Result, link } },
+                new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+            await LoadAsync(sync: false);
+        }
+        catch (FamilyException exception)
+        {
+            Snackbar.Add(L[$"FamilyError_{exception.Message}"], Severity.Error);
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Security.Cryptography.CryptographicException)
+        {
+            Snackbar.Add(L["FamilyError_family-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RevokeAsync(InvitationDto invitation)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["FamilyRevoke"], L["FamilyRevokeConfirm", invitation.Email], yesText: L["FamilyRevoke"], cancelText: L["Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            await Api.RevokeInvitationAsync(invitation.Id);
+            await LoadAsync(sync: false);
+        }
+        catch (Exception exception) when (exception is FamilyException or HttpRequestException)
+        {
+            Snackbar.Add(L["FamilyError_family-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static Color TrustColor(TrustState state) => state switch
+    {
+        TrustState.Pinned => Color.Success,
+        TrustState.Endorsed => Color.Info,
+        TrustState.Changed => Color.Error,
+        _ => Color.Default,
+    };
+
+    private static string TrustIcon(TrustState state) => state switch
+    {
+        TrustState.Pinned => Icons.Material.Filled.VerifiedUser,
+        TrustState.Endorsed => Icons.Material.Outlined.HowToReg,
+        TrustState.Changed => Icons.Material.Filled.GppBad,
+        _ => Icons.Material.Outlined.HelpOutline,
+    };
+
+    private static Color InvitationColor(InvitationStatus status) => status switch
+    {
+        InvitationStatus.Verified => Color.Success,
+        InvitationStatus.Accepted or InvitationStatus.Pending => Color.Info,
+        InvitationStatus.Mismatch => Color.Error,
+        _ => Color.Default,
+    };
+}

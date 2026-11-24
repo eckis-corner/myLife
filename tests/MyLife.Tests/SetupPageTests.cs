@@ -23,6 +23,7 @@ public sealed class SetupPageTests : BunitContext
         Services.AddLocalization();
         Services.AddSingleton<IMyLifeCrypto, ReferenceMyLifeCrypto>();
         Services.AddSingleton<VaultSetupService>();
+        Services.AddSingleton(new FamilyClient(new HttpClient { BaseAddress = new Uri("https://localhost") }));
     }
 
     [Fact]

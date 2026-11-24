@@ -136,6 +136,7 @@ app.MapAccountEndpoints();
 app.MapVaultEndpoints();
 app.MapAdminEndpoints();
 app.MapAccountDeletionEndpoints();
+app.MapFamilyEndpoints();
 
 app.MapStaticAssets();
 // Die Seiten sind nur die leere Hülle (kein Prerendering); [Authorize] prüft der Client. Ohne AllowAnonymous

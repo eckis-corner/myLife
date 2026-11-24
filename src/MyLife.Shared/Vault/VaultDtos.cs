@@ -123,12 +123,23 @@ public static class AuditActions
     public const string AdminRoleRevoked = "admin-role-revoked";
     public const string AdminDeletionRequested = "admin-deletion-requested";
     public const string AdminDeletionCancelled = "admin-deletion-cancelled";
+    public const string AdminInvitationRevoked = "admin-invitation-revoked";
     public const string AccountDeleted = "account-deleted";
     public const string MailFailed = "mail-failed";
 
+    // Familie (M2.2)
+    public const string InvitationCreated = "invitation-created";
+    public const string InvitationRenewed = "invitation-renewed";
+    public const string InvitationRevoked = "invitation-revoked";
+    public const string InvitationAccepted = "invitation-accepted";
+    public const string AccountCreated = "account-created";
+    public const string KeyVerified = "key-verified";
+    public const string KeyMismatch = "key-mismatch";
+    public const string KeyEndorsed = "key-endorsed";
+
     /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
     public static bool IsSystem(string action) =>
-        action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed;
+        action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch;
 
     /// <summary>Was der Browser selbst melden darf.</summary>
     public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ImportJson };

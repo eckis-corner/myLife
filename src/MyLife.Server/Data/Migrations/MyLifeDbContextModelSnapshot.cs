@@ -77,6 +77,115 @@ namespace MyLife.Server.Data.Migrations
                     b.ToTable("audit_log", (string)null);
                 });
 
+            modelBuilder.Entity("MyLife.Server.Data.Invitation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("AcceptedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("accepted_at");
+
+                    b.Property<byte[]>("Binding")
+                        .HasColumnType("bytea")
+                        .HasColumnName("binding");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("email");
+
+                    b.Property<byte[]>("EncryptedSecret")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("encrypted_secret");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<Guid?>("InviteeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invitee_id");
+
+                    b.Property<Guid>("InviterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("inviter_id");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language");
+
+                    b.Property<DateTimeOffset?>("MismatchAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("mismatch_at");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<byte[]>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("token_hash");
+
+                    b.Property<DateTimeOffset?>("VerifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("verified_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("InviteeId");
+
+                    b.HasIndex("InviterId");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("invitations", (string)null);
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.KeyEndorsement", b =>
+                {
+                    b.Property<Guid>("SignerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("signer_id");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subject_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<byte[]>("Fingerprint")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("fingerprint");
+
+                    b.Property<byte[]>("Signature")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("signature");
+
+                    b.HasKey("SignerId", "SubjectId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("key_endorsements", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.MailOutboxEntry", b =>
                 {
                     b.Property<Guid>("Id")
@@ -232,6 +341,32 @@ namespace MyLife.Server.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("passkeys", (string)null);
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.PinnedKey", b =>
+                {
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subject_id");
+
+                    b.Property<byte[]>("EncryptedPin")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("encrypted_pin");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("OwnerId", "SubjectId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("pinned_keys", (string)null);
                 });
 
             modelBuilder.Entity("MyLife.Server.Data.SystemSetting", b =>
@@ -563,6 +698,35 @@ namespace MyLife.Server.Data.Migrations
                     b.ToTable("objects", (string)null);
                 });
 
+            modelBuilder.Entity("MyLife.Server.Data.Invitation", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("InviteeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("InviterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.KeyEndorsement", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("SignerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.OneTimeToken", b =>
                 {
                     b.HasOne("MyLife.Server.Data.User", null)
@@ -581,6 +745,21 @@ namespace MyLife.Server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.PinnedKey", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyLife.Server.Data.VaultArea", b =>

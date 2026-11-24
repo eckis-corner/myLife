@@ -15,6 +15,9 @@ public sealed class BrowserFiles(IJSRuntime js)
 
     public ValueTask PrintAsync() => js.InvokeVoidAsync("myLife.print");
 
+    /// <summary>Text in die Zwischenablage; false, wenn der Browser es nicht erlaubt.</summary>
+    public ValueTask<bool> CopyTextAsync(string text) => js.InvokeAsync<bool>("myLife.copyText", text);
+
     /// <summary>Dateiname mit Datum, etwa „myLife-Notfallordner-2026-11-24.pdf“.</summary>
     public static string DatedName(string prefix, string extension, DateTimeOffset now) =>
         $"{prefix}-{now.ToLocalTime():yyyy-MM-dd}.{extension}";

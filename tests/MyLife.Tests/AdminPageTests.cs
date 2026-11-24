@@ -30,6 +30,7 @@ public sealed class AdminPageTests : BunitContext, IClassFixture<ServerFixture>,
         var (session, _, http) = await account.LoginAsync();
         Services.AddSingleton(session);
         Services.AddSingleton(new AdminClient(http));
+        Services.AddSingleton(new FamilyClient(http));
         Render<MudBlazor.MudPopoverProvider>();
     }
 

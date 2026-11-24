@@ -1,6 +1,9 @@
 @inherits LayoutComponentBase
 @inject IStringLocalizer<SharedResource> L
 @inject AppInfoClient AppInfo
+@inject SessionService CurrentSession
+@inject KeyTrustService Trust
+@implements IDisposable
 
 <MudThemeProvider @ref="_themeProvider" Theme="_theme" @bind-IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -40,6 +43,7 @@
                             <MudNavLink Href="@($"area/{area.Number}")" Icon="@AreaIcons.For(area.Number)">@L[$"Area_{area.Number}"]</MudNavLink>
                         }
                     </MudNavGroup>
+                    <MudNavLink Href="family" Icon="@Icons.Material.Outlined.Diversity3">@L["FamilyTitle"]</MudNavLink>
                     <MudNavLink Href="export" Icon="@Icons.Material.Outlined.IosShare">@L["NavExport"]</MudNavLink>
                     <MudNavLink Href="trash" Icon="@Icons.Material.Outlined.Delete">@L["NavTrash"]</MudNavLink>
                     <MudNavLink Href="account/audit" Icon="@Icons.Material.Outlined.History">@L["NavAudit"]</MudNavLink>
@@ -90,8 +94,11 @@
     private bool _drawerOpen = true;
     private string? _version;
 
+    private Guid? _syncedFor;
+
     protected override async Task OnInitializedAsync()
     {
+        CurrentSession.Changed += OnSessionChanged;
         try
         {
             _version = (await AppInfo.GetAsync())?.Version;
@@ -112,4 +119,33 @@
     }
 
     private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    public void Dispose() => CurrentSession.Changed -= OnSessionChanged;
+
+    /// <summary>
+    /// Nach dem Entsperren prüft der Browser im Hintergrund angenommene Einladungen und gegenzeichnet gepinnte
+    /// Schlüssel (Architektur 4.3: ohne Zutun der Nutzer). Einmal je Anmeldung.
+    /// </summary>
+    private void OnSessionChanged()
+    {
+        if (CurrentSession.State != SessionState.Unlocked || CurrentSession.Session?.UserId is not { } id || _syncedFor == id)
+        {
+            return;
+        }
+
+        _syncedFor = id;
+        _ = SyncTrustAsync();
+    }
+
+    private async Task SyncTrustAsync()
+    {
+        try
+        {
+            await Trust.SyncAsync();
+        }
+        catch (Exception)
+        {
+            // Die Prüfung wiederholt sich beim nächsten Entsperren und auf der Seite „Familie“.
+        }
+    }
 }

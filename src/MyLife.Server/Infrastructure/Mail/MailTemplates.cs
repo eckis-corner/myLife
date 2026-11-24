@@ -14,8 +14,11 @@ internal static class MailTemplate
     public const string TwoFactorReset = "twofactor-reset";
     public const string DeletionRequest = "deletion-request";
     public const string AccountDeleted = "account-deleted";
+    public const string Invitation = "invitation";
+    public const string InvitationAccepted = "invitation-accepted";
 
-    public static IReadOnlyList<string> All { get; } = [Test, AccountLocked, AccountUnlocked, TwoFactorReset, DeletionRequest, AccountDeleted];
+    public static IReadOnlyList<string> All { get; } =
+        [Test, AccountLocked, AccountUnlocked, TwoFactorReset, DeletionRequest, AccountDeleted, Invitation, InvitationAccepted];
 }
 
 /// <summary>Fertig gesetzte Mail: Betreff, Text- und HTML-Fassung.</summary>

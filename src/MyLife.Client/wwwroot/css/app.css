@@ -317,3 +317,10 @@ h1:focus {
 .mylife-rixio .mud-button-filled:hover {
     box-shadow: none;
 }
+
+/* Fingerprints (Familie): gleich breite Ziffern, damit man Gruppen vergleichen kann. */
+.mylife-fingerprint {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    letter-spacing: 0.02em;
+}

@@ -36,6 +36,9 @@ internal static partial class AdminEndpoints
         group.MapPost("/users/{id:guid}/deletion", RequestDeletionAsync);
         group.MapDelete("/users/{id:guid}/deletion", CancelDeletionAsync);
         group.MapGet("/audit", ListAuditAsync);
+        group.MapGet("/invitations", async (MyLifeDbContext db, TimeProvider time, CancellationToken cancellationToken) =>
+            TypedResults.Ok(await FamilyEndpoints.ListOpenAsync(db, time.GetUtcNow(), cancellationToken)));
+        group.MapDelete("/invitations/{id:guid}", RevokeInvitationAsync);
         return app;
     }
 
@@ -258,13 +261,20 @@ internal static partial class AdminEndpoints
             return null;
         }, cancellationToken);
 
+    private static async Task<Results<NoContent, ProblemHttpResult>> RevokeInvitationAsync(
+        Guid id, ClaimsPrincipal principal, MyLifeDbContext db, AuditLog audit, TimeProvider time, CancellationToken cancellationToken) =>
+        await FamilyEndpoints.RevokeAnyAsync(db, audit, Me(principal), id, time.GetUtcNow(), cancellationToken)
+            ? TypedResults.NoContent()
+            : ApiProblems.Create(StatusCodes.Status404NotFound, AdminErrors.NotFound);
+
     /// <summary>System-Protokoll: Ereignisse ohne Tresorbezug und alle Verwaltungsaktionen, nie Tresorinhalte.</summary>
     private static async Task<Ok<AuditPageDto>> ListAuditAsync(MyLifeDbContext db, int? page, int? size, CancellationToken cancellationToken)
     {
         var take = Math.Clamp(size ?? 50, 1, 100);
         var skip = Math.Max(page ?? 0, 0) * take;
         var query = db.AuditLog.AsNoTracking().Where(a =>
-            a.OwnerId == null || a.Action.StartsWith("admin-") || a.Action == AuditActions.AccountDeleted || a.Action == AuditActions.MailFailed);
+            a.OwnerId == null || a.Action.StartsWith("admin-") || a.Action == AuditActions.AccountDeleted || a.Action == AuditActions.MailFailed
+            || a.Action == AuditActions.AccountCreated || a.Action == AuditActions.KeyMismatch);
         var total = await query.CountAsync(cancellationToken);
         var items = await query.OrderByDescending(a => a.At).ThenByDescending(a => a.Id).Skip(skip).Take(take)
             .Select(a => new AuditEntryDto(

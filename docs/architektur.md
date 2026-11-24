@@ -220,7 +220,9 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 | --- | --- |
 | `users` | Id, E-Mail, Anzeigename, IsAdmin, Status (eingeladen/aktiv/gesperrt), Sprache, AuthHash, KdfSalt, KdfParams, 🔒WrappedVmk, 🔒WrappedVmkByRecovery, 🔒WrappedPrivateKeys, PublicEncKey, PublicSignKey, TotpSecret (Data Protection), LastLoginAt, IsDeleted |
 | `passkeys` | UserId, CredentialId, PublicKey, SignCount, Name |
+| `invitations` | Id, InviterId, E-Mail, Sprache, TokenHash, 🔒Einladungsgeheimnis, ExpiresAt, AcceptedAt, InviteeId, Bindung (HMAC), VerifiedAt, MismatchAt, RevokedAt |
 | `key_endorsements` | SignerId, SubjectId, Fingerprint, Signatur, At |
+| `pinned_keys` | OwnerId, SubjectId, 🔒Fingerprint, UpdatedAt |
 | `trust_relations` | OwnerId, TrusteeId, 🔒Profil (Beziehung, Notiz), CanRequestAccess, CreatedAt |
 | `areas` | Id, OwnerId, AreaKey (0–13), 🔒WrappedAreaKey, LastReviewedAt |
 | `objects` | Id, AreaId, TypeKey (bank_account, insurance, …), 🔒Payload (alle Felder, Wunsch, Verweise, Notizen als JSON), SchemaVersion, Status, CreatedAt, UpdatedAt, IsDeleted, DeletedAt, `xmin` |

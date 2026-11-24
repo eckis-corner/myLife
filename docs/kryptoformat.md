@@ -93,6 +93,14 @@ Signatur  = r | s (IEEE P1363, 64 Byte)
 - `sha256(daten)`, etwa für den Fingerprint eines öffentlichen Schlüssels.
 - `hmacSha256(schlüssel ≥ 16 Byte, daten)` für die Bindung an das Einladungsgeheimnis (Architektur 4.3).
 
+Seit M2.2 (Entscheidungen 79–84):
+
+```text
+Fingerprint  = sha256(öffentlicher ECDH-Schlüssel (65 Byte) | öffentlicher ECDSA-Schlüssel (65 Byte))
+Bindung      = hmacSha256(Einladungsgeheimnis (32 Byte), UTF-8("invite:{Einladungs-ID}:") | Fingerprint)
+Gegenzeichnung = Signatur(ECDSA des Unterzeichners, Fingerprint, Kontext "endorsement:{ID der Person}")
+```
+
 ## 8. Kontexte im Tresor (seit M1.4)
 
 | Kontext | Schlüssel | Inhalt |
@@ -104,6 +112,9 @@ Signatur  = r | s (IEEE P1363, 64 Byte)
 | `file-key:{ID}` | Bereichsschlüssel | Dateischlüssel eines Dokuments |
 | `document-meta:{ID}` | Bereichsschlüssel | Metadaten eines Dokuments als JSON |
 | `document:{ID}` | Dateischlüssel | Blöcke eines Dokuments |
+| `invite-secret:{ID}` | Tresorschlüssel | Einladungsgeheimnis der einladenden Person (seit M2.2) |
+| `pin:{ID}` | Tresorschlüssel | gepinnter Fingerprint einer anderen Person (seit M2.2) |
+| `endorsement:{ID}` | ECDSA (Signatur) | Gegenzeichnung des Fingerprints einer Person (seit M2.2) |
 
 IDs sind GUIDs in der Form `D` (klein geschrieben, mit Bindestrichen).
 

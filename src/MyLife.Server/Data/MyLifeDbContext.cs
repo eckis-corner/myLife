@@ -22,6 +22,12 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<OneTimeToken> OneTimeTokens => Set<OneTimeToken>();
 
+    public DbSet<Invitation> Invitations => Set<Invitation>();
+
+    public DbSet<KeyEndorsement> KeyEndorsements => Set<KeyEndorsement>();
+
+    public DbSet<PinnedKey> PinnedKeys => Set<PinnedKey>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -175,6 +181,57 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.SentAt).HasColumnName("sent_at");
             entity.Property(x => x.FailedAt).HasColumnName("failed_at");
             entity.Property(x => x.LastError).HasColumnName("last_error").HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<Invitation>(entity =>
+        {
+            entity.ToTable("invitations");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => x.TokenHash).IsUnique();
+            entity.HasIndex(x => x.Email);
+            entity.HasIndex(x => x.InviterId);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.InviterId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.InviteeId).OnDelete(DeleteBehavior.SetNull);
+            entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            entity.Property(x => x.InviterId).HasColumnName("inviter_id");
+            entity.Property(x => x.Email).HasColumnName("email").HasMaxLength(254);
+            entity.Property(x => x.Language).HasColumnName("language").HasMaxLength(10);
+            entity.Property(x => x.TokenHash).HasColumnName("token_hash");
+            entity.Property(x => x.EncryptedSecret).HasColumnName("encrypted_secret");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.ExpiresAt).HasColumnName("expires_at");
+            entity.Property(x => x.RevokedAt).HasColumnName("revoked_at");
+            entity.Property(x => x.AcceptedAt).HasColumnName("accepted_at");
+            entity.Property(x => x.InviteeId).HasColumnName("invitee_id");
+            entity.Property(x => x.Binding).HasColumnName("binding");
+            entity.Property(x => x.VerifiedAt).HasColumnName("verified_at");
+            entity.Property(x => x.MismatchAt).HasColumnName("mismatch_at");
+        });
+
+        modelBuilder.Entity<KeyEndorsement>(entity =>
+        {
+            entity.ToTable("key_endorsements");
+            entity.HasKey(x => new { x.SignerId, x.SubjectId });
+            entity.HasIndex(x => x.SubjectId);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.SignerId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.SignerId).HasColumnName("signer_id");
+            entity.Property(x => x.SubjectId).HasColumnName("subject_id");
+            entity.Property(x => x.Fingerprint).HasColumnName("fingerprint");
+            entity.Property(x => x.Signature).HasColumnName("signature");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+        });
+
+        modelBuilder.Entity<PinnedKey>(entity =>
+        {
+            entity.ToTable("pinned_keys");
+            entity.HasKey(x => new { x.OwnerId, x.SubjectId });
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.SubjectId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.SubjectId).HasColumnName("subject_id");
+            entity.Property(x => x.EncryptedPin).HasColumnName("encrypted_pin");
+            entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         });
 
         modelBuilder.Entity<OneTimeToken>(entity =>

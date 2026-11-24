@@ -29,6 +29,23 @@ Nur wenn du einverstanden bist, öffne diesen Link und bestätige dort:
 Der Link gilt {days} Tage. Wenn du nichts tust, bleibt dein Konto bestehen.</value></data>
   <data name="Mail_deletion-request_subject" xml:space="preserve"><value>Bitte bestätige: myLife-Konto löschen</value></data>
   <data name="Mail_footer" xml:space="preserve"><value>Diese Nachricht hat myLife ({instance}) automatisch verschickt.</value></data>
+  <data name="Mail_invitation-accepted_body" xml:space="preserve"><value>Hallo {name},
+
+{invitee} hat deine Einladung angenommen und ein Konto bei myLife angelegt.
+
+Melde dich bei myLife an. Dabei prüft dein Browser automatisch, dass der Schlüssel von {invitee} wirklich zu deiner Einladung gehört.</value></data>
+  <data name="Mail_invitation-accepted_subject" xml:space="preserve"><value>{invitee} hat deine Einladung angenommen</value></data>
+  <data name="Mail_invitation_body" xml:space="preserve"><value>Hallo,
+
+{inviter} lädt dich zu myLife ein, dem digitalen Notfallordner der Familie. Darin hältst du fest, was deine Angehörigen im Ernstfall wissen müssen, verschlüsselt und nur für dich lesbar, bis du etwas freigibst.
+
+Öffne diesen Link, um dein Konto einzurichten:
+{link}
+
+Der Link gilt {days} Tage. Du brauchst etwa zehn Minuten, einen Drucker oder Stift und Papier und eine Authenticator-App auf dem Smartphone.
+
+Wenn du {inviter} nicht kennst, ignoriere diese Mail einfach.</value></data>
+  <data name="Mail_invitation_subject" xml:space="preserve"><value>{inviter} lädt dich zu myLife ein</value></data>
   <data name="Mail_test_body" xml:space="preserve"><value>Hallo {name},
 
 diese Testnachricht zeigt, dass der Mailversand von myLife funktioniert.</value></data>

@@ -203,10 +203,6 @@ CLIENT = {
     "AdminDeletionRequested": ("Mail an {0} ist unterwegs.", "Email to {0} is on its way."),
     "AdminCancelDeletion": ("Löschantrag zurückziehen", "Withdraw deletion request"),
     "AdminCancelDeletionConfirm": ("Löschantrag für {0} ({1}) zurückziehen? Der Link in der Mail wird ungültig.", "Withdraw the deletion request for {0} ({1})? The link in the email stops working."),
-    "AdminInviteLater": (
-        "Neue Konten entstehen über Einladungen. Das Einladen folgt mit dem nächsten Schritt (M2.2).",
-        "New accounts are created through invitations. Inviting follows with the next step (M2.2).",
-    ),
     # System-Protokoll
     "AdminAuditTitle": ("System-Protokoll", "System log"),
     "AdminAuditText": (

@@ -29,6 +29,8 @@ builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<RecoveryService>();
 builder.Services.AddScoped<VaultClient>();
 builder.Services.AddScoped<AdminClient>();
+builder.Services.AddScoped<FamilyClient>();
+builder.Services.AddScoped<KeyTrustService>();
 builder.Services.AddScoped<VaultService>();
 builder.Services.AddScoped<SchemaText>();
 builder.Services.AddScoped<VaultSearch>();

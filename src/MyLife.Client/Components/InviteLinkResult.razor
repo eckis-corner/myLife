@@ -1,0 +1,33 @@
+@* Ergebnis einer Einladung: Hinweis auf die Mail oder der Link zum Weitergeben auf eigenem Weg. *@
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject BrowserFiles Files
+
+<MudStack Spacing="3" data-testid="invite-result">
+    @if (Result.MailQueued)
+    {
+        <MudAlert Severity="Severity.Success">@L["InviteMailQueued"]</MudAlert>
+    }
+    else
+    {
+        <MudText Typo="Typo.body2">@L["InviteLinkText"]</MudText>
+        <MudTextField T="string" Value="@Result.Link" ReadOnly Variant="Variant.Outlined" Lines="3" UserAttributes="@LinkAttributes" />
+        <div>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.ContentCopy" OnClick="CopyAsync">@L["InviteCopy"]</MudButton>
+            @if (_copied is { } copied)
+            {
+                <MudText Typo="Typo.caption" Class="ml-2" Color="@(copied ? Color.Success : Color.Warning)">@L[copied ? "InviteCopied" : "InviteCopyFailed"]</MudText>
+            }
+        </div>
+    }
+    <MudText Typo="Typo.caption" Class="mylife-muted">@L["InviteExpires", Result.ExpiresAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)]</MudText>
+</MudStack>
+
+@code {
+    private static readonly Dictionary<string, object> LinkAttributes = new() { ["data-testid"] = "invite-link" };
+    private bool? _copied;
+
+    [Parameter, EditorRequired] public InvitationLink Result { get; set; } = null!;
+
+    private async Task CopyAsync() => _copied = await Files.CopyTextAsync(Result.Link);
+}

@@ -31,8 +31,8 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 
 ## M2 – Familie, Vertrauenspersonen, Notfallzugang
 
-1. **Admin-Bereich:** SMTP und ntfy mit Testmail, Mail-Outbox mit Wiederholung, Standard- und Grenzwerte der Fristen, Abmeldezeit, Benutzerverwaltung (einladen, sperren, löschen, 2FA zurücksetzen), System-Audit-Log, Datenschutzhinweis ✅ (24.11.2026; Entscheidungen 72–78; das Einladen kommt mit M2.2)
-2. **Nutzer einladen:** Einladungslink mit Geheimnis, Einladung annehmen (Passwort, 2FA, Recovery-Kit), automatische Schlüsselprüfung mit Pinning (Architektur 4.3)
+1. **Admin-Bereich:** SMTP und ntfy mit Testmail, Mail-Outbox mit Wiederholung, Standard- und Grenzwerte der Fristen, Abmeldezeit, Benutzerverwaltung (einladen, sperren, löschen, 2FA zurücksetzen), System-Audit-Log, Datenschutzhinweis ✅ (24.11.2026; Entscheidungen 72–78; Einladen mit M2.2)
+2. **Nutzer einladen:** Einladungslink mit Geheimnis, Einladung annehmen (Passwort, 2FA, Recovery-Kit), automatische Schlüsselprüfung mit Pinning (Architektur 4.3) ✅ (24.11.2026; Entscheidungen 79–84)
 3. **Vertrauenspersonen** im eigenen Tresor festlegen: Beziehung, Antragsrecht, **Freigaben je Bereich und Modus**, Briefe je Empfänger, **„Sofort teilen“ je Bereich** (46b). Die Umschläge erzeugt der Browser.
 4. **Notfallzugang:** Zustandsautomat, Hintergrunddienst, Lebenszeichen per Login oder Link, gestufte Erinnerungen (zweite Mail-Adresse und ntfy optional), Antrag mit Information an alle Vertrauenspersonen, Widerspruch (Link hält an, Anmeldung entscheidet), Schutz bei Mailausfall
 5. **Lesemodus** für Hinterbliebene: Auswahl der verstorbenen bzw. handlungsunfähigen Person, ruhige Oberfläche, große Schrift, nur freigegebene Inhalte, Navigation entlang der Checkliste

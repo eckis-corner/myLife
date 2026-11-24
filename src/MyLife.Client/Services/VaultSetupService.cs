@@ -16,8 +16,9 @@ public sealed class VaultSetupService(IMyLifeCrypto crypto)
     /// <summary>Neuer Recovery-Key: 32 Zufallsbytes, angezeigt als 24 Wörter.</summary>
     public async Task<byte[]> CreateRecoveryKeyAsync() => await crypto.RandomBytesAsync(Bip39.EntropyBytes);
 
+    /// <param name="withVaultKey">Optional: erzeugt mit dem neuen Tresorschlüssel weitere Chiffrate (etwa den Pin der einladenden Person), bevor er verworfen wird.</param>
     public async Task<SetupCompleteRequest> CreateVaultAsync(
-        SetupAccount account, string password, byte[] recoveryKey, string token, string totpConfirmation)
+        SetupAccount account, string password, byte[] recoveryKey, string token, string totpConfirmation, Func<CryptoKeyHandle, Task>? withVaultKey = null)
     {
         ArgumentNullException.ThrowIfNull(account);
         var parameters = Argon2Parameters.Default;
@@ -33,6 +34,10 @@ public sealed class VaultSetupService(IMyLifeCrypto crypto)
             var vmk = await crypto.CreateKeyAsync([new(kek, KeyContexts.Vmk), new(recovery, KeyContexts.Vmk)]);
             var encryption = await crypto.CreateKeyPairAsync(KeyPairKind.Ecdh, vmk.Handle, KeyContexts.EncryptionPrivateKey);
             var signing = await crypto.CreateKeyPairAsync(KeyPairKind.Ecdsa, vmk.Handle, KeyContexts.SigningPrivateKey);
+            if (withVaultKey is not null)
+            {
+                await withVaultKey(vmk.Handle);
+            }
 
             return new SetupCompleteRequest
             {
