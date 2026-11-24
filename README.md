@@ -23,6 +23,7 @@ myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: V
 | [docs/architektur.md](docs/architektur.md) | Komponenten, Schlüsselkonzept, Notfallzugang, Datenmodell |
 | [docs/objekttypen.md](docs/objekttypen.md) | Bereiche und Objekttypen mit Feldern |
 | [docs/meilensteine.md](docs/meilensteine.md) | Umsetzungsplan |
+| [docs/kryptoformat.md](docs/kryptoformat.md) | Verschlüsselungsformat Version 1, Byte für Byte |
 | [docs/entscheidungen.md](docs/entscheidungen.md) | Entscheidungsprotokoll |
 | [docs/betrieb/installation.md](docs/betrieb/installation.md) | Installation auf Synology mit Nginx Proxy Manager |
 | [PROMPT.md](PROMPT.md) | Ursprüngliche Anforderung |

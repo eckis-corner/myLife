@@ -5,4 +5,13 @@
   <ItemGroup>
     <ProjectReference Include="..\MyLife.Shared\MyLife.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Fassade über myLife.crypto.js (Browser) -->
+    <PackageReference Include="Microsoft.JSInterop" />
+    <!-- Argon2id für die .NET-Referenzimplementierung und später für den Anmeldehash auf dem Server -->
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="MyLife.Tests" />
+  </ItemGroup>
 </Project>
