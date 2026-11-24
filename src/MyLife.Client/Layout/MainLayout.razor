@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @inject IStringLocalizer<SharedResource> L
+@inject AppInfoClient AppInfo
 
 <MudThemeProvider @ref="_themeProvider" Theme="_theme" @bind-IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -49,8 +50,8 @@
         </AuthorizeView>
     </MudDrawer>
 
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+    <MudMainContent Class="mylife-main">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="py-6 flex-grow-1">
             <ErrorBoundary>
                 <ChildContent>
                     @Body
@@ -63,6 +64,12 @@
                 </ErrorContent>
             </ErrorBoundary>
         </MudContainer>
+        @if (_version is not null)
+        {
+            <footer class="mylife-footer">
+                <MudText Typo="Typo.caption">@L["AppName"] · @L["HomeStatusVersion"] @_version</MudText>
+            </footer>
+        }
     </MudMainContent>
 </MudLayout>
 
@@ -71,6 +78,19 @@
     private MudThemeProvider? _themeProvider;
     private bool _isDarkMode;
     private bool _drawerOpen = true;
+    private string? _version;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _version = (await AppInfo.GetAsync())?.Version;
+        }
+        catch (Exception)
+        {
+            // Die Versionsanzeige ist nur ein Hinweis; ohne Server bleibt die Fußzeile leer.
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

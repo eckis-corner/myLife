@@ -100,3 +100,22 @@ h1:focus {
     border-radius: 7px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
+
+/* Fußzeile mit der App-Version */
+.mylife-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.mylife-footer {
+    padding: 8px 16px 16px;
+    text-align: center;
+    color: var(--mud-palette-text-secondary);
+}
+
+@media print {
+    .mylife-footer {
+        display: none;
+    }
+}
