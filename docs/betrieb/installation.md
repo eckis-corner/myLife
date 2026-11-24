@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M2.2:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Notfallordner-PDF, JSON-Export, Protokoll, die Verwaltung mit Mailversand und Einladungen funktionieren. Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
+> **Stand M2.3:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Notfallordner-PDF, JSON-Export, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen und „Sofort teilen“ funktionieren. Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
 
 ## 1. Ordner anlegen
 

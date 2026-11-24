@@ -28,6 +28,10 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<PinnedKey> PinnedKeys => Set<PinnedKey>();
 
+    public DbSet<TrustRelation> TrustRelations => Set<TrustRelation>();
+
+    public DbSet<Grant> Grants => Set<Grant>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -118,6 +122,7 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.AreaKey).HasColumnName("area_key");
             entity.Property(x => x.TypeKey).HasColumnName("type_key").HasMaxLength(50);
             entity.Property(x => x.Payload).HasColumnName("payload");
+            entity.Property(x => x.WrappedKey).HasColumnName("wrapped_key");
             entity.Property(x => x.SchemaVersion).HasColumnName("schema_version");
             entity.Property(x => x.Status).HasColumnName("status");
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
@@ -232,6 +237,44 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.SubjectId).HasColumnName("subject_id");
             entity.Property(x => x.EncryptedPin).HasColumnName("encrypted_pin");
             entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<TrustRelation>(entity =>
+        {
+            entity.ToTable("trust_relations");
+            entity.HasKey(x => new { x.OwnerId, x.TrusteeId });
+            entity.HasIndex(x => x.TrusteeId);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.TrusteeId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.TrusteeId).HasColumnName("trustee_id");
+            entity.Property(x => x.EncryptedProfile).HasColumnName("encrypted_profile");
+            entity.Property(x => x.CanRequestAccess).HasColumnName("can_request_access");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<Grant>(entity =>
+        {
+            entity.ToTable("grants");
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.OwnerId, x.TrusteeId });
+            entity.HasIndex(x => new { x.TrusteeId, x.Mode });
+            entity.HasIndex(x => new { x.OwnerId, x.TrusteeId, x.Kind, x.AreaKey, x.ObjectId, x.Mode }).IsUnique().AreNullsDistinct(false);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.TrusteeId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<VaultObject>().WithMany().HasForeignKey(x => x.ObjectId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.TrusteeId).HasColumnName("trustee_id");
+            entity.Property(x => x.Kind).HasColumnName("kind");
+            entity.Property(x => x.AreaKey).HasColumnName("area_key");
+            entity.Property(x => x.ObjectId).HasColumnName("object_id");
+            entity.Property(x => x.Mode).HasColumnName("mode");
+            entity.Property(x => x.Envelope).HasColumnName("envelope");
+            entity.Property(x => x.Signature).HasColumnName("signature");
+            entity.Property(x => x.Fingerprint).HasColumnName("fingerprint");
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
         });
 
         modelBuilder.Entity<OneTimeToken>(entity =>

@@ -34,6 +34,9 @@ public sealed class VaultObject
     /// <summary>Verschlüsseltes JSON (<see cref="VaultPayload"/>).</summary>
     public required byte[] Payload { get; set; }
 
+    /// <summary>Eigener Objektschlüssel, verpackt mit dem Bereichsschlüssel (Briefe, M2.3); sonst null.</summary>
+    public byte[]? WrappedKey { get; set; }
+
     public int SchemaVersion { get; set; }
 
     public ObjectStatus Status { get; set; }

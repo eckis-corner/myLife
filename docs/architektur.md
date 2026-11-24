@@ -225,9 +225,9 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 | `pinned_keys` | OwnerId, SubjectId, 🔒Fingerprint, UpdatedAt |
 | `trust_relations` | OwnerId, TrusteeId, 🔒Profil (Beziehung, Notiz), CanRequestAccess, CreatedAt |
 | `areas` | Id, OwnerId, AreaKey (0–13), 🔒WrappedAreaKey, LastReviewedAt |
-| `objects` | Id, AreaId, TypeKey (bank_account, insurance, …), 🔒Payload (alle Felder, Wunsch, Verweise, Notizen als JSON), SchemaVersion, Status, CreatedAt, UpdatedAt, IsDeleted, DeletedAt, `xmin` |
+| `objects` | Id, AreaId, TypeKey (bank_account, insurance, …), 🔒Payload (alle Felder, Wunsch, Verweise, Notizen als JSON), 🔒WrappedKey (nur Briefe: eigener Objektschlüssel), SchemaVersion, Status, CreatedAt, UpdatedAt, IsDeleted, DeletedAt, `xmin` |
 | `documents` | Id, ObjectId, 🔒WrappedFileKey, 🔒Metadata (Bezeichnung, Dateiname, Typ, Datum), CipherSize, StorageKey, CipherSha256, IsDeleted |
-| `grants` | Id, OwnerId, TrusteeId, Ressource (AreaId oder ObjectId bei Briefen), Mode (Live/Death/Incapacity), 🔒Envelope, CreatedAt |
+| `grants` | Id, OwnerId, TrusteeId, Ressource (AreaId oder ObjectId bei Briefen), Mode (Live/Death/Incapacity), 🔒Envelope, Signatur des Eigentümers, Fingerprint der Person beim Versiegeln, CreatedAt |
 | `emergency_switches` | OwnerId, IntervalDays, ReminderOffsets, WaitingDays, RequestWaitingDays, LastLifesignAt, State, ReleasedModes, StateSince, NextActionAt |
 | `access_requests` | Id, OwnerId, TrusteeId, Mode, RequestedAt, DeadlineAt, State, PausedAt, DecidedAt |
 | `vault_deletion_votes` | OwnerId, TrusteeId, VotedAt |

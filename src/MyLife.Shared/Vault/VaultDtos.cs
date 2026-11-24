@@ -24,13 +24,17 @@ public sealed record VaultObjectDto(
     DateTimeOffset UpdatedAt,
     uint Version,
     bool IsDeleted,
-    DateTimeOffset? DeletedAt);
+    DateTimeOffset? DeletedAt,
+    byte[]? WrappedKey = null);
 
-/// <summary>Die ID vergibt der Browser, weil sie im Kontext der Verschlüsselung steckt.</summary>
-public sealed record CreateObjectRequest(Guid Id, int Area, string TypeKey, byte[] Payload, int SchemaVersion, ObjectStatus Status);
+/// <summary>
+/// Die ID vergibt der Browser, weil sie im Kontext der Verschlüsselung steckt. <see cref="WrappedKey"/>: eigener
+/// Objektschlüssel, verpackt mit dem Bereichsschlüssel (Briefe, M2.3); sonst gilt der Bereichsschlüssel.
+/// </summary>
+public sealed record CreateObjectRequest(Guid Id, int Area, string TypeKey, byte[] Payload, int SchemaVersion, ObjectStatus Status, byte[]? WrappedKey = null);
 
 /// <summary><see cref="Version"/> ist der zuletzt gelesene Stand; hat ihn inzwischen jemand geändert, antwortet der Server mit 409.</summary>
-public sealed record UpdateObjectRequest(byte[] Payload, int SchemaVersion, ObjectStatus Status, uint Version);
+public sealed record UpdateObjectRequest(byte[] Payload, int SchemaVersion, ObjectStatus Status, uint Version, byte[]? WrappedKey = null);
 
 public sealed record DocumentDto(
     Guid Id,
@@ -136,6 +140,14 @@ public static class AuditActions
     public const string KeyVerified = "key-verified";
     public const string KeyMismatch = "key-mismatch";
     public const string KeyEndorsed = "key-endorsed";
+
+    // Vertrauenspersonen (M2.3)
+    public const string TrusteeAdded = "trustee-added";
+    public const string TrusteeChanged = "trustee-changed";
+    public const string TrusteeRemoved = "trustee-removed";
+    public const string AreaKeyRotated = "area-key-rotated";
+    public const string SharedRead = "shared-read";
+    public const string SharedDocumentRead = "shared-document-read";
 
     /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
     public static bool IsSystem(string action) =>

@@ -1,0 +1,150 @@
+@page "/shared"
+@attribute [Authorize]
+@using MyLife.Shared.Trust
+@implements IAsyncDisposable
+@inject IStringLocalizer<SharedResource> L
+@inject SharedService Shared
+@inject SchemaText Text
+@inject BrowserFiles Files
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["SharedTitle"]</PageTitle>
+
+@* Mit mir geteilt (46b): was andere schon heute zum Lesen freigegeben haben. Nur Lesen, im Browser entschlüsselt. *@
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["SharedTitle"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["SharedText"]</MudText>
+
+    @if (_loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (_owners.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mylife-muted" data-testid="shared-empty"><i>@L["SharedEmpty"]</i></MudText>
+    }
+    else
+    {
+        @foreach (var owner in _owners)
+        {
+            <MudPaper Outlined Class="pa-3" data-testid="shared-owner">
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.h6" HtmlTag="h2">@owner.Name</MudText>
+                    @if (owner.Grants.Any(g => !g.Verified))
+                    {
+                        <MudAlert Severity="Severity.Warning" Dense>@L[owner.KeyState == TrustState.Changed ? "SharedOwnerKeyChanged" : "SharedNotVerified"]</MudAlert>
+                    }
+                    <MudExpansionPanels MultiExpansion Elevation="0">
+                        @foreach (var grant in owner.Grants)
+                        {
+                            <MudExpansionPanel Text="@Title(grant.Dto)" ExpandedChanged="@(open => OnExpandAsync(owner, grant, open))">
+                                @if (_open.TryGetValue(grant.Dto.Id, out var content))
+                                {
+                                    @if (content.Items.Count == 0)
+                                    {
+                                        <MudText Typo="Typo.body2" Class="mylife-muted"><i>@L["SharedAreaEmpty"]</i></MudText>
+                                    }
+                                    @foreach (var item in content.Items)
+                                    {
+                                        <div class="mb-4" data-testid="shared-item">
+                                            <MudText Typo="Typo.subtitle1"><b>@item.Title</b></MudText>
+                                            <MudText Typo="Typo.caption" Class="mylife-muted">@Text.Type(item.Type)</MudText>
+                                            <MudSimpleTable Dense Elevation="0" Class="mylife-datasheet-table mt-1">
+                                                <tbody>
+                                                    @foreach (var row in Text.Rows(item, id => content.Items.FirstOrDefault(i => i.Id == id)?.Title))
+                                                    {
+                                                        <tr>
+                                                            <th scope="row">@row.Label</th>
+                                                            <td class="@(row.Multiline ? "mylife-multiline" : null)">@row.Value</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </MudSimpleTable>
+                                            @foreach (var file in content.Files.Where(f => f.ObjectId == item.Id))
+                                            {
+                                                <MudButton Variant="Variant.Text" Size="Size.Small" StartIcon="@Icons.Material.Outlined.Download" OnClick="() => DownloadAsync(content, file)">
+                                                    @(string.IsNullOrWhiteSpace(file.Metadata.Label) ? file.Metadata.FileName : file.Metadata.Label)
+                                                </MudButton>
+                                            }
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudProgressLinear Indeterminate Color="Color.Primary" />
+                                }
+                            </MudExpansionPanel>
+                        }
+                    </MudExpansionPanels>
+                </MudStack>
+            </MudPaper>
+        }
+    }
+</MudStack>
+
+@code {
+    private readonly Dictionary<Guid, SharedContent> _open = [];
+    private IReadOnlyList<SharedOwner> _owners = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _owners = await Shared.GetOwnersAsync();
+        }
+        catch (Exception exception) when (exception is TrustException or FamilyException or HttpRequestException
+                                              or System.Security.Cryptography.CryptographicException or InvalidOperationException)
+        {
+            Snackbar.Add(L["TrustError_trust-failed"], Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private string Title(SharedGrantDto grant) =>
+        grant.Kind == GrantKind.Area ? Text.Area(grant.Area!.Value) : L["SharedLetter"];
+
+    private async Task OnExpandAsync(SharedOwner owner, SharedGrant grant, bool open)
+    {
+        if (!open || _open.ContainsKey(grant.Dto.Id))
+        {
+            return;
+        }
+
+        try
+        {
+            _open[grant.Dto.Id] = await Shared.OpenAsync(owner.OwnerId, grant.Dto);
+        }
+        catch (Exception exception) when (exception is TrustException or HttpRequestException or System.Security.Cryptography.CryptographicException
+                                              or Microsoft.JSInterop.JSException or InvalidOperationException)
+        {
+            Snackbar.Add(L["SharedOpenFailed"], Severity.Error);
+        }
+    }
+
+    private async Task DownloadAsync(SharedContent content, VaultFile file)
+    {
+        try
+        {
+            await Files.SaveAsync(await Shared.DownloadAsync(content, file), file.Metadata.FileName, file.Metadata.ContentType);
+        }
+        catch (Exception exception) when (exception is TrustException or VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L["SharedOpenFailed"], Severity.Error);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        // Die geöffneten Schlüssel nicht länger als nötig im Krypto-Modul halten.
+        foreach (var content in _open.Values)
+        {
+            await Shared.CloseAsync(content);
+        }
+
+        _open.Clear();
+    }
+}

@@ -171,6 +171,7 @@
   <data name="Audit_admin-user-locked" xml:space="preserve"><value>Account locked</value></data>
   <data name="Audit_admin-user-unlocked" xml:space="preserve"><value>Account unlocked</value></data>
   <data name="Audit_area-created" xml:space="preserve"><value>Area created</value></data>
+  <data name="Audit_area-key-rotated" xml:space="preserve"><value>New area key</value></data>
   <data name="Audit_area-reviewed" xml:space="preserve"><value>Area reviewed</value></data>
   <data name="Audit_document-deleted" xml:space="preserve"><value>Document moved to trash</value></data>
   <data name="Audit_document-downloaded" xml:space="preserve"><value>Document downloaded</value></data>
@@ -201,7 +202,12 @@
   <data name="Audit_passkey-removed" xml:space="preserve"><value>Passkey removed</value></data>
   <data name="Audit_password-changed" xml:space="preserve"><value>Password changed</value></data>
   <data name="Audit_recovered" xml:space="preserve"><value>Recovery</value></data>
+  <data name="Audit_shared-document-read" xml:space="preserve"><value>Shared document opened</value></data>
+  <data name="Audit_shared-read" xml:space="preserve"><value>Shared content read</value></data>
   <data name="Audit_totp-enrolled" xml:space="preserve"><value>Authenticator app set up again</value></data>
+  <data name="Audit_trustee-added" xml:space="preserve"><value>Trusted person added</value></data>
+  <data name="Audit_trustee-changed" xml:space="preserve"><value>Access changed</value></data>
+  <data name="Audit_trustee-removed" xml:space="preserve"><value>Trusted person removed</value></data>
   <data name="AuthError_auth-crypto-failed" xml:space="preserve"><value>The keys could not be processed in your browser.</value></data>
   <data name="AuthError_auth-disabled" xml:space="preserve"><value>Your account is locked. Please contact the administrator.</value></data>
   <data name="AuthError_auth-expired" xml:space="preserve"><value>The sign-in took too long. Please start again.</value></data>
@@ -546,6 +552,12 @@
   <data name="FollowUpDue" xml:space="preserve"><value>due</value></data>
   <data name="FollowUpDueAlert" xml:space="preserve"><value>Follow-up due: {0}</value></data>
   <data name="FormHasErrors" xml:space="preserve"><value>Please check the highlighted fields.</value></data>
+  <data name="GrantModeHint_Death" xml:space="preserve"><value>Visible once emergency access is released as "deceased".</value></data>
+  <data name="GrantModeHint_Incapacity" xml:space="preserve"><value>Visible once emergency access is released as "incapacitated". You can revoke it after you return.</value></data>
+  <data name="GrantModeHint_Live" xml:space="preserve"><value>The person can read the area today but cannot change anything.</value></data>
+  <data name="GrantMode_Death" xml:space="preserve"><value>Deceased</value></data>
+  <data name="GrantMode_Incapacity" xml:space="preserve"><value>Incapacitated</value></data>
+  <data name="GrantMode_Live" xml:space="preserve"><value>Share now</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Expiring soon</value></data>
   <data name="HomeFollowUpTitle" xml:space="preserve"><value>Follow-ups</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>This is where your digital emergency folder takes shape: insurance policies, accounts, contracts, certificates and wishes in one safe place. Everything is encrypted in your browser, so only you and, in an emergency, your trusted persons can read it.</value></data>
@@ -952,6 +964,14 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="SetupTwoFactorSecret" xml:space="preserve"><value>Key for manual entry</value></data>
   <data name="SetupTwoFactorText" xml:space="preserve"><value>To sign in you also need a code from an authenticator app such as Aegis, Google Authenticator, Microsoft Authenticator or your password manager. Scan the QR code and enter the code shown.</value></data>
   <data name="SetupWelcomeText" xml:space="preserve"><value>This instance has not been set up yet. You are about to create the first account. It becomes the administrator and gets its own vault. All keys are created in your browser; the server only ever sees encrypted data.</value></data>
+  <data name="SharedAreaEmpty" xml:space="preserve"><value>This area is empty.</value></data>
+  <data name="SharedEmpty" xml:space="preserve"><value>Nobody is sharing anything with you right now.</value></data>
+  <data name="SharedLetter" xml:space="preserve"><value>Personal letter</value></data>
+  <data name="SharedNotVerified" xml:space="preserve"><value>The share is not signed by a confirmed key. Check on the "Family" page whether this person's key is confirmed.</value></data>
+  <data name="SharedOpenFailed" xml:space="preserve"><value>The content could not be opened.</value></data>
+  <data name="SharedOwnerKeyChanged" xml:space="preserve"><value>This person's key has changed. Careful: the content may not come from them.</value></data>
+  <data name="SharedText" xml:space="preserve"><value>What others already share with you today, read only. Decryption happens in your browser with your own key.</value></data>
+  <data name="SharedTitle" xml:space="preserve"><value>Shared with me</value></data>
   <data name="ShowEnded" xml:space="preserve"><value>Show ended</value></data>
   <data name="SomeFailed" xml:space="preserve"><value>{0} entries could not be changed.</value></data>
   <data name="SortBy" xml:space="preserve"><value>Sort by</value></data>
@@ -961,6 +981,42 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="TrashEmpty" xml:space="preserve"><value>The trash is empty.</value></data>
   <data name="TrashRemaining" xml:space="preserve"><value>Removed in</value></data>
   <data name="TrashText" xml:space="preserve"><value>Deleted entries and documents stay here for {0} days and are then removed permanently.</value></data>
+  <data name="TrustAdd" xml:space="preserve"><value>Add trusted person</value></data>
+  <data name="TrustAll" xml:space="preserve"><value>all</value></data>
+  <data name="TrustArea" xml:space="preserve"><value>Area</value></data>
+  <data name="TrustAreasText" xml:space="preserve"><value>Deceased and incapacitated are separate cases; what you release for one case is only visible in that case. You release letters individually below.</value></data>
+  <data name="TrustAreasTitle" xml:space="preserve"><value>Areas</value></data>
+  <data name="TrustCanRequest" xml:space="preserve"><value>may request</value></data>
+  <data name="TrustCanRequestLabel" xml:space="preserve"><value>May request access</value></data>
+  <data name="TrustEmpty" xml:space="preserve"><value>No trusted persons yet.</value></data>
+  <data name="TrustError_trust-failed" xml:space="preserve"><value>That did not work. Please try again.</value></data>
+  <data name="TrustError_trust-invalid" xml:space="preserve"><value>The access settings are invalid. Please reload the page.</value></data>
+  <data name="TrustError_trust-key-changed" xml:space="preserve"><value>The person's key has changed. Nothing was saved.</value></data>
+  <data name="TrustError_trust-not-found" xml:space="preserve"><value>This person does not exist (any more).</value></data>
+  <data name="TrustError_trust-stale" xml:space="preserve"><value>Something has changed in the meantime. Please reload and try again.</value></data>
+  <data name="TrustGrants" xml:space="preserve"><value>Access</value></data>
+  <data name="TrustLetter" xml:space="preserve"><value>Letter</value></data>
+  <data name="TrustLettersEmpty" xml:space="preserve"><value>No letters. You create letters in the "Personal wishes" area.</value></data>
+  <data name="TrustLettersText" xml:space="preserve"><value>Each letter has its own key and only goes to the people you select here.</value></data>
+  <data name="TrustLettersTitle" xml:space="preserve"><value>Personal letters</value></data>
+  <data name="TrustLiveEndText" xml:space="preserve"><value>Sharing now ends for {0}. Your browser creates a new key and re-encrypts the area. This may take a moment.</value></data>
+  <data name="TrustLiveEndTitle" xml:space="preserve"><value>Stop sharing</value></data>
+  <data name="TrustLiveHint" xml:space="preserve"><value>The person sees areas shared now under "Shared with me" as soon as you save. If you stop sharing, the area gets a new key.</value></data>
+  <data name="TrustNobody" xml:space="preserve"><value>Trusted persons are people with their own account on this instance. Invite someone first.</value></data>
+  <data name="TrustNote" xml:space="preserve"><value>Note</value></data>
+  <data name="TrustProfileEncrypted" xml:space="preserve"><value>Relationship and note are encrypted in your vault; the server cannot see them.</value></data>
+  <data name="TrustRelationship" xml:space="preserve"><value>Relationship</value></data>
+  <data name="TrustRelationshipHint" xml:space="preserve"><value>E.g. daughter, brother, friend. Only visible to you.</value></data>
+  <data name="TrustRemove" xml:space="preserve"><value>Remove as trusted person</value></data>
+  <data name="TrustRemoveConfirm" xml:space="preserve"><value>Remove {0} as a trusted person? All access for this person is deleted. Areas shared now get a new key.</value></data>
+  <data name="TrustSave" xml:space="preserve"><value>Save and encrypt</value></data>
+  <data name="TrustSaving" xml:space="preserve"><value>Encrypting keys for this person …</value></data>
+  <data name="TrustStale" xml:space="preserve"><value>Needs saving again</value></data>
+  <data name="TrustText" xml:space="preserve"><value>Decide who may see which areas in an emergency: if you have died, if you are incapacitated, or already today (share now, read only). Your browser encrypts the area keys for each person individually; the server only releases them when the case occurs.</value></data>
+  <data name="TrustTitle" xml:space="preserve"><value>Trusted persons</value></data>
+  <data name="TrusteeKeyChanged" xml:space="preserve"><value>This person's key has changed. myLife will not encrypt anything for them until this is resolved. Talk to the person and the administrator.</value></data>
+  <data name="TrusteeStaleHint" xml:space="preserve"><value>The person now has a new key. Save once more so that the access is encrypted for it.</value></data>
+  <data name="TrusteeUnconfirmed" xml:space="preserve"><value>This person's key has not yet been confirmed by anyone you trust. When you save, your browser remembers it so that a later swap is noticed.</value></data>
   <data name="Type_asset" xml:space="preserve"><value>Valuable / asset</value></data>
   <data name="Type_bankAccount" xml:space="preserve"><value>Bank account</value></data>
   <data name="Type_card" xml:space="preserve"><value>Card</value></data>

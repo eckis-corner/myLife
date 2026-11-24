@@ -68,9 +68,14 @@ public sealed class ExportKdf
 /// <summary>Bereichsschlüssel, verpackt mit dem Tresorschlüssel (Kontext <c>area:{n}</c>).</summary>
 public sealed record ExportArea(int Area, byte[] WrappedKey);
 
-/// <summary>Objekt; <see cref="Payload"/> ist JSON, verschlüsselt mit dem Bereichsschlüssel (Kontext <c>object:{Typ}:{Id}</c>).</summary>
+/// <summary>
+/// Objekt; <see cref="Payload"/> ist JSON, verschlüsselt mit dem Bereichsschlüssel (Kontext <c>object:{Typ}:{Id}</c>)
+/// oder, wenn <see cref="WrappedKey"/> gesetzt ist (Briefe, seit M2.3), mit diesem eigenen Objektschlüssel; er ist
+/// mit dem Bereichsschlüssel verpackt (Kontext <c>object-key:{Id}</c>) und verschlüsselt auch die Dokumente.
+/// </summary>
 public sealed record ExportObject(
-    Guid Id, int Area, string Type, int SchemaVersion, ObjectStatus Status, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt, byte[] Payload);
+    Guid Id, int Area, string Type, int SchemaVersion, ObjectStatus Status, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt, byte[] Payload,
+    byte[]? WrappedKey = null);
 
 /// <summary>Dokument; Inhalt in Blöcken mit dem Dateischlüssel verschlüsselt, fehlt bei einem Export ohne Dokumente.</summary>
 public sealed record ExportDocument(Guid Id, Guid ObjectId, byte[] WrappedFileKey, byte[] Metadata, byte[]? Content);
@@ -98,7 +103,7 @@ public sealed class VaultExport(VaultClient api, VaultService vault, SessionServ
         };
 
         var objects = (await api.GetObjectsAsync()).Where(o => !o.IsDeleted).ToList();
-        file.Objects = [.. objects.Select(o => new ExportObject(o.Id, o.Area, o.TypeKey, o.SchemaVersion, o.Status, o.CreatedAt, o.UpdatedAt, o.Payload))];
+        file.Objects = [.. objects.Select(o => new ExportObject(o.Id, o.Area, o.TypeKey, o.SchemaVersion, o.Status, o.CreatedAt, o.UpdatedAt, o.Payload, o.WrappedKey))];
         var live = objects.Select(o => o.Id).ToHashSet();
         var documents = (await api.GetDocumentsAsync()).Where(d => !d.IsDeleted && live.Contains(d.ObjectId)).ToList();
         for (var i = 0; i < documents.Count; i++)
@@ -155,6 +160,8 @@ public sealed class VaultExport(VaultClient api, VaultService vault, SessionServ
                 }
             }
 
+            // Eigene Objektschlüssel (Briefe) aus dem Export; sie verschlüsseln Inhalt und Dokumente.
+            var objectKeys = new Dictionary<Guid, CryptoKeyHandle>();
             int imported = 0, skipped = 0, unreadable = 0, documents = 0, done = 0;
             var total = Math.Max(file.Objects.Count + file.Documents.Count, 1);
             foreach (var entry in file.Objects)
@@ -175,7 +182,15 @@ public sealed class VaultExport(VaultClient api, VaultService vault, SessionServ
 
                 try
                 {
-                    var payload = VaultPayload.FromUtf8(await crypto.DecryptAsync(areaKey, entry.Payload, KeyContexts.VaultObject(type.Key, entry.Id)));
+                    var contentKey = areaKey;
+                    if (entry.WrappedKey is not null)
+                    {
+                        contentKey = await crypto.UnwrapKeyAsync(areaKey, entry.WrappedKey, KeyContexts.ObjectKey(entry.Id));
+                        handles.Add(contentKey);
+                        objectKeys[entry.Id] = contentKey;
+                    }
+
+                    var payload = VaultPayload.FromUtf8(await crypto.DecryptAsync(contentKey, entry.Payload, KeyContexts.VaultObject(type.Key, entry.Id)));
                     await vault.CreateAsync(type.Key, payload, entry.Status, entry.Id);
                     imported++;
                 }
@@ -203,6 +218,15 @@ public sealed class VaultExport(VaultClient api, VaultService vault, SessionServ
                 {
                     unreadable++;
                     continue;
+                }
+
+                if (source.WrappedKey is not null)
+                {
+                    if (!objectKeys.TryGetValue(source.Id, out oldAreaKey))
+                    {
+                        unreadable++;
+                        continue;
+                    }
                 }
 
                 try

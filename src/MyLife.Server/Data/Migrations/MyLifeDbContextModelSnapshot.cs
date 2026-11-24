@@ -77,6 +77,71 @@ namespace MyLife.Server.Data.Migrations
                     b.ToTable("audit_log", (string)null);
                 });
 
+            modelBuilder.Entity("MyLife.Server.Data.Grant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AreaKey")
+                        .HasColumnType("integer")
+                        .HasColumnName("area_key");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<byte[]>("Envelope")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("envelope");
+
+                    b.Property<byte[]>("Fingerprint")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("fingerprint");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer")
+                        .HasColumnName("kind");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("integer")
+                        .HasColumnName("mode");
+
+                    b.Property<Guid?>("ObjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("object_id");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.Property<byte[]>("Signature")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("signature");
+
+                    b.Property<Guid>("TrusteeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trustee_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ObjectId");
+
+                    b.HasIndex("OwnerId", "TrusteeId");
+
+                    b.HasIndex("TrusteeId", "Mode");
+
+                    b.HasIndex("OwnerId", "TrusteeId", "Kind", "AreaKey", "ObjectId", "Mode")
+                        .IsUnique();
+
+                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("OwnerId", "TrusteeId", "Kind", "AreaKey", "ObjectId", "Mode"), false);
+
+                    b.ToTable("grants", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.Invitation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -389,6 +454,40 @@ namespace MyLife.Server.Data.Migrations
                     b.ToTable("system_settings", (string)null);
                 });
 
+            modelBuilder.Entity("MyLife.Server.Data.TrustRelation", b =>
+                {
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.Property<Guid>("TrusteeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trustee_id");
+
+                    b.Property<bool>("CanRequestAccess")
+                        .HasColumnType("boolean")
+                        .HasColumnName("can_request_access");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<byte[]>("EncryptedProfile")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("encrypted_profile");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("OwnerId", "TrusteeId");
+
+                    b.HasIndex("TrusteeId");
+
+                    b.ToTable("trust_relations", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -691,11 +790,35 @@ namespace MyLife.Server.Data.Migrations
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
+                    b.Property<byte[]>("WrappedKey")
+                        .HasColumnType("bytea")
+                        .HasColumnName("wrapped_key");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId", "AreaKey");
 
                     b.ToTable("objects", (string)null);
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.Grant", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.VaultObject", null)
+                        .WithMany()
+                        .HasForeignKey("ObjectId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("TrusteeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyLife.Server.Data.Invitation", b =>
@@ -758,6 +881,21 @@ namespace MyLife.Server.Data.Migrations
                     b.HasOne("MyLife.Server.Data.User", null)
                         .WithMany()
                         .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.TrustRelation", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("TrusteeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

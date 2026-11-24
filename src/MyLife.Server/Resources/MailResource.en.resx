@@ -50,6 +50,10 @@ If you do not know {inviter}, simply ignore this email.</value></data>
 
 this test message shows that myLife can send emails.</value></data>
   <data name="Mail_test_subject" xml:space="preserve"><value>myLife: test message</value></data>
+  <data name="Mail_trustee-added_body" xml:space="preserve"><value>Hello {name},
+
+{owner} has named you as a trusted person on myLife. What you may see in an emergency stays encrypted until it is released. If {owner} already shares something with you today, you will find it under "Shared with me" after signing in.</value></data>
+  <data name="Mail_trustee-added_subject" xml:space="preserve"><value>{owner} has named you as a trusted person</value></data>
   <data name="Mail_twofactor-reset_body" xml:space="preserve"><value>Hello {name},
 
 an administrator has reset the two-factor sign-in of your myLife account. The authenticator app and passkeys have been removed. At your next sign-in, after the master password, you set up an authenticator app again.

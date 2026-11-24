@@ -232,8 +232,10 @@ public sealed partial class FamilyTests(ServerFixture server) : IClassFixture<Se
         return new Browser(vault, family, new KeyTrustService(family, vault.Crypto, vault.Session));
     }
 
+    private Task<string> AcceptAsync(string link, string name, string? email = null) => AcceptInvitationAsync(server, link, name, email);
+
     /// <summary>Wie der Browser der eingeladenen Person: Link lesen, TOTP einrichten, Tresor erzeugen, binden, annehmen.</summary>
-    private async Task<string> AcceptAsync(string link, string name, string? email = null)
+    internal static async Task<string> AcceptInvitationAsync(ServerFixture server, string link, string name, string? email = null)
     {
         var fragment = Fragment(link);
         using var http = server.CreateApiClient();
@@ -241,7 +243,7 @@ public sealed partial class FamilyTests(ServerFixture server) : IClassFixture<Se
         var family = new FamilyClient(http);
         var info = await family.GetInviteInfoAsync(fragment["t"], Ct);
         var enrollment = await family.CreateInviteTotpAsync(fragment["t"], Ct);
-        var confirmation = await family.VerifyInviteTotpAsync(fragment["t"], enrollment.Enrollment, Code(enrollment.Secret), Ct);
+        var confirmation = await family.VerifyInviteTotpAsync(fragment["t"], enrollment.Enrollment, Code(server, enrollment.Secret), Ct);
         var setup = new VaultSetupService(crypto);
         var recoveryKey = await setup.CreateRecoveryKeyAsync();
         byte[]? pin = null;
@@ -253,10 +255,12 @@ public sealed partial class FamilyTests(ServerFixture server) : IClassFixture<Se
         return enrollment.Secret;
     }
 
-    private static Dictionary<string, string> Fragment(string link) =>
+    internal static Dictionary<string, string> Fragment(string link) =>
         link[(link.IndexOf('#', StringComparison.Ordinal) + 1)..].Split('&').Select(p => p.Split('=', 2)).ToDictionary(p => p[0], p => p[1]);
 
-    private string Code(string secret)
+    private string Code(string secret) => Code(server, secret);
+
+    internal static string Code(ServerFixture server, string secret)
     {
         server.Clock.Advance(TimeSpan.FromSeconds(Totp.PeriodSeconds));
         return Totp.Compute(Base32.Decode(secret), Totp.StepAt(server.Clock.GetUtcNow()));

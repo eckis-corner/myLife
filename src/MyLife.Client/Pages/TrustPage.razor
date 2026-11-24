@@ -1,0 +1,114 @@
+@page "/trust"
+@attribute [Authorize]
+@using MyLife.Shared.Trust
+@inject IStringLocalizer<SharedResource> L
+@inject TrustService Trust
+@inject KeyTrustService Keys
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L["TrustTitle"]</PageTitle>
+
+@* Vertrauenspersonen (M2.3): wer im Ernstfall oder schon heute welche Bereiche sehen darf. *@
+<MudStack Spacing="3">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["TrustTitle"]</MudText>
+        <MudMenu Label="@L["TrustAdd"]" StartIcon="@Icons.Material.Filled.PersonAddAlt1" Variant="Variant.Filled" Color="Color.Primary"
+                 Disabled="@(_candidates.Count == 0)" data-testid="trust-add">
+            @foreach (var person in _candidates)
+            {
+                <MudMenuItem OnClick="@(() => Navigation.NavigateTo($"trust/{person.Person.Id}"))">@person.Person.DisplayName (@person.Person.Email)</MudMenuItem>
+            }
+        </MudMenu>
+    </MudStack>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["TrustText"]</MudText>
+
+    @if (!_loading && _candidates.Count == 0 && _trustees.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+            @L["TrustNobody"]
+            <MudButton Variant="Variant.Text" Href="family?invite=true" Class="ml-2">@L["InviteDialogTitle"]</MudButton>
+        </MudAlert>
+    }
+
+    <MudTable T="Trustee" Items="_trustees" Loading="_loading" Hover Striped Dense="false" Elevation="1" Breakpoint="Breakpoint.Sm"
+              LoadingProgressColor="Color.Primary" OnRowClick="@((TableRowClickEventArgs<Trustee> e) => Navigation.NavigateTo($"trust/{e.Item!.Person.Person.Id}"))"
+              RowStyle="cursor: pointer" data-testid="trustees">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel T="Trustee" SortBy="t => t.Person.Person.DisplayName" InitialDirection="SortDirection.Ascending">@L["AdminUserName"]</MudTableSortLabel></MudTh>
+            <MudTh>@L["TrustRelationship"]</MudTh>
+            <MudTh>@L["TrustGrants"]</MudTh>
+            <MudTh>@L["FamilyKey"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="@L["AdminUserName"]">
+                <b>@context.Person.Person.DisplayName</b>
+                <div class="mylife-muted">@context.Person.Person.Email</div>
+            </MudTd>
+            <MudTd DataLabel="@L["TrustRelationship"]">@context.Profile.Relationship</MudTd>
+            <MudTd DataLabel="@L["TrustGrants"]">
+                <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
+                    @foreach (var mode in Enum.GetValues<GrantMode>())
+                    {
+                        var count = context.Areas.Count(a => a.Mode == mode) + context.Letters.Count(l => l.Mode == mode);
+                        @if (count > 0)
+                        {
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(mode == GrantMode.Live ? Color.Secondary : Color.Default)">
+                                @L[$"GrantMode_{mode}"]: @count
+                            </MudChip>
+                        }
+                    }
+                    @if (context.CanRequestAccess)
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary">@L["TrustCanRequest"]</MudChip>
+                    }
+                </MudStack>
+            </MudTd>
+            <MudTd DataLabel="@L["FamilyKey"]">
+                @if (context.Person.State == TrustState.Changed)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.GppBad">@L["FamilyTrust_Changed"]</MudChip>
+                }
+                else if (context.Stale)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Warning">@L["TrustStale"]</MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(context.Person.State == TrustState.Unconfirmed ? Color.Default : Color.Success)">
+                        @(context.Person.State == TrustState.Endorsed ? L["FamilyTrust_Endorsed", context.Person.ConfirmedBy ?? string.Empty] : L[$"FamilyTrust_{context.Person.State}"])
+                    </MudChip>
+                }
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body2" Class="pa-4">@L["TrustEmpty"]</MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudStack>
+
+@code {
+    private IReadOnlyList<Trustee> _trustees = [];
+    private List<PersonTrust> _candidates = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await Keys.SyncAsync();
+            _trustees = await Trust.GetTrusteesAsync();
+            var chosen = _trustees.Select(t => t.Person.Person.Id).ToHashSet();
+            _candidates = [.. (await Keys.GetPeopleAsync()).Where(p => !chosen.Contains(p.Person.Id)).OrderBy(p => p.Person.DisplayName)];
+        }
+        catch (Exception exception) when (exception is TrustException or FamilyException or HttpRequestException
+                                              or System.Security.Cryptography.CryptographicException or InvalidOperationException)
+        {
+            Snackbar.Add(L["TrustError_trust-failed"], Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

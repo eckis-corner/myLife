@@ -21,7 +21,7 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601.
   "wrappedVmk": "…",
   "wrappedVmkByRecovery": "…",
   "areas": [ { "area": 1, "wrappedKey": "…" } ],
-  "objects": [ { "id": "…", "area": 1, "type": "bankAccount", "schemaVersion": 1, "status": "active", "createdAt": "…", "updatedAt": "…", "payload": "…" } ],
+  "objects": [ { "id": "…", "area": 1, "type": "bankAccount", "schemaVersion": 1, "status": "active", "createdAt": "…", "updatedAt": "…", "payload": "…", "wrappedKey": "… (nur Briefe)" } ],
   "documents": [ { "id": "…", "objectId": "…", "wrappedFileKey": "…", "metadata": "…", "content": "…" } ]
 }
 ```
@@ -32,10 +32,10 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601.
    - Mit Passwort: `mk = Argon2id(Passwort, kdf.salt, …)`, `kek = HKDF(mk, "mylife/kek")`, VMK = AES-GCM-Entpacken von `wrappedVmk` mit `kek`, Kontext `vmk`.
    - Mit Recovery-Key: die 24 Wörter nach BIP-39 in 32 Byte wandeln, `rkKey = HKDF(rk, "mylife/recovery")`, VMK = Entpacken von `wrappedVmkByRecovery`, Kontext `vmk`.
 2. **Bereichsschlüssel:** `areas[].wrappedKey` mit dem VMK entpacken, Kontext `area:{area}`.
-3. **Objekte:** `payload` mit dem Bereichsschlüssel entschlüsseln, Kontext `object:{type}:{id}`. Ergebnis ist JSON (siehe unten).
+3. **Objekte:** `payload` mit dem Bereichsschlüssel entschlüsseln, Kontext `object:{type}:{id}`. Ergebnis ist JSON (siehe unten). Hat ein Objekt `wrappedKey` (Briefe, seit M2.3), zuerst diesen Objektschlüssel mit dem Bereichsschlüssel entpacken (Kontext `object-key:{id}`) und damit `payload` und die Dateischlüssel seiner Dokumente öffnen.
 4. **Dokumente:**
-   - `wrappedFileKey` mit dem Bereichsschlüssel des Objekts entpacken, Kontext `file-key:{id}`.
-   - `metadata` mit dem Bereichsschlüssel entschlüsseln, Kontext `document-meta:{id}`.
+   - `wrappedFileKey` mit dem Bereichsschlüssel des Objekts entpacken (bei Briefen mit dem Objektschlüssel), Kontext `file-key:{id}`.
+   - `metadata` mit demselben Schlüssel entschlüsseln, Kontext `document-meta:{id}`.
    - `content` blockweise entschlüsseln: Blöcke zu je 1 MiB + 16 Byte, der letzte kürzer, Kontext `document:{id}` (kryptoformat.md, Abschnitt 4). Bei einem Export ohne Dokumente fehlt `content`.
 
 ## Inhalt eines Objekts

@@ -50,6 +50,10 @@ Wenn du {inviter} nicht kennst, ignoriere diese Mail einfach.</value></data>
 
 diese Testnachricht zeigt, dass der Mailversand von myLife funktioniert.</value></data>
   <data name="Mail_test_subject" xml:space="preserve"><value>myLife: Testnachricht</value></data>
+  <data name="Mail_trustee-added_body" xml:space="preserve"><value>Hallo {name},
+
+{owner} hat dich bei myLife als Vertrauensperson benannt. Was du im Ernstfall sehen darfst, bleibt verschlüsselt, bis es freigegeben wird. Falls {owner} etwas schon heute mit dir teilt, findest du es nach der Anmeldung unter „Mit mir geteilt“.</value></data>
+  <data name="Mail_trustee-added_subject" xml:space="preserve"><value>{owner} hat dich als Vertrauensperson benannt</value></data>
   <data name="Mail_twofactor-reset_body" xml:space="preserve"><value>Hallo {name},
 
 ein Administrator hat die Zwei-Faktor-Anmeldung deines myLife-Kontos zurückgesetzt. Authenticator-App und Passkeys sind entfernt. Bei der nächsten Anmeldung richtest du nach dem Master-Passwort eine Authenticator-App neu ein.

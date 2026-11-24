@@ -38,6 +38,22 @@ public static class KeyContexts
     /// <summary>Gepinnter Fingerprint einer anderen Person, verschlüsselt mit dem eigenen Tresorschlüssel.</summary>
     public static string Pin(Guid subjectId) => string.Create(CultureInfo.InvariantCulture, $"pin:{subjectId:D}");
 
+    /// <summary>Eigener Schlüssel eines Objekts (Brief), verpackt mit dem Bereichsschlüssel (seit M2.3).</summary>
+    public static string ObjectKey(Guid objectId) => string.Create(CultureInfo.InvariantCulture, $"object-key:{objectId:D}");
+
+    /// <summary>Beziehung und Notiz zu einer Vertrauensperson, verschlüsselt mit dem Tresorschlüssel.</summary>
+    public static string TrusteeProfile(Guid trusteeId) => string.Create(CultureInfo.InvariantCulture, $"trustee-profile:{trusteeId:D}");
+
+    /// <summary>Umschlag (ECIES) mit einem Bereichsschlüssel für eine Vertrauensperson.</summary>
+    public static string AreaEnvelope(Guid ownerId, int area) => string.Create(CultureInfo.InvariantCulture, $"envelope:area:{ownerId:D}:{area}");
+
+    /// <summary>Umschlag (ECIES) mit dem Schlüssel eines Briefs für eine Vertrauensperson.</summary>
+    public static string LetterEnvelope(Guid ownerId, Guid objectId) => string.Create(CultureInfo.InvariantCulture, $"envelope:letter:{ownerId:D}:{objectId:D}");
+
+    /// <summary>Signatur des Eigentümers über einen Umschlag: bindet Empfänger, Inhalt und Modus.</summary>
+    public static string GrantSignature(Guid trusteeId, int kind, string resource, int mode) =>
+        string.Create(CultureInfo.InvariantCulture, $"grant:{trusteeId:D}:{kind}:{resource}:{mode}");
+
     /// <summary>Gegenzeichnung (ECDSA) des Fingerprints einer Person.</summary>
     public static string Endorsement(Guid subjectId) => string.Create(CultureInfo.InvariantCulture, $"endorsement:{subjectId:D}");
 }

@@ -121,6 +121,18 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 83 | Automatische Prüfung | Nach jedem Entsperren prüft der Browser angenommene Einladungen (HMAC), gegenzeichnet und pinnt bei Erfolg, meldet sonst „Schlüssel passt nicht“ ins eigene und ins System-Protokoll. Gepinnte, unveränderte Schlüssel gegenzeichnet er ebenfalls, so bestätigt auch die eingeladene Person die einladende. |
 | 84 | Seite „Familie“ | Zustand je Person aus eigener Sicht: „Von dir bestätigt“ (Pin passt), „Bestätigt durch X“ (gültige Gegenzeichnung von jemandem mit passendem Pin), „Noch nicht bestätigt“ (sachlicher Hinweis, keine Sperre) und „Schlüssel geändert!“ (Pin passt nicht, deutliche Warnung; ab M2.3 keine Umschläge). Dazu die eigenen Einladungen; Admins sehen in der Benutzerverwaltung alle offenen Einladungen und können sie zurückziehen. |
 
+## Runde 8 (24.11.2026, Umsetzung M2.3)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 85 | Vertrauenspersonen | Jede andere Person mit aktivem Konto kann Vertrauensperson werden. Beziehung und Notiz liegen mit dem Tresorschlüssel verschlüsselt in `trust_relations` (Kontext `trustee-profile:{ID}`); das Antragsrecht steht im Klartext, weil der Server den Antrag ab M2.4 prüft. Die Person bekommt eine Mail, dass sie benannt wurde, ohne Einzelheiten. |
+| 86 | Umschläge | Je Person, Bereich und Modus (verstorben, handlungsunfähig, sofort teilen) ein Umschlag: der Bereichsschlüssel per ECIES an den öffentlichen Schlüssel der Person (Kontext `envelope:area:{Eigentümer}:{n}`), dazu eine ECDSA-Signatur des Eigentümers über den Umschlag (Kontext `grant:{Person}:{Art}:{Ressource}:{Modus}`). Die Vertrauensperson prüft die Signatur gegen einen bestätigten Schlüssel, damit ein manipulierter Server keine eigenen Umschläge unterschieben kann. Speichern ersetzt alle Umschläge einer Person. |
+| 87 | Schlüsselprüfung beim Versiegeln | Für eine Person mit geändertem Schlüssel entstehen keine Umschläge. Ist ihr Schlüssel noch unbestätigt, pinnt der Browser ihn beim ersten Speichern. Jeder Umschlag trägt den Fingerprint der Person; der Server nimmt nur Umschläge für ihren aktuellen Schlüssel an. Ändert sich der Schlüssel später, zeigt die Liste „Neu speichern nötig“. |
+| 88 | Briefe | Jeder Brief hat einen eigenen Objektschlüssel, verpackt mit dem Bereichsschlüssel (Spalte `objects.wrapped_key`, Kontext `object-key:{ID}`); er verschlüsselt Inhalt und Dokumente des Briefs. Briefe aus der Zeit vor M2.3 bekommen ihn beim nächsten Speichern. Freigaben je Brief und Empfänger gibt es nur für verstorben und handlungsunfähig; ein freigegebener Bereich 11 enthält die Briefe nicht. |
+| 89 | Sofort teilen | Live-Umschläge liefert der Server sofort aus; die Vertrauensperson liest unter „Mit mir geteilt“, nur Lesen, ohne Briefe und Papierkorb. Jeder Abruf von Inhalten und Dokumenten steht im Protokoll des Eigentümers. |
+| 90 | Neuer Bereichsschlüssel | Endet das sofortige Teilen (oder wird die Person entfernt), erzeugt der Browser einen neuen Bereichsschlüssel, verschlüsselt alle Objekte des Bereichs neu (Briefe: nur ihren Schlüssel neu verpackt), packt die Dateischlüssel um und versiegelt alle verbleibenden Umschläge des Bereichs neu. Der Server übernimmt das nur vollständig und unverändert (sonst 409). Abgebrochene Uploads des Bereichs entfallen dabei. |
+| 91 | Exportformat | Objekte tragen optional `wrappedKey` (Briefe). Ältere Exporte bleiben gültig; Version 1 bleibt. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

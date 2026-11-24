@@ -171,6 +171,7 @@
   <data name="Audit_admin-user-locked" xml:space="preserve"><value>Konto gesperrt</value></data>
   <data name="Audit_admin-user-unlocked" xml:space="preserve"><value>Konto entsperrt</value></data>
   <data name="Audit_area-created" xml:space="preserve"><value>Bereich angelegt</value></data>
+  <data name="Audit_area-key-rotated" xml:space="preserve"><value>Neuer Bereichsschlüssel</value></data>
   <data name="Audit_area-reviewed" xml:space="preserve"><value>Bereich geprüft</value></data>
   <data name="Audit_document-deleted" xml:space="preserve"><value>Dokument in den Papierkorb</value></data>
   <data name="Audit_document-downloaded" xml:space="preserve"><value>Dokument abgerufen</value></data>
@@ -201,7 +202,12 @@
   <data name="Audit_passkey-removed" xml:space="preserve"><value>Passkey entfernt</value></data>
   <data name="Audit_password-changed" xml:space="preserve"><value>Passwort geändert</value></data>
   <data name="Audit_recovered" xml:space="preserve"><value>Wiederherstellung</value></data>
+  <data name="Audit_shared-document-read" xml:space="preserve"><value>Geteiltes Dokument geöffnet</value></data>
+  <data name="Audit_shared-read" xml:space="preserve"><value>Geteilten Inhalt gelesen</value></data>
   <data name="Audit_totp-enrolled" xml:space="preserve"><value>Authenticator-App neu eingerichtet</value></data>
+  <data name="Audit_trustee-added" xml:space="preserve"><value>Vertrauensperson hinzugefügt</value></data>
+  <data name="Audit_trustee-changed" xml:space="preserve"><value>Freigaben geändert</value></data>
+  <data name="Audit_trustee-removed" xml:space="preserve"><value>Vertrauensperson entfernt</value></data>
   <data name="AuthError_auth-crypto-failed" xml:space="preserve"><value>Die Schlüssel konnten im Browser nicht verarbeitet werden.</value></data>
   <data name="AuthError_auth-disabled" xml:space="preserve"><value>Dein Konto ist gesperrt. Bitte wende dich an den Administrator.</value></data>
   <data name="AuthError_auth-expired" xml:space="preserve"><value>Die Anmeldung hat zu lange gedauert. Bitte beginne von vorn.</value></data>
@@ -546,6 +552,12 @@
   <data name="FollowUpDue" xml:space="preserve"><value>fällig</value></data>
   <data name="FollowUpDueAlert" xml:space="preserve"><value>Wiedervorlage fällig: {0}</value></data>
   <data name="FormHasErrors" xml:space="preserve"><value>Bitte prüfe die markierten Felder.</value></data>
+  <data name="GrantModeHint_Death" xml:space="preserve"><value>Sichtbar, wenn der Notfallzugang im Modus „verstorben“ freigegeben ist.</value></data>
+  <data name="GrantModeHint_Incapacity" xml:space="preserve"><value>Sichtbar, wenn der Notfallzugang im Modus „handlungsunfähig“ freigegeben ist. Du kannst ihn nach deiner Rückkehr wieder entziehen.</value></data>
+  <data name="GrantModeHint_Live" xml:space="preserve"><value>Die Person kann den Bereich schon heute lesen, aber nichts ändern.</value></data>
+  <data name="GrantMode_Death" xml:space="preserve"><value>Verstorben</value></data>
+  <data name="GrantMode_Incapacity" xml:space="preserve"><value>Handlungsunfähig</value></data>
+  <data name="GrantMode_Live" xml:space="preserve"><value>Sofort teilen</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Läuft bald ab</value></data>
   <data name="HomeFollowUpTitle" xml:space="preserve"><value>Wiedervorlage</value></data>
   <data name="HomeIntro" xml:space="preserve"><value>Hier entsteht dein digitaler Notfallordner: Versicherungen, Konten, Verträge, Urkunden und Wünsche an einem sicheren Ort. Alles wird in deinem Browser verschlüsselt, sodass nur du und im Ernstfall deine Vertrauenspersonen die Daten lesen können.</value></data>
@@ -952,6 +964,14 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="SetupTwoFactorSecret" xml:space="preserve"><value>Schlüssel zum manuellen Eingeben</value></data>
   <data name="SetupTwoFactorText" xml:space="preserve"><value>Zur Anmeldung brauchst du zusätzlich einen Code aus einer Authenticator-App, zum Beispiel Aegis, Google Authenticator, Microsoft Authenticator oder deinem Passwortmanager. Scanne den QR-Code und gib den angezeigten Code ein.</value></data>
   <data name="SetupWelcomeText" xml:space="preserve"><value>Diese Instanz ist noch nicht eingerichtet. Du legst jetzt das erste Konto an. Es wird Administrator und bekommt einen eigenen Tresor. Alle Schlüssel entstehen in deinem Browser, der Server sieht nur verschlüsselte Daten.</value></data>
+  <data name="SharedAreaEmpty" xml:space="preserve"><value>Dieser Bereich ist leer.</value></data>
+  <data name="SharedEmpty" xml:space="preserve"><value>Niemand teilt gerade etwas mit dir.</value></data>
+  <data name="SharedLetter" xml:space="preserve"><value>Persönlicher Brief</value></data>
+  <data name="SharedNotVerified" xml:space="preserve"><value>Die Freigabe ist nicht von einem bestätigten Schlüssel unterschrieben. Prüfe auf der Seite „Familie“, ob der Schlüssel dieser Person bestätigt ist.</value></data>
+  <data name="SharedOpenFailed" xml:space="preserve"><value>Der Inhalt ließ sich nicht öffnen.</value></data>
+  <data name="SharedOwnerKeyChanged" xml:space="preserve"><value>Der Schlüssel dieser Person hat sich geändert. Vorsicht: Die Inhalte könnten nicht von ihr stammen.</value></data>
+  <data name="SharedText" xml:space="preserve"><value>Was andere schon heute mit dir teilen, nur zum Lesen. Entschlüsselt wird in deinem Browser mit deinem eigenen Schlüssel.</value></data>
+  <data name="SharedTitle" xml:space="preserve"><value>Mit mir geteilt</value></data>
   <data name="ShowEnded" xml:space="preserve"><value>Beendete anzeigen</value></data>
   <data name="SomeFailed" xml:space="preserve"><value>{0} Einträge konnten nicht geändert werden.</value></data>
   <data name="SortBy" xml:space="preserve"><value>Sortieren nach</value></data>
@@ -961,6 +981,42 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="TrashEmpty" xml:space="preserve"><value>Der Papierkorb ist leer.</value></data>
   <data name="TrashRemaining" xml:space="preserve"><value>Wird entfernt in</value></data>
   <data name="TrashText" xml:space="preserve"><value>Gelöschte Einträge und Dokumente bleiben {0} Tage hier und werden dann endgültig entfernt.</value></data>
+  <data name="TrustAdd" xml:space="preserve"><value>Vertrauensperson hinzufügen</value></data>
+  <data name="TrustAll" xml:space="preserve"><value>alle</value></data>
+  <data name="TrustArea" xml:space="preserve"><value>Bereich</value></data>
+  <data name="TrustAreasText" xml:space="preserve"><value>Verstorben und handlungsunfähig sind getrennte Fälle; was du für einen Fall freigibst, sieht die Person nur in diesem Fall. Briefe gibst du unten einzeln frei.</value></data>
+  <data name="TrustAreasTitle" xml:space="preserve"><value>Bereiche</value></data>
+  <data name="TrustCanRequest" xml:space="preserve"><value>darf beantragen</value></data>
+  <data name="TrustCanRequestLabel" xml:space="preserve"><value>Darf einen Zugang beantragen</value></data>
+  <data name="TrustEmpty" xml:space="preserve"><value>Noch keine Vertrauenspersonen.</value></data>
+  <data name="TrustError_trust-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
+  <data name="TrustError_trust-invalid" xml:space="preserve"><value>Die Freigaben sind ungültig. Bitte lade die Seite neu.</value></data>
+  <data name="TrustError_trust-key-changed" xml:space="preserve"><value>Der Schlüssel der Person hat sich geändert. Es wurde nichts gespeichert.</value></data>
+  <data name="TrustError_trust-not-found" xml:space="preserve"><value>Die Person gibt es nicht (mehr).</value></data>
+  <data name="TrustError_trust-stale" xml:space="preserve"><value>Inzwischen hat sich etwas geändert. Bitte lade die Seite neu und versuche es erneut.</value></data>
+  <data name="TrustGrants" xml:space="preserve"><value>Freigaben</value></data>
+  <data name="TrustLetter" xml:space="preserve"><value>Brief</value></data>
+  <data name="TrustLettersEmpty" xml:space="preserve"><value>Keine Briefe. Briefe legst du im Bereich „Persönliche Wünsche“ an.</value></data>
+  <data name="TrustLettersText" xml:space="preserve"><value>Jeder Brief hat einen eigenen Schlüssel und geht nur an die Personen, die du hier auswählst.</value></data>
+  <data name="TrustLettersTitle" xml:space="preserve"><value>Persönliche Briefe</value></data>
+  <data name="TrustLiveEndText" xml:space="preserve"><value>Für {0} endet das sofortige Teilen. Dein Browser erzeugt dafür einen neuen Schlüssel und verschlüsselt den Bereich neu. Das kann einen Moment dauern.</value></data>
+  <data name="TrustLiveEndTitle" xml:space="preserve"><value>Teilen beenden</value></data>
+  <data name="TrustLiveHint" xml:space="preserve"><value>Sofort geteilte Bereiche sieht die Person ab dem Speichern unter „Mit mir geteilt“. Beendest du das Teilen, bekommt der Bereich einen neuen Schlüssel.</value></data>
+  <data name="TrustNobody" xml:space="preserve"><value>Vertrauenspersonen sind Personen mit eigenem Konto auf dieser Instanz. Lade zuerst jemanden ein.</value></data>
+  <data name="TrustNote" xml:space="preserve"><value>Notiz</value></data>
+  <data name="TrustProfileEncrypted" xml:space="preserve"><value>Beziehung und Notiz werden in deinem Tresor verschlüsselt; der Server sieht sie nicht.</value></data>
+  <data name="TrustRelationship" xml:space="preserve"><value>Beziehung</value></data>
+  <data name="TrustRelationshipHint" xml:space="preserve"><value>Etwa Tochter, Bruder, Freundin. Nur für dich sichtbar.</value></data>
+  <data name="TrustRemove" xml:space="preserve"><value>Als Vertrauensperson entfernen</value></data>
+  <data name="TrustRemoveConfirm" xml:space="preserve"><value>{0} als Vertrauensperson entfernen? Alle Freigaben für diese Person werden gelöscht. Sofort geteilte Bereiche bekommen einen neuen Schlüssel.</value></data>
+  <data name="TrustSave" xml:space="preserve"><value>Speichern und verschlüsseln</value></data>
+  <data name="TrustSaving" xml:space="preserve"><value>Schlüssel werden für die Person verschlüsselt …</value></data>
+  <data name="TrustStale" xml:space="preserve"><value>Neu speichern nötig</value></data>
+  <data name="TrustText" xml:space="preserve"><value>Lege fest, wer im Ernstfall welche Bereiche sehen darf: wenn du verstorben bist, wenn du handlungsunfähig bist, oder schon heute (sofort teilen, nur Lesen). Dein Browser verschlüsselt dafür die Schlüssel der Bereiche für jede Person einzeln; der Server gibt sie erst heraus, wenn der Fall eintritt.</value></data>
+  <data name="TrustTitle" xml:space="preserve"><value>Vertrauenspersonen</value></data>
+  <data name="TrusteeKeyChanged" xml:space="preserve"><value>Der Schlüssel dieser Person hat sich geändert. myLife verschlüsselt nichts für sie, bis das geklärt ist. Sprich mit der Person und dem Administrator.</value></data>
+  <data name="TrusteeStaleHint" xml:space="preserve"><value>Die Person hat inzwischen einen neuen Schlüssel. Speichere einmal neu, damit die Freigaben für ihn verschlüsselt sind.</value></data>
+  <data name="TrusteeUnconfirmed" xml:space="preserve"><value>Der Schlüssel dieser Person ist noch von niemandem bestätigt, dem du vertraust. Beim Speichern merkt sich dein Browser ihn; ein späterer Austausch fällt dann auf.</value></data>
   <data name="Type_asset" xml:space="preserve"><value>Wertgegenstand / Vermögen</value></data>
   <data name="Type_bankAccount" xml:space="preserve"><value>Bankkonto</value></data>
   <data name="Type_card" xml:space="preserve"><value>Karte</value></data>

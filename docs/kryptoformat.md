@@ -115,6 +115,11 @@ Gegenzeichnung = Signatur(ECDSA des Unterzeichners, Fingerprint, Kontext "endors
 | `invite-secret:{ID}` | Tresorschlüssel | Einladungsgeheimnis der einladenden Person (seit M2.2) |
 | `pin:{ID}` | Tresorschlüssel | gepinnter Fingerprint einer anderen Person (seit M2.2) |
 | `endorsement:{ID}` | ECDSA (Signatur) | Gegenzeichnung des Fingerprints einer Person (seit M2.2) |
+| `object-key:{ID}` | Bereichsschlüssel | eigener Schlüssel eines Briefs; verschlüsselt dessen Inhalt (`object:letter:{ID}`) und Dateischlüssel (seit M2.3) |
+| `trustee-profile:{ID}` | Tresorschlüssel | Beziehung und Notiz zu einer Vertrauensperson (seit M2.3) |
+| `envelope:area:{Eigentümer}:{n}` | ECIES an die Vertrauensperson | Bereichsschlüssel im Umschlag (seit M2.3) |
+| `envelope:letter:{Eigentümer}:{ID}` | ECIES an die Vertrauensperson | Briefschlüssel im Umschlag (seit M2.3) |
+| `grant:{Person}:{Art}:{Ressource}:{Modus}` | ECDSA (Signatur) | Signatur des Eigentümers über einen Umschlag; Art 0 = Bereich, 1 = Brief; Modus 0 = sofort, 1 = verstorben, 2 = handlungsunfähig (seit M2.3) |
 
 IDs sind GUIDs in der Form `D` (klein geschrieben, mit Bindestrichen).
 

@@ -1,0 +1,323 @@
+@page "/trust/{PersonId:guid}"
+@attribute [Authorize]
+@using MyLife.Shared.Trust
+@inherits VaultPageBase
+@inject IStringLocalizer<SharedResource> L
+@inject TrustService Trust
+@inject KeyTrustService Keys
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>@L["AppName"] – @L["TrustTitle"]</PageTitle>
+
+@* Eine Vertrauensperson: Beziehung, Antragsrecht und die Freigaben je Bereich und Modus, Briefe je Empfänger (M2.3). *@
+<MudStack Spacing="3">
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Href="trust" aria-label="@L["Close"]" />
+        <MudText Typo="Typo.h4" HtmlTag="h1">@(_person?.Person.DisplayName ?? L["TrustTitle"])</MudText>
+    </MudStack>
+
+    @if (Loading || _loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (_person is null)
+    {
+        <MudAlert Severity="Severity.Warning">@L["TrustError_trust-not-found"]</MudAlert>
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" Class="mylife-muted">@_person.Person.Email</MudText>
+        @switch (_person.State)
+        {
+            case TrustState.Changed:
+                <MudAlert Severity="Severity.Error" Variant="Variant.Filled" data-testid="trustee-key-changed">@L["TrusteeKeyChanged"]</MudAlert>
+                break;
+            case TrustState.Unconfirmed:
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">@L["TrusteeUnconfirmed"]</MudAlert>
+                break;
+        }
+
+        @if (_existing?.Stale == true && _person.State != TrustState.Changed)
+        {
+            <MudAlert Severity="Severity.Warning">@L["TrusteeStaleHint"]</MudAlert>
+        }
+
+        <MudPaper Outlined Class="pa-4">
+            <MudGrid Spacing="3">
+                <MudItem xs="12" sm="6">
+                    <MudTextField T="string" @bind-Value="_relationship" Label="@L["TrustRelationship"]" Variant="Variant.Outlined" Required MaxLength="100"
+                                  HelperText="@L["TrustRelationshipHint"]" UserAttributes="@RelationshipAttributes" />
+                </MudItem>
+                <MudItem xs="12" sm="6" Class="d-flex align-center">
+                    <MudSwitch T="bool" @bind-Value="_canRequest" Color="Color.Primary" Label="@L["TrustCanRequestLabel"]" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" @bind-Value="_note" Label="@L["TrustNote"]" Variant="Variant.Outlined" Lines="2" MaxLength="1000" />
+                </MudItem>
+            </MudGrid>
+            <MudText Typo="Typo.caption" Class="mylife-muted">@L["TrustProfileEncrypted"]</MudText>
+        </MudPaper>
+
+        <MudText Typo="Typo.h6" HtmlTag="h2">@L["TrustAreasTitle"]</MudText>
+        <MudText Typo="Typo.body2" Class="mylife-muted">@L["TrustAreasText"]</MudText>
+        <MudSimpleTable Dense Hover Elevation="1" Class="mylife-grant-matrix" data-testid="grant-matrix">
+            <thead>
+                <tr>
+                    <th>@L["TrustArea"]</th>
+                    @foreach (var mode in Modes)
+                    {
+                        <th style="text-align: center">
+                            <MudTooltip Text="@L[$"GrantModeHint_{mode}"]">@L[$"GrantMode_{mode}"]</MudTooltip>
+                            <div>
+                                <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="() => ToggleColumn(mode)">@L["TrustAll"]</MudButton>
+                            </div>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var area in ObjectCatalog.Areas.Where(a => a.IsAvailable))
+                {
+                    <tr>
+                        <td>
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudIcon Icon="@AreaIcons.For(area.Number)" Size="Size.Small" />
+                                <span>@Text.Area(area.Number)</span>
+                                <span class="mylife-muted">(@Vault.Current.Count(i => i.Area == area.Number && i.WrappedKey is null))</span>
+                            </MudStack>
+                        </td>
+                        @foreach (var mode in Modes)
+                        {
+                            <td style="text-align: center">
+                                <MudCheckBox T="bool" Value="@_areas.Contains((area.Number, mode))" ValueChanged="@(v => Toggle(area.Number, mode, v))"
+                                             Color="@(mode == GrantMode.Live ? Color.Secondary : Color.Primary)" Dense
+                                             aria-label="@($"{Text.Area(area.Number)} – {L[$"GrantMode_{mode}"]}")"
+                                             data-testid="@($"grant-{area.Number}-{mode}")" />
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+        @if (_areas.Any(a => a.Mode == GrantMode.Live))
+        {
+            <MudAlert Severity="Severity.Info" Dense>@L["TrustLiveHint"]</MudAlert>
+        }
+
+        <MudText Typo="Typo.h6" HtmlTag="h2">@L["TrustLettersTitle"]</MudText>
+        @if (_letters.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Class="mylife-muted">@L["TrustLettersEmpty"]</MudText>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mylife-muted">@L["TrustLettersText"]</MudText>
+            <MudSimpleTable Dense Hover Elevation="1">
+                <thead>
+                    <tr>
+                        <th>@L["TrustLetter"]</th>
+                        @foreach (var mode in LetterModes)
+                        {
+                            <th style="text-align: center">@L[$"GrantMode_{mode}"]</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var letter in _letters)
+                    {
+                        <tr>
+                            <td>
+                                <b>@letter.Title</b>
+                                @if (letter.Payload.Get("recipients") is { Length: > 0 } recipients)
+                                {
+                                    <div class="mylife-muted">@recipients</div>
+                                }
+                            </td>
+                            @foreach (var mode in LetterModes)
+                            {
+                                <td style="text-align: center">
+                                    <MudCheckBox T="bool" Value="@_letterGrants.Contains((letter.Id, mode))" ValueChanged="@(v => ToggleLetter(letter.Id, mode, v))"
+                                                 Color="Color.Primary" Dense aria-label="@($"{letter.Title} – {L[$"GrantMode_{mode}"]}")" />
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        }
+
+        <MudStack Row Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap">
+            <div>
+                @if (_existing is not null)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Outlined.PersonRemove" Disabled="_busy" OnClick="RemoveAsync">
+                        @L["TrustRemove"]
+                    </MudButton>
+                }
+            </div>
+            <MudStack Row Spacing="2">
+                <MudButton Variant="Variant.Text" Href="trust" Disabled="_busy">@L["Cancel"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" OnClick="SaveAsync"
+                           Disabled="@(_busy || _person.State == TrustState.Changed || string.IsNullOrWhiteSpace(_relationship))" data-testid="trustee-save">
+                    @L["TrustSave"]
+                </MudButton>
+            </MudStack>
+        </MudStack>
+        @if (_busy)
+        {
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudProgressCircular Indeterminate Size="Size.Small" />
+                <MudText>@L["TrustSaving"]</MudText>
+            </MudStack>
+        }
+    }
+</MudStack>
+
+@code {
+    private static readonly GrantMode[] Modes = [GrantMode.Death, GrantMode.Incapacity, GrantMode.Live];
+    private static readonly GrantMode[] LetterModes = [GrantMode.Death, GrantMode.Incapacity];
+    private static readonly Dictionary<string, object> RelationshipAttributes = new() { ["data-testid"] = "trustee-relationship" };
+    private readonly HashSet<(int Area, GrantMode Mode)> _areas = [];
+    private readonly HashSet<(Guid Letter, GrantMode Mode)> _letterGrants = [];
+    private PersonTrust? _person;
+    private Trustee? _existing;
+    private List<VaultItem> _letters = [];
+    private string? _relationship;
+    private string? _note;
+    private bool _canRequest;
+    private bool _loading = true;
+    private bool _busy;
+
+    [Parameter] public Guid PersonId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            _person = (await Keys.GetPeopleAsync()).FirstOrDefault(p => p.Person.Id == PersonId);
+            _existing = (await Trust.GetTrusteesAsync()).FirstOrDefault(t => t.Person.Person.Id == PersonId);
+            if (_existing is not null)
+            {
+                _relationship = _existing.Profile.Relationship;
+                _note = _existing.Profile.Note;
+                _canRequest = _existing.CanRequestAccess;
+                _areas.UnionWith(_existing.Areas);
+                _letterGrants.UnionWith(_existing.Letters);
+            }
+        }
+        catch (Exception exception) when (exception is TrustException or FamilyException or HttpRequestException
+                                              or System.Security.Cryptography.CryptographicException or InvalidOperationException)
+        {
+            Snackbar.Add(L["TrustError_trust-failed"], Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    protected override void OnVaultReady() =>
+        _letters = [.. Vault.Current.Where(i => i.Type.Key == "letter").OrderBy(i => i.Title, StringComparer.CurrentCultureIgnoreCase)];
+
+    private void Toggle(int area, GrantMode mode, bool value)
+    {
+        if (value)
+        {
+            _areas.Add((area, mode));
+        }
+        else
+        {
+            _areas.Remove((area, mode));
+        }
+    }
+
+    private void ToggleLetter(Guid letter, GrantMode mode, bool value)
+    {
+        if (value)
+        {
+            _letterGrants.Add((letter, mode));
+        }
+        else
+        {
+            _letterGrants.Remove((letter, mode));
+        }
+    }
+
+    private void ToggleColumn(GrantMode mode)
+    {
+        var areas = ObjectCatalog.Areas.Where(a => a.IsAvailable).Select(a => a.Number).ToList();
+        var all = areas.All(a => _areas.Contains((a, mode)));
+        foreach (var area in areas)
+        {
+            Toggle(area, mode, !all);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_person is null || string.IsNullOrWhiteSpace(_relationship))
+        {
+            return;
+        }
+
+        // Wer „Sofort teilen“ beendet, bekommt einen Hinweis auf den Schlüsselwechsel.
+        var ending = _existing?.Areas.Where(a => a.Mode == GrantMode.Live && !_areas.Contains(a)).ToList() ?? [];
+        if (ending.Count > 0)
+        {
+            var confirmed = await Dialogs.ShowMessageBoxAsync(L["TrustLiveEndTitle"], L["TrustLiveEndText", string.Join(", ", ending.Select(a => Text.Area(a.Area)))],
+                yesText: L["TrustSave"], cancelText: L["Cancel"]);
+            if (confirmed != true)
+            {
+                return;
+            }
+        }
+
+        await RunAsync(async () =>
+        {
+            await Trust.SaveAsync(_person, new TrusteeProfile(_relationship.Trim(), string.IsNullOrWhiteSpace(_note) ? null : _note.Trim()), _canRequest,
+                _areas, _letterGrants, _existing);
+            Snackbar.Add(L["SaveSuccessful"], Severity.Success);
+            Navigation.NavigateTo("trust");
+        });
+    }
+
+    private async Task RemoveAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["TrustRemove"], L["TrustRemoveConfirm", _person!.Person.DisplayName], yesText: L["TrustRemove"], cancelText: L["Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        await RunAsync(async () =>
+        {
+            await Trust.RemoveAsync(_existing!);
+            Navigation.NavigateTo("trust");
+        });
+    }
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        _busy = true;
+        try
+        {
+            await action();
+        }
+        catch (TrustException exception)
+        {
+            Snackbar.Add(L[$"TrustError_{exception.Message}"], Severity.Error);
+        }
+        catch (Exception exception) when (exception is VaultException or FamilyException or HttpRequestException
+                                              or System.Security.Cryptography.CryptographicException or Microsoft.JSInterop.JSException)
+        {
+            Snackbar.Add(L["TrustError_trust-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

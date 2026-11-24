@@ -113,7 +113,7 @@ internal static class VaultEndpoints
     {
         var me = Me(principal);
         var objects = await db.Objects.AsNoTracking().Where(o => o.OwnerId == me).OrderBy(o => o.CreatedAt)
-            .Select(o => new VaultObjectDto(o.Id, o.AreaKey, o.TypeKey, o.Payload, o.SchemaVersion, o.Status, o.CreatedAt, o.UpdatedAt, o.Version, o.IsDeleted, o.DeletedAt))
+            .Select(o => new VaultObjectDto(o.Id, o.AreaKey, o.TypeKey, o.Payload, o.SchemaVersion, o.Status, o.CreatedAt, o.UpdatedAt, o.Version, o.IsDeleted, o.DeletedAt, o.WrappedKey))
             .ToListAsync(cancellationToken);
         return TypedResults.Ok(objects);
     }
@@ -125,7 +125,7 @@ internal static class VaultEndpoints
         var me = Me(principal);
         var type = ObjectCatalog.Find(request.TypeKey);
         if (request.Id == Guid.Empty || type is null || type.Area != request.Area || !IsPayload(request.Payload)
-            || !Enum.IsDefined(request.Status) || request.SchemaVersion is < 1 or > 1000)
+            || !Enum.IsDefined(request.Status) || request.SchemaVersion is < 1 or > 1000 || !IsWrappedObjectKey(request.WrappedKey))
         {
             return ApiProblems.Create(StatusCodes.Status400BadRequest, VaultErrors.Invalid);
         }
@@ -148,6 +148,7 @@ internal static class VaultEndpoints
             AreaKey = request.Area,
             TypeKey = type.Key,
             Payload = request.Payload,
+            WrappedKey = request.WrappedKey,
             SchemaVersion = request.SchemaVersion,
             Status = request.Status,
             CreatedAt = now,
@@ -164,7 +165,7 @@ internal static class VaultEndpoints
         CancellationToken cancellationToken)
     {
         var me = Me(principal);
-        if (!IsPayload(request.Payload) || !Enum.IsDefined(request.Status) || request.SchemaVersion is < 1 or > 1000)
+        if (!IsPayload(request.Payload) || !Enum.IsDefined(request.Status) || request.SchemaVersion is < 1 or > 1000 || !IsWrappedObjectKey(request.WrappedKey))
         {
             return ApiProblems.Create(StatusCodes.Status400BadRequest, VaultErrors.Invalid);
         }
@@ -177,6 +178,16 @@ internal static class VaultEndpoints
 
         db.Entry(entity).Property(o => o.Version).OriginalValue = request.Version;
         entity.Payload = request.Payload;
+        // Ein Objekt bekommt höchstens einmal einen eigenen Schlüssel; danach wechselt er nur über den Bereichswechsel.
+        if (entity.WrappedKey is null && request.WrappedKey is not null)
+        {
+            entity.WrappedKey = request.WrappedKey;
+        }
+        else if (request.WrappedKey is not null && !request.WrappedKey.AsSpan().SequenceEqual(entity.WrappedKey))
+        {
+            return ApiProblems.Create(StatusCodes.Status409Conflict, VaultErrors.Conflict);
+        }
+
         entity.SchemaVersion = request.SchemaVersion;
         entity.Status = request.Status;
         entity.UpdatedAt = time.GetUtcNow();
@@ -472,13 +483,20 @@ internal static class VaultEndpoints
 
     private static bool IsPayload(byte[]? payload) => IsData(payload, VaultLimits.MaxPayloadBytes);
 
+    /// <summary>Kein eigener Schlüssel oder ein verpackter AES-Schlüssel (kryptoformat.md 3).</summary>
+    internal static bool IsWrappedObjectKey(byte[]? wrapped) => wrapped is null || KeyMaterialValidation.IsWrappedSecretKey(wrapped);
+
+    internal static VaultObjectDto ObjectDto(VaultObject o) => ToDto(o);
+
+    internal static DocumentDto DocumentDtoOf(VaultDocument d) => ToDto(d);
+
     /// <summary>AES-GCM-Datensatz der Art „Data“ (kryptoformat.md 3) mit Obergrenze für den Klartext.</summary>
     private static bool IsData(byte[]? data, int maxPlainBytes) =>
         data is { Length: >= 2 + CryptoFormat.NonceLength + CryptoFormat.TagLength } && data.Length <= maxPlainBytes + 2 + CryptoFormat.NonceLength + CryptoFormat.TagLength
         && data[0] == CryptoFormat.CurrentVersion && data[1] == (byte)CryptoKind.Data;
 
     private static VaultObjectDto ToDto(VaultObject o) =>
-        new(o.Id, o.AreaKey, o.TypeKey, o.Payload, o.SchemaVersion, o.Status, o.CreatedAt, o.UpdatedAt, o.Version, o.IsDeleted, o.DeletedAt);
+        new(o.Id, o.AreaKey, o.TypeKey, o.Payload, o.SchemaVersion, o.Status, o.CreatedAt, o.UpdatedAt, o.Version, o.IsDeleted, o.DeletedAt, o.WrappedKey);
 
     private static DocumentDto ToDto(VaultDocument d) =>
         new(d.Id, d.ObjectId, d.WrappedFileKey, d.Metadata, d.CipherSize, d.IsComplete, d.CreatedAt, d.IsDeleted, d.DeletedAt);

@@ -73,6 +73,9 @@ public sealed class VaultClient(HttpClient http)
         await GetAsync<AuditPageDto>(
             string.Create(CultureInfo.InvariantCulture, $"api/vault/audit?page={page}&size={size}"), cancellationToken) ?? new AuditPageDto([], 0);
 
+    public Task RotateAreaAsync(int area, MyLife.Shared.Trust.RotateAreaRequest request, CancellationToken cancellationToken = default) =>
+        SendAsync<object>(HttpMethod.Post, $"api/trust/areas/{area.ToString(CultureInfo.InvariantCulture)}/rotate", request, cancellationToken);
+
     public Task ReportAsync(string action, string? details = null, CancellationToken cancellationToken = default) =>
         SendAsync<object>(HttpMethod.Post, "api/vault/audit", new AuditEventRequest(action, details), cancellationToken);
 
