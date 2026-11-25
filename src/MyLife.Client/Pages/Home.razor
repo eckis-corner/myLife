@@ -81,6 +81,7 @@
             {
                 var state = _states.GetValueOrDefault(area.Number);
                 var count = _counts.GetValueOrDefault(area.Number);
+                var href = area.Number == ObjectCatalog.ChecklistArea ? "checklist" : $"area/{area.Number}";
                 <MudItem xs="12" sm="6" md="4">
                     <MudCard Elevation="1" Class="mylife-area-card" data-testid="@($"area-tile-{area.Number}")">
                         <MudCardHeader>
@@ -88,7 +89,7 @@
                                 <MudAvatar Color="Color.Primary" Variant="Variant.Outlined"><MudIcon Icon="@AreaIcons.For(area.Number)" /></MudAvatar>
                             </CardHeaderAvatar>
                             <CardHeaderContent>
-                                <MudLink Href="@($"area/{area.Number}")" Typo="Typo.subtitle1" Color="Color.Inherit"><b>@Text.Area(area.Number)</b></MudLink>
+                                <MudLink Href="@href" Typo="Typo.subtitle1" Color="Color.Inherit"><b>@Text.Area(area.Number)</b></MudLink>
                                 <MudText Typo="Typo.body2" Class="mylife-muted">@L["HomeObjectCount", count]</MudText>
                                 @if (_dueAreas.Contains(area.Number))
                                 {
@@ -106,7 +107,7 @@
                             </MudText>
                         </MudCardContent>
                         <MudCardActions>
-                            <MudButton Variant="Variant.Text" Href="@($"area/{area.Number}")">@L["Open"]</MudButton>
+                            <MudButton Variant="Variant.Text" Href="@href">@L["Open"]</MudButton>
                             <MudSpacer />
                             <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.TaskAlt" Disabled="_busy"
                                        OnClick="() => MarkReviewedAsync(area.Number)" data-testid="@($"area-reviewed-{area.Number}")">

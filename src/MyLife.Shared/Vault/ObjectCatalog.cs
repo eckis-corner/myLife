@@ -52,6 +52,12 @@ public static class ObjectCatalog
         ["organDecision"] = ["yes", "no", "partial", "delegated"],
         ["employmentKind"] = ["employed", "civilServant", "selfEmployed", "retired"],
         ["pensionKind"] = ["statutory", "company", "riester", "ruerup", "civilService", "professional"],
+        ["checklistPhase"] = ["first24h", "firstWeek", "firstMonth", "later"],
+        ["checklistArea"] =
+        [
+            "aboutMe", "banking", "cards", "loans", "insurance", "contracts", "documents", "property", "digital", "passwordManager",
+            "contacts", "wishes", "income",
+        ],
         ["wish"] =
         [
             "close", "cancel", "takeOver", "keepRunning", "claim", "sell", "handOver", "keep", "delete", "memorialize",
@@ -73,7 +79,7 @@ public static class ObjectCatalog
         new(9, "passwordManager"),
         new(10, "contacts"),
         new(11, "wishes"),
-        new(ChecklistArea, "checklist") { IsAvailable = false },
+        new(ChecklistArea, "checklist"),
         new(13, "income"),
     ];
 
@@ -87,7 +93,10 @@ public static class ObjectCatalog
 
     public static IEnumerable<ObjectTypeDefinition> TypesIn(int area) => Types.Where(t => t.Area == area);
 
-    /// <summary>Gilt ein Bereich als Ablage für Objekte (0–11 und 13)?</summary>
+    /// <summary>Bereich zu einem Wert der Auswahlliste <c>checklistArea</c> (dem Schlüssel des Bereichs).</summary>
+    public static int? AreaByKey(string? key) => Areas.FirstOrDefault(a => a.Key == key)?.Number;
+
+    /// <summary>Gilt ein Bereich als Ablage für Objekte (0–13, seit M3.2 auch die Checkliste)?</summary>
     public static bool IsUsableArea(int area) => FindArea(area) is { IsAvailable: true };
 
     private static FieldDefinition Text(string key, bool required = false) => new(key, FieldType.Text) { Required = required };
@@ -264,6 +273,13 @@ public static class ObjectCatalog
         new("otherWish", 11,
         [
             Long("wishText", true),
+        ]),
+
+        // Bereich 12 – Checkliste für die Hinterbliebenen (M3.2): Aufgabe mit Phase und Regel für verknüpfte Einträge
+        new("task", ChecklistArea,
+        [
+            Choice("checklistPhase", "checklistPhase", true), Long("taskText"), Text("responsible"),
+            Choice("linkedArea", "checklistArea"), Choice("linkedWish", "wish") with { HasHint = true },
         ]),
 
         // Bereich 13 – Einkommen, Rente & Steuern

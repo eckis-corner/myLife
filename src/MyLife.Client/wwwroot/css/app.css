@@ -340,3 +340,8 @@ h1:focus {
 .mylife-reading-item { padding: 1rem 0; border-top: 1px solid var(--mud-palette-lines-default); }
 .mylife-reading-item:first-of-type { border-top: none; }
 .mylife-reading-hint { opacity: 0.85; }
+
+/* Checkliste (M3.2): erledigte Aufgaben treten zurück. */
+.mylife-task-done {
+    opacity: .7;
+}

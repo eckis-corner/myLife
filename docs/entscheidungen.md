@@ -181,6 +181,16 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 113 | Erinnerungsmail | Eine Mail je Durchlauf mit allgemeinen Zeilen („N Bereiche wurden seit mehr als M Monaten nicht geprüft“, „Ein Ablaufdatum oder eine Wiedervorlage rückt näher“) und dem Link zur Instanz, ohne Titel oder Inhalte. Keine Mails, wenn sie abgeschaltet sind, für gesperrte Konten und nach der Freigabe „verstorben“. Der Dienst prüft stündlich. |
 | 114 | Aktualität des Termins | Der Browser meldet den Termin bei jedem Laden und jeder Änderung des Tresors. Meldet sich jemand lange nicht an, kennt der Server nur den einen gemeldeten Termin; die Prüf-Erinnerung läuft trotzdem weiter. Die Seite „Erinnerungen“ zeigt, welches Datum der Server kennt. |
 
+## Runde 14 (25.11.2026, Umsetzung M3.2)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 115 | Checkliste als Bereich 12 | Aufgaben sind gewöhnliche, verschlüsselte Einträge des Objekttyps „Aufgabe“ (Phase, was zu tun ist, zuständig, zugehöriger Bereich, Wunsch). Freigegeben wird die Checkliste wie jeder Bereich; Notfallordner, Notfallpaket und JSON-Export enthalten sie. Im Menü und auf der Übersicht öffnet Bereich 12 die Seite „Checkliste“ mit den Phasen. |
+| 116 | Vorlage für Deutschland | 24 Aufgaben in vier Phasen (erste 24 Stunden, erste Woche, erster Monat, später), von der Ärztin bis zum Finanzamt. „Vorlage übernehmen“ legt sie in der Sprache der Oberfläche im eigenen Tresor an; danach ändert, ergänzt oder löscht der Eigentümer sie frei. Fristen sind Richtwerte (etwa Lebens- und Unfallversicherung 24–72 Stunden, Ausschlagung 6 Wochen, Rentenvorschuss 30 Tage, Anzeige beim Finanzamt 3 Monate), keine Rechtsberatung. Texte in `tools/resources_checklist.py`. |
+| 117 | Verknüpfte Einträge | Eine Aufgabe listet alle aktiven Einträge eines Bereichs auf, auf Wunsch nur die mit einem bestimmten Wunsch (etwa Verträge mit „kündigen“), dazu einzeln verknüpfte Einträge. Vertrauenspersonen sehen nur Einträge aus Bereichen, die sie sehen dürfen; im Lesemodus nur aus schon aufgeschlagenen Bereichen, und „Ansehen“ schlägt den Bereich auf, damit das Protokoll ehrlich bleibt (101). |
+| 118 | Gemeinsames Abhaken | Je Aufgabe gibt es einen Stand für alle: erledigt von wem und wann. Abhaken und zurücknehmen dürfen der Eigentümer und jede Vertrauensperson, der die Checkliste gerade ausgeliefert wird (sofort geteilt oder freigegeben); das Protokoll des Eigentümers hält es fest. **Abweichung von Architektur 6.1:** keine Notiz zum Haken, weil sie beim Schlüsselwechsel des Bereichs mit umgeschlüsselt werden müsste. |
+| 119 | Lesemodus mit Checkliste | Ist die Checkliste freigegeben, ist sie der Schritt direkt nach den Briefen; die Bereiche folgen wie bisher (100), damit nichts verborgen bleibt. Ohne Freigabe der Checkliste bleibt der Weg entlang der Bereiche. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

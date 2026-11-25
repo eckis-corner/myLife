@@ -1,3 +1,4 @@
+using MyLife.Shared.Checklist;
 using System.Xml.Linq;
 using MyLife.Client.Services;
 using MyLife.Shared.Vault;
@@ -22,13 +23,31 @@ public sealed class CatalogTests
             Assert.Equal(type.Fields.Count, type.Fields.Select(f => f.Key).Distinct().Count());
         }
 
-        // Jeder nutzbare Bereich hat mindestens einen Objekttyp; die Checkliste folgt mit M3.
-        foreach (var area in ObjectCatalog.Areas.Where(a => a.IsAvailable))
+        // Jeder Bereich hat mindestens einen Objekttyp; die Checkliste (seit M3.2) nur die Aufgabe.
+        foreach (var area in ObjectCatalog.Areas)
         {
+            Assert.True(area.IsAvailable);
             Assert.NotEmpty(ObjectCatalog.TypesIn(area.Number));
         }
 
-        Assert.Empty(ObjectCatalog.TypesIn(ObjectCatalog.ChecklistArea));
+        Assert.Equal(["task"], ObjectCatalog.TypesIn(ObjectCatalog.ChecklistArea).Select(t => t.Key));
+    }
+
+    [Fact]
+    public void TheChecklistTemplateUsesOnlyKnownPhasesAreasAndWishes()
+    {
+        var areas = ObjectCatalog.OptionSets["checklistArea"];
+        Assert.All(areas, key => Assert.True(ObjectCatalog.AreaByKey(key) is { } area && area != ObjectCatalog.ChecklistArea, key));
+        Assert.Equal(ChecklistTemplate.Tasks.Count, ChecklistTemplate.Tasks.Select(t => t.Id).Distinct().Count());
+        foreach (var task in ChecklistTemplate.Tasks)
+        {
+            Assert.Contains(task.Phase, ObjectCatalog.OptionSets["checklistPhase"]);
+            Assert.True(task.LinkedArea is null || areas.Contains(task.LinkedArea), task.Id);
+            Assert.True(task.LinkedWish is null || ObjectCatalog.OptionSets["wish"].Contains(task.LinkedWish), task.Id);
+        }
+
+        // Jede Phase kommt vor.
+        Assert.Equal(ObjectCatalog.OptionSets["checklistPhase"], ChecklistTemplate.Tasks.Select(t => t.Phase).Distinct());
     }
 
     [Fact]

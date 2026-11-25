@@ -153,6 +153,7 @@ app.MapFamilyEndpoints();
 app.MapTrustEndpoints();
 app.MapEmergencyEndpoints();
 app.MapReminderEndpoints();
+app.MapChecklistEndpoints();
 
 app.MapStaticAssets();
 // Die Seiten sind nur die leere Hülle (kein Prerendering); [Authorize] prüft der Client. Ohne AllowAnonymous

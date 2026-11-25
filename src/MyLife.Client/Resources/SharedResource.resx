@@ -126,7 +126,7 @@
   <data name="AreaText_1" xml:space="preserve"><value>Konten, Depots und Schließfächer mit Vollmachten.</value></data>
   <data name="AreaText_10" xml:space="preserve"><value>Steuerberatung, Notariat, Ärzte und alle, die benachrichtigt werden sollen.</value></data>
   <data name="AreaText_11" xml:space="preserve"><value>Bestattung, Organspende, Haustiere und persönliche Briefe.</value></data>
-  <data name="AreaText_12" xml:space="preserve"><value>Aufgaben für die Hinterbliebenen (folgt mit M3).</value></data>
+  <data name="AreaText_12" xml:space="preserve"><value>Was die Hinterbliebenen wann tun sollten, mit den passenden Einträgen.</value></data>
   <data name="AreaText_13" xml:space="preserve"><value>Arbeitgeber, Altersvorsorge und Steuern.</value></data>
   <data name="AreaText_2" xml:space="preserve"><value>Karten ohne vollständige Nummer, ohne PIN und ohne Prüfziffer.</value></data>
   <data name="AreaText_3" xml:space="preserve"><value>Was du schuldest und was dir geschuldet wird.</value></data>
@@ -179,6 +179,8 @@
   <data name="Audit_area-created" xml:space="preserve"><value>Bereich angelegt</value></data>
   <data name="Audit_area-key-rotated" xml:space="preserve"><value>Neuer Bereichsschlüssel</value></data>
   <data name="Audit_area-reviewed" xml:space="preserve"><value>Bereich geprüft</value></data>
+  <data name="Audit_checklist-done" xml:space="preserve"><value>Aufgabe abgehakt</value></data>
+  <data name="Audit_checklist-undone" xml:space="preserve"><value>Haken zurückgenommen</value></data>
   <data name="Audit_document-deleted" xml:space="preserve"><value>Dokument in den Papierkorb</value></data>
   <data name="Audit_document-downloaded" xml:space="preserve"><value>Dokument abgerufen</value></data>
   <data name="Audit_document-purged" xml:space="preserve"><value>Dokument endgültig gelöscht</value></data>
@@ -247,6 +249,70 @@
   <data name="BannerRequest" xml:space="preserve"><value>Achtung: Zugang zu deinen Daten wurde beantragt von {0}.</value></data>
   <data name="BannerTrustedReleased" xml:space="preserve"><value>Freigegeben für dich: {0}.</value></data>
   <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="ChecklistAdopt" xml:space="preserve"><value>Vorlage übernehmen</value></data>
+  <data name="ChecklistAdopted" xml:space="preserve"><value>{0} Aufgaben übernommen.</value></data>
+  <data name="ChecklistDone" xml:space="preserve"><value>Erledigt</value></data>
+  <data name="ChecklistDoneBy" xml:space="preserve"><value>Erledigt von {0} am {1}</value></data>
+  <data name="ChecklistError_checklist-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
+  <data name="ChecklistError_checklist-not-found" xml:space="preserve"><value>Nicht gefunden.</value></data>
+  <data name="ChecklistIntro" xml:space="preserve"><value>Was ist zu tun, wenn dir etwas zustößt? Die Checkliste führt deine Vertrauenspersonen Schritt für Schritt: erste 24 Stunden, erste Woche, erster Monat, später. Jede Aufgabe zeigt die passenden Einträge, etwa alle Verträge, die gekündigt werden sollen. Deine Vertrauenspersonen haken gemeinsam ab.</value></data>
+  <data name="ChecklistLinkedArea" xml:space="preserve"><value>Dazu: {0}</value></data>
+  <data name="ChecklistLinkedAreaWish" xml:space="preserve"><value>Dazu: {0} mit dem Wunsch „{1}“</value></data>
+  <data name="ChecklistNewTask" xml:space="preserve"><value>Neue Aufgabe</value></data>
+  <data name="ChecklistOpenArea" xml:space="preserve"><value>Ansehen</value></data>
+  <data name="ChecklistResponsible" xml:space="preserve"><value>Zuständig: {0}</value></data>
+  <data name="ChecklistShareHint" xml:space="preserve"><value>Damit deine Vertrauenspersonen die Checkliste im Lesemodus sehen, gib sie ihnen unter „Vertrauenspersonen“ frei wie jeden anderen Bereich. Verknüpfte Einträge sehen sie nur aus Bereichen, die sie auch sehen dürfen.</value></data>
+  <data name="ChecklistStartEmpty" xml:space="preserve"><value>Ohne Vorlage beginnen</value></data>
+  <data name="ChecklistTemplateText" xml:space="preserve"><value>{0} Aufgaben von der Ärztin bis zum Finanzamt, mit Fristen als Richtwert. Sie landen in deinem Tresor, und du änderst, ergänzt oder löschst sie wie jeden anderen Eintrag. Keine Rechtsberatung.</value></data>
+  <data name="ChecklistTemplateTitle" xml:space="preserve"><value>Vorlage für Deutschland</value></data>
+  <data name="ChecklistTemplate_banks_text" xml:space="preserve"><value>Mit Sterbeurkunde und Vollmacht oder Erbnachweis. Daueraufträge prüfen; laufende Kosten wie Miete müssen weiter bezahlt werden.</value></data>
+  <data name="ChecklistTemplate_banks_title" xml:space="preserve"><value>Banken informieren</value></data>
+  <data name="ChecklistTemplate_cancelContracts_text" xml:space="preserve"><value>Diese Verträge sollen gekündigt werden. Viele haben ein Sonderkündigungsrecht im Todesfall; die Sterbeurkunde beilegen.</value></data>
+  <data name="ChecklistTemplate_cancelContracts_title" xml:space="preserve"><value>Verträge kündigen</value></data>
+  <data name="ChecklistTemplate_cancelInsurance_text" xml:space="preserve"><value>Sachversicherungen wie Hausrat oder Haftpflicht gehen oft auf die Erben über; prüfen, was bleiben soll.</value></data>
+  <data name="ChecklistTemplate_cancelInsurance_title" xml:space="preserve"><value>Versicherungen kündigen oder umschreiben</value></data>
+  <data name="ChecklistTemplate_cards_text" xml:space="preserve"><value>Bei Verlust oder Missbrauch sofort sperren lassen: Sperr-Notruf 116 116.</value></data>
+  <data name="ChecklistTemplate_cards_title" xml:space="preserve"><value>Kreditkarten kündigen</value></data>
+  <data name="ChecklistTemplate_deathCertificate_text" xml:space="preserve"><value>Beim Standesamt des Sterbeorts, meist innerhalb von drei Werktagen; oft erledigt das das Bestattungsinstitut. Mehrere Exemplare bestellen: Banken, Versicherungen und Behörden brauchen sie.</value></data>
+  <data name="ChecklistTemplate_deathCertificate_title" xml:space="preserve"><value>Sterbeurkunde beantragen</value></data>
+  <data name="ChecklistTemplate_digital_text" xml:space="preserve"><value>Konten löschen, in den Gedenkzustand versetzen oder übergeben, wie gewünscht; Geräte zurücksetzen oder Daten sichern.</value></data>
+  <data name="ChecklistTemplate_digital_title" xml:space="preserve"><value>Digitalen Nachlass regeln</value></data>
+  <data name="ChecklistTemplate_doctor_text" xml:space="preserve"><value>Bei einem Tod zu Hause die Hausarztpraxis oder den ärztlichen Bereitschaftsdienst (116 117) rufen; sie stellen die Todesbescheinigung aus. Im Krankenhaus oder Pflegeheim kümmert sich das Personal darum. Es gibt keinen Grund zur Eile: Abschied nehmen ist erlaubt.</value></data>
+  <data name="ChecklistTemplate_doctor_title" xml:space="preserve"><value>Ärztin oder Arzt rufen</value></data>
+  <data name="ChecklistTemplate_documents_text" xml:space="preserve"><value>Personalausweis, Geburtsurkunde, gegebenenfalls Heiratsurkunde, Testament und Vollmachten. Wo die Originale liegen, steht bei den Urkunden.</value></data>
+  <data name="ChecklistTemplate_documents_title" xml:space="preserve"><value>Wichtige Unterlagen zusammentragen</value></data>
+  <data name="ChecklistTemplate_employer_text" xml:space="preserve"><value>Arbeitgeber, Personalnummer und Gehaltskonto stehen bei Einkommen, Rente &amp; Steuern.</value></data>
+  <data name="ChecklistTemplate_employer_title" xml:space="preserve"><value>Arbeitgeber oder Dienstherrn informieren</value></data>
+  <data name="ChecklistTemplate_family_text" xml:space="preserve"><value>Wer benachrichtigt werden soll, steht bei den wichtigen Kontakten. Holt euch Unterstützung; ihr müsst das nicht allein tun.</value></data>
+  <data name="ChecklistTemplate_family_title" xml:space="preserve"><value>Angehörige und enge Freunde benachrichtigen</value></data>
+  <data name="ChecklistTemplate_funeral_text" xml:space="preserve"><value>Wünsche zu Trauerfeier, Musik, Traueranzeige und Gästen stehen bei den persönlichen Wünschen.</value></data>
+  <data name="ChecklistTemplate_funeral_title" xml:space="preserve"><value>Trauerfeier und Traueranzeige planen</value></data>
+  <data name="ChecklistTemplate_grave_text" xml:space="preserve"><value>Grabstein, Grabpflege und Nutzungsrechte der Grabstätte klären.</value></data>
+  <data name="ChecklistTemplate_grave_title" xml:space="preserve"><value>Grabstätte und Grabpflege</value></data>
+  <data name="ChecklistTemplate_healthInsurance_text" xml:space="preserve"><value>Die Krankenkasse beendet die Versicherung; mitversicherte Angehörige brauchen gegebenenfalls eine eigene.</value></data>
+  <data name="ChecklistTemplate_healthInsurance_title" xml:space="preserve"><value>Krankenkasse und Pflegekasse informieren</value></data>
+  <data name="ChecklistTemplate_home_text" xml:space="preserve"><value>Wohnung sichern, Haustiere versorgen, verderbliche Lebensmittel entsorgen, Post sammeln.</value></data>
+  <data name="ChecklistTemplate_home_title" xml:space="preserve"><value>Wohnung, Haustiere und Pflanzen versorgen</value></data>
+  <data name="ChecklistTemplate_inheritance_text" xml:space="preserve"><value>Die Frist zum Ausschlagen beträgt in der Regel sechs Wochen ab Kenntnis. Bei Schulden oder Unklarheiten früh beraten lassen, etwa beim Nachlassgericht oder Notariat. Für Banken und Grundbuch braucht ihr oft einen Erbschein.</value></data>
+  <data name="ChecklistTemplate_inheritance_title" xml:space="preserve"><value>Erbe annehmen oder ausschlagen</value></data>
+  <data name="ChecklistTemplate_lifeInsurance_text" xml:space="preserve"><value>Diese Versicherungen wollen den Todesfall sehr schnell wissen, oft innerhalb von 24 bis 72 Stunden, bei Unfallversicherungen meist 48 Stunden. Ein kurzer Anruf oder eine Mail genügt zunächst; Unterlagen folgen später.</value></data>
+  <data name="ChecklistTemplate_lifeInsurance_title" xml:space="preserve"><value>Lebens- und Unfallversicherungen melden</value></data>
+  <data name="ChecklistTemplate_loans_text" xml:space="preserve"><value>Gläubiger informieren; eine Restschuldversicherung kann einspringen. Bei hohen Schulden an das Ausschlagen denken.</value></data>
+  <data name="ChecklistTemplate_loans_title" xml:space="preserve"><value>Kredite und Verbindlichkeiten klären</value></data>
+  <data name="ChecklistTemplate_passwordManager_text" xml:space="preserve"><value>Wie ihr an die Zugänge kommt, steht beim Passwortmanager. Viele Anbieter haben eine Wartezeit für den Notfallzugang.</value></data>
+  <data name="ChecklistTemplate_passwordManager_title" xml:space="preserve"><value>Zugang zum Passwortmanager</value></data>
+  <data name="ChecklistTemplate_pension_text" xml:space="preserve"><value>Hinterbliebenenrente beantragen. Wer innerhalb von 30 Tagen beim Renten Service einen Vorschuss beantragt, bekommt für drei Monate die Rente der verstorbenen Person weiter.</value></data>
+  <data name="ChecklistTemplate_pension_title" xml:space="preserve"><value>Rentenversicherung und Versorgungswerke informieren</value></data>
+  <data name="ChecklistTemplate_property_text" xml:space="preserve"><value>Grundbuch berichtigen lassen, Fahrzeuge ummelden oder abmelden, Wertgegenstände wie gewünscht verteilen.</value></data>
+  <data name="ChecklistTemplate_property_title" xml:space="preserve"><value>Immobilien und Fahrzeuge</value></data>
+  <data name="ChecklistTemplate_takeOverContracts_text" xml:space="preserve"><value>Diese Verträge sollen übernommen werden, etwa Strom, Internet oder Miete.</value></data>
+  <data name="ChecklistTemplate_takeOverContracts_title" xml:space="preserve"><value>Verträge übernehmen</value></data>
+  <data name="ChecklistTemplate_taxes_text" xml:space="preserve"><value>Für das Todesjahr ist meist noch eine Steuererklärung nötig. Eine Erbschaft dem Finanzamt innerhalb von drei Monaten melden, wenn das nicht schon über Gericht oder Notariat geschieht.</value></data>
+  <data name="ChecklistTemplate_taxes_title" xml:space="preserve"><value>Finanzamt und Steuern</value></data>
+  <data name="ChecklistTemplate_undertaker_text" xml:space="preserve"><value>Das Bestattungsinstitut übernimmt die Überführung und viele Formalitäten, oft auch die Sterbeurkunde. Wünsche zur Bestattung und eine Bestattungsvorsorge stehen bei den persönlichen Wünschen.</value></data>
+  <data name="ChecklistTemplate_undertaker_title" xml:space="preserve"><value>Bestattungsinstitut beauftragen</value></data>
+  <data name="ChecklistTemplate_will_text" xml:space="preserve"><value>Wer ein Testament findet, muss es unverzüglich beim Nachlassgericht (Amtsgericht) abgeben, auch wenn es ungültig erscheint. Ein hinterlegtes Testament eröffnet das Gericht von sich aus.</value></data>
+  <data name="ChecklistTemplate_will_title" xml:space="preserve"><value>Testament beim Nachlassgericht abgeben</value></data>
   <data name="Close" xml:space="preserve"><value>Schließen</value></data>
   <data name="CommonAddCustomField" xml:space="preserve"><value>Zusatzfeld hinzufügen</value></data>
   <data name="CommonContact" xml:space="preserve"><value>Ansprechpartner</value></data>
@@ -254,7 +320,7 @@
   <data name="CommonCustomFields" xml:space="preserve"><value>Zusatzfelder</value></data>
   <data name="CommonCustomLabel" xml:space="preserve"><value>Bezeichnung</value></data>
   <data name="CommonCustomValue" xml:space="preserve"><value>Wert</value></data>
-  <data name="CommonExpiryHelp" xml:space="preserve"><value>Grundlage für Erinnerungen (folgen mit M3).</value></data>
+  <data name="CommonExpiryHelp" xml:space="preserve"><value>Grundlage für Erinnerungen.</value></data>
   <data name="CommonFollowUp" xml:space="preserve"><value>Wiedervorlage</value></data>
   <data name="CommonFollowUpHelp" xml:space="preserve"><value>Optional. Ab 14 Tagen vorher auf der Übersicht.</value></data>
   <data name="CommonFollowUpNote" xml:space="preserve"><value>Hinweis zur Wiedervorlage</value></data>
@@ -451,6 +517,7 @@
   <data name="FieldError_url" xml:space="preserve"><value>Keine gültige Adresse (https://…)</value></data>
   <data name="FieldHint_deathNotificationPeriod" xml:space="preserve"><value>Bei Lebensversicherungen oft 24 bis 72 Stunden.</value></data>
   <data name="FieldHint_last4" xml:space="preserve"><value>Nie die vollständige Nummer, PIN oder Prüfziffer.</value></data>
+  <data name="FieldHint_linkedWish" xml:space="preserve"><value>Zum Beispiel „Verträge &amp; Abos“ mit „kündigen“: Die Aufgabe listet dann alle Verträge auf, die gekündigt werden sollen.</value></data>
   <data name="FieldHint_masterPasswordLocation" xml:space="preserve"><value>Nur der Ort, nicht das Passwort.</value></data>
   <data name="FieldHint_recipients" xml:space="preserve"><value>Vertrauenspersonen als Empfänger mit eigener Freigabe folgen mit M2. Bis dahin hier die Namen.</value></data>
   <data name="FieldHint_seedLocation" xml:space="preserve"><value>Nur den Ort, nie die Seed-Phrase selbst.</value></data>
@@ -485,6 +552,7 @@
   <data name="Field_cardholder" xml:space="preserve"><value>Karteninhaber</value></data>
   <data name="Field_caretaker" xml:space="preserve"><value>Wer es übernehmen soll</value></data>
   <data name="Field_ceremony" xml:space="preserve"><value>Trauerfeier</value></data>
+  <data name="Field_checklistPhase" xml:space="preserve"><value>Wann</value></data>
   <data name="Field_coHolder" xml:space="preserve"><value>Mitinhaber</value></data>
   <data name="Field_collateral" xml:space="preserve"><value>Sicherheit</value></data>
   <data name="Field_company" xml:space="preserve"><value>Firma</value></data>
@@ -549,6 +617,8 @@
   <data name="Field_legalDocument_number" xml:space="preserve"><value>Nummer / Aktenzeichen</value></data>
   <data name="Field_letterText" xml:space="preserve"><value>Text</value></data>
   <data name="Field_licensePlate" xml:space="preserve"><value>Kennzeichen</value></data>
+  <data name="Field_linkedArea" xml:space="preserve"><value>Zugehörige Einträge aus dem Bereich</value></data>
+  <data name="Field_linkedWish" xml:space="preserve"><value>Nur Einträge mit dem Wunsch</value></data>
   <data name="Field_loanDirection" xml:space="preserve"><value>Richtung</value></data>
   <data name="Field_loanKind" xml:space="preserve"><value>Art</value></data>
   <data name="Field_mainDueDate" xml:space="preserve"><value>Hauptfälligkeit</value></data>
@@ -604,6 +674,7 @@
   <data name="Field_religion" xml:space="preserve"><value>Konfession</value></data>
   <data name="Field_rentIncome" xml:space="preserve"><value>Miete</value></data>
   <data name="Field_rented" xml:space="preserve"><value>Vermietet</value></data>
+  <data name="Field_responsible" xml:space="preserve"><value>Zuständig</value></data>
   <data name="Field_salaryAccount" xml:space="preserve"><value>Gehalts- oder Rentenkonto</value></data>
   <data name="Field_seedLocation" xml:space="preserve"><value>Aufbewahrungsort der Seed-Phrase</value></data>
   <data name="Field_service" xml:space="preserve"><value>Dienst</value></data>
@@ -615,6 +686,7 @@
   <data name="Field_storageLocation" xml:space="preserve"><value>Aufbewahrungsort</value></data>
   <data name="Field_sumInsured" xml:space="preserve"><value>Versicherungssumme</value></data>
   <data name="Field_survivorBenefit" xml:space="preserve"><value>Hinterbliebenenleistung</value></data>
+  <data name="Field_taskText" xml:space="preserve"><value>Was zu tun ist</value></data>
   <data name="Field_taxAdvisor" xml:space="preserve"><value>Steuerberater</value></data>
   <data name="Field_taxId" xml:space="preserve"><value>Steuer-ID</value></data>
   <data name="Field_taxNumber" xml:space="preserve"><value>Steuernummer</value></data>
@@ -788,6 +860,23 @@
   <data name="Option_cardKind_other" xml:space="preserve"><value>Sonstige</value></data>
   <data name="Option_cardKind_prepaid" xml:space="preserve"><value>Prepaid</value></data>
   <data name="Option_cardKind_visa" xml:space="preserve"><value>Visa</value></data>
+  <data name="Option_checklistArea_aboutMe" xml:space="preserve"><value>Über mich</value></data>
+  <data name="Option_checklistArea_banking" xml:space="preserve"><value>Bankkonten &amp; Depots</value></data>
+  <data name="Option_checklistArea_cards" xml:space="preserve"><value>Kreditkarten</value></data>
+  <data name="Option_checklistArea_contacts" xml:space="preserve"><value>Wichtige Kontakte</value></data>
+  <data name="Option_checklistArea_contracts" xml:space="preserve"><value>Verträge &amp; Abos</value></data>
+  <data name="Option_checklistArea_digital" xml:space="preserve"><value>Digitaler Nachlass</value></data>
+  <data name="Option_checklistArea_documents" xml:space="preserve"><value>Urkunden &amp; Dokumente</value></data>
+  <data name="Option_checklistArea_income" xml:space="preserve"><value>Einkommen, Rente &amp; Steuern</value></data>
+  <data name="Option_checklistArea_insurance" xml:space="preserve"><value>Versicherungen</value></data>
+  <data name="Option_checklistArea_loans" xml:space="preserve"><value>Kredite &amp; Darlehen</value></data>
+  <data name="Option_checklistArea_passwordManager" xml:space="preserve"><value>Passwortmanager</value></data>
+  <data name="Option_checklistArea_property" xml:space="preserve"><value>Immobilien, Fahrzeuge &amp; Vermögen</value></data>
+  <data name="Option_checklistArea_wishes" xml:space="preserve"><value>Persönliche Wünsche</value></data>
+  <data name="Option_checklistPhase_first24h" xml:space="preserve"><value>Erste 24 Stunden</value></data>
+  <data name="Option_checklistPhase_firstMonth" xml:space="preserve"><value>Erster Monat</value></data>
+  <data name="Option_checklistPhase_firstWeek" xml:space="preserve"><value>Erste Woche</value></data>
+  <data name="Option_checklistPhase_later" xml:space="preserve"><value>Später</value></data>
   <data name="Option_contactRole_bankAdvisor" xml:space="preserve"><value>Bankberater</value></data>
   <data name="Option_contactRole_employer" xml:space="preserve"><value>Arbeitgeber</value></data>
   <data name="Option_contactRole_friend" xml:space="preserve"><value>Freund / Bekannter</value></data>
@@ -983,6 +1072,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="ReadingHint_1" xml:space="preserve"><value>Konten, Depots und Schließfächer, mit Vollmachten und Wünschen dazu.</value></data>
   <data name="ReadingHint_10" xml:space="preserve"><value>Wer benachrichtigt werden soll und wer helfen kann: Ärzte, Notariat, Steuerberatung.</value></data>
   <data name="ReadingHint_11" xml:space="preserve"><value>Wünsche zur Bestattung, zur Organspende, zu Haustieren und weitere persönliche Wünsche. Lies sie zuerst; manches davon ist früh wichtig.</value></data>
+  <data name="ReadingHint_12" xml:space="preserve"><value>Was zu tun ist, Schritt für Schritt. Hakt gemeinsam ab, was erledigt ist; alle sehen denselben Stand.</value></data>
   <data name="ReadingHint_13" xml:space="preserve"><value>Arbeitgeber, Rente, Altersvorsorge und Steuern.</value></data>
   <data name="ReadingHint_2" xml:space="preserve"><value>Kreditkarten, die gesperrt oder gekündigt werden sollten.</value></data>
   <data name="ReadingHint_3" xml:space="preserve"><value>Kredite und Darlehen, offene Forderungen in beide Richtungen.</value></data>
@@ -1206,6 +1296,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="Type_pet" xml:space="preserve"><value>Haustier</value></data>
   <data name="Type_property" xml:space="preserve"><value>Immobilie</value></data>
   <data name="Type_safeDeposit" xml:space="preserve"><value>Schließfach</value></data>
+  <data name="Type_task" xml:space="preserve"><value>Aufgabe</value></data>
   <data name="Type_taxes" xml:space="preserve"><value>Steuern</value></data>
   <data name="Type_vehicle" xml:space="preserve"><value>Fahrzeug</value></data>
   <data name="UnitDays" xml:space="preserve"><value>Tage</value></data>

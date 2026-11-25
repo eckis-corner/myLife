@@ -173,6 +173,10 @@ public static class AuditActions
     public const string ReminderSent = "reminder-sent";
     public const string ReminderSettingsChanged = "reminder-settings-changed";
 
+    // Checkliste (M3.2)
+    public const string ChecklistDone = "checklist-done";
+    public const string ChecklistUndone = "checklist-undone";
+
     /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
     public static bool IsSystem(string action) =>
         action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch or EmergencyReleased or EmergencyRevoked

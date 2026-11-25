@@ -35,7 +35,7 @@ public sealed record ReadingBook(SharedOwner Owner, bool Death, bool Incapacity,
 public sealed class ReadingService(SharedService shared)
 {
     /// <summary>Reihenfolge der Bereiche im Ernstfall (ohne Checkliste 12, die folgt mit M3).</summary>
-    public static IReadOnlyList<int> Order { get; } = [11, 10, 0, 6, 4, 1, 2, 3, 13, 5, 7, 8, 9];
+    public static IReadOnlyList<int> Order { get; } = [12, 11, 10, 0, 6, 4, 1, 2, 3, 13, 5, 7, 8, 9];
 
     /// <summary>Personen, für die mindestens ein Modus (verstorben oder handlungsunfähig) freigegeben ist.</summary>
     public async Task<IReadOnlyList<SharedOwner>> GetOwnersAsync() =>

@@ -128,6 +128,33 @@ namespace MyLife.Server.Data.Migrations
                     b.ToTable("audit_log", (string)null);
                 });
 
+            modelBuilder.Entity("MyLife.Server.Data.ChecklistProgress", b =>
+                {
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("task_id");
+
+                    b.Property<DateTimeOffset>("DoneAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("done_at");
+
+                    b.Property<Guid>("DoneById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("done_by_id");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.HasKey("TaskId");
+
+                    b.HasIndex("DoneById");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("checklist_progress", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.EmergencySwitch", b =>
                 {
                     b.Property<Guid>("OwnerId")
@@ -1020,6 +1047,27 @@ namespace MyLife.Server.Data.Migrations
                     b.HasOne("MyLife.Server.Data.User", null)
                         .WithMany()
                         .HasForeignKey("TrusteeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.ChecklistProgress", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("DoneById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.VaultObject", null)
+                        .WithOne()
+                        .HasForeignKey("MyLife.Server.Data.ChecklistProgress", "TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

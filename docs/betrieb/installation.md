@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M3.1:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Erinnerungen per Mail, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen und der Lesemodus für Hinterbliebene funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
+> **Stand M3.2:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Erinnerungen per Mail, die Checkliste mit Vorlage für Deutschland, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen und der Lesemodus für Hinterbliebene funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
 
 ## 1. Ordner anlegen
 

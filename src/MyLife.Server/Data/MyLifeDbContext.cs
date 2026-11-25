@@ -40,6 +40,8 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<ReminderSetting> ReminderSettings => Set<ReminderSetting>();
 
+    public DbSet<ChecklistProgress> ChecklistProgress => Set<ChecklistProgress>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -309,6 +311,20 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.DeletionScheduledAt).HasColumnName("deletion_scheduled_at");
             entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
             entity.Property(x => x.Version).IsRowVersion();
+        });
+
+        modelBuilder.Entity<ChecklistProgress>(entity =>
+        {
+            entity.ToTable("checklist_progress");
+            entity.HasKey(x => x.TaskId);
+            entity.HasIndex(x => x.OwnerId);
+            entity.HasOne<VaultObject>().WithOne().HasForeignKey<ChecklistProgress>(x => x.TaskId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.DoneById).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.TaskId).HasColumnName("task_id");
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.DoneById).HasColumnName("done_by_id");
+            entity.Property(x => x.DoneAt).HasColumnName("done_at");
         });
 
         modelBuilder.Entity<ReminderSetting>(entity =>

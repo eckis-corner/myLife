@@ -205,8 +205,8 @@ public sealed class VaultTests(ServerFixture server) : IClassFixture<ServerFixtu
         var secondKey = await Assert.ThrowsAsync<VaultException>(() => a.Api.CreateAreaKeyAsync(13, [1, 2, .. new byte[60]], Ct));
         Assert.Equal(VaultErrors.AreaKeyExists, secondKey.Message);
 
-        var checklist = await Assert.ThrowsAsync<VaultException>(() => a.Api.CreateAreaKeyAsync(ObjectCatalog.ChecklistArea, [1, 2, .. new byte[60]], Ct));
-        Assert.Equal(VaultErrors.Invalid, checklist.Message);
+        var unknownArea = await Assert.ThrowsAsync<VaultException>(() => a.Api.CreateAreaKeyAsync(14, [1, 2, .. new byte[60]], Ct));
+        Assert.Equal(VaultErrors.Invalid, unknownArea.Message);
     }
 
     [Fact]

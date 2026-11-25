@@ -41,6 +41,8 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton(new VaultExport(_browser.Api, _browser.Vault, _browser.Session, _browser.Crypto));
         Services.AddSingleton<MyLife.Crypto.IMyLifeCrypto>(_browser.Crypto);
         Services.AddSingleton<EmergencyPackage>();
+        Services.AddSingleton(new ChecklistClient(_browser.Http));
+        Services.AddSingleton<ChecklistService>();
         Services.AddSingleton(new ReminderClient(_browser.Http));
         Services.AddSingleton(sp => new ReminderSync(sp.GetRequiredService<ReminderClient>(), _browser.Vault));
         Services.AddSingleton(new EmergencyClient(_browser.Http));
@@ -56,9 +58,9 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         var page = Render<Home>();
 
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=area-tile-2]")));
-        Assert.Equal(13, page.FindAll("[data-testid^=area-tile-]").Count);
+        Assert.Equal(14, page.FindAll("[data-testid^=area-tile-]").Count);
         Assert.Contains("Kreditkarten", page.Find("[data-testid=area-tile-2]").TextContent, StringComparison.Ordinal);
-        Assert.DoesNotContain("Checkliste", page.Markup, StringComparison.Ordinal);
+        Assert.Contains("Checkliste", page.Find("[data-testid=area-tile-12]").TextContent, StringComparison.Ordinal);
 
         page.Find("[data-testid=area-reviewed-2]").Click();
         page.WaitForAssertion(() => Assert.Contains("Zuletzt geprüft am", page.Find("[data-testid=area-tile-2]").TextContent, StringComparison.Ordinal));
@@ -97,6 +99,33 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         var api = Services.GetRequiredService<ReminderClient>();
         await page.WaitForAssertionAsync(async () => Assert.Equal(new MyLife.Shared.Reminders.ReminderSettingsDto(3, 90, true), (await api.GetAsync(Xunit.TestContext.Current.CancellationToken)).Settings));
         await api.SaveSettingsAsync(MyLife.Shared.Reminders.ReminderSettingsDto.Default, Xunit.TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task TheChecklistAdoptsTheTemplateListsLinkedEntriesAndTicksOff()
+    {
+        await _browser.Vault.CreateAsync("contract", new VaultPayload
+        {
+            Title = "Fitnessstudio", Wish = "cancel", Fields = { ["contractKind"] = "gym", ["provider"] = "Fit" },
+        });
+
+        var page = Render<ChecklistPage>();
+        page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=checklist-adopt]")));
+        page.Find("[data-testid=checklist-adopt]").Click();
+        page.WaitForAssertion(() => Assert.Equal(MyLife.Shared.Checklist.ChecklistTemplate.Tasks.Count, page.FindAll("[data-testid=checklist-task]").Count),
+            TimeSpan.FromSeconds(10));
+        Assert.Contains("Erste 24 Stunden", page.Markup, StringComparison.Ordinal);
+
+        // „Verträge kündigen“ listet den Vertrag mit dem Wunsch „kündigen“ auf.
+        var cancel = page.FindAll("[data-testid=checklist-task]").Single(t => t.TextContent.Contains("Verträge kündigen", StringComparison.Ordinal));
+        Assert.Contains("Fitnessstudio", cancel.TextContent, StringComparison.Ordinal);
+        Assert.Contains("mit dem Wunsch „kündigen“", cancel.TextContent, StringComparison.Ordinal);
+
+        page.FindAll("input[data-testid=checklist-tick]")[0].Change(true);
+        page.WaitForAssertion(() => Assert.Single(page.FindAll("[data-testid=checklist-done-by]")));
+        var progress = await Services.GetRequiredService<ChecklistClient>().GetAsync(_browser.Session.Session!.UserId, Xunit.TestContext.Current.CancellationToken);
+        Assert.Single(progress);
+        await Services.GetRequiredService<ChecklistClient>().UndoneAsync(_browser.Session.Session!.UserId, progress[0].TaskId, Xunit.TestContext.Current.CancellationToken);
     }
 
     [Fact]

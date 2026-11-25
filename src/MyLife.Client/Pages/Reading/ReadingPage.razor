@@ -9,6 +9,7 @@
 @inject BrowserFiles Files
 @inject IDialogService Dialogs
 @inject ISnackbar Snackbar
+@inject ChecklistClient Checklist
 
 <PageTitle>@L["AppName"] – @L["ReadingTitle"]</PageTitle>
 
@@ -68,6 +69,12 @@ else
                     {
                         <MudProgressLinear Indeterminate Color="Color.Primary" />
                     }
+                    else if (step.Area == ObjectCatalog.ChecklistArea && step.Items.Any(ChecklistService.IsTask))
+                    {
+                        @* Die Checkliste führt: Aufgaben nach Phasen, gemeinsam abhaken, verknüpfte Bereiche direkt aufschlagen. *@
+                        <ChecklistView Tasks="step.Items.Where(ChecklistService.IsTask)" Items="_book.Steps.SelectMany(s => s.Items)" Progress="_progress"
+                                       OnToggle="ToggleAsync" CanOpenArea="HasArea" OnOpenArea="OpenAreaAsync" />
+                    }
                     else if (!step.Items.Any())
                     {
                         <MudText Typo="Typo.body1" Class="mylife-muted"><i>@L["SharedAreaEmpty"]</i></MudText>
@@ -110,7 +117,7 @@ else
 
             <MudStack Row Justify="Justify.SpaceBetween">
                 <MudButton Variant="Variant.Outlined" Size="Size.Large" StartIcon="@Icons.Material.Filled.ArrowBack" Disabled="@(_index == 0)"
-                           OnClick="() => GoAsync(_index - 1)">@L["ReadingPrevious"]</MudButton>
+                           OnClick="() => GoAsync(_index - 1)" data-testid="reading-previous">@L["ReadingPrevious"]</MudButton>
                 @if (_index < _book.Steps.Count - 1)
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" EndIcon="@Icons.Material.Filled.ArrowForward"
@@ -127,6 +134,7 @@ else
 
 @code {
     private readonly HashSet<int> _visited = [];
+    private IReadOnlyList<MyLife.Shared.Checklist.ChecklistProgressDto> _progress = [];
     private ReadingBook? _book;
     private int _index;
     private bool _missing;
@@ -170,6 +178,10 @@ else
         try
         {
             await Reading.LoadAsync(_book, _book.Steps[index]);
+            if (_book.Steps[index].Area == ObjectCatalog.ChecklistArea)
+            {
+                _progress = await Checklist.GetAsync(_book.Owner.OwnerId);
+            }
         }
         catch (Exception exception) when (exception is TrustException or HttpRequestException or System.Security.Cryptography.CryptographicException
                                               or Microsoft.JSInterop.JSException or InvalidOperationException)
@@ -177,6 +189,35 @@ else
             _book.Steps[index].Loaded = true;
             Snackbar.Add(L["SharedOpenFailed"], Severity.Error);
         }
+    }
+
+    private bool HasArea(int area) => _book?.Steps.Any(s => s.Area == area) == true;
+
+    private Task OpenAreaAsync(int area) => GoAsync(_book!.Steps.ToList().FindIndex(s => s.Area == area));
+
+    /// <summary>Gemeinsames Abhaken (Entscheidung 21): alle mit Freigabe der Checkliste sehen denselben Stand.</summary>
+    private async Task ToggleAsync(VaultItem task, bool done)
+    {
+        var owner = _book!.Owner.OwnerId;
+        try
+        {
+            if (done)
+            {
+                await Checklist.DoneAsync(owner, task.Id);
+            }
+            else
+            {
+                await Checklist.UndoneAsync(owner, task.Id);
+            }
+
+            _progress = await Checklist.GetAsync(owner);
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(L["ChecklistError_checklist-failed"], Severity.Error);
+        }
+
+        StateHasChanged();
     }
 
     private async Task PreviewAsync(SharedContent content, VaultFile file)

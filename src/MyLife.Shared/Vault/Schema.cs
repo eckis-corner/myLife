@@ -76,7 +76,7 @@ public sealed record FieldDefinition(string Key, FieldType Type)
 /// <summary>Bereich, die Einheit für Verschlüsselung und Freigaben. Texte unter <c>Area_{Number}</c> und <c>AreaText_{Number}</c>.</summary>
 public sealed record AreaDefinition(int Number, string Key)
 {
-    /// <summary>Bereich 12 (Checkliste) folgt mit M3 und hat noch keine Objekttypen.</summary>
+    /// <summary>Ablage für Objekte; alle Bereiche sind es (seit M3.2 auch die Checkliste).</summary>
     public bool IsAvailable { get; init; } = true;
 }
 

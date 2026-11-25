@@ -1,0 +1,122 @@
+@page "/checklist"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using MyLife.Shared.Checklist
+@inject IStringLocalizer<SharedResource> L
+@inject ChecklistService Checklist
+@inject ChecklistClient Api
+@inject SessionService Session
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["Area_12"]</PageTitle>
+
+@* Checkliste für die Hinterbliebenen (Bereich 12, M3.2): Vorlage übernehmen, anpassen, Stand des Abhakens. *@
+<MudStack Spacing="4">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["Area_12"]</MudText>
+        @if (_tasks.Count > 0)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="object/new/task" data-testid="checklist-new">
+                @L["ChecklistNewTask"]
+            </MudButton>
+        }
+    </MudStack>
+    <MudText Typo="Typo.body1">@L["ChecklistIntro"]</MudText>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else if (_tasks.Count == 0)
+    {
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6" HtmlTag="h2">@L["ChecklistTemplateTitle"]</MudText>
+                <MudText Typo="Typo.body2">@L["ChecklistTemplateText", ChecklistTemplate.Tasks.Count]</MudText>
+                <MudStack Row Wrap="Wrap.Wrap" Spacing="2" Justify="Justify.FlexEnd">
+                    <MudButton Variant="Variant.Outlined" Href="object/new/task">@L["ChecklistStartEmpty"]</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.PlaylistAdd" Disabled="_busy" OnClick="AdoptAsync"
+                               data-testid="checklist-adopt">@L["ChecklistAdopt"]</MudButton>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense>@L["ChecklistShareHint"]</MudAlert>
+        <ChecklistView Tasks="_tasks" Items="Vault.Current" Progress="_progress" ObjectLinks OnToggle="ToggleAsync" />
+    }
+</MudStack>
+
+@code {
+    private List<VaultItem> _tasks = [];
+    private IReadOnlyList<ChecklistProgressDto> _progress = [];
+    private bool _busy;
+
+    private Guid Me => Session.Session?.UserId ?? Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadProgressAsync();
+    }
+
+    protected override void OnVaultReady() => _tasks = [.. Vault.Current.Where(ChecklistService.IsTask)];
+
+    private async Task LoadProgressAsync()
+    {
+        try
+        {
+            _progress = await Api.GetAsync(Me);
+        }
+        catch (HttpRequestException)
+        {
+            _progress = [];
+        }
+    }
+
+    private async Task AdoptAsync()
+    {
+        _busy = true;
+        try
+        {
+            var created = await Checklist.AdoptTemplateAsync();
+            Snackbar.Add(L["ChecklistAdopted", created], Severity.Success);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task ToggleAsync(VaultItem task, bool done)
+    {
+        try
+        {
+            if (done)
+            {
+                await Api.DoneAsync(Me, task.Id);
+            }
+            else
+            {
+                await Api.UndoneAsync(Me, task.Id);
+            }
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add(L["ChecklistError_checklist-failed"], Severity.Error);
+        }
+
+        await LoadProgressAsync();
+        StateHasChanged();
+    }
+}

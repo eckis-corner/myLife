@@ -39,7 +39,7 @@
                     <MudNavGroup Title="@L["NavAreas"]" Icon="@Icons.Material.Outlined.FolderOpen" Expanded>
                         @foreach (var area in MyLife.Shared.Vault.ObjectCatalog.Areas.Where(a => a.IsAvailable))
                         {
-                            <MudNavLink Href="@($"area/{area.Number}")" Icon="@AreaIcons.For(area.Number)">@L[$"Area_{area.Number}"]</MudNavLink>
+                            <MudNavLink Href="@(area.Number == MyLife.Shared.Vault.ObjectCatalog.ChecklistArea ? "checklist" : $"area/{area.Number}")" Icon="@AreaIcons.For(area.Number)">@L[$"Area_{area.Number}"]</MudNavLink>
                         }
                     </MudNavGroup>
                     <MudNavLink Href="family" Icon="@Icons.Material.Outlined.Diversity3">@L["FamilyTitle"]</MudNavLink>

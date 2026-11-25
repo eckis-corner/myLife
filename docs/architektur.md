@@ -232,7 +232,7 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 | `access_requests` | Id, OwnerId, TrusteeId, Mode, RequestedAt, Mail an den Eigentümer, DeadlineAt (ab deren Versand), State, PausedAt, DecidedAt |
 | `vault_deletion_votes` | OwnerId, TrusteeId, VotedAt |
 | `one_time_tokens` | Id, Zweck (Lifesign/Objection/Invite/PasswordReset…), TokenHash, UserId, ExpiresAt, UsedAt |
-| `checklist_progress` | OwnerId, ObjectId (Aufgabe), TrusteeId, DoneAt, 🔒Notiz |
+| `checklist_progress` | TaskId (Aufgabe), OwnerId, DoneById, DoneAt; ein Stand je Aufgabe für alle, ohne Notiz (118) |
 | `reminder_settings` | UserId, Prüfintervall (Monate), Vorlauf (Tage), Mail an/aus, NextDueOn: nur der nächste Termin ohne Bezug zum Objekt (39b), Termin der letzten Mail, letzte Prüf-Erinnerung (M3.1) |
 | `settings` | Globale Einstellungen: SMTP (Passwort per Data Protection), ntfy, Standard- und Grenzwerte, Abmeldezeit, Dateigröße, Sicherung, Datenschutzhinweis |
 | `audit_log` | Id, At, ActorId, OwnerId (Tresorbezug), Aktion, Objekttyp, ObjektId, IP gekürzt, Details (ohne Inhalte) |

@@ -18,7 +18,10 @@ namespace MyLife.Server.Infrastructure.Reminders;
 internal sealed partial class ReminderEngine(
     MyLifeDbContext db, MailOutbox outbox, SettingsStore settings, KnownBaseUrl baseUrl, TimeProvider time, ILogger<ReminderEngine> logger)
 {
-    /// <summary>Erinnerungen des Nutzers; legt sie mit den Standardwerten an.</summary>
+    /// <summary>
+    /// Erinnerungen des Nutzers; legt sie mit den Standardwerten an und speichert sofort. Fragen zwei Anfragen
+    /// gleichzeitig zum ersten Mal, gewinnt eine; die andere liest danach deren Zeile.
+    /// </summary>
     public async Task<ReminderSetting> EnsureAsync(Guid userId, CancellationToken cancellationToken)
     {
         var existing = await db.ReminderSettings.SingleOrDefaultAsync(r => r.UserId == userId, cancellationToken);
@@ -33,7 +36,16 @@ internal sealed partial class ReminderEngine(
             UserId = userId, ReviewMonths = defaults.ReviewMonths, LeadDays = defaults.LeadDays, MailEnabled = defaults.MailEnabled, UpdatedAt = time.GetUtcNow(),
         };
         db.ReminderSettings.Add(created);
-        return created;
+        try
+        {
+            await db.SaveChangesAsync(cancellationToken);
+            return created;
+        }
+        catch (DbUpdateException exception) when (exception.InnerException is Npgsql.PostgresException { SqlState: Npgsql.PostgresErrorCodes.UniqueViolation })
+        {
+            db.Entry(created).State = EntityState.Detached;
+            return await db.ReminderSettings.SingleAsync(r => r.UserId == userId, cancellationToken);
+        }
     }
 
     /// <summary>

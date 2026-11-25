@@ -114,7 +114,7 @@ Felder in *kursiv* sind Auswahllisten.
 
 | Objekttyp | Felder |
 | --- | --- |
-| Aufgabe | *Phase* (erste 24 Stunden, erste Woche, erster Monat, später), Titel, Beschreibung, zuständig, **verknüpfte Bereiche/Objekte** (zum Beispiel listet „Verträge kündigen“ alle Verträge mit dem Wunsch *kündigen* auf), erledigt von/am |
+| Aufgabe | *Phase* (erste 24 Stunden, erste Woche, erster Monat, später), Titel, Beschreibung, zuständig, **zugehöriger Bereich** und optional **Wunsch** (zum Beispiel listet „Verträge kündigen“ alle Verträge mit dem Wunsch *kündigen* auf), dazu einzelne Verweise; erledigt von/am steht beim Server, für alle gleich (M3.2, 115–118) |
 
 ### Bereich 13 – Einkommen, Rente & Steuern (41)
 

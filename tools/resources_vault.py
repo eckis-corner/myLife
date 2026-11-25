@@ -15,7 +15,7 @@ AREAS = {
     9: (("Passwortmanager", "Password manager"), ("Wie die Hinterbliebenen an deinen Passwortmanager kommen. Keine einzelnen Passwörter.", "How your survivors can access your password manager. No individual passwords.")),
     10: (("Wichtige Kontakte", "Important contacts"), ("Steuerberatung, Notariat, Ärzte und alle, die benachrichtigt werden sollen.", "Tax advisor, notary, doctors and everyone who should be notified.")),
     11: (("Persönliche Wünsche", "Personal wishes"), ("Bestattung, Organspende, Haustiere und persönliche Briefe.", "Funeral, organ donation, pets and personal letters.")),
-    12: (("Checkliste", "Checklist"), ("Aufgaben für die Hinterbliebenen (folgt mit M3).", "Tasks for your survivors (coming with M3).")),
+    12: (("Checkliste", "Checklist"), ("Was die Hinterbliebenen wann tun sollten, mit den passenden Einträgen.", "What your survivors should do and when, with the matching entries.")),
     13: (("Einkommen, Rente & Steuern", "Income, pension & taxes"), ("Arbeitgeber, Altersvorsorge und Steuern.", "Employer, retirement provision and taxes.")),
 }
 
@@ -440,7 +440,7 @@ TEXTS = {
     "DatasheetPdf": ("Datenblatt als PDF", "Data sheet as PDF"),
     "CommonTitle": ("Titel", "Title"),
     "CommonSection": ("Für alle Einträge", "For all entries"),
-    "CommonExpiryHelp": ("Grundlage für Erinnerungen (folgen mit M3).", "Used for reminders (coming with M3)."),
+    "CommonExpiryHelp": ("Grundlage für Erinnerungen.", "Used for reminders."),
     "CommonOriginalLocation": ("Ablageort des Originals", "Where the original is kept"),
     "CommonContact": ("Ansprechpartner", "Contact person"),
     "CommonWish": ("Wunsch für die Hinterbliebenen", "Wish for your survivors"),

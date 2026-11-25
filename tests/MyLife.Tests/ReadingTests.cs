@@ -45,6 +45,7 @@ public sealed class ReadingTests : BunitContext, IClassFixture<ServerFixture>, I
         var shared = new SharedService(new TrustClient(_reader.Http), readerKeys, _reader.Vault, _reader.Crypto, _reader.Session);
         _reading = new ReadingService(shared);
         Services.AddSingleton(_reading);
+        Services.AddSingleton(new ChecklistClient(_reader.Http));
         Services.AddSingleton<SchemaText>();
         Services.AddSingleton<BrowserFiles>();
         Render<MudBlazor.MudPopoverProvider>();
@@ -71,10 +72,15 @@ public sealed class ReadingTests : BunitContext, IClassFixture<ServerFixture>, I
         var letter = await owner.Vault.CreateAsync("letter", new VaultPayload { Title = "Für dich", Fields = { ["recipients"] = "Daniel", ["letterText"] = "Danke für alles." } });
         await owner.Vault.CreateAsync("insurance", new VaultPayload { Title = "Risikoleben", Fields = { ["insuranceKind"] = "termLife", ["insurer"] = "HUK" } });
         await owner.Vault.CreateAsync("bankAccount", new VaultPayload { Title = "Geheimes Konto", Fields = { ["bank"] = "X", ["iban"] = "DE89370400440532013000" } });
+        await owner.Vault.CreateAsync("task", new VaultPayload
+        {
+            Title = "Versicherung melden",
+            Fields = { ["checklistPhase"] = "first24h", ["taskText"] = "Sofort anrufen.", ["linkedArea"] = "insurance" },
+        });
 
         var reader = (await ownerKeys.GetPeopleAsync()).Single(p => p.Person.Email == AuthTestSupport.Email);
         await ownerTrust.SaveAsync(reader, new TrusteeProfile("Bruder", null), false,
-            new HashSet<(int, GrantMode)> { (11, GrantMode.Death), (4, GrantMode.Death), (1, GrantMode.Incapacity) },
+            new HashSet<(int, GrantMode)> { (12, GrantMode.Death), (11, GrantMode.Death), (4, GrantMode.Death), (1, GrantMode.Incapacity) },
             new HashSet<(Guid, GrantMode)> { (letter.Id, GrantMode.Death) }, null);
 
         await using (var scope = server.Services.CreateAsyncScope())
@@ -98,14 +104,14 @@ public sealed class ReadingTests : BunitContext, IClassFixture<ServerFixture>, I
         var book = (await _reading.OpenAsync(_ownerId))!;
         Assert.True(book.Death);
         Assert.False(book.Incapacity);
-        Assert.Equal(["letters", "area-11", "area-4"], book.Steps.Select(s => s.Key));
+        Assert.Equal(["letters", "area-12", "area-11", "area-4"], book.Steps.Select(s => s.Key));
 
         await _reading.LoadAsync(book, book.Steps[0]);
         Assert.Equal("Danke für alles.", Assert.Single(book.Steps[0].Items).Payload.Get("letterText"));
 
         // Der Bereich 11 enthält den Brief nicht noch einmal; das Konto (nur handlungsunfähig) ist nicht dabei.
-        await _reading.LoadAsync(book, book.Steps[1]);
-        Assert.Equal("Bestattung", Assert.Single(book.Steps[1].Items).Title);
+        await _reading.LoadAsync(book, book.Steps[2]);
+        Assert.Equal("Bestattung", Assert.Single(book.Steps[2].Items).Title);
         Assert.DoesNotContain(book.Steps.SelectMany(s => s.Items), i => i.Title == "Geheimes Konto");
         await _reading.CloseAsync(book);
     }
@@ -118,13 +124,49 @@ public sealed class ReadingTests : BunitContext, IClassFixture<ServerFixture>, I
         page.WaitForAssertion(() => Assert.Contains("Danke für alles.", page.Markup, StringComparison.Ordinal));
         Assert.Equal("Briefe an dich", page.Find("[data-testid=reading-step-title]").TextContent);
 
+        // Die Checkliste führt: abhaken, und der verknüpfte Bereich lässt sich direkt aufschlagen.
         page.Find("[data-testid=reading-next]").Click();
+        page.WaitForAssertion(() => Assert.Equal("Checkliste", page.Find("[data-testid=reading-step-title]").TextContent));
+        page.WaitForAssertion(() => Assert.Contains("Versicherung melden", page.Find("[data-testid=checklist-task]").TextContent, StringComparison.Ordinal));
+        Assert.Contains("Erste 24 Stunden", page.Markup, StringComparison.Ordinal);
+        page.Find("input[data-testid=checklist-tick]").Change(true);
+        page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=checklist-done-by]")));
+        page.Find("input[data-testid=checklist-tick]").Change(false);
+        page.WaitForAssertion(() => Assert.Empty(page.FindAll("[data-testid=checklist-done-by]")));
+        page.Find("[data-testid=checklist-open-area]").Click();
+        page.WaitForAssertion(() => Assert.Equal("Versicherungen", page.Find("[data-testid=reading-step-title]").TextContent));
+        page.Find("[data-testid=reading-previous]").Click();
         page.WaitForAssertion(() => Assert.Equal("Persönliche Wünsche", page.Find("[data-testid=reading-step-title]").TextContent));
         page.WaitForAssertion(() => Assert.Contains("Im Wald, bitte.", page.Markup, StringComparison.Ordinal));
 
         page.Find("[data-testid=reading-next]").Click();
         page.WaitForAssertion(() => Assert.Contains("Risikoleben", page.Markup, StringComparison.Ordinal));
         Assert.Contains("Fertig", page.Markup, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task OnlyTheOwnerAndTrusteesWithTheChecklistMayTickOff()
+    {
+        var api = new ChecklistClient(_reader.Http);
+        var book = (await _reading.OpenAsync(_ownerId))!;
+        await _reading.LoadAsync(book, book.Steps[1]);
+        var task = Assert.Single(book.Steps[1].Items);
+        await _reading.CloseAsync(book);
+
+        var done = await api.DoneAsync(_ownerId, task.Id, Ct);
+        Assert.Equal(task.Id, Assert.Single(await api.GetAsync(_ownerId, Ct)).TaskId);
+        Assert.Equal(done.DoneAt, (await api.DoneAsync(_ownerId, task.Id, Ct)).DoneAt);
+
+        // Nur Aufgaben der Checkliste lassen sich abhaken; Fremde sehen nichts.
+        await Assert.ThrowsAsync<HttpRequestException>(() => api.DoneAsync(_ownerId, Guid.NewGuid(), Ct));
+        var stranger = $"fremd{Guid.NewGuid():N}@example.org";
+        var secret = await Server.VaultIsolationTests.CreateUserAsync(_server, stranger);
+        var other = await VaultBrowser.OpenAsync(await AuthTestSupport.ForAsync(_server), stranger, () => FamilyTests.Code(_server, secret));
+        Assert.Empty(await new ChecklistClient(other.Http).GetAsync(_ownerId, Ct));
+        await Assert.ThrowsAsync<HttpRequestException>(() => new ChecklistClient(other.Http).DoneAsync(_ownerId, task.Id, Ct));
+
+        await api.UndoneAsync(_ownerId, task.Id, Ct);
+        Assert.Empty(await api.GetAsync(_ownerId, Ct));
     }
 
     [Fact]
