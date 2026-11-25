@@ -27,6 +27,7 @@ myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: V
 | [docs/entscheidungen.md](docs/entscheidungen.md) | Entscheidungsprotokoll |
 | [docs/format.md](docs/format.md) | Offene Formate: JSON-Export, Notfallpaket, Server-Sicherung |
 | [docs/betrieb/installation.md](docs/betrieb/installation.md) | Installation auf Synology mit Nginx Proxy Manager, Updates, Sicherung und Rücksicherung |
+| [docs/betrieb/abnahme.md](docs/betrieb/abnahme.md) | Checkliste für die Abnahme auf der Synology vor Version 1.0 |
 | [docs/betrieb/nachfolge.md](docs/betrieb/nachfolge.md) | Übergabe an eine Nachfolgeperson, geordnetes Beenden |
 | [docs/betrieb/mylife-decrypt.md](docs/betrieb/mylife-decrypt.md) | Exporte und Notfallpakete ohne Server öffnen |
 | [PROMPT.md](PROMPT.md) | Ursprüngliche Anforderung |
