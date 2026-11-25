@@ -206,7 +206,7 @@ public sealed partial class HelpTests : BunitContext
         }
     }
 
-    /// <summary>Tutorial und Anleitung stehen in der unteren, immer sichtbaren Leiste direkt über „Konto“.</summary>
+    /// <summary>In der unteren, immer sichtbaren Leiste: Verwaltung, darunter Tutorial und Anleitung direkt über „Konto“.</summary>
     [Fact]
     public void HelpLinksSitDirectlyAboveAccount()
     {
@@ -218,8 +218,8 @@ public sealed partial class HelpTests : BunitContext
 
         var bottom = layout.Find(".mylife-nav-account");
         var items = bottom.QuerySelectorAll("[data-testid]").Select(e => e.GetAttribute("data-testid")).ToList();
-        Assert.Equal(["nav-tutorial", "nav-guide", "nav-account"], items.Take(3));
-        Assert.Empty(layout.Find(".mylife-nav-main").QuerySelectorAll("[data-testid=nav-tutorial], [data-testid=nav-guide]"));
+        Assert.Equal(["nav-admin", "nav-tutorial", "nav-guide", "nav-account"], items.Take(4));
+        Assert.Empty(layout.Find(".mylife-nav-main").QuerySelectorAll("[data-testid=nav-admin], [data-testid=nav-tutorial], [data-testid=nav-guide]"));
         Assert.Equal("tutorial", layout.Find("[data-testid=nav-tutorial]").GetAttribute("href"));
         Assert.Equal("guide", layout.Find("[data-testid=nav-guide]").GetAttribute("href"));
     }

@@ -35,7 +35,7 @@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" Variant="DrawerVariant.Responsive" Class="mylife-drawer">
         <AuthorizeView>
             <Authorized>
-                @* Hauptmenü scrollt; die Gruppe „Konto“ steht immer sichtbar am unteren Rand der Seitenleiste. *@
+                @* Hauptmenü scrollt; Verwaltung, Hilfe und Konto stehen immer sichtbar am unteren Rand der Seitenleiste. *@
                 <div class="mylife-drawer-body">
                 <MudNavMenu Class="mylife-nav mylife-nav-main">
                     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
@@ -52,6 +52,9 @@
                     <MudNavLink Href="emergency" Icon="@Icons.Material.Outlined.HealthAndSafety">@L["EmergencyTitle"]</MudNavLink>
                     <MudNavLink Href="reading" Icon="@Icons.Material.Outlined.MenuBook">@L["ReadingTitle"]</MudNavLink>
                     <MudNavLink Href="export" Icon="@Icons.Material.Outlined.IosShare">@L["NavExport"]</MudNavLink>
+                </MudNavMenu>
+                @* Unten immer sichtbar: Verwaltung, darunter Hilfe direkt über „Konto“ (Entscheidungen 139 und 140). *@
+                <MudNavMenu Class="mylife-nav mylife-nav-account">
                     <MudNavGroup Title="@L["NavAdmin"]" Icon="@Icons.Material.Outlined.AdminPanelSettings" Expanded="false" data-testid="nav-admin">
                         <MudNavLink Href="account/audit" Icon="@Icons.Material.Outlined.History">@L["NavAudit"]</MudNavLink>
                         <MudNavLink Href="trash" Icon="@Icons.Material.Outlined.Delete">@L["NavTrash"]</MudNavLink>
@@ -62,9 +65,6 @@
                             <MudNavLink Href="admin/audit" Icon="@Icons.Material.Outlined.ReceiptLong">@L["AdminAuditTitle"]</MudNavLink>
                         }
                     </MudNavGroup>
-                </MudNavMenu>
-                @* Hilfe steht immer ganz unten, direkt über „Konto“ (Entscheidung 139). *@
-                <MudNavMenu Class="mylife-nav mylife-nav-account">
                     <MudNavLink Href="tutorial" Icon="@Icons.Material.Outlined.RocketLaunch" data-testid="nav-tutorial">@L["NavTutorial"]</MudNavLink>
                     <MudNavLink Href="guide" Icon="@Icons.Material.Outlined.HelpOutline" data-testid="nav-guide">@L["NavGuide"]</MudNavLink>
                     <MudNavGroup Title="@L["NavAccount"]" Icon="@Icons.Material.Outlined.AccountCircle" Expanded="false" data-testid="nav-account">

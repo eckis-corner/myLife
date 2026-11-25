@@ -241,6 +241,12 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | ---: | --- | --- |
 | 139 | Hilfe in der App | Nach dem Vorbild von cleverDocs zwei Seiten: **Tutorial** (`/tutorial`, ein durchgehender Weg in Kapiteln von der Einrichtung bis zum Notfallordner, mit Verweisen in die Anleitung) und **Anleitung** (`/guide`, Teile mit aufklappbaren Themen: wer, Schritte, Hinweise, Sprung zur Seite; mit Suche). Die Verwaltung steht jeweils am Ende. Beide stehen in der Seitenleiste immer ganz unten direkt über „Konto“ und sind ohne Anmeldung erreichbar. Die Inhalte liegen je Sprache in `src/MyLife.Client/Help/HelpContent.De.cs` und `.En.cs` statt in den Ressourcen; dargestellt werden sie mit einem kleinen, kodierenden Markdown (`HelpMarkdown`). Tests prüfen gleiche Gliederung in beiden Sprachen, gültige Verweise und Seiten sowie die Position im Menü. |
 
+## Runde 21 (25.11.2026, Menü unten)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 140 | Menü unten | Die Gruppe **Verwaltung** steht nicht mehr im scrollenden Hauptmenü, sondern immer sichtbar am unteren Rand der Seitenleiste über Tutorial und Anleitung; darunter folgt „Konto“ (ändert 137). Sind Verwaltung und Konto aufgeklappt, scrollt die untere Leiste selbst (höchstens 60 % der Höhe). |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

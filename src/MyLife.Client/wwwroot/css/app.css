@@ -276,6 +276,9 @@ h1:focus {
 
 .mylife-nav-account {
     flex: 0 0 auto;
+    /* Verwaltung und Konto aufgeklappt: Die untere Leiste scrollt selbst, statt das Hauptmenü ganz zu verdrängen. */
+    max-height: 60%;
+    overflow-y: auto;
     padding-top: 8px;
     border-top: 1px solid var(--mud-palette-lines-default);
 }
