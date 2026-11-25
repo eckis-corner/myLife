@@ -28,7 +28,7 @@
   <data name="AdminBackupText" xml:space="preserve"><value>Jeden Tag zur eingestellten Uhrzeit legt myLife eine verschlüsselte Sicherung im Ordner „backup“ ab: Datenbank, Schlüsselring und auf Wunsch die Dokumente. Das Synology-Backup übernimmt sie von dort. Alte Sicherungen werden nach Generationen aufgeräumt. Wie man zurücksichert, steht in der Installationsanleitung.</value></data>
   <data name="AdminCancelDeletion" xml:space="preserve"><value>Löschantrag zurückziehen</value></data>
   <data name="AdminCancelDeletionConfirm" xml:space="preserve"><value>Löschantrag für {0} ({1}) zurückziehen? Der Link in der Mail wird ungültig.</value></data>
-  <data name="AdminDeadlinesText" xml:space="preserve"><value>Standardwerte und Grenzen für den Notfallzugang. Jeder Nutzer wählt seine Werte später innerhalb der Grenzen. Kürzere Fristen eines Nutzers kannst du nicht erzwingen.</value></data>
+  <data name="AdminDeadlinesText" xml:space="preserve"><value>Standardwerte und Grenzen für den Notfallzugang. Jeder Nutzer wählt seine Werte unter „Notfallzugang“ innerhalb der Grenzen. Kürzere Fristen eines Nutzers kannst du nicht erzwingen.</value></data>
   <data name="AdminDeletedAccount" xml:space="preserve"><value>gelöschtes Konto</value></data>
   <data name="AdminDeletionPending" xml:space="preserve"><value>Löschung beantragt</value></data>
   <data name="AdminDeletionRequested" xml:space="preserve"><value>Mail an {0} ist unterwegs.</value></data>
@@ -53,9 +53,9 @@
   <data name="AdminLockConfirm" xml:space="preserve"><value>{0} ({1}) sperren? Die Person wird sofort abgemeldet und kann sich nicht mehr anmelden, bis du sie entsperrst. Ihre Daten bleiben erhalten.</value></data>
   <data name="AdminLocked" xml:space="preserve"><value>{0} ist gesperrt.</value></data>
   <data name="AdminMailTemplate" xml:space="preserve"><value>Mail „{0}“</value></data>
-  <data name="AdminMailText" xml:space="preserve"><value>myLife verschickt Mails für Benachrichtigungen und später für Lebenszeichen und den Notfallzugang. Ohne Mailversand warten Mails in der Warteschlange.</value></data>
+  <data name="AdminMailText" xml:space="preserve"><value>myLife verschickt Mails für Einladungen, Lebenszeichen, Erinnerungen und den Notfallzugang. Ohne Mailversand warten Mails in der Warteschlange, und die Fristen des Notfallzugangs laufen nicht weiter.</value></data>
   <data name="AdminNtfyServer" xml:space="preserve"><value>ntfy-Server</value></data>
-  <data name="AdminNtfyText" xml:space="preserve"><value>Optional: Push-Nachrichten über einen ntfy-Server, zusätzlich zur Mail. Die Themen der einzelnen Nutzer kommen mit dem Notfallzugang.</value></data>
+  <data name="AdminNtfyText" xml:space="preserve"><value>Optional: Push-Nachrichten über einen ntfy-Server, zusätzlich zur Mail. Sein Thema trägt jeder Nutzer selbst unter „Notfallzugang“ ein.</value></data>
   <data name="AdminNtfyToken" xml:space="preserve"><value>Zugriffstoken (optional)</value></data>
   <data name="AdminNtfyTopic" xml:space="preserve"><value>Thema für den Test</value></data>
   <data name="AdminNtfyTopicHint" xml:space="preserve"><value>Buchstaben, Ziffern, - und _; wird nicht gespeichert.</value></data>
@@ -137,10 +137,9 @@
   <data name="AdminWaiting" xml:space="preserve"><value>Wartezeit</value></data>
   <data name="AdminWaitingHint" xml:space="preserve"><value>Nach der letzten Erinnerung ohne Reaktion, bis der Zugang freigegeben wird.</value></data>
   <data name="AppName" xml:space="preserve"><value>myLife</value></data>
-  <data name="AppTagline" xml:space="preserve"><value>Dein digitaler Notfallordner</value></data>
   <data name="Area" xml:space="preserve"><value>Bereich</value></data>
   <data name="AreaEmpty" xml:space="preserve"><value>Noch keine Einträge in diesem Bereich.</value></data>
-  <data name="AreaNotAvailable" xml:space="preserve"><value>Dieser Bereich folgt in einer späteren Version.</value></data>
+  <data name="AreaNotAvailable" xml:space="preserve"><value>Diesen Bereich gibt es nicht.</value></data>
   <data name="AreaText_0" xml:space="preserve"><value>Persönliche Daten und Ausweisdokumente.</value></data>
   <data name="AreaText_1" xml:space="preserve"><value>Konten, Depots und Schließfächer mit Vollmachten.</value></data>
   <data name="AreaText_10" xml:space="preserve"><value>Steuerberatung, Notariat, Ärzte und alle, die benachrichtigt werden sollen.</value></data>
@@ -550,7 +549,7 @@
   <data name="FieldHint_last4" xml:space="preserve"><value>Nie die vollständige Nummer, PIN oder Prüfziffer.</value></data>
   <data name="FieldHint_linkedWish" xml:space="preserve"><value>Zum Beispiel „Verträge &amp; Abos“ mit „kündigen“: Die Aufgabe listet dann alle Verträge auf, die gekündigt werden sollen.</value></data>
   <data name="FieldHint_masterPasswordLocation" xml:space="preserve"><value>Nur der Ort, nicht das Passwort.</value></data>
-  <data name="FieldHint_recipients" xml:space="preserve"><value>Vertrauenspersonen als Empfänger mit eigener Freigabe folgen mit M2. Bis dahin hier die Namen.</value></data>
+  <data name="FieldHint_recipients" xml:space="preserve"><value>Für wen der Brief ist. Wer ihn lesen darf, legst du unter „Vertrauenspersonen“ fest.</value></data>
   <data name="FieldHint_seedLocation" xml:space="preserve"><value>Nur den Ort, nie die Seed-Phrase selbst.</value></data>
   <data name="FieldHint_username" xml:space="preserve"><value>Kein Passwort eintragen.</value></data>
   <data name="Field_account" xml:space="preserve"><value>Konto / E-Mail</value></data>
@@ -756,20 +755,14 @@
   <data name="GrantMode_Live" xml:space="preserve"><value>Sofort teilen</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Läuft bald ab</value></data>
   <data name="HomeFollowUpTitle" xml:space="preserve"><value>Wiedervorlage</value></data>
-  <data name="HomeIntro" xml:space="preserve"><value>Hier entsteht dein digitaler Notfallordner: Versicherungen, Konten, Verträge, Urkunden und Wünsche an einem sicheren Ort. Alles wird in deinem Browser verschlüsselt, sodass nur du und im Ernstfall deine Vertrauenspersonen die Daten lesen können.</value></data>
   <data name="HomeLastReviewed" xml:space="preserve"><value>Zuletzt geprüft am {0}</value></data>
   <data name="HomeMarkReviewed" xml:space="preserve"><value>Als geprüft markieren</value></data>
   <data name="HomeNeverReviewed" xml:space="preserve"><value>Noch nie geprüft</value></data>
-  <data name="HomeNextStepsText" xml:space="preserve"><value>Als Nächstes folgen die Objekttypen und der verschlüsselte Tresor.</value></data>
-  <data name="HomeNextStepsTitle" xml:space="preserve"><value>Wie geht es weiter?</value></data>
   <data name="HomeNotInVaultHint" xml:space="preserve"><value>PINs, Passwörter und Seed-Phrasen gehören nicht hinein.</value></data>
   <data name="HomeObjectCount" xml:space="preserve"><value>{0} Einträge</value></data>
   <data name="HomeReviewDue" xml:space="preserve"><value>{0} Bereiche wurden seit mehr als {1} Monaten nicht geprüft. Sieh sie dir an und markiere sie dann als geprüft.</value></data>
   <data name="HomeReviewDueChip" xml:space="preserve"><value>Prüfung fällig</value></data>
   <data name="HomeReviewedSaved" xml:space="preserve"><value>„{0}“ als geprüft markiert.</value></data>
-  <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Verschlüsselungsformat</value></data>
-  <data name="HomeStatusReachable" xml:space="preserve"><value>Server erreichbar</value></data>
-  <data name="HomeStatusTitle" xml:space="preserve"><value>Status der Instanz</value></data>
   <data name="HomeStatusUnreachable" xml:space="preserve"><value>Der Server ist nicht erreichbar. Bitte versuche es später erneut.</value></data>
   <data name="HomeStatusVersion" xml:space="preserve"><value>Version</value></data>
   <data name="HomeTitle" xml:space="preserve"><value>Willkommen bei myLife</value></data>
@@ -1258,6 +1251,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="SharedText" xml:space="preserve"><value>Was andere schon heute mit dir teilen, nur zum Lesen. Entschlüsselt wird in deinem Browser mit deinem eigenen Schlüssel.</value></data>
   <data name="SharedTitle" xml:space="preserve"><value>Mit mir geteilt</value></data>
   <data name="ShowEnded" xml:space="preserve"><value>Beendete anzeigen</value></data>
+  <data name="SkipToContent" xml:space="preserve"><value>Zum Inhalt springen</value></data>
   <data name="SomeFailed" xml:space="preserve"><value>{0} Einträge konnten nicht geändert werden.</value></data>
   <data name="SortBy" xml:space="preserve"><value>Sortieren nach</value></data>
   <data name="ToggleDarkMode" xml:space="preserve"><value>Hell/Dunkel umschalten</value></data>

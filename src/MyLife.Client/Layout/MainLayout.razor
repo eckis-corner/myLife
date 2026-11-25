@@ -11,6 +11,8 @@
 <IdleMonitor />
 
 @* Design nach dem rixio-Template (Entscheidung 71): flache Kopfzeile mit Trennlinie, Seitenleiste mit Orange-Akzent. *@
+<a class="mylife-skip-link" href="@SkipTarget">@L["SkipToContent"]</a>
+
 <MudLayout Class="@(_isDarkMode ? "mylife-rixio mylife-rixio-dark" : "mylife-rixio mylife-rixio-light")">
     <MudAppBar Elevation="0" Class="mylife-appbar">
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
@@ -33,7 +35,9 @@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" Variant="DrawerVariant.Responsive" Class="mylife-drawer">
         <AuthorizeView>
             <Authorized>
-                <MudNavMenu Class="mylife-nav">
+                @* Hauptmenü scrollt; die Gruppe „Konto“ steht immer sichtbar am unteren Rand der Seitenleiste. *@
+                <div class="mylife-drawer-body">
+                <MudNavMenu Class="mylife-nav mylife-nav-main">
                     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
                     <MudNavLink Href="search" Icon="@Icons.Material.Outlined.Search">@L["NavSearch"]</MudNavLink>
                     <MudNavGroup Title="@L["NavAreas"]" Icon="@Icons.Material.Outlined.FolderOpen" Expanded>
@@ -48,26 +52,31 @@
                     <MudNavLink Href="emergency" Icon="@Icons.Material.Outlined.HealthAndSafety">@L["EmergencyTitle"]</MudNavLink>
                     <MudNavLink Href="reading" Icon="@Icons.Material.Outlined.MenuBook">@L["ReadingTitle"]</MudNavLink>
                     <MudNavLink Href="export" Icon="@Icons.Material.Outlined.IosShare">@L["NavExport"]</MudNavLink>
-                    <MudNavLink Href="trash" Icon="@Icons.Material.Outlined.Delete">@L["NavTrash"]</MudNavLink>
-                    <MudNavLink Href="account/audit" Icon="@Icons.Material.Outlined.History">@L["NavAudit"]</MudNavLink>
-                    <MudNavLink Href="account/reminders" Icon="@Icons.Material.Outlined.NotificationsActive">@L["RemindersTitle"]</MudNavLink>
-                    <MudNavLink Href="account/security" Icon="@Icons.Material.Outlined.Security">@L["NavSecurity"]</MudNavLink>
-                    <MudNavLink Href="hints/not-in-vault" Icon="@Icons.Material.Outlined.Block">@L["NotInVaultTitle"]</MudNavLink>
-                    @if (context.User.IsInRole("admin"))
-                    {
-                        <MudNavGroup Title="@L["NavAdmin"]" Icon="@Icons.Material.Outlined.AdminPanelSettings" Expanded="false" data-testid="nav-admin">
+                    <MudNavGroup Title="@L["NavAdmin"]" Icon="@Icons.Material.Outlined.AdminPanelSettings" Expanded="false" data-testid="nav-admin">
+                        <MudNavLink Href="account/audit" Icon="@Icons.Material.Outlined.History">@L["NavAudit"]</MudNavLink>
+                        <MudNavLink Href="trash" Icon="@Icons.Material.Outlined.Delete">@L["NavTrash"]</MudNavLink>
+                        @if (context.User.IsInRole("admin"))
+                        {
                             <MudNavLink Href="admin/settings" Icon="@Icons.Material.Outlined.Settings">@L["AdminSettingsTitle"]</MudNavLink>
                             <MudNavLink Href="admin/users" Icon="@Icons.Material.Outlined.People">@L["AdminUsersTitle"]</MudNavLink>
                             <MudNavLink Href="admin/audit" Icon="@Icons.Material.Outlined.ReceiptLong">@L["AdminAuditTitle"]</MudNavLink>
-                        </MudNavGroup>
-                    }
+                        }
+                    </MudNavGroup>
                 </MudNavMenu>
+                <MudNavMenu Class="mylife-nav mylife-nav-account">
+                    <MudNavGroup Title="@L["NavAccount"]" Icon="@Icons.Material.Outlined.AccountCircle" Expanded="false" data-testid="nav-account">
+                        <MudNavLink Href="account/reminders" Icon="@Icons.Material.Outlined.NotificationsActive">@L["RemindersTitle"]</MudNavLink>
+                        <MudNavLink Href="account/security" Icon="@Icons.Material.Outlined.Security">@L["NavSecurity"]</MudNavLink>
+                        <MudNavLink Href="hints/not-in-vault" Icon="@Icons.Material.Outlined.Block">@L["NotInVaultTitle"]</MudNavLink>
+                    </MudNavGroup>
+                </MudNavMenu>
+                </div>
             </Authorized>
         </AuthorizeView>
     </MudDrawer>
 
-    <MudMainContent Class="mylife-main">
-        <MudContainer MaxWidth="MaxWidth.Large" Class="py-6 flex-grow-1">
+    <MudMainContent Class="mylife-main" role="main">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="py-6 flex-grow-1" id="main-content" tabindex="-1">
             <ErrorBoundary>
                 <ChildContent>
                     @Body
@@ -122,12 +131,23 @@
         }
     }
 
+    private bool? _appliedLight;
+
+    /// <summary>Sprunglink „Zum Inhalt“ auf die aktuelle Seite (mit &lt;base href="/"&gt; sonst die Startseite).</summary>
+    private string SkipTarget => $"{(ServiceProvider.GetService<NavigationManager>()?.Uri ?? string.Empty).Split('#')[0]}#main-content";
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && _themeProvider is not null)
         {
             _isDarkMode = await _themeProvider.GetSystemDarkModeAsync();
             StateHasChanged();
+        }
+
+        if (_appliedLight != !_isDarkMode && ServiceProvider.GetService<Microsoft.JSInterop.IJSRuntime>() is { } js)
+        {
+            _appliedLight = !_isDarkMode;
+            await js.InvokeVoidAsync("myLife.setLightMode", !_isDarkMode);
         }
     }
 

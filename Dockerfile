@@ -12,7 +12,7 @@ COPY src/MyLife.Server/MyLife.Server.csproj src/MyLife.Server/
 RUN dotnet restore src/MyLife.Server/MyLife.Server.csproj
 
 COPY src/ src/
-ARG VERSION=0.1.0
+ARG VERSION=1.0.0
 RUN dotnet publish src/MyLife.Server/MyLife.Server.csproj \
         -c Release -o /app --no-restore \
         -p:Version=${VERSION} -p:UseAppHost=false

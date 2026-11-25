@@ -48,7 +48,7 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 3. **Vollständigkeitsanzeige** je Bereich und Objekt (Pflicht- und empfohlene Felder, fehlende typische Objekte) ✅ (25.11.2026; Entscheidungen 120–123)
 4. **Server-Sicherung:** täglicher verschlüsselter Dump im Volume `backup`, Rücksicherung getestet ✅ (25.11.2026; Entscheidungen 124–129; Schnappschuss per COPY statt pg_dump)
 5. **Betriebsdoku:** Update, Sicherung, Rücksicherung, Übergabe an die Nachfolgeperson; Formatbeschreibung `docs/format.md`; Werkzeug `mylife-decrypt` ✅ (25.11.2026; Entscheidungen 130–132)
-6. Barrierefreiheit, Durchsicht der englischen Texte, Prüfung der Sicherheit (CSP, Header, Abhängigkeiten), Release v1.0
+6. Barrierefreiheit, Durchsicht der englischen Texte, Prüfung der Sicherheit (CSP, Header, Abhängigkeiten), Release v1.0 ✅ (25.11.2026; Entscheidungen 133–136; das Tag `v1.0.0` setzt der Betreiber nach der Abnahme)
 
 ## Später (nicht geplant)
 

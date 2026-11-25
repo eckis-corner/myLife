@@ -252,8 +252,8 @@ HINTS = {
     "seedLocation": ("Nur den Ort, nie die Seed-Phrase selbst.", "Only the location, never the seed phrase itself."),
     "masterPasswordLocation": ("Nur der Ort, nicht das Passwort.", "Only the location, not the password."),
     "recipients": (
-        "Vertrauenspersonen als Empfänger mit eigener Freigabe folgen mit M2. Bis dahin hier die Namen.",
-        "Trusted persons as recipients with their own access follow with M2. Until then, enter names here.",
+        "Für wen der Brief ist. Wer ihn lesen darf, legst du unter „Vertrauenspersonen“ fest.",
+        "Who the letter is for. You decide who may read it under “Trusted persons”.",
     ),
 }
 
@@ -405,7 +405,7 @@ TEXTS = {
     "HomeNotInVaultHint": ("PINs, Passwörter und Seed-Phrasen gehören nicht hinein.", "PINs, passwords and seed phrases do not belong in here."),
     # Bereiche und Objekte
     "AreaEmpty": ("Noch keine Einträge in diesem Bereich.", "No entries in this area yet."),
-    "AreaNotAvailable": ("Dieser Bereich folgt in einer späteren Version.", "This area will follow in a later version."),
+    "AreaNotAvailable": ("Diesen Bereich gibt es nicht.", "This area does not exist."),
     "NewObject": ("{0} anlegen", "New {0}"),
     "EditObject": ("„{0}“ bearbeiten", "Edit “{0}”"),
     "ObjectType": ("Objekttyp", "Type"),

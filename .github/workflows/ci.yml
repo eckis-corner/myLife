@@ -50,7 +50,7 @@ jobs:
             type=sha,format=short
       - id: version
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then echo "value=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"; else echo "value=0.1.0-ci.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"; fi
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then echo "value=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"; else echo "value=1.0.0-ci.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"; fi
       - uses: docker/build-push-action@v6
         with:
           context: .

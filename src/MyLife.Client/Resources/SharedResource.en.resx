@@ -12,7 +12,7 @@
   <data name="AdminAuditTitle" xml:space="preserve"><value>System log</value></data>
   <data name="AdminBackupCreated" xml:space="preserve"><value>Created</value></data>
   <data name="AdminBackupDocuments" xml:space="preserve"><value>Include documents in every backup</value></data>
-  <data name="AdminBackupDocumentsHint" xml:space="preserve"><value>Turn off if Synology backup already covers the "files" folder: backups then stay small.</value></data>
+  <data name="AdminBackupDocumentsHint" xml:space="preserve"><value>Turn off if Synology backup already covers the “files” folder: backups then stay small.</value></data>
   <data name="AdminBackupDone" xml:space="preserve"><value>The backup has been created.</value></data>
   <data name="AdminBackupError" xml:space="preserve"><value>Error on {0}: {1}</value></data>
   <data name="AdminBackupFile" xml:space="preserve"><value>File</value></data>
@@ -25,10 +25,10 @@
   <data name="AdminBackupNotConfigured" xml:space="preserve"><value>No backup key is set up, so there are no automatic backups. Add MYLIFE_BACKUP_KEY to the .env file (openssl rand -base64 32), keep the key separately and restart the project.</value></data>
   <data name="AdminBackupNow" xml:space="preserve"><value>Back up now</value></data>
   <data name="AdminBackupSize" xml:space="preserve"><value>Size</value></data>
-  <data name="AdminBackupText" xml:space="preserve"><value>Every day at the set time, myLife stores an encrypted backup in the "backup" folder: database, key ring and, if chosen, the documents. Synology backup takes it from there. Old backups are pruned by generations. How to restore is described in the installation guide.</value></data>
+  <data name="AdminBackupText" xml:space="preserve"><value>Every day at the set time, myLife stores an encrypted backup in the “backup” folder: database, key ring and, if chosen, the documents. Synology backup takes it from there. Old backups are pruned by generations. How to restore is described in the installation guide.</value></data>
   <data name="AdminCancelDeletion" xml:space="preserve"><value>Withdraw deletion request</value></data>
   <data name="AdminCancelDeletionConfirm" xml:space="preserve"><value>Withdraw the deletion request for {0} ({1})? The link in the email stops working.</value></data>
-  <data name="AdminDeadlinesText" xml:space="preserve"><value>Defaults and limits for emergency access. Each user later chooses their own values within the limits. You cannot force shorter deadlines on a user.</value></data>
+  <data name="AdminDeadlinesText" xml:space="preserve"><value>Defaults and limits for emergency access. Each user chooses their own values under “Emergency access” within the limits. You cannot force shorter deadlines on a user.</value></data>
   <data name="AdminDeletedAccount" xml:space="preserve"><value>deleted account</value></data>
   <data name="AdminDeletionPending" xml:space="preserve"><value>Deletion requested</value></data>
   <data name="AdminDeletionRequested" xml:space="preserve"><value>Email to {0} is on its way.</value></data>
@@ -52,10 +52,10 @@
   <data name="AdminLock" xml:space="preserve"><value>Lock</value></data>
   <data name="AdminLockConfirm" xml:space="preserve"><value>Lock {0} ({1})? They are signed out immediately and cannot sign in until you unlock them. Their data is kept.</value></data>
   <data name="AdminLocked" xml:space="preserve"><value>{0} is locked.</value></data>
-  <data name="AdminMailTemplate" xml:space="preserve"><value>Email "{0}"</value></data>
-  <data name="AdminMailText" xml:space="preserve"><value>myLife sends emails for notifications and later for life signs and emergency access. Without a mail server, emails wait in the queue.</value></data>
+  <data name="AdminMailTemplate" xml:space="preserve"><value>Email “{0}”</value></data>
+  <data name="AdminMailText" xml:space="preserve"><value>myLife sends emails for invitations, life signs, reminders and emergency access. Without a mail server, emails wait in the queue and emergency access deadlines do not continue.</value></data>
   <data name="AdminNtfyServer" xml:space="preserve"><value>ntfy server</value></data>
-  <data name="AdminNtfyText" xml:space="preserve"><value>Optional: push notifications via an ntfy server, in addition to email. Topics for individual users come with emergency access.</value></data>
+  <data name="AdminNtfyText" xml:space="preserve"><value>Optional: push notifications via an ntfy server, in addition to email. Each user enters their own topic under “Emergency access”.</value></data>
   <data name="AdminNtfyToken" xml:space="preserve"><value>Access token (optional)</value></data>
   <data name="AdminNtfyTopic" xml:space="preserve"><value>Topic for the test</value></data>
   <data name="AdminNtfyTopicHint" xml:space="preserve"><value>Letters, digits, - and _; not stored.</value></data>
@@ -137,10 +137,9 @@
   <data name="AdminWaiting" xml:space="preserve"><value>Waiting period</value></data>
   <data name="AdminWaitingHint" xml:space="preserve"><value>After the last unanswered reminder, until access is released.</value></data>
   <data name="AppName" xml:space="preserve"><value>myLife</value></data>
-  <data name="AppTagline" xml:space="preserve"><value>Your digital emergency folder</value></data>
   <data name="Area" xml:space="preserve"><value>Area</value></data>
   <data name="AreaEmpty" xml:space="preserve"><value>No entries in this area yet.</value></data>
-  <data name="AreaNotAvailable" xml:space="preserve"><value>This area will follow in a later version.</value></data>
+  <data name="AreaNotAvailable" xml:space="preserve"><value>This area does not exist.</value></data>
   <data name="AreaText_0" xml:space="preserve"><value>Personal details and identity documents.</value></data>
   <data name="AreaText_1" xml:space="preserve"><value>Accounts, securities and safe deposit boxes with powers of attorney.</value></data>
   <data name="AreaText_10" xml:space="preserve"><value>Tax advisor, notary, doctors and everyone who should be notified.</value></data>
@@ -278,11 +277,11 @@
   <data name="ChecklistError_checklist-not-found" xml:space="preserve"><value>Not found.</value></data>
   <data name="ChecklistIntro" xml:space="preserve"><value>What needs to be done if something happens to you? The checklist guides your trusted persons step by step: first 24 hours, first week, first month, later. Each task shows the matching entries, such as all contracts that should be cancelled. Your trusted persons tick them off together.</value></data>
   <data name="ChecklistLinkedArea" xml:space="preserve"><value>Related: {0}</value></data>
-  <data name="ChecklistLinkedAreaWish" xml:space="preserve"><value>Related: {0} with the wish "{1}"</value></data>
+  <data name="ChecklistLinkedAreaWish" xml:space="preserve"><value>Related: {0} with the wish “{1}”</value></data>
   <data name="ChecklistNewTask" xml:space="preserve"><value>New task</value></data>
   <data name="ChecklistOpenArea" xml:space="preserve"><value>View</value></data>
   <data name="ChecklistResponsible" xml:space="preserve"><value>Responsible: {0}</value></data>
-  <data name="ChecklistShareHint" xml:space="preserve"><value>For your trusted persons to see the checklist in reading mode, share it with them under "Trusted persons" like any other area. They only see related entries from areas they may see as well.</value></data>
+  <data name="ChecklistShareHint" xml:space="preserve"><value>For your trusted persons to see the checklist in reading mode, share it with them under “Trusted persons” like any other area. They only see related entries from areas they may see as well.</value></data>
   <data name="ChecklistStartEmpty" xml:space="preserve"><value>Start without template</value></data>
   <data name="ChecklistTemplateText" xml:space="preserve"><value>{0} tasks from the doctor to the tax office, with deadlines as a guide. They are added to your vault, and you change, add or delete them like any other entry. Not legal advice.</value></data>
   <data name="ChecklistTemplateTitle" xml:space="preserve"><value>Template for Germany</value></data>
@@ -418,7 +417,7 @@
   <data name="EmergencyDeletionOwnerScheduled" xml:space="preserve"><value>All trusted persons have agreed: your vault will be deleted for good on {0}.</value></data>
   <data name="EmergencyDeletionOwnerVotes" xml:space="preserve"><value>Your trusted persons are considering deleting your vault for good. Agreed so far: {0}.</value></data>
   <data name="EmergencyDeletionScheduled" xml:space="preserve"><value>Everyone has agreed. Deletion takes place on {0}; until then you can withdraw your agreement.</value></data>
-  <data name="EmergencyDeletionText" xml:space="preserve"><value>When everything has been taken care of, you can delete {0}'s vault together. All trusted persons for the case "deceased" must agree; seven days after the last agreement everything is deleted irrevocably.</value></data>
+  <data name="EmergencyDeletionText" xml:space="preserve"><value>When everything has been taken care of, you can delete {0}'s vault together. All trusted persons for the case “deceased” must agree; seven days after the last agreement everything is deleted irrevocably.</value></data>
   <data name="EmergencyDeletionTitle" xml:space="preserve"><value>Delete vault for good</value></data>
   <data name="EmergencyDeletionVotes" xml:space="preserve"><value>Agreed: {0}. Still missing: {1}.</value></data>
   <data name="EmergencyDeletionWithdraw" xml:space="preserve"><value>Withdraw agreement</value></data>
@@ -454,13 +453,13 @@
   <data name="EmergencyRekeyContinue" xml:space="preserve"><value>Continue key change</value></data>
   <data name="EmergencyRekeyDone" xml:space="preserve"><value>All affected areas and letters have new keys.</value></data>
   <data name="EmergencyRekeyFailed" xml:space="preserve"><value>The key change did not quite finish. You can continue it here.</value></data>
-  <data name="EmergencyRekeyKeyChanged" xml:space="preserve"><value>A trusted person's key has changed. Check them under "Trusted persons" and then continue the key change here.</value></data>
+  <data name="EmergencyRekeyKeyChanged" xml:space="preserve"><value>A trusted person's key has changed. Check them under “Trusted persons” and then continue the key change here.</value></data>
   <data name="EmergencyRekeyPending" xml:space="preserve"><value>The release has been revoked, but the key change is not finished yet ({0} areas, {1} letters). Until then, trusted persons may still know the old keys.</value></data>
   <data name="EmergencyRekeying" xml:space="preserve"><value>New keys are being created and everything affected is re-encrypted. Please do not close the page.</value></data>
   <data name="EmergencyReleasedFor" xml:space="preserve"><value>Released ({0}) – view</value></data>
   <data name="EmergencyReleasedOwner" xml:space="preserve"><value>Your emergency access has been released ({0}) since {1}. Your trusted persons can read what you set up for this case. If you are well, revoke the release.</value></data>
   <data name="EmergencyRequest" xml:space="preserve"><value>Request access: {0}</value></data>
-  <data name="EmergencyRequestConfirm" xml:space="preserve"><value>Request access to {0} for the case "{1}"? {0} and all other trusted persons will receive an email right away.</value></data>
+  <data name="EmergencyRequestConfirm" xml:space="preserve"><value>Request access to {0} for the case “{1}”? {0} and all other trusted persons will receive an email right away.</value></data>
   <data name="EmergencyRequestPaused" xml:space="preserve"><value>{0}'s request ({1}) is paused. Decide now: object for good or let it continue.</value></data>
   <data name="EmergencyRequestPending" xml:space="preserve"><value>{0} has requested access ({1}). Without an objection it will be released on {2}.</value></data>
   <data name="EmergencyRequestSubmit" xml:space="preserve"><value>Request</value></data>
@@ -548,9 +547,9 @@
   <data name="FieldError_url" xml:space="preserve"><value>Not a valid address (https://…)</value></data>
   <data name="FieldHint_deathNotificationPeriod" xml:space="preserve"><value>Often 24 to 72 hours for life insurance.</value></data>
   <data name="FieldHint_last4" xml:space="preserve"><value>Never the full number, PIN or security code.</value></data>
-  <data name="FieldHint_linkedWish" xml:space="preserve"><value>For example "Contracts &amp; subscriptions" with "cancel": the task then lists all contracts that should be cancelled.</value></data>
+  <data name="FieldHint_linkedWish" xml:space="preserve"><value>For example “Contracts &amp; subscriptions” with “cancel”: the task then lists all contracts that should be cancelled.</value></data>
   <data name="FieldHint_masterPasswordLocation" xml:space="preserve"><value>Only the location, not the password.</value></data>
-  <data name="FieldHint_recipients" xml:space="preserve"><value>Trusted persons as recipients with their own access follow with M2. Until then, enter names here.</value></data>
+  <data name="FieldHint_recipients" xml:space="preserve"><value>Who the letter is for. You decide who may read it under “Trusted persons”.</value></data>
   <data name="FieldHint_seedLocation" xml:space="preserve"><value>Only the location, never the seed phrase itself.</value></data>
   <data name="FieldHint_username" xml:space="preserve"><value>Do not enter a password.</value></data>
   <data name="Field_account" xml:space="preserve"><value>Account / email</value></data>
@@ -748,28 +747,22 @@
   <data name="FollowUpDue" xml:space="preserve"><value>due</value></data>
   <data name="FollowUpDueAlert" xml:space="preserve"><value>Follow-up due: {0}</value></data>
   <data name="FormHasErrors" xml:space="preserve"><value>Please check the highlighted fields.</value></data>
-  <data name="GrantModeHint_Death" xml:space="preserve"><value>Visible once emergency access is released as "deceased".</value></data>
-  <data name="GrantModeHint_Incapacity" xml:space="preserve"><value>Visible once emergency access is released as "incapacitated". You can revoke it after you return.</value></data>
+  <data name="GrantModeHint_Death" xml:space="preserve"><value>Visible once emergency access is released as “deceased”.</value></data>
+  <data name="GrantModeHint_Incapacity" xml:space="preserve"><value>Visible once emergency access is released as “incapacitated”. You can revoke it after you return.</value></data>
   <data name="GrantModeHint_Live" xml:space="preserve"><value>The person can read the area today but cannot change anything.</value></data>
   <data name="GrantMode_Death" xml:space="preserve"><value>Deceased</value></data>
   <data name="GrantMode_Incapacity" xml:space="preserve"><value>Incapacitated</value></data>
   <data name="GrantMode_Live" xml:space="preserve"><value>Share now</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Expiring soon</value></data>
   <data name="HomeFollowUpTitle" xml:space="preserve"><value>Follow-ups</value></data>
-  <data name="HomeIntro" xml:space="preserve"><value>This is where your digital emergency folder takes shape: insurance policies, accounts, contracts, certificates and wishes in one safe place. Everything is encrypted in your browser, so only you and, in an emergency, your trusted persons can read it.</value></data>
   <data name="HomeLastReviewed" xml:space="preserve"><value>Last reviewed on {0}</value></data>
   <data name="HomeMarkReviewed" xml:space="preserve"><value>Mark as reviewed</value></data>
   <data name="HomeNeverReviewed" xml:space="preserve"><value>Never reviewed</value></data>
-  <data name="HomeNextStepsText" xml:space="preserve"><value>Next up: object types and the encrypted vault.</value></data>
-  <data name="HomeNextStepsTitle" xml:space="preserve"><value>What comes next?</value></data>
   <data name="HomeNotInVaultHint" xml:space="preserve"><value>PINs, passwords and seed phrases do not belong in here.</value></data>
   <data name="HomeObjectCount" xml:space="preserve"><value>{0} entries</value></data>
   <data name="HomeReviewDue" xml:space="preserve"><value>{0} areas have not been reviewed for more than {1} months. Look through them and then mark them as reviewed.</value></data>
   <data name="HomeReviewDueChip" xml:space="preserve"><value>Review due</value></data>
   <data name="HomeReviewedSaved" xml:space="preserve"><value>“{0}” marked as reviewed.</value></data>
-  <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Encryption format</value></data>
-  <data name="HomeStatusReachable" xml:space="preserve"><value>Server reachable</value></data>
-  <data name="HomeStatusTitle" xml:space="preserve"><value>Instance status</value></data>
   <data name="HomeStatusUnreachable" xml:space="preserve"><value>The server cannot be reached. Please try again later.</value></data>
   <data name="HomeStatusVersion" xml:space="preserve"><value>Version</value></data>
   <data name="HomeTitle" xml:space="preserve"><value>Welcome to myLife</value></data>
@@ -863,7 +856,7 @@
   <data name="ObjectUpdated" xml:space="preserve"><value>Updated</value></data>
   <data name="ObjectionDone" xml:space="preserve"><value>{0}'s request is paused. Nothing will be released for now.</value></data>
   <data name="ObjectionInvalid" xml:space="preserve"><value>This link is invalid or the request has already been decided.</value></data>
-  <data name="ObjectionNext" xml:space="preserve"><value>Now sign in and decide under "Emergency access" whether to object for good.</value></data>
+  <data name="ObjectionNext" xml:space="preserve"><value>Now sign in and decide under “Emergency access” whether to object for good.</value></data>
   <data name="ObjectionTitle" xml:space="preserve"><value>Pause request</value></data>
   <data name="Open" xml:space="preserve"><value>Open</value></data>
   <data name="OpenMenu" xml:space="preserve"><value>Open menu</value></data>
@@ -1064,7 +1057,7 @@
   <data name="PackageSaveAgain" xml:space="preserve"><value>Save file again</value></data>
   <data name="PackageSheetCreated" xml:space="preserve"><value>Created on</value></data>
   <data name="PackageSheetFile" xml:space="preserve"><value>File</value></data>
-  <data name="PackageSheetInstructions" xml:space="preserve"><value>How to open the package: open the file {0} in a browser (double-click), enter the 24 words in this order and choose "Open". No internet and no account are needed.</value></data>
+  <data name="PackageSheetInstructions" xml:space="preserve"><value>How to open the package: open the file {0} in a browser (double-click), enter the 24 words in this order and choose “Open”. No internet and no account are needed.</value></data>
   <data name="PackageSheetOwner" xml:space="preserve"><value>From</value></data>
   <data name="PackageSheetTitle" xml:space="preserve"><value>myLife – Key to the emergency package</value></data>
   <data name="PackageSheetWarning" xml:space="preserve"><value>Keep this sheet separate from the file. Anyone who has both can read everything in the package.</value></data>
@@ -1252,12 +1245,13 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="SharedAreaEmpty" xml:space="preserve"><value>This area is empty.</value></data>
   <data name="SharedEmpty" xml:space="preserve"><value>Nobody is sharing anything with you right now.</value></data>
   <data name="SharedLetter" xml:space="preserve"><value>Personal letter</value></data>
-  <data name="SharedNotVerified" xml:space="preserve"><value>The share is not signed by a confirmed key. Check on the "Family" page whether this person's key is confirmed.</value></data>
+  <data name="SharedNotVerified" xml:space="preserve"><value>The share is not signed by a confirmed key. Check on the “Family” page whether this person's key is confirmed.</value></data>
   <data name="SharedOpenFailed" xml:space="preserve"><value>The content could not be opened.</value></data>
   <data name="SharedOwnerKeyChanged" xml:space="preserve"><value>This person's key has changed. Careful: the content may not come from them.</value></data>
   <data name="SharedText" xml:space="preserve"><value>What others already share with you today, read only. Decryption happens in your browser with your own key.</value></data>
   <data name="SharedTitle" xml:space="preserve"><value>Shared with me</value></data>
   <data name="ShowEnded" xml:space="preserve"><value>Show ended</value></data>
+  <data name="SkipToContent" xml:space="preserve"><value>Skip to content</value></data>
   <data name="SomeFailed" xml:space="preserve"><value>{0} entries could not be changed.</value></data>
   <data name="SortBy" xml:space="preserve"><value>Sort by</value></data>
   <data name="ToggleDarkMode" xml:space="preserve"><value>Toggle light/dark mode</value></data>
@@ -1281,12 +1275,12 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="TrustError_trust-stale" xml:space="preserve"><value>Something has changed in the meantime. Please reload and try again.</value></data>
   <data name="TrustGrants" xml:space="preserve"><value>Access</value></data>
   <data name="TrustLetter" xml:space="preserve"><value>Letter</value></data>
-  <data name="TrustLettersEmpty" xml:space="preserve"><value>No letters. You create letters in the "Personal wishes" area.</value></data>
+  <data name="TrustLettersEmpty" xml:space="preserve"><value>No letters. You create letters in the “Personal wishes” area.</value></data>
   <data name="TrustLettersText" xml:space="preserve"><value>Each letter has its own key and only goes to the people you select here.</value></data>
   <data name="TrustLettersTitle" xml:space="preserve"><value>Personal letters</value></data>
   <data name="TrustLiveEndText" xml:space="preserve"><value>Sharing now ends for {0}. Your browser creates a new key and re-encrypts the area. This may take a moment.</value></data>
   <data name="TrustLiveEndTitle" xml:space="preserve"><value>Stop sharing</value></data>
-  <data name="TrustLiveHint" xml:space="preserve"><value>The person sees areas shared now under "Shared with me" as soon as you save. If you stop sharing, the area gets a new key.</value></data>
+  <data name="TrustLiveHint" xml:space="preserve"><value>The person sees areas shared now under “Shared with me” as soon as you save. If you stop sharing, the area gets a new key.</value></data>
   <data name="TrustNobody" xml:space="preserve"><value>Trusted persons are people with their own account on this instance. Invite someone first.</value></data>
   <data name="TrustNote" xml:space="preserve"><value>Note</value></data>
   <data name="TrustProfileEncrypted" xml:space="preserve"><value>Relationship and note are encrypted in your vault; the server cannot see them.</value></data>

@@ -4,6 +4,7 @@ damit beide Sprachen immer dieselben Schlüssel haben.
 
 Aufruf: python3 tools/resources.py
 """
+import re
 import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -20,11 +21,11 @@ import resources_checklist  # noqa: E402
 import resources_completeness  # noqa: E402
 import resources_backup  # noqa: E402
 import resources_decrypt  # noqa: E402
+import resources_a11y  # noqa: E402
 import resources_vault  # noqa: E402
 
 TEXTS: dict[str, tuple[str, str]] = {
     "AppName": ("myLife", "myLife"),
-    "AppTagline": ("Dein digitaler Notfallordner", "Your digital emergency folder"),
     "NavHome": ("Übersicht", "Overview"),
     "OpenMenu": ("Menü öffnen", "Open menu"),
     "ToggleDarkMode": ("Hell/Dunkel umschalten", "Toggle light/dark mode"),
@@ -33,27 +34,11 @@ TEXTS: dict[str, tuple[str, str]] = {
     "LanguageName_en": ("English", "English"),
     "Loading": ("Wird geladen …", "Loading …"),
     "HomeTitle": ("Willkommen bei myLife", "Welcome to myLife"),
-    "HomeIntro": (
-        "Hier entsteht dein digitaler Notfallordner: Versicherungen, Konten, Verträge, Urkunden und "
-        "Wünsche an einem sicheren Ort. Alles wird in deinem Browser verschlüsselt, sodass nur du "
-        "und im Ernstfall deine Vertrauenspersonen die Daten lesen können.",
-        "This is where your digital emergency folder takes shape: insurance policies, accounts, "
-        "contracts, certificates and wishes in one safe place. Everything is encrypted in your "
-        "browser, so only you and, in an emergency, your trusted persons can read it.",
-    ),
-    "HomeStatusTitle": ("Status der Instanz", "Instance status"),
-    "HomeStatusReachable": ("Server erreichbar", "Server reachable"),
     "HomeStatusUnreachable": (
         "Der Server ist nicht erreichbar. Bitte versuche es später erneut.",
         "The server cannot be reached. Please try again later.",
     ),
     "HomeStatusVersion": ("Version", "Version"),
-    "HomeStatusCryptoFormat": ("Verschlüsselungsformat", "Encryption format"),
-    "HomeNextStepsTitle": ("Wie geht es weiter?", "What comes next?"),
-    "HomeNextStepsText": (
-        "Als Nächstes folgen die Objekttypen und der verschlüsselte Tresor.",
-        "Next up: object types and the encrypted vault.",
-    ),
     "NotFoundTitle": ("Seite nicht gefunden", "Page not found"),
     "NotFoundText": (
         "Die aufgerufene Seite gibt es nicht.",
@@ -398,6 +383,10 @@ _DUPLICATES = sorted(set(TEXTS) & set(resources_decrypt.CLIENT))
 if _DUPLICATES:
     raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
 TEXTS.update(resources_decrypt.CLIENT)
+_DUPLICATES = sorted(set(TEXTS) & set(resources_a11y.CLIENT))
+if _DUPLICATES:
+    raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
+TEXTS.update(resources_a11y.CLIENT)
 MAIL = {**resources_admin.MAIL, **resources_family.MAIL, **resources_trust.MAIL, **resources_emergency.MAIL, **resources_reminders.MAIL, **resources_backup.MAIL}
 
 HEADER = """<?xml version="1.0" encoding="utf-8"?>
@@ -410,10 +399,16 @@ HEADER = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 
+def english_quotes(text: str) -> str:
+    """Englisch einheitlich mit typografischen Anführungszeichen (M3.6); die Quellen schreiben oft gerade."""
+    return re.sub(r'"([^"\n]*)"', "\u201c\\1\u201d", text)
+
+
 def write(path: Path, index: int, texts: dict[str, tuple[str, str]] = TEXTS) -> None:
     lines = [HEADER]
     for key in sorted(texts):
-        value = escape(texts[key][index])
+        text = texts[key][index]
+        value = escape(english_quotes(text) if index == 1 else text)
         lines.append(f'  <data name="{key}" xml:space="preserve"><value>{value}</value></data>\n')
     lines.append("</root>\n")
     path.write_text("".join(lines), encoding="utf-8")

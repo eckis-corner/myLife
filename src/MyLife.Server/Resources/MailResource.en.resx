@@ -24,7 +24,7 @@ an administrator has unlocked your myLife account. You can sign in again.</value
 the daily myLife backup failed:
 {error}
 
-Please check "Backup" in the administration and the container log. myLife keeps trying; this email is sent at most once a day.</value></data>
+Please check “Backup” in the administration and the container log. myLife keeps trying; this email is sent at most once a day.</value></data>
   <data name="Mail_backup-failed_subject" xml:space="preserve"><value>myLife: The backup failed</value></data>
   <data name="Mail_deletion-request_body" xml:space="preserve"><value>Hello {name},
 
@@ -81,7 +81,7 @@ If this is a mistake, sign in to myLife.</value></data>
   <data name="Mail_released-owner_subject" xml:space="preserve"><value>myLife: Your emergency access has been released</value></data>
   <data name="Mail_released-trustee_body" xml:space="preserve"><value>Hello {name},
 
-{owner}'s emergency access has been released ({mode}). Sign in to myLife; under "Shared with me" you will find what {owner} left for you.</value></data>
+{owner}'s emergency access has been released ({mode}). Sign in to myLife; under “Shared with me” you will find what {owner} left for you.</value></data>
   <data name="Mail_released-trustee_subject" xml:space="preserve"><value>myLife: Access to {owner} released</value></data>
   <data name="Mail_reminder_body" xml:space="preserve"><value>Hello {name},
 
@@ -91,13 +91,13 @@ something is due on myLife:
 Sign in; the overview shows what it is about:
 {link}
 
-This email deliberately contains no details. You can adjust reminders under "Reminders" after signing in.</value></data>
+This email deliberately contains no details. You can adjust reminders under “Reminders” after signing in.</value></data>
   <data name="Mail_reminder_dates" xml:space="preserve"><value>An expiry date or a follow-up is coming up.</value></data>
   <data name="Mail_reminder_review" xml:space="preserve"><value>{count} areas have not been reviewed for more than {months} months.</value></data>
   <data name="Mail_reminder_subject" xml:space="preserve"><value>myLife: Time to look at your emergency folder</value></data>
   <data name="Mail_request-info_body" xml:space="preserve"><value>Hello {name},
 
-{trustee} has requested access to {owner} on myLife, for the case "{mode}". {owner} can object. You do not need to do anything; if in doubt, talk to {trustee} or {owner}.</value></data>
+{trustee} has requested access to {owner} on myLife, for the case “{mode}”. {owner} can object. You do not need to do anything; if in doubt, talk to {trustee} or {owner}.</value></data>
   <data name="Mail_request-info_subject" xml:space="preserve"><value>myLife: Access request for {owner}</value></data>
   <data name="Mail_request-objected_body" xml:space="preserve"><value>Hello {name},
 
@@ -105,7 +105,7 @@ This email deliberately contains no details. You can adjust reminders under "Rem
   <data name="Mail_request-objected_subject" xml:space="preserve"><value>myLife: {owner} has objected to the request</value></data>
   <data name="Mail_request-owner_body" xml:space="preserve"><value>Hello {name},
 
-{trustee} has requested access to your data on myLife, for the case "{mode}". Without an objection, access will be released on {date}.
+{trustee} has requested access to your data on myLife, for the case “{mode}”. Without an objection, access will be released on {date}.
 
 If this is not what you want, open this link right away. It pauses the request:
 {link}
@@ -122,7 +122,7 @@ this test message shows that myLife can send emails.</value></data>
   <data name="Mail_test_subject" xml:space="preserve"><value>myLife: test message</value></data>
   <data name="Mail_trustee-added_body" xml:space="preserve"><value>Hello {name},
 
-{owner} has named you as a trusted person on myLife. What you may see in an emergency stays encrypted until it is released. If {owner} already shares something with you today, you will find it under "Shared with me" after signing in.</value></data>
+{owner} has named you as a trusted person on myLife. What you may see in an emergency stays encrypted until it is released. If {owner} already shares something with you today, you will find it under “Shared with me” after signing in.</value></data>
   <data name="Mail_trustee-added_subject" xml:space="preserve"><value>{owner} has named you as a trusted person</value></data>
   <data name="Mail_twofactor-reset_body" xml:space="preserve"><value>Hello {name},
 
@@ -140,14 +140,14 @@ as agreed by all trusted persons, {owner}'s vault on myLife has now been deleted
   <data name="Mail_vault-deletion-cancelled_subject" xml:space="preserve"><value>myLife: Deletion of {owner}'s vault cancelled</value></data>
   <data name="Mail_vault-deletion-proposed_body" xml:space="preserve"><value>Hello {name},
 
-{trustee} suggests deleting {owner}'s vault on myLife for good. It will only be deleted if all trusted persons agree. Sign in and decide under "Emergency access". Save anything you want to keep first.</value></data>
+{trustee} suggests deleting {owner}'s vault on myLife for good. It will only be deleted if all trusted persons agree. Sign in and decide under “Emergency access”. Save anything you want to keep first.</value></data>
   <data name="Mail_vault-deletion-proposed_subject" xml:space="preserve"><value>myLife: Delete {owner}'s vault?</value></data>
   <data name="Mail_vault-deletion-scheduled-owner_body" xml:space="preserve"><value>Hello {name},
 
-your trusted persons have agreed to delete your vault on myLife for good on {date}. If this is a mistake, sign in right away and revoke the release under "Emergency access"; then nothing will be deleted.</value></data>
+your trusted persons have agreed to delete your vault on myLife for good on {date}. If this is a mistake, sign in right away and revoke the release under “Emergency access”; then nothing will be deleted.</value></data>
   <data name="Mail_vault-deletion-scheduled-owner_subject" xml:space="preserve"><value>myLife: Your vault will be deleted on {date}</value></data>
   <data name="Mail_vault-deletion-scheduled_body" xml:space="preserve"><value>Hello {name},
 
-all trusted persons have agreed: {owner}'s vault will be deleted for good on {date}. Until then you can withdraw your agreement under "Emergency access".</value></data>
+all trusted persons have agreed: {owner}'s vault will be deleted for good on {date}. Until then you can withdraw your agreement under “Emergency access”.</value></data>
   <data name="Mail_vault-deletion-scheduled_subject" xml:space="preserve"><value>myLife: {owner}'s vault will be deleted on {date}</value></data>
 </root>

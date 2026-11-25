@@ -14,6 +14,8 @@ using MyLife.Server.Infrastructure.Mail;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+// Kein „Server: Kestrel“ in den Antworten (M3.6).
+builder.WebHost.ConfigureKestrel(kestrel => kestrel.AddServerHeader = false);
 
 builder.Services.AddSerilog((services, configuration) => configuration
     .ReadFrom.Configuration(builder.Configuration)

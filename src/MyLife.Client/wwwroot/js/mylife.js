@@ -4,6 +4,8 @@ window.myLife = {
     setStoredCulture: (culture) => window.localStorage.setItem("mylife.culture", culture),
     getBrowserLanguage: () => navigator.language || "de",
     setDocumentLanguage: (culture) => { document.documentElement.lang = culture; },
+    // Heller Modus: Orange als Schriftfarbe wird dunkler, damit der Kontrast reicht (M3.6, app.css).
+    setLightMode: (light) => { document.documentElement.classList.toggle("mylife-light", light); },
     print: () => window.print(),
     copyText: async (text) => {
         try {

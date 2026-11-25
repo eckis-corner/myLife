@@ -4,9 +4,9 @@
 
 myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: Versicherungen, Konten, Kredite, Verträge, Urkunden, digitale Zugänge, Kontakte und persönliche Wünsche. Solange du lebst, kann niemand die Daten lesen, auch nicht der Betreiber des Servers. Wirst du handlungsunfähig oder stirbst du, erhalten deine Vertrauenspersonen über einen Notfallzugang (Dead-Man's-Switch) genau die Bereiche, die du für sie freigegeben hast.
 
-> **Status:** Meilensteine M1 und M2 umgesetzt, M3 in Arbeit. Vor echten Daten fehlt die Abnahme auf der Synology.
+> **Status:** Meilensteine M1 bis M3 umgesetzt, Version 1.0 vorbereitet. Vor echten Daten fehlt die Abnahme auf der Synology.
 
-## Merkmale (geplant)
+## Merkmale
 
 - **Zero-Knowledge:** Verschlüsselung im Browser (AES-256-GCM, Argon2id, ECDH P-256), der Server sieht nur Chiffrat
 - **Objekte mit Datenblatt:** Bankkonto, Versicherung, Vertrag, Urkunde, Immobilie, Online-Konto … jeweils mit typischen Feldern und beliebigen Dokumenten

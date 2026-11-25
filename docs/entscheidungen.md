@@ -219,6 +219,15 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 131 | Verteilung | Die CI baut bei jedem Push eigenständige Einzeldateien für Windows, macOS (Apple und Intel) und Linux und hängt sie bei einem Tag `v*` an das GitHub-Release. Sie brauchen kein .NET; eine Kopie gehört zum Notfallordner. Die Dateien sind nicht signiert; die Anleitung erklärt, wie macOS sie trotzdem startet. |
 | 132 | Betriebsdoku | `installation.md` beschreibt Installation, Updates (mit Sicherung vorher, fester Version und Weg zurück), Sicherung und Rücksicherung; `nachfolge.md` die Übergabe an eine Nachfolgeperson, was sie vorher bekommt, was sie regelmäßig prüft und wie sie die Instanz geordnet beendet oder umzieht; `mylife-decrypt.md` das Werkzeug für Angehörige; `format.md` alle drei Formate. |
 
+## Runde 18 (25.11.2026, Umsetzung M3.6)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 133 | Sicherheitsprüfung | Header und CSP waren bereits streng; neu: kein `Server`-Header. Ein Test hält fest, welche 25 API-Endpunkte bewusst ohne Anmeldung erreichbar sind (Anmeldung, Einrichtung, Einladung, Links mit Einmal-Token, Info, Datenschutz), und dass die Verwaltung die Rolle Admin verlangt; dazu die Prüfsumme von hash-wasm. Abhängigkeiten ohne bekannte Schwachstellen. Neuere Hauptversionen (.NET 11, MailKit 5) übernehmen wir nicht vor 1.0: .NET 10 ist eine LTS-Version. |
+| 134 | Barrierefreiheit | Sprunglink „Zum Inhalt springen“, Hauptbereich als Landmarke, sichtbarer Tastaturfokus, Sprache des Dokuments folgt der Oberfläche. Ein Test verlangt für jeden Symbolknopf ein `aria-label` und für jedes Bild einen Alternativtext. **Kontrast:** Das Orange erreicht als Schrift auf Weiß nur 2,0:1; im hellen Modus nutzen Schrift, Rahmen, Haken und Links deshalb ein dunkleres Orange (`#8a5800`, 6,0:1). Gefüllte orange Flächen mit dunkler Schrift (8,5:1) und der dunkle Modus (8,2:1) bleiben. Eine Prüfung mit Screenreader steht noch aus. |
+| 135 | Englische Texte | Durchgesehen: britisches Englisch, einheitlich typografische Anführungszeichen (setzt `tools/resources.py` um), veraltete Hinweise auf spätere Meilensteine entfernt, ungenutzte Texte aus M0 gelöscht. Ein Test prüft gleiche Platzhalter in beiden Sprachen, kein Deutsch im Englischen und keine Verweise auf künftige Meilensteine. |
+| 136 | Release v1.0 | Version 1.0.0 entsteht mit dem Tag `v1.0.0`: Die CI baut das Image `ghcr.io/eckis-corner/mylife:1.0.0` und hängt `mylife-decrypt` an das GitHub-Release. Den Tag setzt der Betreiber, sinnvollerweise nach der Abnahme auf der DS1520+ (M1, M2). |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

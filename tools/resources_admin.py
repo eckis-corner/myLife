@@ -53,10 +53,10 @@ CLIENT = {
     "AdminRetentionHint": ("Ältere Protokolleinträge werden automatisch gelöscht.", "Older log entries are deleted automatically."),
     "AdminTabMail": ("E-Mail", "Email"),
     "AdminMailText": (
-        "myLife verschickt Mails für Benachrichtigungen und später für Lebenszeichen und den Notfallzugang. Ohne "
-        "Mailversand warten Mails in der Warteschlange.",
-        "myLife sends emails for notifications and later for life signs and emergency access. Without a mail "
-        "server, emails wait in the queue.",
+        "myLife verschickt Mails für Einladungen, Lebenszeichen, Erinnerungen und den Notfallzugang. Ohne "
+        "Mailversand warten Mails in der Warteschlange, und die Fristen des Notfallzugangs laufen nicht weiter.",
+        "myLife sends emails for invitations, life signs, reminders and emergency access. Without a mail server, "
+        "emails wait in the queue and emergency access deadlines do not continue.",
     ),
     "AdminSmtpHost": ("SMTP-Server", "SMTP server"),
     "AdminSmtpPort": ("Port", "Port"),
@@ -84,10 +84,10 @@ CLIENT = {
     "AdminQueueRetry": ("Jetzt erneut versuchen", "Retry now"),
     "AdminTabNtfy": ("ntfy", "ntfy"),
     "AdminNtfyText": (
-        "Optional: Push-Nachrichten über einen ntfy-Server, zusätzlich zur Mail. Die Themen der einzelnen Nutzer "
-        "kommen mit dem Notfallzugang.",
-        "Optional: push notifications via an ntfy server, in addition to email. Topics for individual users come "
-        "with emergency access.",
+        "Optional: Push-Nachrichten über einen ntfy-Server, zusätzlich zur Mail. Sein Thema trägt jeder Nutzer "
+        "selbst unter „Notfallzugang“ ein.",
+        "Optional: push notifications via an ntfy server, in addition to email. Each user enters their own topic "
+        "under “Emergency access”.",
     ),
     "AdminNtfyServer": ("ntfy-Server", "ntfy server"),
     "AdminNtfyToken": ("Zugriffstoken (optional)", "Access token (optional)"),
@@ -97,10 +97,10 @@ CLIENT = {
     "AdminTestNtfySent": ("Testnachricht verschickt.", "Test notification sent."),
     "AdminTabDeadlines": ("Fristen", "Deadlines"),
     "AdminDeadlinesText": (
-        "Standardwerte und Grenzen für den Notfallzugang. Jeder Nutzer wählt seine Werte später innerhalb der "
-        "Grenzen. Kürzere Fristen eines Nutzers kannst du nicht erzwingen.",
-        "Defaults and limits for emergency access. Each user later chooses their own values within the limits. "
-        "You cannot force shorter deadlines on a user.",
+        "Standardwerte und Grenzen für den Notfallzugang. Jeder Nutzer wählt seine Werte unter „Notfallzugang“ "
+        "innerhalb der Grenzen. Kürzere Fristen eines Nutzers kannst du nicht erzwingen.",
+        "Defaults and limits for emergency access. Each user chooses their own values under “Emergency access” "
+        "within the limits. You cannot force shorter deadlines on a user.",
     ),
     "AdminLifesign": ("Lebenszeichen", "Life sign"),
     "AdminLifesignHint": ("Wie oft sich jemand meldet, per Anmeldung oder Link in der Mail.", "How often someone checks in, by signing in or via the link in an email."),

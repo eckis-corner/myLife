@@ -1,5 +1,7 @@
 @inherits LayoutComponentBase
 @inject IStringLocalizer<SharedResource> L
+@inject NavigationManager Navigation
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 @* Lesemodus (Architektur 1.4, M2.5): ruhig und linear, ohne Seitenleiste und Verwaltung, große Schrift. *@
 <MudThemeProvider @ref="_themeProvider" Theme="_theme" @bind-IsDarkMode="_isDarkMode" />
@@ -7,6 +9,8 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 <IdleMonitor />
+
+<a class="mylife-skip-link" href="@SkipTarget">@L["SkipToContent"]</a>
 
 <MudLayout Class="@($"mylife-rixio {(_isDarkMode ? "mylife-rixio-dark" : "mylife-rixio-light")} mylife-reading-mode {(_large ? "mylife-reading-large" : string.Empty)}")">
     <MudAppBar Elevation="0" Class="mylife-appbar">
@@ -19,8 +23,8 @@
         </MudTooltip>
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Href="" StartIcon="@Icons.Material.Outlined.ExitToApp">@L["ReadingLeave"]</MudButton>
     </MudAppBar>
-    <MudMainContent Class="mylife-main">
-        <MudContainer MaxWidth="MaxWidth.Medium" Class="py-6">
+    <MudMainContent Class="mylife-main" role="main">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="py-6" id="main-content" tabindex="-1">
             <ErrorBoundary>
                 <ChildContent>
                     @Body
@@ -42,12 +46,22 @@
     private bool _isDarkMode;
     private bool _large = true;
 
+    private bool? _appliedLight;
+
+    private string SkipTarget => $"{Navigation.Uri.Split('#')[0]}#main-content";
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && _themeProvider is not null)
         {
             _isDarkMode = await _themeProvider.GetSystemDarkModeAsync();
             StateHasChanged();
+        }
+
+        if (_appliedLight != !_isDarkMode)
+        {
+            _appliedLight = !_isDarkMode;
+            await JS.InvokeVoidAsync("myLife.setLightMode", !_isDarkMode);
         }
     }
 }
