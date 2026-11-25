@@ -1,0 +1,58 @@
+@page "/reading"
+@attribute [Authorize]
+@layout Layout.ReadingLayout
+@using MyLife.Shared.Trust
+@inject IStringLocalizer<SharedResource> L
+@inject ReadingService Reading
+
+<PageTitle>@L["AppName"] – @L["ReadingTitle"]</PageTitle>
+
+@* Einstieg in den Lesemodus: Wessen Notfallzugang ist für mich freigegeben? *@
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["ReadingTitle"]</MudText>
+    <MudText Typo="Typo.body1">@L["ReadingStartText"]</MudText>
+
+    @if (_owners is null)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (_owners.Count == 0)
+    {
+        <MudText Typo="Typo.body1" Class="mylife-muted" data-testid="reading-empty"><i>@L["ReadingEmpty"]</i></MudText>
+    }
+    else
+    {
+        @foreach (var owner in _owners)
+        {
+            <MudPaper Outlined Class="pa-4" data-testid="reading-owner">
+                <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap" Spacing="2">
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h5" HtmlTag="h2">@owner.Name</MudText>
+                        <MudText Typo="Typo.body2" Class="mylife-muted">
+                            @string.Join(" · ", owner.Grants.Where(g => g.Dto.Mode != GrantMode.Live).Select(g => L[$"GrantMode_{g.Dto.Mode}"].Value).Distinct())
+                        </MudText>
+                    </MudStack>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" EndIcon="@Icons.Material.Filled.ArrowForward"
+                               Href="@($"reading/{owner.OwnerId}")">@L["ReadingOpen"]</MudButton>
+                </MudStack>
+            </MudPaper>
+        }
+    }
+</MudStack>
+
+@code {
+    private IReadOnlyList<SharedOwner>? _owners;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _owners = await Reading.GetOwnersAsync();
+        }
+        catch (Exception exception) when (exception is TrustException or FamilyException or HttpRequestException or InvalidOperationException
+                                              or System.Security.Cryptography.CryptographicException)
+        {
+            _owners = [];
+        }
+    }
+}

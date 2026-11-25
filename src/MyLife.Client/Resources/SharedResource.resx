@@ -921,6 +921,36 @@ Wie lange: Das Protokoll wird nach der eingestellten Frist gelöscht. Wird dein 
 
 Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen. Wende dich dafür an den Administrator dieser Instanz.</value></data>
   <data name="PrivacyTitle" xml:space="preserve"><value>Datenschutz</value></data>
+  <data name="ReadingBackToStart" xml:space="preserve"><value>Zur Übersicht</value></data>
+  <data name="ReadingDone" xml:space="preserve"><value>Fertig</value></data>
+  <data name="ReadingEmpty" xml:space="preserve"><value>Im Moment ist nichts für dich freigegeben.</value></data>
+  <data name="ReadingFontLarge" xml:space="preserve"><value>Schrift größer</value></data>
+  <data name="ReadingFontNormal" xml:space="preserve"><value>Schrift kleiner</value></data>
+  <data name="ReadingHint_0" xml:space="preserve"><value>Persönliche Daten und Ausweise, die du für Ämter und Anträge brauchst.</value></data>
+  <data name="ReadingHint_1" xml:space="preserve"><value>Konten, Depots und Schließfächer, mit Vollmachten und Wünschen dazu.</value></data>
+  <data name="ReadingHint_10" xml:space="preserve"><value>Wer benachrichtigt werden soll und wer helfen kann: Ärzte, Notariat, Steuerberatung.</value></data>
+  <data name="ReadingHint_11" xml:space="preserve"><value>Wünsche zur Bestattung, zur Organspende, zu Haustieren und weitere persönliche Wünsche. Lies sie zuerst; manches davon ist früh wichtig.</value></data>
+  <data name="ReadingHint_13" xml:space="preserve"><value>Arbeitgeber, Rente, Altersvorsorge und Steuern.</value></data>
+  <data name="ReadingHint_2" xml:space="preserve"><value>Kreditkarten, die gesperrt oder gekündigt werden sollten.</value></data>
+  <data name="ReadingHint_3" xml:space="preserve"><value>Kredite und Darlehen, offene Forderungen in beide Richtungen.</value></data>
+  <data name="ReadingHint_4" xml:space="preserve"><value>Manche Versicherungen müssen sehr schnell benachrichtigt werden. Die Fristen und Bezugsberechtigten stehen in den Einträgen.</value></data>
+  <data name="ReadingHint_5" xml:space="preserve"><value>Verträge und Abos, die gekündigt oder übernommen werden müssen.</value></data>
+  <data name="ReadingHint_6" xml:space="preserve"><value>Urkunden, Testament und Vollmachten. Achte darauf, wo die Originale liegen; oft braucht man sie im Original.</value></data>
+  <data name="ReadingHint_7" xml:space="preserve"><value>Immobilien, Fahrzeuge und Wertgegenstände.</value></data>
+  <data name="ReadingHint_8" xml:space="preserve"><value>Online-Konten, Domains und Geräte, mit dem Wunsch, was damit geschehen soll.</value></data>
+  <data name="ReadingHint_9" xml:space="preserve"><value>Wie du an den Passwortmanager kommst.</value></data>
+  <data name="ReadingHint_letters" xml:space="preserve"><value>Persönliche Worte, nur für dich.</value></data>
+  <data name="ReadingIntroDeath" xml:space="preserve"><value>{0} hat dir diese Angaben für den Fall hinterlassen, dass sie oder er nicht mehr da ist. Gehe sie in Ruhe Schritt für Schritt durch. Nichts davon muss heute erledigt sein.</value></data>
+  <data name="ReadingIntroIncapacity" xml:space="preserve"><value>{0} hat dir diese Angaben für den Fall hinterlassen, dass sie oder er selbst nicht handeln kann. Handle in ihrem oder seinem Sinn; {0} kann den Zugang später wieder entziehen.</value></data>
+  <data name="ReadingLeave" xml:space="preserve"><value>Lesemodus beenden</value></data>
+  <data name="ReadingLetters" xml:space="preserve"><value>Briefe an dich</value></data>
+  <data name="ReadingMissing" xml:space="preserve"><value>Für diese Person ist nichts (mehr) für dich freigegeben.</value></data>
+  <data name="ReadingNext" xml:space="preserve"><value>Weiter</value></data>
+  <data name="ReadingNothing" xml:space="preserve"><value>Es gibt keine Einträge, die für dich freigegeben sind.</value></data>
+  <data name="ReadingOpen" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="ReadingPrevious" xml:space="preserve"><value>Zurück</value></data>
+  <data name="ReadingStartText" xml:space="preserve"><value>Hier findest du, was dir Menschen für den Ernstfall hinterlassen haben. Nimm dir Zeit; du kannst jederzeit aufhören und später weitermachen.</value></data>
+  <data name="ReadingTitle" xml:space="preserve"><value>Lesemodus</value></data>
   <data name="RecoverBackToLogin" xml:space="preserve"><value>Zur Anmeldung</value></data>
   <data name="RecoverDone" xml:space="preserve"><value>Dein neues Master-Passwort ist gesetzt. Melde dich jetzt damit und mit deinem zweiten Faktor an.</value></data>
   <data name="RecoverNewPassword" xml:space="preserve"><value>Neues Master-Passwort</value></data>

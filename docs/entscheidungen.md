@@ -145,6 +145,14 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 97 | Eigene Einstellungen | Jeder Nutzer wählt Intervall, Wartezeit und Antragsfrist innerhalb der Grenzen des Admins (43), dazu optional eine zweite Mail-Adresse und ein ntfy-Thema. Die Erinnerungstage gibt der Admin vor. |
 | 98 | Freigabe und Rücknahme | Freigegebene Umschläge liefert der Server unter „Mit mir geteilt“ aus. Eine spätere Anmeldung hebt eine Freigabe nicht auf; die Rücknahme mit neuen Bereichsschlüsseln folgt mit M2.6. Ein Konto mit Freigabe kann der Admin nicht löschen (44). |
 
+## Runde 10 (24.11.2026, Umsetzung M2.5)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 99 | Lesemodus | Eigener, ruhiger Rahmen unter `/reading` ohne Seitenleiste und Verwaltung, große Schrift (zuschaltbar noch größer), sachliche Farben. Zu sehen sind nur Personen, für die mindestens ein Modus (verstorben oder handlungsunfähig) freigegeben ist, und nur deren freigegebene Inhalte; sofort Geteiltes bleibt unter „Mit mir geteilt“. Nur Lesen, Dokumente mit Vorschau und Speichern. |
+| 100 | Reihenfolge bis zur Checkliste | Bis die Checkliste mit M3 kommt, führt der Weg Schritt für Schritt entlang der Bereiche: Briefe an mich, Persönliche Wünsche, Wichtige Kontakte, Über mich, Urkunden & Dokumente, Versicherungen, Bankkonten, Kreditkarten, Kredite, Einkommen/Rente/Steuern, Verträge & Abos, Immobilien/Fahrzeuge, Digitaler Nachlass, Passwortmanager. Jeder Schritt hat einen kurzen, behutsamen Hinweis; der Einleitungstext unterscheidet verstorben und handlungsunfähig. |
+| 101 | Laden und Protokoll | Ein Schritt wird erst beim Aufschlagen geöffnet, damit im Protokoll des Eigentümers nur steht, was wirklich gelesen wurde; die Schlüssel verlassen beim Verlassen der Seite das Krypto-Modul. Gelesen-Markierungen gibt es erst mit der Checkliste (M3). |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

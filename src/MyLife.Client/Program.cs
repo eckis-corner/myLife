@@ -35,6 +35,7 @@ builder.Services.AddScoped<TrustClient>();
 builder.Services.AddScoped<TrustService>();
 builder.Services.AddScoped<SharedService>();
 builder.Services.AddScoped<EmergencyClient>();
+builder.Services.AddScoped<ReadingService>();
 builder.Services.AddScoped<VaultService>();
 builder.Services.AddScoped<SchemaText>();
 builder.Services.AddScoped<VaultSearch>();

@@ -1,0 +1,233 @@
+@page "/reading/{OwnerId:guid}"
+@attribute [Authorize]
+@layout Layout.ReadingLayout
+@using MyLife.Shared.Trust
+@implements IAsyncDisposable
+@inject IStringLocalizer<SharedResource> L
+@inject ReadingService Reading
+@inject SchemaText Text
+@inject BrowserFiles Files
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["ReadingTitle"]</PageTitle>
+
+@* Geführter Weg durch das, was eine Person für mich hinterlegt hat: ein Schritt nach dem anderen, nur Lesen. *@
+@if (_book is null)
+{
+    @if (_missing)
+    {
+        <MudAlert Severity="Severity.Info" data-testid="reading-missing">@L["ReadingMissing"]</MudAlert>
+        <MudButton Variant="Variant.Text" Href="reading" StartIcon="@Icons.Material.Filled.ArrowBack" Class="mt-2">@L["ReadingBackToStart"]</MudButton>
+    }
+    else
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+}
+else
+{
+    <MudStack Spacing="4">
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.h4" HtmlTag="h1" data-testid="reading-owner-name">@_book.Owner.Name</MudText>
+            <MudText Typo="Typo.body1" Class="mylife-muted">@L[_book.Death ? "ReadingIntroDeath" : "ReadingIntroIncapacity", _book.Owner.Name]</MudText>
+        </MudStack>
+
+        @if (_book.Owner.Grants.Any(g => !g.Verified))
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">@L["SharedNotVerified"]</MudAlert>
+        }
+
+        @if (_book.Steps.Count == 0)
+        {
+            <MudText Typo="Typo.body1" Class="mylife-muted"><i>@L["ReadingNothing"]</i></MudText>
+        }
+        else
+        {
+            <MudStack Row Wrap="Wrap.Wrap" Spacing="1" Class="mylife-reading-steps" data-testid="reading-steps">
+                @for (var i = 0; i < _book.Steps.Count; i++)
+                {
+                    var index = i;
+                    <MudChip T="string" Variant="@(index == _index ? Variant.Filled : Variant.Outlined)" Color="@(index == _index ? Color.Primary : Color.Default)"
+                             OnClick="() => GoAsync(index)" Icon="@(_visited.Contains(index) && index != _index ? Icons.Material.Filled.Check : null)">
+                        @StepTitle(_book.Steps[index])
+                    </MudChip>
+                }
+            </MudStack>
+
+            var step = _book.Steps[_index];
+            <MudPaper Outlined Class="pa-4 pa-sm-6">
+                <MudStack Spacing="3">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                        <MudIcon Icon="@(step.Area is { } a ? AreaIcons.For(a) : Icons.Material.Outlined.Mail)" />
+                        <MudText Typo="Typo.h5" HtmlTag="h2" data-testid="reading-step-title">@StepTitle(step)</MudText>
+                    </MudStack>
+                    <MudText Typo="Typo.body1" Class="mylife-reading-hint">@L[step.Area is { } area ? $"ReadingHint_{area}" : "ReadingHint_letters"]</MudText>
+
+                    @if (!step.Loaded)
+                    {
+                        <MudProgressLinear Indeterminate Color="Color.Primary" />
+                    }
+                    else if (!step.Items.Any())
+                    {
+                        <MudText Typo="Typo.body1" Class="mylife-muted"><i>@L["SharedAreaEmpty"]</i></MudText>
+                    }
+                    else
+                    {
+                        @foreach (var item in step.Items.OrderBy(i => i.Type.Key).ThenBy(i => i.Title, StringComparer.CurrentCultureIgnoreCase))
+                        {
+                            <div class="mylife-reading-item" data-testid="reading-item">
+                                <MudText Typo="Typo.h6" HtmlTag="h3">@item.Title</MudText>
+                                <MudText Typo="Typo.body2" Class="mylife-muted">@Text.Type(item.Type)</MudText>
+                                <MudSimpleTable Dense Elevation="0" Class="mylife-datasheet-table mt-2">
+                                    <tbody>
+                                        @foreach (var row in Text.Rows(item, TitleOf))
+                                        {
+                                            <tr>
+                                                <th scope="row">@row.Label</th>
+                                                <td class="@(row.Multiline ? "mylife-multiline" : null)">@row.Value</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </MudSimpleTable>
+                                @foreach (var (content, file) in step.FilesOf(item.Id))
+                                {
+                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mt-1">
+                                        <MudIcon Icon="@Icons.Material.Outlined.Description" Size="Size.Small" />
+                                        <MudText Typo="Typo.body2">@(string.IsNullOrWhiteSpace(file.Metadata.Label) ? file.Metadata.FileName : file.Metadata.Label)</MudText>
+                                        @if (BrowserFiles.CanPreview(file.Metadata.ContentType))
+                                        {
+                                            <MudButton Variant="Variant.Text" Size="Size.Small" Disabled="_busy" OnClick="() => PreviewAsync(content, file)">@L["DocumentPreview"]</MudButton>
+                                        }
+                                        <MudButton Variant="Variant.Text" Size="Size.Small" Disabled="_busy" OnClick="() => SaveAsync(content, file)">@L["DocumentDownload"]</MudButton>
+                                    </MudStack>
+                                }
+                            </div>
+                        }
+                    }
+                </MudStack>
+            </MudPaper>
+
+            <MudStack Row Justify="Justify.SpaceBetween">
+                <MudButton Variant="Variant.Outlined" Size="Size.Large" StartIcon="@Icons.Material.Filled.ArrowBack" Disabled="@(_index == 0)"
+                           OnClick="() => GoAsync(_index - 1)">@L["ReadingPrevious"]</MudButton>
+                @if (_index < _book.Steps.Count - 1)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" EndIcon="@Icons.Material.Filled.ArrowForward"
+                               OnClick="() => GoAsync(_index + 1)" data-testid="reading-next">@L["ReadingNext"]</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Href="reading">@L["ReadingDone"]</MudButton>
+                }
+            </MudStack>
+        }
+    </MudStack>
+}
+
+@code {
+    private readonly HashSet<int> _visited = [];
+    private ReadingBook? _book;
+    private int _index;
+    private bool _missing;
+    private bool _busy;
+
+    [Parameter] public Guid OwnerId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _book = await Reading.OpenAsync(OwnerId);
+            _missing = _book is null;
+            if (_book is { Steps.Count: > 0 })
+            {
+                await GoAsync(0);
+            }
+        }
+        catch (Exception exception) when (exception is TrustException or FamilyException or HttpRequestException or InvalidOperationException
+                                              or System.Security.Cryptography.CryptographicException)
+        {
+            _missing = true;
+        }
+    }
+
+    private string StepTitle(ReadingStep step) => step.Area is { } area ? Text.Area(area) : L["ReadingLetters"];
+
+    /// <summary>Verweise auf andere freigegebene Einträge zeigen deren Titel; nicht freigegebene bleiben verborgen.</summary>
+    private string? TitleOf(Guid id) => _book?.Steps.SelectMany(s => s.Items).FirstOrDefault(i => i.Id == id)?.Title;
+
+    private async Task GoAsync(int index)
+    {
+        if (_book is null || index < 0 || index >= _book.Steps.Count)
+        {
+            return;
+        }
+
+        _index = index;
+        _visited.Add(index);
+        StateHasChanged();
+        try
+        {
+            await Reading.LoadAsync(_book, _book.Steps[index]);
+        }
+        catch (Exception exception) when (exception is TrustException or HttpRequestException or System.Security.Cryptography.CryptographicException
+                                              or Microsoft.JSInterop.JSException or InvalidOperationException)
+        {
+            _book.Steps[index].Loaded = true;
+            Snackbar.Add(L["SharedOpenFailed"], Severity.Error);
+        }
+    }
+
+    private async Task PreviewAsync(SharedContent content, VaultFile file)
+    {
+        _busy = true;
+        try
+        {
+            var url = await Files.CreateUrlAsync(await Reading.DownloadAsync(content, file), file.Metadata.ContentType);
+            try
+            {
+                var parameters = new DialogParameters<DocumentPreviewDialog>
+                {
+                    { x => x.Url, url },
+                    { x => x.ContentType, file.Metadata.ContentType },
+                    { x => x.Title, string.IsNullOrWhiteSpace(file.Metadata.Label) ? file.Metadata.FileName : file.Metadata.Label },
+                };
+                var dialog = await Dialogs.ShowAsync<DocumentPreviewDialog>(file.Metadata.FileName, parameters,
+                    new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseButton = true });
+                await dialog.Result;
+            }
+            finally
+            {
+                await Files.RevokeUrlAsync(url);
+            }
+        }
+        catch (Exception exception) when (exception is TrustException or VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L["SharedOpenFailed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task SaveAsync(SharedContent content, VaultFile file)
+    {
+        _busy = true;
+        try
+        {
+            await Files.SaveAsync(await Reading.DownloadAsync(content, file), file.Metadata.FileName, file.Metadata.ContentType);
+        }
+        catch (Exception exception) when (exception is TrustException or VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L["SharedOpenFailed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync() => await Reading.CloseAsync(_book);
+}

@@ -139,7 +139,7 @@
                             <MudText Typo="Typo.subtitle1"><b>@owner.OwnerName</b></MudText>
                             @if (owner.ReleasedModes != ReleasedModes.None)
                             {
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="shared" StartIcon="@Icons.Material.Outlined.FolderShared">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@($"reading/{owner.OwnerId}")" StartIcon="@Icons.Material.Outlined.MenuBook">
                                     @L["EmergencyReleasedFor", Modes(owner.ReleasedModes)]
                                 </MudButton>
                             }

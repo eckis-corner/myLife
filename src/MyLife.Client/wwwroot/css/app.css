@@ -324,3 +324,19 @@ h1:focus {
     font-size: 0.85em;
     letter-spacing: 0.02em;
 }
+
+/* Lesemodus (M2.5): ruhig, große Schrift, viel Luft. „Größer“ hebt alles noch einmal an. */
+.mylife-reading-mode .mud-typography-body1 { font-size: 1.125rem; line-height: 1.7; }
+.mylife-reading-mode .mud-typography-body2,
+.mylife-reading-mode .mylife-datasheet-table td,
+.mylife-reading-mode .mylife-datasheet-table th { font-size: 1.05rem; line-height: 1.6; }
+.mylife-reading-mode.mylife-reading-large .mud-typography-body1 { font-size: 1.3rem; }
+.mylife-reading-mode.mylife-reading-large .mud-typography-body2,
+.mylife-reading-mode.mylife-reading-large .mylife-datasheet-table td,
+.mylife-reading-mode.mylife-reading-large .mylife-datasheet-table th { font-size: 1.2rem; }
+.mylife-reading-mode.mylife-reading-large .mud-typography-h4 { font-size: 2.4rem; }
+.mylife-reading-mode.mylife-reading-large .mud-typography-h5 { font-size: 1.8rem; }
+.mylife-reading-mode.mylife-reading-large .mud-typography-h6 { font-size: 1.45rem; }
+.mylife-reading-item { padding: 1rem 0; border-top: 1px solid var(--mud-palette-lines-default); }
+.mylife-reading-item:first-of-type { border-top: none; }
+.mylife-reading-hint { opacity: 0.85; }
