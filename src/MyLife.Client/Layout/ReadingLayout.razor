@@ -21,7 +21,7 @@
             <MudIconButton Icon="@(_large ? Icons.Material.Filled.TextDecrease : Icons.Material.Filled.TextIncrease)" Color="Color.Inherit"
                            aria-label="@L[_large ? "ReadingFontNormal" : "ReadingFontLarge"]" OnClick="() => _large = !_large" data-testid="reading-font" />
         </MudTooltip>
-        <MudButton Variant="Variant.Text" Color="Color.Inherit" Href="" StartIcon="@Icons.Material.Outlined.ExitToApp">@L["ReadingLeave"]</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Inherit" Href="./" StartIcon="@Icons.Material.Outlined.ExitToApp" data-testid="reading-leave">@L["ReadingLeave"]</MudButton>
     </MudAppBar>
     <MudMainContent Class="mylife-main" role="main">
         <MudContainer MaxWidth="MaxWidth.Medium" Class="py-6" id="main-content" tabindex="-1">
