@@ -1,0 +1,138 @@
+@page "/tutorial"
+@using MyLife.Client.Help
+@inject IStringLocalizer<SharedResource> L
+@inject IJSRuntime JS
+
+@* Tutorial nach dem Vorbild von cleverDocs: ein durchgehender Weg von der Einrichtung bis zum fertigen
+   Notfallordner, Kapitel für Kapitel. Ohne Anmeldung erreichbar, damit auch Eingeladene es vorher lesen können. *@
+<PageTitle>@L["AppName"] – @L["NavTutorial"]</PageTitle>
+
+<MudStack Spacing="1" Class="mb-4">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["NavTutorial"]</MudText>
+        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.MenuBook" Href="guide" data-testid="to-guide">@L["HelpToGuide"]</MudButton>
+    </MudStack>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["HelpTutorialText"]</MudText>
+</MudStack>
+
+<MudGrid Spacing="4">
+    @* Kapitelverzeichnis *@
+    <MudItem xs="12" md="3">
+        <MudPaper Elevation="0" Outlined>
+            <nav aria-label="@L["HelpChapters"]">
+                <MudList T="string" Dense>
+                    @for (var index = 0; index < _chapters.Length; index++)
+                    {
+                        var chapter = _chapters[index];
+                        var number = index + 1;
+                        <MudListItem T="string" Href="@Address(chapter)" Icon="@chapter.Icon"
+                                     IconColor="@(chapter == _current ? Color.Primary : Color.Default)"
+                                     Class="@(chapter == _current ? "mylife-help-current" : null)"
+                                     data-testid="@($"chapter-{chapter.Id}")">
+                            @number. @chapter.Title
+                        </MudListItem>
+                    }
+                </MudList>
+            </nav>
+        </MudPaper>
+    </MudItem>
+
+    @* Das aktuelle Kapitel *@
+    <MudItem xs="12" md="9">
+        <MudPaper Elevation="0" Outlined Class="pa-6">
+            <MudText Typo="Typo.caption" Class="mylife-muted">@L["HelpChapterOf", _index + 1, _chapters.Length]</MudText>
+            <MudProgressLinear Color="Color.Primary" Value="@(100.0 * (_index + 1) / _chapters.Length)" Class="mt-1 mb-4"
+                               aria-label="@L["HelpChapterOf", _index + 1, _chapters.Length]" />
+
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="3" Class="mb-3">
+                <MudIcon Icon="@_current.Icon" Color="Color.Primary" />
+                <MudText Typo="Typo.h5" HtmlTag="h2" data-testid="chapter-title">@_current.Title</MudText>
+            </MudStack>
+
+            <div class="mylife-help-text mylife-help-intro mb-4">@Html(_current.Intro)</div>
+            <div class="mylife-help-text mb-4">@Html(_current.Text)</div>
+
+            @if (_topics.Length > 0)
+            {
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mb-1">@L["HelpMoreInGuide"]</MudText>
+                <div class="d-flex flex-wrap gap-1 mb-4">
+                    @foreach (var topic in _topics)
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary"
+                                 Icon="@topic.Icon" Href="@($"guide?topic={topic.Id}")">@topic.Title</MudChip>
+                    }
+                </div>
+            }
+
+            <MudDivider Class="mb-4" />
+
+            <MudStack Row Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Spacing="2">
+                @if (_index > 0)
+                {
+                    var previous = _chapters[_index - 1];
+                    <MudButton Variant="Variant.Text" Href="@Address(previous)" StartIcon="@Icons.Material.Filled.ChevronLeft"
+                               data-testid="chapter-previous">@previous.Title</MudButton>
+                }
+                else
+                {
+                    <span></span>
+                }
+
+                @if (_index < _chapters.Length - 1)
+                {
+                    var next = _chapters[_index + 1];
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@Address(next)" EndIcon="@Icons.Material.Filled.ChevronRight"
+                               data-testid="chapter-next">@next.Title</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="./" EndIcon="@Icons.Material.Filled.Check"
+                               data-testid="chapter-finish">@L["HelpFinish"]</MudButton>
+                }
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    /// <summary>Einsprung auf ein Kapitel, etwa <c>tutorial?chapter=notfallzugang</c>.</summary>
+    [SupplyParameterFromQuery(Name = "chapter")]
+    public string? ChapterId { get; set; }
+
+    private TutorialChapter[] _chapters = [];
+    private TutorialChapter _current = null!;
+    private int _index = -1;
+    private GuideTopic[] _topics = [];
+    private bool _scrollToTop;
+
+    protected override void OnParametersSet()
+    {
+        var texts = HelpContent.Current;
+        _chapters = texts.Tutorial;
+
+        var index = Math.Max(0, Array.FindIndex(_chapters, c => c.Id == ChapterId));
+
+        // Beim Blättern beginnt das neue Kapitel oben, sonst stünde man an dessen Ende.
+        _scrollToTop = _index >= 0 && index != _index;
+        _index = index;
+        _current = _chapters[index];
+
+        var topics = texts.Guide.SelectMany(p => p.Topics).ToDictionary(t => t.Id, StringComparer.Ordinal);
+        _topics = _current.Topics.Select(id => topics.GetValueOrDefault(id)).OfType<GuideTopic>().ToArray();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_scrollToTop)
+        {
+            return;
+        }
+
+        _scrollToTop = false;
+        await JS.InvokeVoidAsync("scrollTo", 0, 0);
+    }
+
+    private static string Address(TutorialChapter chapter) => $"tutorial?chapter={chapter.Id}";
+
+    private static MarkupString Html(string markdown) => (MarkupString)HelpMarkdown.ToHtml(markdown);
+}

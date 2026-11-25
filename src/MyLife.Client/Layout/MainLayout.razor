@@ -63,7 +63,10 @@
                         }
                     </MudNavGroup>
                 </MudNavMenu>
+                @* Hilfe steht immer ganz unten, direkt über „Konto“ (Entscheidung 139). *@
                 <MudNavMenu Class="mylife-nav mylife-nav-account">
+                    <MudNavLink Href="tutorial" Icon="@Icons.Material.Outlined.RocketLaunch" data-testid="nav-tutorial">@L["NavTutorial"]</MudNavLink>
+                    <MudNavLink Href="guide" Icon="@Icons.Material.Outlined.HelpOutline" data-testid="nav-guide">@L["NavGuide"]</MudNavLink>
                     <MudNavGroup Title="@L["NavAccount"]" Icon="@Icons.Material.Outlined.AccountCircle" Expanded="false" data-testid="nav-account">
                         <MudNavLink Href="account/reminders" Icon="@Icons.Material.Outlined.NotificationsActive">@L["RemindersTitle"]</MudNavLink>
                         <MudNavLink Href="account/security" Icon="@Icons.Material.Outlined.Security">@L["NavSecurity"]</MudNavLink>

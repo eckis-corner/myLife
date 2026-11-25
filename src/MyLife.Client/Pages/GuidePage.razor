@@ -1,0 +1,167 @@
+@page "/guide"
+@using MyLife.Client.Help
+@inject IStringLocalizer<SharedResource> L
+
+@* Anleitung nach dem Vorbild von cleverDocs: je Teil eine Gruppe zum Auf- und Zuklappen, darin die Themen.
+   Anfangs ist alles zu; so ist die Seite selbst das Inhaltsverzeichnis. Ohne Anmeldung erreichbar. *@
+<PageTitle>@L["AppName"] – @L["NavGuide"]</PageTitle>
+
+<MudStack Spacing="1" Class="mb-4">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["NavGuide"]</MudText>
+        <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
+            <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.RocketLaunch" Href="tutorial" data-testid="to-tutorial">@L["HelpToTutorial"]</MudButton>
+            <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.UnfoldMore" OnClick="ExpandAll" data-testid="expand-all">@L["HelpExpandAll"]</MudButton>
+            <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.UnfoldLess" OnClick="CollapseAll">@L["HelpCollapseAll"]</MudButton>
+        </MudStack>
+    </MudStack>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["HelpGuideText"]</MudText>
+</MudStack>
+
+<MudTextField T="string" Value="_search" ValueChanged="SearchChanged" Label="@L["HelpSearchLabel"]" Placeholder="@L["HelpSearchPlaceholder"]"
+              Immediate DebounceInterval="200" Clearable Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+              Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-4 mylife-help-search" UserAttributes="@SearchAttributes" />
+
+@if (VisibleParts.Count == 0)
+{
+    <MudAlert Severity="Severity.Info" Dense data-testid="guide-no-hits">@L["HelpNoHits", _search ?? string.Empty]</MudAlert>
+}
+
+<MudExpansionPanels MultiExpansion Elevation="0" Class="mb-6">
+    @foreach (var (part, topics) in VisibleParts)
+    {
+        <MudExpansionPanel @key="part.Id" Expanded="@_openParts.Contains(part.Id)" ExpandedChanged="@(open => Toggle(_openParts, part.Id, open))"
+                           Class="mb-3 mylife-help-part" data-testid="@($"part-{part.Id}")">
+            <TitleContent>
+                <MudText Typo="Typo.h6" HtmlTag="h2">@part.Title</MudText>
+                <MudText Typo="Typo.body2" Class="mylife-muted">
+                    @part.Description · @(topics.Length == 1 ? L["HelpTopicCountOne"] : L["HelpTopicCount", topics.Length])
+                </MudText>
+            </TitleContent>
+            <ChildContent>
+                <MudExpansionPanels MultiExpansion Elevation="0" Class="mylife-help-topics">
+                    @foreach (var topic in topics)
+                    {
+                        <MudExpansionPanel @key="topic.Id" Expanded="@_openTopics.Contains(topic.Id)"
+                                           ExpandedChanged="@(open => Toggle(_openTopics, topic.Id, open))"
+                                           data-testid="@($"topic-{topic.Id}")">
+                            <TitleContent>
+                                <MudStack Row AlignItems="AlignItems.Center" Spacing="3">
+                                    <MudIcon Icon="@topic.Icon" Color="Color.Primary" />
+                                    <div>
+                                        <MudText Typo="Typo.subtitle1" HtmlTag="h3"><b>@topic.Title</b></MudText>
+                                        <MudText Typo="Typo.caption" Class="mylife-muted">@topic.Who</MudText>
+                                    </div>
+                                </MudStack>
+                            </TitleContent>
+                            <ChildContent>
+                                <div class="mylife-help-text mb-3">@Html(topic.Intro)</div>
+
+                                <MudText Typo="Typo.subtitle2" HtmlTag="h4" Class="mb-1">@L["HelpHowTo"]</MudText>
+                                <div class="mylife-help-text mb-3">@Html(Numbered(topic.Steps))</div>
+
+                                @if (topic.Notes.Length > 0)
+                                {
+                                    <MudAlert Severity="Severity.Info" Dense Class="mb-3">
+                                        <div class="mylife-help-text">@Html(Bulleted(topic.Notes))</div>
+                                    </MudAlert>
+                                }
+
+                                @if (topic.Page is not null)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" Href="@topic.Page"
+                                               StartIcon="@Icons.Material.Outlined.OpenInNew">@L["HelpGoTo", topic.PageName ?? topic.Title]</MudButton>
+                                }
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            </ChildContent>
+        </MudExpansionPanel>
+    }
+</MudExpansionPanels>
+
+@code {
+    /// <summary>Einsprung auf ein Thema, etwa <c>guide?topic=passkeys</c>; öffnet das Thema und seinen Teil.</summary>
+    [SupplyParameterFromQuery(Name = "topic")]
+    public string? TopicId { get; set; }
+
+    private static readonly Dictionary<string, object> SearchAttributes = new() { ["data-testid"] = "guide-search" };
+
+    private readonly HashSet<string> _openParts = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _openTopics = new(StringComparer.Ordinal);
+    private string? _search;
+
+    private static GuidePart[] Parts => HelpContent.Current.Guide;
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrWhiteSpace(TopicId) && Parts.FirstOrDefault(p => p.Topics.Any(t => t.Id == TopicId)) is { } part)
+        {
+            _openParts.Add(part.Id);
+            _openTopics.Add(TopicId);
+        }
+    }
+
+    /// <summary>Die Teile mit den Themen, die zur Suche passen; ohne Suche alle.</summary>
+    private List<(GuidePart Part, GuideTopic[] Topics)> VisibleParts =>
+        Parts.Select(p => (p, p.Topics.Where(Matches).ToArray())).Where(x => x.Item2.Length > 0).ToList();
+
+    private bool Matches(GuideTopic topic)
+    {
+        if (string.IsNullOrWhiteSpace(_search))
+        {
+            return true;
+        }
+
+        var texts = new[] { topic.Title, topic.Who, topic.Intro }.Concat(topic.Steps).Concat(topic.Notes).ToList();
+
+        // Alle Begriffe müssen vorkommen, wie in der Volltextsuche.
+        return _search.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .All(term => texts.Any(t => t.Contains(term, StringComparison.CurrentCultureIgnoreCase)));
+    }
+
+    private void SearchChanged(string? value)
+    {
+        _search = value;
+
+        // Beim Suchen sind die Treffer samt ihren Teilen aufgeklappt, sonst müsste man jeden einzeln öffnen.
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            ExpandAll();
+        }
+    }
+
+    private void ExpandAll()
+    {
+        foreach (var (part, topics) in VisibleParts)
+        {
+            _openParts.Add(part.Id);
+            _openTopics.UnionWith(topics.Select(t => t.Id));
+        }
+    }
+
+    private void CollapseAll()
+    {
+        _openParts.Clear();
+        _openTopics.Clear();
+    }
+
+    private static void Toggle(HashSet<string> set, string id, bool open)
+    {
+        if (open)
+        {
+            set.Add(id);
+        }
+        else
+        {
+            set.Remove(id);
+        }
+    }
+
+    private static MarkupString Html(string markdown) => (MarkupString)HelpMarkdown.ToHtml(markdown);
+
+    private static string Numbered(IEnumerable<string> steps) => string.Join('\n', steps.Select((s, i) => $"{i + 1}. {s}"));
+
+    private static string Bulleted(IEnumerable<string> notes) => string.Join('\n', notes.Select(n => $"- {n}"));
+}

@@ -251,6 +251,29 @@ h1:focus {
     border-top: 1px solid var(--mud-palette-lines-default);
 }
 
+/* Tutorial und Anleitung: Texte aus HelpMarkdown. */
+.mylife-help-text p { margin: 0 0 0.75rem; }
+.mylife-help-text p:last-child { margin-bottom: 0; }
+.mylife-help-text ul,
+.mylife-help-text ol { margin: 0 0 0.75rem; padding-left: 1.5rem; }
+.mylife-help-text li { margin-bottom: 0.25rem; }
+.mylife-help-text blockquote {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 1rem;
+    border-left: 3px solid var(--mylife-primary-ink, var(--mud-palette-primary));
+    background: var(--mud-palette-background-gray);
+}
+.mylife-help-text table { border-collapse: collapse; margin: 0 0 0.75rem; width: 100%; }
+.mylife-help-text th,
+.mylife-help-text td { border: 1px solid var(--mud-palette-lines-default); padding: 0.35rem 0.6rem; text-align: left; vertical-align: top; }
+.mylife-help-text th { background: var(--mud-palette-background-gray); }
+.mylife-help-text code { font-size: 0.9em; padding: 0 0.2em; background: var(--mud-palette-background-gray); border-radius: 3px; }
+.mylife-help-intro { font-size: 1.05rem; }
+.mylife-help-current { font-weight: 600; }
+.mylife-help-part,
+.mylife-help-topics { border: 1px solid var(--mud-palette-lines-default); }
+.mylife-help-search { max-width: 480px; }
+
 /* Eigenes Datenblatt: rundes Bild oder Initialen. */
 .mylife-profile-picture {
     width: 128px;

@@ -755,6 +755,23 @@
   <data name="GrantMode_Death" xml:space="preserve"><value>Verstorben</value></data>
   <data name="GrantMode_Incapacity" xml:space="preserve"><value>Handlungsunfähig</value></data>
   <data name="GrantMode_Live" xml:space="preserve"><value>Sofort teilen</value></data>
+  <data name="HelpChapterOf" xml:space="preserve"><value>Kapitel {0} von {1}</value></data>
+  <data name="HelpChapters" xml:space="preserve"><value>Kapitel</value></data>
+  <data name="HelpCollapseAll" xml:space="preserve"><value>Alles zuklappen</value></data>
+  <data name="HelpExpandAll" xml:space="preserve"><value>Alles aufklappen</value></data>
+  <data name="HelpFinish" xml:space="preserve"><value>Fertig – zur Übersicht</value></data>
+  <data name="HelpGoTo" xml:space="preserve"><value>Zu „{0}“</value></data>
+  <data name="HelpGuideText" xml:space="preserve"><value>Alle Abläufe in myLife Schritt für Schritt. Je Thema steht dabei, wer den Ablauf ausführt.</value></data>
+  <data name="HelpHowTo" xml:space="preserve"><value>So geht's</value></data>
+  <data name="HelpMoreInGuide" xml:space="preserve"><value>Mehr dazu in der Anleitung</value></data>
+  <data name="HelpNoHits" xml:space="preserve"><value>Zu „{0}“ steht nichts in der Anleitung.</value></data>
+  <data name="HelpSearchLabel" xml:space="preserve"><value>Anleitung durchsuchen</value></data>
+  <data name="HelpSearchPlaceholder" xml:space="preserve"><value>Etwa „Passkey“ oder „Notfallpaket“</value></data>
+  <data name="HelpToGuide" xml:space="preserve"><value>Zur Anleitung</value></data>
+  <data name="HelpToTutorial" xml:space="preserve"><value>Zum Tutorial</value></data>
+  <data name="HelpTopicCount" xml:space="preserve"><value>{0} Themen</value></data>
+  <data name="HelpTopicCountOne" xml:space="preserve"><value>1 Thema</value></data>
+  <data name="HelpTutorialText" xml:space="preserve"><value>Die wichtigsten Funktionen von myLife Schritt für Schritt, zum Lesen von vorn nach hinten. Jeden Ablauf im Einzelnen beschreibt die Anleitung.</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Läuft bald ab</value></data>
   <data name="HomeFollowUpTitle" xml:space="preserve"><value>Wiedervorlage</value></data>
   <data name="HomeLastReviewed" xml:space="preserve"><value>Zuletzt geprüft am {0}</value></data>
@@ -827,10 +844,12 @@
   <data name="NavAreas" xml:space="preserve"><value>Bereiche</value></data>
   <data name="NavAudit" xml:space="preserve"><value>Protokoll</value></data>
   <data name="NavExport" xml:space="preserve"><value>Export &amp; Druck</value></data>
+  <data name="NavGuide" xml:space="preserve"><value>Anleitung</value></data>
   <data name="NavHome" xml:space="preserve"><value>Übersicht</value></data>
   <data name="NavSearch" xml:space="preserve"><value>Suche</value></data>
   <data name="NavSecurity" xml:space="preserve"><value>Sicherheit</value></data>
   <data name="NavTrash" xml:space="preserve"><value>Papierkorb</value></data>
+  <data name="NavTutorial" xml:space="preserve"><value>Tutorial</value></data>
   <data name="New" xml:space="preserve"><value>Neu</value></data>
   <data name="NewObject" xml:space="preserve"><value>{0} anlegen</value></data>
   <data name="No" xml:space="preserve"><value>Nein</value></data>

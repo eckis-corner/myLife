@@ -235,6 +235,12 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 137 | Menü | Zwei Gruppen statt einer langen Liste: **Verwaltung** (Protokoll, Papierkorb; für Admins dazu Einstellungen, Benutzer, Admin-Protokoll) für alle, **Konto** (Erinnerungen, Sicherheit, Eigenes Datenblatt, Was gehört nicht in myLife?) immer sichtbar am unteren Rand der Seitenleiste. |
 | 138 | Eigenes Datenblatt | Name, Vorname und Bild liegen verschlüsselt im Tresor als Eintrag vom Typ `profile` im Bereich 0, höchstens einer je Tresor (`Singleton`, nicht in „Neuer Eintrag“). Das Bild ist ein Dokument an diesem Eintrag (JPEG, PNG oder WebP bis 5 MB); es gilt das neueste, ein neues legt das alte in den Papierkorb. Das Dateiformat ändert sich nicht. |
 
+## Runde 20 (25.11.2026, Tutorial und Anleitung)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 139 | Hilfe in der App | Nach dem Vorbild von cleverDocs zwei Seiten: **Tutorial** (`/tutorial`, ein durchgehender Weg in Kapiteln von der Einrichtung bis zum Notfallordner, mit Verweisen in die Anleitung) und **Anleitung** (`/guide`, Teile mit aufklappbaren Themen: wer, Schritte, Hinweise, Sprung zur Seite; mit Suche). Die Verwaltung steht jeweils am Ende. Beide stehen in der Seitenleiste immer ganz unten direkt über „Konto“ und sind ohne Anmeldung erreichbar. Die Inhalte liegen je Sprache in `src/MyLife.Client/Help/HelpContent.De.cs` und `.En.cs` statt in den Ressourcen; dargestellt werden sie mit einem kleinen, kodierenden Markdown (`HelpMarkdown`). Tests prüfen gleiche Gliederung in beiden Sprachen, gültige Verweise und Seiten sowie die Position im Menü. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

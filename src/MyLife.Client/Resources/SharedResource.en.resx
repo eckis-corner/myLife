@@ -755,6 +755,23 @@
   <data name="GrantMode_Death" xml:space="preserve"><value>Deceased</value></data>
   <data name="GrantMode_Incapacity" xml:space="preserve"><value>Incapacitated</value></data>
   <data name="GrantMode_Live" xml:space="preserve"><value>Share now</value></data>
+  <data name="HelpChapterOf" xml:space="preserve"><value>Chapter {0} of {1}</value></data>
+  <data name="HelpChapters" xml:space="preserve"><value>Chapters</value></data>
+  <data name="HelpCollapseAll" xml:space="preserve"><value>Collapse all</value></data>
+  <data name="HelpExpandAll" xml:space="preserve"><value>Expand all</value></data>
+  <data name="HelpFinish" xml:space="preserve"><value>Done – to the overview</value></data>
+  <data name="HelpGoTo" xml:space="preserve"><value>Go to “{0}”</value></data>
+  <data name="HelpGuideText" xml:space="preserve"><value>Every procedure in myLife step by step. Each topic says who carries it out.</value></data>
+  <data name="HelpHowTo" xml:space="preserve"><value>How it works</value></data>
+  <data name="HelpMoreInGuide" xml:space="preserve"><value>More in the guide</value></data>
+  <data name="HelpNoHits" xml:space="preserve"><value>The guide has nothing on “{0}”.</value></data>
+  <data name="HelpSearchLabel" xml:space="preserve"><value>Search the guide</value></data>
+  <data name="HelpSearchPlaceholder" xml:space="preserve"><value>For example “passkey” or “emergency package”</value></data>
+  <data name="HelpToGuide" xml:space="preserve"><value>Open the guide</value></data>
+  <data name="HelpToTutorial" xml:space="preserve"><value>Open the tutorial</value></data>
+  <data name="HelpTopicCount" xml:space="preserve"><value>{0} topics</value></data>
+  <data name="HelpTopicCountOne" xml:space="preserve"><value>1 topic</value></data>
+  <data name="HelpTutorialText" xml:space="preserve"><value>The main features of myLife step by step, to read from start to finish. The guide describes every procedure in detail.</value></data>
   <data name="HomeExpiringTitle" xml:space="preserve"><value>Expiring soon</value></data>
   <data name="HomeFollowUpTitle" xml:space="preserve"><value>Follow-ups</value></data>
   <data name="HomeLastReviewed" xml:space="preserve"><value>Last reviewed on {0}</value></data>
@@ -827,10 +844,12 @@
   <data name="NavAreas" xml:space="preserve"><value>Areas</value></data>
   <data name="NavAudit" xml:space="preserve"><value>Activity log</value></data>
   <data name="NavExport" xml:space="preserve"><value>Export &amp; print</value></data>
+  <data name="NavGuide" xml:space="preserve"><value>Guide</value></data>
   <data name="NavHome" xml:space="preserve"><value>Overview</value></data>
   <data name="NavSearch" xml:space="preserve"><value>Search</value></data>
   <data name="NavSecurity" xml:space="preserve"><value>Security</value></data>
   <data name="NavTrash" xml:space="preserve"><value>Trash</value></data>
+  <data name="NavTutorial" xml:space="preserve"><value>Tutorial</value></data>
   <data name="New" xml:space="preserve"><value>New</value></data>
   <data name="NewObject" xml:space="preserve"><value>New {0}</value></data>
   <data name="No" xml:space="preserve"><value>No</value></data>
