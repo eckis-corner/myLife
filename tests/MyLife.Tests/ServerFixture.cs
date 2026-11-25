@@ -59,10 +59,17 @@ public sealed class ServerFixture : WebApplicationFactory<Program>, IAsyncLifeti
     }
 }
 
-/// <summary>Einstellbare Uhr für Tests. Startet bei der echten Zeit.</summary>
+/// <summary>
+/// Einstellbare Uhr für Tests. Startet bei der echten Zeit, gekappt auf ganze Mikrosekunden:
+/// PostgreSQL speichert nicht genauer, unter Linux liefert die Systemuhr aber 100-ns-Ticks.
+/// Sonst unterscheiden sich gespeicherte und erwartete Zeitpunkte um den Rest.
+/// </summary>
 public sealed class TestClock : TimeProvider
 {
-    private DateTimeOffset _now = DateTimeOffset.UtcNow;
+    private DateTimeOffset _now = TruncateToMicroseconds(DateTimeOffset.UtcNow);
+
+    private static DateTimeOffset TruncateToMicroseconds(DateTimeOffset value) =>
+        value.AddTicks(-(value.Ticks % TimeSpan.TicksPerMicrosecond));
 
     public override DateTimeOffset GetUtcNow() => _now;
 
