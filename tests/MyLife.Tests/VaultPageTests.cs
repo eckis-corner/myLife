@@ -43,6 +43,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton<EmergencyPackage>();
         Services.AddSingleton(new ChecklistClient(_browser.Http));
         Services.AddSingleton<ChecklistService>();
+        Services.AddSingleton<Completeness>();
         Services.AddSingleton(new ReminderClient(_browser.Http));
         Services.AddSingleton(sp => new ReminderSync(sp.GetRequiredService<ReminderClient>(), _browser.Vault));
         Services.AddSingleton(new EmergencyClient(_browser.Http));
@@ -126,6 +127,32 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         var progress = await Services.GetRequiredService<ChecklistClient>().GetAsync(_browser.Session.Session!.UserId, Xunit.TestContext.Current.CancellationToken);
         Assert.Single(progress);
         await Services.GetRequiredService<ChecklistClient>().UndoneAsync(_browser.Session.Session!.UserId, progress[0].TaskId, Xunit.TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
+    public async Task CompletenessShowsGapsAndSuggestsTypicalEntries()
+    {
+        var item = await _browser.Vault.CreateAsync("legalDocument", new VaultPayload { Title = "Testament Lücke", Fields = { ["documentKind"] = "will" } });
+
+        var home = Render<Home>();
+        home.WaitForAssertion(() => Assert.Contains("Vollständigkeit:", home.Find("[data-testid=completeness]").TextContent, StringComparison.Ordinal));
+        Assert.NotNull(home.Find("[data-testid=area-completeness-6]"));
+
+        var area = Render<AreaPage>(p => p.Add(x => x.Number, 6));
+        area.WaitForAssertion(() => Assert.NotNull(area.Find("[data-testid=area-completeness]")));
+        Assert.Contains(area.FindAll("[data-testid=area-typical]"), b => b.TextContent.Contains("Patientenverfügung", StringComparison.Ordinal));
+        Assert.NotEmpty(area.FindAll("[data-testid=object-gaps]"));
+
+        var page = Render<ObjectPage>(p => p.Add(x => x.Id, item.Id));
+        page.WaitForAssertion(() => Assert.Contains("Ablageort des Originals", page.Find("[data-testid=object-missing]").TextContent, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ATypicalEntryOpensTheFormWithThePresetValue()
+    {
+        Services.GetRequiredService<NavigationManager>().NavigateTo("object/new/legalDocument?field=documentKind&value=livingWill");
+        var page = Render<ObjectPage>(p => p.Add(x => x.TypeKey, "legalDocument"));
+        page.WaitForAssertion(() => Assert.Equal("Patientenverfügung", page.Find("input[data-testid=object-title]").GetAttribute("value")));
     }
 
     [Fact]

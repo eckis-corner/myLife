@@ -78,7 +78,13 @@ public sealed record AreaDefinition(int Number, string Key)
 {
     /// <summary>Ablage für Objekte; alle Bereiche sind es (seit M3.2 auch die Checkliste).</summary>
     public bool IsAvailable { get; init; } = true;
+
+    /// <summary>Einträge, die fast jeder hier haben sollte (M3.3); fehlen sie, schlägt die Seite sie vor.</summary>
+    public IReadOnlyList<TypicalEntry> Typical { get; init; } = [];
 }
+
+/// <summary>Typischer Eintrag eines Bereichs: ein Objekttyp, auf Wunsch mit einem bestimmten Wert einer Auswahl (etwa Urkunde „Patientenverfügung“).</summary>
+public sealed record TypicalEntry(string TypeKey, string? FieldKey = null, string? Value = null);
 
 /// <summary>
 /// Objekttyp (Entscheidung 29): Bereich, Felder, mögliche Wünsche. Aus dem Schema entstehen Formular, Datenblatt
@@ -94,6 +100,9 @@ public sealed record ObjectTypeDefinition(string Key, int Area, IReadOnlyList<Fi
 
     /// <summary>Eigene Bezeichnung für das Ablaufdatum (<c>Expiry_{Key}</c>).</summary>
     public bool HasExpiryLabel { get; init; }
+
+    /// <summary>Das Ablaufdatum gehört zur Vollständigkeit (M3.3), etwa bei Ausweisen und Karten.</summary>
+    public bool ExpiryRecommended { get; init; }
 
     public int SchemaVersion { get; init; } = 1;
 

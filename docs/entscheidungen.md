@@ -191,6 +191,15 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 118 | Gemeinsames Abhaken | Je Aufgabe gibt es einen Stand für alle: erledigt von wem und wann. Abhaken und zurücknehmen dürfen der Eigentümer und jede Vertrauensperson, der die Checkliste gerade ausgeliefert wird (sofort geteilt oder freigegeben); das Protokoll des Eigentümers hält es fest. **Abweichung von Architektur 6.1:** keine Notiz zum Haken, weil sie beim Schlüsselwechsel des Bereichs mit umgeschlüsselt werden müsste. |
 | 119 | Lesemodus mit Checkliste | Ist die Checkliste freigegeben, ist sie der Schritt direkt nach den Briefen; die Bereiche folgen wie bisher (100), damit nichts verborgen bleibt. Ohne Freigabe der Checkliste bleibt der Weg entlang der Bereiche. |
 
+## Runde 15 (25.11.2026, Umsetzung M3.3)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 120 | Vollständigkeit eines Eintrags | Erwartet werden die sichtbaren Pflicht- und **empfohlenen** Felder, dazu der Wunsch (bei Typen mit Wünschen), der Ablageort des Originals (Urkunden) und das Ablaufdatum (Ausweise, Karten). Der Anteil des Ausgefüllten ist die Vollständigkeit. Empfohlen sind je Typ wenige Felder, die die Hinterbliebenen wirklich brauchen, etwa Kontoinhaber und Vollmacht beim Konto, Versicherungsnummer, Kündigungsfrist, Ablageort von Fahrzeugbrief oder Seed; das Formular kennzeichnet sie mit „Empfohlen“. Beendete Einträge zählen nicht. |
+| 121 | Bereich und Übersicht | Je Bereich der Durchschnitt seiner aktiven Einträge und die Zahl der Einträge mit Lücken; leere Bereiche zählen nicht als unvollständig (nicht jeder hat Kredite). Die Übersicht zeigt den Gesamtwert und je Kachel einen Balken; die Bereichsliste markiert Einträge mit Lücken, die Seite eines Eintrags nennt, was fehlt. |
+| 122 | Typische Einträge | Je Bereich wenige Einträge, die fast jeder hat: persönliche Daten und Ausweis, ein Bankkonto, Kranken- und Haftpflichtversicherung, Geburtsurkunde, Testament, Patientenverfügung und Vorsorgevollmacht, ein Kontakt, Bestattungswünsche, eine Aufgabe der Checkliste, Altersvorsorge. Fehlen sie, schlägt die Bereichsseite sie mit einem Knopf zum Anlegen vor (mit vorbelegter Art); sie fließen nicht in den Prozentwert ein und lassen sich nicht wegklicken. |
+| 123 | Wo gerechnet wird | Ganz im Browser aus dem entschlüsselten Tresor; der Server erfährt nichts über Lücken. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

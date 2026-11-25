@@ -8,6 +8,7 @@
 @inject ISnackbar Snackbar
 @inject BrowserFiles Files
 @inject EmergencyFolder Folder
+@inject Completeness Completeness
 
 <PageTitle>@L["AppName"] – @(_item?.Title ?? (_type is null ? L["NotFoundTitle"] : Text.Type(_type)))</PageTitle>
 
@@ -99,6 +100,13 @@ else
                     @L["FollowUpDueAlert", SchemaText.FollowUp(_item.Payload)]
                 </MudAlert>
             }
+            @if (_item.Status == ObjectStatus.Active && !_item.IsDeleted && Completeness.Missing(_item) is { Count: > 0 } missing)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Checklist" Class="mylife-no-print" data-testid="object-missing">
+                    @L["CompletenessMissing", string.Join(", ", missing.Select(m => m.Label))]
+                    <MudButton Variant="Variant.Text" Size="Size.Small" Class="ml-2" OnClick="StartEdit">@L["Edit"]</MudButton>
+                </MudAlert>
+            }
             <MudPaper Class="pa-4 mylife-print" Elevation="1">
                 <MudText Typo="Typo.h4" HtmlTag="h1" data-testid="object-heading">@_item.Title</MudText>
                 <ObjectDatasheet Item="_item" />
@@ -124,6 +132,11 @@ else
     [Parameter] public string? TypeKey { get; set; }
 
     [Parameter] public Guid? Id { get; set; }
+
+    /// <summary>Vorbelegung beim Anlegen eines typischen Eintrags (M3.3), etwa <c>?field=documentKind&amp;value=livingWill</c>.</summary>
+    [SupplyParameterFromQuery(Name = "field")] public string? PresetField { get; set; }
+
+    [SupplyParameterFromQuery(Name = "value")] public string? PresetValue { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -161,6 +174,13 @@ else
             foreach (var field in _type.Fields.Where(f => f.DefaultValue is not null))
             {
                 _draft.Set(field.Key, field.DefaultValue);
+            }
+
+            if (_type.Field(PresetField ?? string.Empty) is { OptionSet: { } set } preset && PresetValue is { } value
+                && ObjectCatalog.OptionSets.TryGetValue(set, out var options) && options.Contains(value))
+            {
+                _draft.Set(preset.Key, value);
+                _draft.Title = Text.Option(set, value);
             }
 
             _status = ObjectStatus.Active;

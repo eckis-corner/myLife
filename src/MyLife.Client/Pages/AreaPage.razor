@@ -6,6 +6,7 @@
 @inject NavigationManager Navigation
 @inject IDialogService Dialogs
 @inject ISnackbar Snackbar
+@inject Completeness Completeness
 
 <PageTitle>@L["AppName"] – @Text.Area(Number)</PageTitle>
 
@@ -52,6 +53,36 @@ else
                 <MudSwitch T="bool" Value="_selecting" ValueChanged="SelectingChanged" Color="Color.Primary" Label="@L["Select"]" data-testid="select-mode" />
             </MudStack>
 
+            @if (_completeness is { } completeness && (completeness.MissingTypical.Count > 0 || completeness.Percent is not null))
+            {
+                <MudPaper Outlined Class="pa-3" data-testid="area-completeness">
+                    <MudStack Spacing="2">
+                        @if (completeness.Percent is { } percent)
+                        {
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                                <MudText Typo="Typo.body2" Style="white-space: nowrap;">@L["CompletenessPercent", percent]</MudText>
+                                <MudProgressLinear Value="percent" Color="@(percent == 100 ? Color.Success : Color.Primary)" Rounded Size="Size.Small" />
+                            </MudStack>
+                            @if (completeness.Incomplete > 0)
+                            {
+                                <MudText Typo="Typo.caption" Class="mylife-muted">@L["CompletenessIncomplete", completeness.Incomplete]</MudText>
+                            }
+                        }
+                        @if (completeness.MissingTypical.Count > 0)
+                        {
+                            <MudText Typo="Typo.body2">@L["CompletenessTypical"]</MudText>
+                            <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
+                                @foreach (var typical in completeness.MissingTypical)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Filled.Add" Href="@Completeness.NewHref(typical)"
+                                               data-testid="area-typical">@Completeness.Label(typical)</MudButton>
+                                }
+                            </MudStack>
+                        }
+                    </MudStack>
+                </MudPaper>
+            }
+
             @if (_selecting && _selected.Count > 0)
             {
                 <MudPaper Outlined Class="pa-2">
@@ -85,6 +116,13 @@ else
                         @if (context.Status == ObjectStatus.Ended)
                         {
                             <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="ml-2">@Text.Status(context.Status)</MudChip>
+                        }
+                        @if (context.Status == ObjectStatus.Active && Completeness.Missing(context) is { Count: > 0 } gaps)
+                        {
+                            <MudTooltip Text="@L["CompletenessMissing", string.Join(", ", gaps.Select(g => g.Label))]">
+                                <MudIcon Icon="@Icons.Material.Outlined.Rule" Size="Size.Small" Class="ml-2" Style="vertical-align: middle" Color="Color.Info"
+                                         aria-label="@L["CompletenessGaps"]" data-testid="object-gaps" />
+                            </MudTooltip>
                         }
                         @if (context.Payload.HasFollowUp)
                         {
@@ -133,8 +171,13 @@ else
         }
     }
 
-    protected override void OnVaultReady() =>
+    private AreaCompleteness? _completeness;
+
+    protected override void OnVaultReady()
+    {
         _items = [.. Vault.Current.Where(i => i.Area == Number && (_showEnded || i.Status == ObjectStatus.Active))];
+        _completeness = Completeness.ForArea(Number, Vault.Current);
+    }
 
     private void ShowEndedChanged(bool value)
     {

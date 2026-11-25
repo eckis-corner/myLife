@@ -36,6 +36,12 @@ public sealed class SchemaText(IStringLocalizer<SharedResource> l)
 
     public string Wish(string value) => Option("wish", value);
 
+    /// <summary>Beschriftung des Wunschs für die Hinterbliebenen.</summary>
+    public string WishLabel => l["CommonWish"];
+
+    /// <summary>Beschriftung des Ablageorts des Originals.</summary>
+    public string OriginalLocation => l["CommonOriginalLocation"];
+
     public string Expiry(ObjectTypeDefinition type) => type is { HasExpiryLabel: true } ? l[$"Expiry_{type.Key}"] : l["Expiry_default"];
 
     public string Status(ObjectStatus status) => l[$"ObjectStatus_{status}"];

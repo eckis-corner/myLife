@@ -65,25 +65,69 @@ public static class ObjectCatalog
         ],
     };
 
+    /// <summary>
+    /// Empfohlene Felder je Objekttyp (M3.3): was die Hinterbliebenen besonders brauchen. Mit den Pflichtfeldern und dem
+    /// Wunsch ergeben sie die Vollständigkeit eines Eintrags.
+    /// </summary>
+    private static readonly Dictionary<string, string[]> RecommendedFields = new(StringComparer.Ordinal)
+    {
+        ["personal"] = ["birthDate", "address", "taxId", "pensionInsuranceNumber", "healthInsuranceNumber"],
+        ["idDocument"] = ["number"],
+        ["bankAccount"] = ["holder", "powerOfAttorney"],
+        ["depot"] = ["depotNumber", "holder"],
+        ["safeDeposit"] = ["boxNumber", "keyLocation"],
+        ["card"] = ["issuer", "last4"],
+        ["loan"] = ["contractNumber", "outstandingAmount"],
+        ["insurance"] = ["policyNumber"],
+        ["contract"] = ["customerNumber", "noticePeriod"],
+        ["property"] = ["owners", "landRegistry"],
+        ["vehicle"] = ["licensePlate", "titleLocation"],
+        ["asset"] = ["storageLocation"],
+        ["onlineAccount"] = ["username"],
+        ["domain"] = ["registrar"],
+        ["cryptoWallet"] = ["seedLocation"],
+        ["device"] = ["unlockEntry"],
+        ["passwordManager"] = ["pmEmergency", "instructions"],
+        ["contact"] = ["phone"],
+        ["funeral"] = ["burialKind"],
+        ["organDonation"] = ["cardLocation"],
+        ["pet"] = ["caretaker"],
+        ["letter"] = ["recipients"],
+        ["task"] = ["taskText"],
+        ["employment"] = ["employer", "personnelNumber"],
+        ["pension"] = ["contractNumber"],
+        ["taxes"] = ["taxNumber"],
+    };
+
+    /// <summary>Bei diesen Typen gehört das Ablaufdatum zur Vollständigkeit (Ausweise, Karten).</summary>
+    private static readonly HashSet<string> ExpiryRecommendedTypes = new(StringComparer.Ordinal) { "idDocument", "card" };
+
     public static IReadOnlyList<AreaDefinition> Areas { get; } =
     [
-        new(0, "aboutMe"),
-        new(1, "banking"),
+        new(0, "aboutMe") { Typical = [new("personal"), new("idDocument")] },
+        new(1, "banking") { Typical = [new("bankAccount")] },
         new(2, "cards"),
         new(3, "loans"),
-        new(4, "insurance"),
+        new(4, "insurance") { Typical = [new("insurance", "insuranceKind", "health"), new("insurance", "insuranceKind", "liability")] },
         new(5, "contracts"),
-        new(6, "documents"),
+        new(6, "documents")
+        {
+            Typical =
+            [
+                new("legalDocument", "documentKind", "birth"), new("legalDocument", "documentKind", "will"),
+                new("legalDocument", "documentKind", "livingWill"), new("legalDocument", "documentKind", "healthcareProxy"),
+            ],
+        },
         new(7, "property"),
         new(8, "digital"),
         new(9, "passwordManager"),
-        new(10, "contacts"),
-        new(11, "wishes"),
-        new(ChecklistArea, "checklist"),
-        new(13, "income"),
+        new(10, "contacts") { Typical = [new("contact")] },
+        new(11, "wishes") { Typical = [new("funeral")] },
+        new(ChecklistArea, "checklist") { Typical = [new("task")] },
+        new(13, "income") { Typical = [new("pension")] },
     ];
 
-    public static IReadOnlyList<ObjectTypeDefinition> Types { get; } = BuildTypes();
+    public static IReadOnlyList<ObjectTypeDefinition> Types { get; } = [.. BuildTypes().Select(Recommend)];
 
     private static readonly Dictionary<string, ObjectTypeDefinition> ByKey = Types.ToDictionary(t => t.Key, StringComparer.Ordinal);
 
@@ -98,6 +142,16 @@ public static class ObjectCatalog
 
     /// <summary>Gilt ein Bereich als Ablage für Objekte (0–13, seit M3.2 auch die Checkliste)?</summary>
     public static bool IsUsableArea(int area) => FindArea(area) is { IsAvailable: true };
+
+    private static ObjectTypeDefinition Recommend(ObjectTypeDefinition type)
+    {
+        var recommended = RecommendedFields.GetValueOrDefault(type.Key) ?? [];
+        return type with
+        {
+            Fields = [.. type.Fields.Select(f => recommended.Contains(f.Key) ? f with { Recommended = true } : f)],
+            ExpiryRecommended = ExpiryRecommendedTypes.Contains(type.Key),
+        };
+    }
 
     private static FieldDefinition Text(string key, bool required = false) => new(key, FieldType.Text) { Required = required };
 

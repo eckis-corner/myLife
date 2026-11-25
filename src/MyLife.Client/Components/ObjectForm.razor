@@ -135,7 +135,9 @@
     {
         var label = Text.Field(Type, field);
         var value = Payload.Get(field.Key);
-        var hint = Text.Hint(field);
+        var hint = field.Recommended && !field.Required
+            ? string.Join(" ", new[] { L["CompletenessRecommended"].Value, Text.Hint(field) }.Where(h => !string.IsNullOrEmpty(h)))
+            : Text.Hint(field);
         var testId = new Dictionary<string, object> { ["data-testid"] = $"field-{field.Key}" };
         switch (field.Type)
         {

@@ -335,6 +335,15 @@
   <data name="CommonWish" xml:space="preserve"><value>Wish for your survivors</value></data>
   <data name="CommonWishNote" xml:space="preserve"><value>Note on your wish</value></data>
   <data name="CommonWishNoteHelp" xml:space="preserve"><value>For example, who something should be handed over to.</value></data>
+  <data name="CompletenessGaps" xml:space="preserve"><value>Gaps</value></data>
+  <data name="CompletenessIncomplete" xml:space="preserve"><value>{0} entries still have gaps; they are marked in the list.</value></data>
+  <data name="CompletenessMissing" xml:space="preserve"><value>Still missing: {0}</value></data>
+  <data name="CompletenessPercent" xml:space="preserve"><value>{0} % complete</value></data>
+  <data name="CompletenessRecommended" xml:space="preserve"><value>Recommended.</value></data>
+  <data name="CompletenessSummary" xml:space="preserve"><value>{0} entries still have gaps, {1} typical entries are missing. The areas show exactly what.</value></data>
+  <data name="CompletenessTile" xml:space="preserve"><value>{0} % complete, {1} with gaps</value></data>
+  <data name="CompletenessTitle" xml:space="preserve"><value>Completeness: {0} %</value></data>
+  <data name="CompletenessTypical" xml:space="preserve"><value>Most people have this here; yours is still missing:</value></data>
   <data name="ContentWarningEdit" xml:space="preserve"><value>Back to editing</value></data>
   <data name="ContentWarningQuestion" xml:space="preserve"><value>Save anyway?</value></data>
   <data name="ContentWarningTitle" xml:space="preserve"><value>Does this really belong in here?</value></data>

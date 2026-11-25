@@ -335,6 +335,15 @@
   <data name="CommonWish" xml:space="preserve"><value>Wunsch für die Hinterbliebenen</value></data>
   <data name="CommonWishNote" xml:space="preserve"><value>Hinweis zum Wunsch</value></data>
   <data name="CommonWishNoteHelp" xml:space="preserve"><value>Etwa an wen etwas übergeben werden soll.</value></data>
+  <data name="CompletenessGaps" xml:space="preserve"><value>Lücken</value></data>
+  <data name="CompletenessIncomplete" xml:space="preserve"><value>{0} Einträge haben noch Lücken; sie sind in der Liste markiert.</value></data>
+  <data name="CompletenessMissing" xml:space="preserve"><value>Es fehlt noch: {0}</value></data>
+  <data name="CompletenessPercent" xml:space="preserve"><value>{0} % vollständig</value></data>
+  <data name="CompletenessRecommended" xml:space="preserve"><value>Empfohlen.</value></data>
+  <data name="CompletenessSummary" xml:space="preserve"><value>{0} Einträge haben noch Lücken, {1} typische Einträge fehlen. Was genau, zeigen die Bereiche.</value></data>
+  <data name="CompletenessTile" xml:space="preserve"><value>{0} % vollständig, {1} mit Lücken</value></data>
+  <data name="CompletenessTitle" xml:space="preserve"><value>Vollständigkeit: {0} %</value></data>
+  <data name="CompletenessTypical" xml:space="preserve"><value>Das haben die meisten hier, bei dir fehlt es noch:</value></data>
   <data name="ContentWarningEdit" xml:space="preserve"><value>Zurück zum Bearbeiten</value></data>
   <data name="ContentWarningQuestion" xml:space="preserve"><value>Trotzdem speichern?</value></data>
   <data name="ContentWarningTitle" xml:space="preserve"><value>Gehört das wirklich hinein?</value></data>

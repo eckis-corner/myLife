@@ -21,6 +21,7 @@ Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel
 | Notizen | Freitext |
 | Zusatzfelder | Frei benannte Felder mit Bezeichnung und Wert für alles, was der Katalog nicht abdeckt (Felderkatalog: Durchsicht offen, 47) |
 | Zuletzt geprüft | Datum, wird mit „Als geprüft markieren“ gesetzt |
+| Vollständigkeit | Pflicht- und **empfohlene** Felder, Wunsch, Ablageort (Urkunden) und Ablaufdatum (Ausweise, Karten). Welche Felder empfohlen sind und welche Einträge je Bereich typisch sind, steht in `ObjectCatalog.cs` (M3.3, 120–122). |
 
 ## 2. Katalog
 

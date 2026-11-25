@@ -48,6 +48,7 @@ builder.Services.AddScoped<VaultExport>();
 builder.Services.AddScoped<EmergencyPackage>();
 builder.Services.AddScoped<ReminderSync>();
 builder.Services.AddScoped<ChecklistService>();
+builder.Services.AddScoped<Completeness>();
 builder.Services.AddScoped<MyLifeAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(services => services.GetRequiredService<MyLifeAuthenticationStateProvider>());
 builder.Services.AddAuthorizationCore();

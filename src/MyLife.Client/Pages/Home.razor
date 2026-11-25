@@ -6,6 +6,7 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
 @inject ReminderSync Reminders
+@inject Completeness Completeness
 
 <PageTitle>@L["AppName"] – @L["NavHome"]</PageTitle>
 
@@ -30,6 +31,21 @@
         @if (Vault.UnreadableCount > 0)
         {
             <MudAlert Severity="Severity.Warning">@L["VaultUnreadable", Vault.UnreadableCount]</MudAlert>
+        }
+
+        @if (_overall is { } overall)
+        {
+            <MudPaper Class="pa-4" Elevation="1" data-testid="completeness">
+                <MudStack Spacing="1">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.h6" HtmlTag="h2" Style="white-space: nowrap;">@L["CompletenessTitle", overall]</MudText>
+                        <MudProgressLinear Value="overall" Color="@(overall == 100 ? Color.Success : Color.Primary)" Rounded Size="Size.Medium" />
+                    </MudStack>
+                    <MudText Typo="Typo.body2" Class="mylife-muted">
+                        @L["CompletenessSummary", _areaCompleteness.Values.Sum(a => a.Incomplete), _areaCompleteness.Values.Sum(a => a.MissingTypical.Count)]
+                    </MudText>
+                </MudStack>
+            </MudPaper>
         }
 
         @if (_dueAreas.Count > 0)
@@ -91,6 +107,14 @@
                             <CardHeaderContent>
                                 <MudLink Href="@href" Typo="Typo.subtitle1" Color="Color.Inherit"><b>@Text.Area(area.Number)</b></MudLink>
                                 <MudText Typo="Typo.body2" Class="mylife-muted">@L["HomeObjectCount", count]</MudText>
+                                @if (_areaCompleteness.GetValueOrDefault(area.Number) is { Percent: { } areaPercent } areaState)
+                                {
+                                    <MudProgressLinear Value="areaPercent" Color="@(areaPercent == 100 ? Color.Success : Color.Primary)" Rounded Size="Size.Small" Class="my-1"
+                                                       data-testid="@($"area-completeness-{area.Number}")" />
+                                    <MudText Typo="Typo.caption" Class="mylife-muted">
+                                        @(areaState.Incomplete > 0 ? L["CompletenessTile", areaPercent, areaState.Incomplete] : L["CompletenessPercent", areaPercent])
+                                    </MudText>
+                                }
                                 @if (_dueAreas.Contains(area.Number))
                                 {
                                     <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined" data-testid="@($"area-review-due-{area.Number}")">
@@ -131,6 +155,8 @@
 
     private Dictionary<int, AreaState> _states = [];
     private IReadOnlySet<int> _dueAreas = new HashSet<int>();
+    private Dictionary<int, AreaCompleteness> _areaCompleteness = [];
+    private int? _overall;
     private Dictionary<int, int> _counts = [];
     private List<VaultItem> _expiring = [];
     private List<VaultItem> _followUps = [];
@@ -158,6 +184,8 @@
     protected override void OnVaultReady()
     {
         _dueAreas = Reminders.DueAreas(DateTimeOffset.Now);
+        _areaCompleteness = ObjectCatalog.Areas.ToDictionary(a => a.Number, a => Completeness.ForArea(a.Number, Vault.Current));
+        _overall = Completeness.Overall(Vault.Current);
         _states = Vault.Areas.ToDictionary(a => a.Area);
         _counts = Vault.Current.Where(i => i.Status == ObjectStatus.Active).GroupBy(i => i.Area).ToDictionary(g => g.Key, g => g.Count());
         var today = _today = DateOnly.FromDateTime(DateTime.Today);
