@@ -17,6 +17,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
 {
     private readonly ServerFixture _server;
     private VaultBrowser _browser = null!;
+    private Bunit.TestDoubles.BunitAuthorizationContext _auth = null!;
 
     public VaultPageTests(ServerFixture server)
     {
@@ -48,6 +49,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton(sp => new ReminderSync(sp.GetRequiredService<ReminderClient>(), _browser.Vault));
         Services.AddSingleton(new EmergencyClient(_browser.Http));
         Services.AddSingleton(new AdminClient(_browser.Http));
+        _auth = AddAuthorization();
         Render<MudBlazor.MudPopoverProvider>();
     }
 
@@ -184,6 +186,34 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Render<ObjectPage>(p => p.Add(x => x.TypeKey, "profile"));
         Assert.EndsWith("/account/profile", navigation.Uri, StringComparison.Ordinal);
         Assert.DoesNotContain(ObjectCatalog.TypesIn(0).Where(t => !t.Singleton), t => t.Key == "profile");
+    }
+
+    /// <summary>Ist im eigenen Datenblatt ein Bild hinterlegt, zeigt die Kopfzeile es statt des Kontosymbols.</summary>
+    [Fact]
+    public async Task TheAppBarShowsTheProfilePicture()
+    {
+        // Die Testklasse teilt sich einen Tresor; ein Datenblatt aus einem anderen Test kommt vorher weg.
+        await _browser.Vault.EnsureLoadedAsync();
+        foreach (var existing in _browser.Vault.Current.Where(i => i.Type.Key == "profile").ToList())
+        {
+            await _browser.Vault.DeleteAsync(existing.Id);
+        }
+
+        JSInterop.Setup<string>("myLife.createObjectUrl", _ => true).SetResult("blob:profilbild");
+        _auth.SetAuthorized("anna@example.org");
+        var menu = Render<MyLife.Client.Components.UserMenu>();
+        menu.WaitForAssertion(() => Assert.NotNull(menu.Find("[data-testid=user-menu] button")));
+        Assert.Empty(menu.FindAll("[data-testid=user-menu-picture]"));
+
+        var profile = await _browser.Vault.CreateAsync("profile", new VaultPayload { Title = "Erika Muster", Fields = { ["lastName"] = "Muster" } });
+        byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2, 3];
+        var picture = await _browser.Vault.UploadAsync(profile.Id, new MemoryStream(png),
+            new DocumentMetadata { Label = "Bild", FileName = "ich.png", ContentType = "image/png", Size = png.Length });
+        menu.WaitForAssertion(() => Assert.Equal("blob:profilbild", menu.Find("[data-testid=user-menu-picture] img").GetAttribute("src")), TimeSpan.FromSeconds(10));
+
+        await _browser.Vault.DeleteFileAsync(picture);
+        menu.WaitForAssertion(() => Assert.Empty(menu.FindAll("[data-testid=user-menu-picture]")), TimeSpan.FromSeconds(10));
+        await _browser.Vault.DeleteAsync(profile.Id);
     }
 
     [Fact]

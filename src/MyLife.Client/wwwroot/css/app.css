@@ -222,6 +222,35 @@ h1:focus {
     box-shadow: 0 0 0 1px #ffffff26;
 }
 
+/* Profilbild statt Kontosymbol in der Kopfzeile, so groß wie die Symbolknöpfe daneben. */
+.mylife-appbar-avatar {
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    padding: 8px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+}
+
+.mylife-appbar-avatar:hover {
+    background: var(--mud-palette-action-default-hover);
+}
+
+.mylife-appbar-avatar:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
+
+.mylife-appbar-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px #ffffff40;
+}
+
 /* Seitenleiste */
 .mylife-rixio .mylife-drawer {
     border-right: 1px solid var(--mud-palette-lines-default);

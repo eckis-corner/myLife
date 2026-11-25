@@ -1,24 +1,150 @@
-@* Konto-Menü in der Kopfzeile: Name, Sicherheit, Abmelden. Nur bei entsperrtem Tresor sichtbar. *@
+@* Konto-Menü in der Kopfzeile: Name, Sicherheit, Abmelden. Nur bei entsperrtem Tresor sichtbar.
+   Ist im eigenen Datenblatt ein Bild hinterlegt, steht es statt des Kontosymbols in der Kopfzeile. *@
 @inject IStringLocalizer<SharedResource> L
 @inject SessionService Session
 @inject NavigationManager Navigation
+@* Tresor und Dateien optional: Die Seite „nicht gefunden“ rendert der Server statisch, ohne die Dienste des Browsers. *@
+@using MyLife.Client.Pages
+@inject IServiceProvider ServiceProvider
+@implements IDisposable
 
 <AuthorizeView>
     <Authorized>
-        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AriaLabel="@L["UserMenu"]"
-                 AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" data-testid="user-menu">
-            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>@context.User.Identity?.Name</b></MudText>
-            <MudDivider />
-            <MudMenuItem Icon="@Icons.Material.Outlined.Security" Href="account/security">@L["NavSecurity"]</MudMenuItem>
-            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="LogoutAsync" data-testid="logout">@L["Logout"]</MudMenuItem>
+        <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" data-testid="user-menu">
+            <ActivatorContent Context="menu">
+                @if (_pictureUrl is not null)
+                {
+                    <button type="button" class="mylife-appbar-avatar" aria-label="@L["UserMenu"]" data-testid="user-menu-picture">
+                        <img src="@_pictureUrl" alt="" />
+                    </button>
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" aria-label="@L["UserMenu"]" />
+                }
+            </ActivatorContent>
+            <ChildContent>
+                <MudText Typo="Typo.body2" Class="px-4 py-2"><b>@context.User.Identity?.Name</b></MudText>
+                <MudDivider />
+                <MudMenuItem Icon="@Icons.Material.Outlined.Badge" Href="account/profile">@L["ProfileTitle"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.Security" Href="account/security">@L["NavSecurity"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="LogoutAsync" data-testid="logout">@L["Logout"]</MudMenuItem>
+            </ChildContent>
         </MudMenu>
     </Authorized>
 </AuthorizeView>
 
 @code {
+    private Guid? _pictureId;
+    private string? _pictureUrl;
+    private bool _disposed;
+
+    private VaultService? Vault => ServiceProvider.GetService<VaultService>();
+
+    private BrowserFiles? Files => ServiceProvider.GetService<BrowserFiles>();
+
+    protected override void OnInitialized()
+    {
+        if (Vault is null || Files is null)
+        {
+            return;
+        }
+
+        Vault.Changed += OnVaultChanged;
+        Session.Changed += OnSessionChanged;
+        OnSessionChanged();
+    }
+
+    /// <summary>Nach dem Entsperren den Tresor laden, damit das Bild auf jeder Seite erscheint, nicht erst auf einer Tresor-Seite.</summary>
+    private void OnSessionChanged()
+    {
+        if (Session.State == SessionState.Unlocked)
+        {
+            _ = LoadVaultAsync();
+        }
+    }
+
+    private async Task LoadVaultAsync()
+    {
+        try
+        {
+            await Vault!.EnsureLoadedAsync();
+            OnVaultChanged();
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            // Das Bild ist nur Schmuck; die Seiten zeigen Ladefehler selbst an.
+        }
+    }
+
+    private void OnVaultChanged()
+    {
+        var picture = Vault!.IsLoaded ? ProfilePage.FindPicture(Vault, ProfilePage.FindProfile(Vault)) : null;
+        if (picture?.Id != _pictureId)
+        {
+            _ = ShowPictureAsync(picture);
+        }
+    }
+
+    private async Task ShowPictureAsync(VaultFile? picture)
+    {
+        _pictureId = picture?.Id;
+        var old = _pictureUrl;
+        string? url = null;
+        if (picture is not null)
+        {
+            try
+            {
+                url = await Files!.CreateUrlAsync(await Vault!.DownloadAsync(picture), picture.Metadata.ContentType);
+            }
+            catch (Exception exception) when (exception is VaultException or HttpRequestException or System.Security.Cryptography.CryptographicException or Microsoft.JSInterop.JSException)
+            {
+                // Ohne Bild bleibt das Kontosymbol stehen.
+            }
+        }
+
+        if (_disposed || _pictureId != picture?.Id)
+        {
+            // Inzwischen gilt ein anderes Bild oder das Menü ist weg; dieses wird nicht mehr gebraucht.
+            await RevokeAsync(url);
+            return;
+        }
+
+        _pictureUrl = url;
+        await RevokeAsync(old);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RevokeAsync(string? url)
+    {
+        if (url is not null && Files is not null)
+        {
+            try
+            {
+                await Files.RevokeUrlAsync(url);
+            }
+            catch (Exception exception) when (exception is Microsoft.JSInterop.JSDisconnectedException or Microsoft.JSInterop.JSException)
+            {
+                // Die Seite ist schon weg.
+            }
+        }
+    }
+
     private async Task LogoutAsync()
     {
         await Session.LogoutAsync();
         Navigation.NavigateTo("login");
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        if (Vault is not null)
+        {
+            Vault.Changed -= OnVaultChanged;
+            Session.Changed -= OnSessionChanged;
+        }
+
+        _ = RevokeAsync(_pictureUrl);
     }
 }

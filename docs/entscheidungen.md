@@ -233,7 +233,7 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | Nr. | Thema | Entscheidung |
 | ---: | --- | --- |
 | 137 | Menü | Zwei Gruppen statt einer langen Liste: **Verwaltung** (Protokoll, Papierkorb; für Admins dazu Einstellungen, Benutzer, Admin-Protokoll) für alle, **Konto** (Erinnerungen, Sicherheit, Eigenes Datenblatt, Was gehört nicht in myLife?) immer sichtbar am unteren Rand der Seitenleiste. |
-| 138 | Eigenes Datenblatt | Name, Vorname und Bild liegen verschlüsselt im Tresor als Eintrag vom Typ `profile` im Bereich 0, höchstens einer je Tresor (`Singleton`, nicht in „Neuer Eintrag“). Das Bild ist ein Dokument an diesem Eintrag (JPEG, PNG oder WebP bis 5 MB); es gilt das neueste, ein neues legt das alte in den Papierkorb. Das Dateiformat ändert sich nicht. |
+| 138 | Eigenes Datenblatt | Name, Vorname und Bild liegen verschlüsselt im Tresor als Eintrag vom Typ `profile` im Bereich 0, höchstens einer je Tresor (`Singleton`, nicht in „Neuer Eintrag“). Das Bild ist ein Dokument an diesem Eintrag (JPEG, PNG oder WebP bis 5 MB); es gilt das neueste, ein neues legt das alte in den Papierkorb. Ist ein Bild hinterlegt, steht es in der Kopfzeile statt des Kontosymbols; dafür lädt die Kopfzeile den Tresor nach dem Entsperren selbst. Das Konto-Menü führt auch zum Datenblatt. Das Dateiformat ändert sich nicht. |
 
 ## Runde 20 (25.11.2026, Tutorial und Anleitung)
 
