@@ -169,6 +169,10 @@ public static class AuditActions
     public const string VaultDeletionWithdrawn = "vault-deletion-withdrawn";
     public const string VaultDeletedByTrustees = "vault-deleted-by-trustees";
 
+    // Erinnerungen (M3.1)
+    public const string ReminderSent = "reminder-sent";
+    public const string ReminderSettingsChanged = "reminder-settings-changed";
+
     /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
     public static bool IsSystem(string action) =>
         action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch or EmergencyReleased or EmergencyRevoked

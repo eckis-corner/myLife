@@ -582,6 +582,45 @@ namespace MyLife.Server.Data.Migrations
                     b.ToTable("pinned_keys", (string)null);
                 });
 
+            modelBuilder.Entity("MyLife.Server.Data.ReminderSetting", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateTimeOffset?>("LastReviewMailAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_review_mail_at");
+
+                    b.Property<int>("LeadDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("lead_days");
+
+                    b.Property<bool>("MailEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("mail_enabled");
+
+                    b.Property<DateOnly?>("NextDueOn")
+                        .HasColumnType("date")
+                        .HasColumnName("next_due_on");
+
+                    b.Property<DateOnly?>("NotifiedDueOn")
+                        .HasColumnType("date")
+                        .HasColumnName("notified_due_on");
+
+                    b.Property<int>("ReviewMonths")
+                        .HasColumnType("integer")
+                        .HasColumnName("review_months");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("reminder_settings", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.SystemSetting", b =>
                 {
                     b.Property<string>("Key")
@@ -1074,6 +1113,15 @@ namespace MyLife.Server.Data.Migrations
                     b.HasOne("MyLife.Server.Data.User", null)
                         .WithMany()
                         .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.ReminderSetting", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithOne()
+                        .HasForeignKey("MyLife.Server.Data.ReminderSetting", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -76,6 +76,18 @@ Wenn das ein Irrtum ist, melde dich bei myLife an.</value></data>
 
 der Notfallzugang von {owner} ist freigegeben ({mode}). Melde dich bei myLife an; unter „Mit mir geteilt“ findest du, was {owner} für dich hinterlegt hat.</value></data>
   <data name="Mail_released-trustee_subject" xml:space="preserve"><value>myLife: Zugang zu {owner} freigegeben</value></data>
+  <data name="Mail_reminder_body" xml:space="preserve"><value>Hallo {name},
+
+bei myLife steht etwas an:
+{items}
+
+Melde dich an; auf der Übersicht siehst du, worum es geht:
+{link}
+
+Diese Mail nennt absichtlich keine Einzelheiten. Erinnerungen stellst du nach der Anmeldung unter „Erinnerungen“ ein.</value></data>
+  <data name="Mail_reminder_dates" xml:space="preserve"><value>Ein Ablaufdatum oder eine Wiedervorlage rückt näher.</value></data>
+  <data name="Mail_reminder_review" xml:space="preserve"><value>{count} Bereiche wurden seit mehr als {months} Monaten nicht geprüft.</value></data>
+  <data name="Mail_reminder_subject" xml:space="preserve"><value>myLife: Zeit für einen Blick in deinen Notfallordner</value></data>
   <data name="Mail_request-info_body" xml:space="preserve"><value>Hallo {name},
 
 {trustee} hat bei myLife Zugang zu {owner} beantragt, für den Fall „{mode}“. {owner} kann widersprechen. Du musst nichts tun; wenn du Zweifel hast, sprich mit {trustee} oder {owner}.</value></data>

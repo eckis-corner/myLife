@@ -31,12 +31,14 @@ internal static class MailTemplate
     public const string VaultDeletionScheduledOwner = "vault-deletion-scheduled-owner";
     public const string VaultDeletionCancelled = "vault-deletion-cancelled";
     public const string VaultDeleted = "vault-deleted";
+    public const string Reminder = "reminder";
 
     public static IReadOnlyList<string> All { get; } =
     [
         Test, AccountLocked, AccountUnlocked, TwoFactorReset, DeletionRequest, AccountDeleted, Invitation, InvitationAccepted, TrusteeAdded,
         LifesignDue, LifesignReminder, ReleasedOwner, ReleasedTrustee, RequestOwner, RequestInfo, RequestPaused, RequestObjected,
         ReleaseRevoked, VaultDeletionProposed, VaultDeletionScheduled, VaultDeletionScheduledOwner, VaultDeletionCancelled, VaultDeleted,
+        Reminder,
     ];
 }
 

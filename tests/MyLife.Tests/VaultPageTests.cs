@@ -41,6 +41,8 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton(new VaultExport(_browser.Api, _browser.Vault, _browser.Session, _browser.Crypto));
         Services.AddSingleton<MyLife.Crypto.IMyLifeCrypto>(_browser.Crypto);
         Services.AddSingleton<EmergencyPackage>();
+        Services.AddSingleton(new ReminderClient(_browser.Http));
+        Services.AddSingleton(sp => new ReminderSync(sp.GetRequiredService<ReminderClient>(), _browser.Vault));
         Services.AddSingleton(new EmergencyClient(_browser.Http));
         Services.AddSingleton(new AdminClient(_browser.Http));
         Render<MudBlazor.MudPopoverProvider>();
@@ -79,6 +81,22 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Assert.Contains("myLife-Notfallpaket", page.Find("[data-testid=package-done]").TextContent, StringComparison.Ordinal);
         var saved = Assert.Single(save.Invocations);
         Assert.Equal("text/html", saved.Arguments[2]);
+    }
+
+    [Fact]
+    public async Task TheRemindersPageSavesTheSettingsAndShowsWhatTheServerKnows()
+    {
+        var page = Render<RemindersPage>();
+        page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=reminders-save]")));
+        Assert.NotNull(page.Find("[data-testid=reminders-server]"));
+
+        page.Find("input[data-testid=reminders-review]").Change("3");
+        page.Find("input[data-testid=reminders-lead]").Change("90");
+        page.Find("[data-testid=reminders-save]").Click();
+
+        var api = Services.GetRequiredService<ReminderClient>();
+        await page.WaitForAssertionAsync(async () => Assert.Equal(new MyLife.Shared.Reminders.ReminderSettingsDto(3, 90, true), (await api.GetAsync(Xunit.TestContext.Current.CancellationToken)).Settings));
+        await api.SaveSettingsAsync(MyLife.Shared.Reminders.ReminderSettingsDto.Default, Xunit.TestContext.Current.CancellationToken);
     }
 
     [Fact]

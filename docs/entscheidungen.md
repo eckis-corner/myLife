@@ -172,6 +172,15 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 109 | OfflineViewer | Eine Datei ohne Abhängigkeiten. Eine Content-Security-Policy im Kopf verbietet jedes Nachladen und Senden; entschlüsselt wird mit der Web Crypto API eines aktuellen Browsers, auch von `file://`. Inhalte erscheinen nur als Text, nie als HTML. Dokumente lassen sich ansehen und speichern, das Ganze drucken. Die Texte des Viewers (de/en) stehen in der Datei selbst. Die Vorlage liegt in `src/MyLife.OfflineViewer/` und ist in den Client eingebettet; ein eigenes Projekt gibt es nicht. |
 | 110 | Abgrenzung | Der Server ist nicht beteiligt: kein Upload, nur ein Protokolleintrag mit der Zahl der Einträge und Dokumente. Der OfflineViewer öffnet nur Notfallpakete, keine JSON-Exporte; dafür kommt mit M3 `mylife-decrypt` (abweichend von Architektur 7). |
 
+## Runde 13 (25.11.2026, Umsetzung M3.1)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 111 | Prüfintervall | Jeder Nutzer stellt unter „Erinnerungen“ ein, nach wie vielen Monaten Bereiche wieder geprüft werden sollen (Standard 6, 0 = aus, höchstens 24). Fällig ist ein Bereich mit aktiven Einträgen, wenn „Als geprüft markieren“ (67) länger her ist, bei nie geprüften Bereichen seit seinem Anlegen. Das weiß der Server ohnehin. Die Übersicht zeigt fällige Bereiche mit Hinweis und Markierung an der Kachel; per Mail wird höchstens alle 30 Tage erinnert, solange etwas fällig ist. |
+| 112 | Ablaufdaten und Wiedervorlagen | Der Browser berechnet den frühesten künftigen Termin aktiver Einträge: Ablaufdatum minus Vorlauf (Standard 60 Tage, einstellbar 7–365) oder Wiedervorlage (69). Nur dieses Datum geht an den Server (39b); er weiß nicht, wozu es gehört. Ist es erreicht, kommt eine Mail; derselbe Termin löst keine zweite aus. Was schon im Vorlauf liegt, steht auf der Übersicht, deren Fenster für ablaufende Einträge jetzt der Vorlauf ist (bisher fest 90 Tage). |
+| 113 | Erinnerungsmail | Eine Mail je Durchlauf mit allgemeinen Zeilen („N Bereiche wurden seit mehr als M Monaten nicht geprüft“, „Ein Ablaufdatum oder eine Wiedervorlage rückt näher“) und dem Link zur Instanz, ohne Titel oder Inhalte. Keine Mails, wenn sie abgeschaltet sind, für gesperrte Konten und nach der Freigabe „verstorben“. Der Dienst prüft stündlich. |
+| 114 | Aktualität des Termins | Der Browser meldet den Termin bei jedem Laden und jeder Änderung des Tresors. Meldet sich jemand lange nicht an, kennt der Server nur den einen gemeldeten Termin; die Prüf-Erinnerung läuft trotzdem weiter. Die Seite „Erinnerungen“ zeigt, welches Datum der Server kennt. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

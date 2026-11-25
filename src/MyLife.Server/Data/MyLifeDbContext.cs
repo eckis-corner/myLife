@@ -38,6 +38,8 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<VaultDeletionVote> VaultDeletionVotes => Set<VaultDeletionVote>();
 
+    public DbSet<ReminderSetting> ReminderSettings => Set<ReminderSetting>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -307,6 +309,21 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.DeletionScheduledAt).HasColumnName("deletion_scheduled_at");
             entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
             entity.Property(x => x.Version).IsRowVersion();
+        });
+
+        modelBuilder.Entity<ReminderSetting>(entity =>
+        {
+            entity.ToTable("reminder_settings");
+            entity.HasKey(x => x.UserId);
+            entity.HasOne<User>().WithOne().HasForeignKey<ReminderSetting>(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.UserId).HasColumnName("user_id");
+            entity.Property(x => x.ReviewMonths).HasColumnName("review_months");
+            entity.Property(x => x.LeadDays).HasColumnName("lead_days");
+            entity.Property(x => x.MailEnabled).HasColumnName("mail_enabled");
+            entity.Property(x => x.NextDueOn).HasColumnName("next_due_on");
+            entity.Property(x => x.NotifiedDueOn).HasColumnName("notified_due_on");
+            entity.Property(x => x.LastReviewMailAt).HasColumnName("last_review_mail_at");
+            entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         });
 
         modelBuilder.Entity<VaultDeletionVote>(entity =>

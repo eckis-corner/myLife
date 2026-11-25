@@ -43,7 +43,7 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 
 ## M3 – Erinnerungen, Checkliste, Feinschliff
 
-1. **Erinnerungen:** Prüfintervall (Standard 6 Monate) und das Ablaufdatum jedes Objekts (39). Der Server kennt nur den nächsten Termin.
+1. **Erinnerungen:** Prüfintervall (Standard 6 Monate) und das Ablaufdatum jedes Objekts (39). Der Server kennt nur den nächsten Termin. ✅ (25.11.2026; Entscheidungen 111–114; dazu Wiedervorlagen per Mail)
 2. **Checkliste (Bereich 12):** Vorlage für Deutschland (24 Stunden, 1 Woche, 1 Monat, später), anpassbar, Aufgaben listen verknüpfte Objekte auf (zum Beispiel alle Verträge mit „kündigen“), gemeinsames Abhaken
 3. **Vollständigkeitsanzeige** je Bereich und Objekt (Pflicht- und empfohlene Felder, fehlende typische Objekte)
 4. **Server-Sicherung:** täglicher verschlüsselter Dump im Volume `backup`, Rücksicherung getestet

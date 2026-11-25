@@ -76,6 +76,18 @@ If this is a mistake, sign in to myLife.</value></data>
 
 {owner}'s emergency access has been released ({mode}). Sign in to myLife; under "Shared with me" you will find what {owner} left for you.</value></data>
   <data name="Mail_released-trustee_subject" xml:space="preserve"><value>myLife: Access to {owner} released</value></data>
+  <data name="Mail_reminder_body" xml:space="preserve"><value>Hello {name},
+
+something is due on myLife:
+{items}
+
+Sign in; the overview shows what it is about:
+{link}
+
+This email deliberately contains no details. You can adjust reminders under "Reminders" after signing in.</value></data>
+  <data name="Mail_reminder_dates" xml:space="preserve"><value>An expiry date or a follow-up is coming up.</value></data>
+  <data name="Mail_reminder_review" xml:space="preserve"><value>{count} areas have not been reviewed for more than {months} months.</value></data>
+  <data name="Mail_reminder_subject" xml:space="preserve"><value>myLife: Time to look at your emergency folder</value></data>
   <data name="Mail_request-info_body" xml:space="preserve"><value>Hello {name},
 
 {trustee} has requested access to {owner} on myLife, for the case "{mode}". {owner} can object. You do not need to do anything; if in doubt, talk to {trustee} or {owner}.</value></data>

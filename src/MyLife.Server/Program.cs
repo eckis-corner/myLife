@@ -72,6 +72,9 @@ builder.Services.AddSingleton<MyLife.Server.Infrastructure.Emergency.KnownBaseUr
 builder.Services.AddScoped<MyLife.Server.Infrastructure.Emergency.EmergencyEngine>();
 builder.Services.AddSingleton<MyLife.Server.Infrastructure.Emergency.EmergencySwitchService>();
 builder.Services.AddHostedService(services => services.GetRequiredService<MyLife.Server.Infrastructure.Emergency.EmergencySwitchService>());
+builder.Services.AddScoped<MyLife.Server.Infrastructure.Reminders.ReminderEngine>();
+builder.Services.AddSingleton<MyLife.Server.Infrastructure.Reminders.ReminderService>();
+builder.Services.AddHostedService(services => services.GetRequiredService<MyLife.Server.Infrastructure.Reminders.ReminderService>());
 
 // Sitzungs-Cookie (Architektur 4.4): HttpOnly, SameSite=Strict, gleitende Laufzeit wie die automatische Abmeldung.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -149,6 +152,7 @@ app.MapAccountDeletionEndpoints();
 app.MapFamilyEndpoints();
 app.MapTrustEndpoints();
 app.MapEmergencyEndpoints();
+app.MapReminderEndpoints();
 
 app.MapStaticAssets();
 // Die Seiten sind nur die leere Hülle (kein Prerendering); [Authorize] prüft der Client. Ohne AllowAnonymous

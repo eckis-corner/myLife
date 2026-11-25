@@ -5,6 +5,7 @@
 @inject IStringLocalizer<SharedResource> L
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
+@inject ReminderSync Reminders
 
 <PageTitle>@L["AppName"] – @L["NavHome"]</PageTitle>
 
@@ -29,6 +30,14 @@
         @if (Vault.UnreadableCount > 0)
         {
             <MudAlert Severity="Severity.Warning">@L["VaultUnreadable", Vault.UnreadableCount]</MudAlert>
+        }
+
+        @if (_dueAreas.Count > 0)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" data-testid="review-due">
+                @L["HomeReviewDue", _dueAreas.Count, Reminders.Settings.ReviewMonths]
+                <MudLink Href="account/reminders" Class="ml-1">@L["RemindersTitle"]</MudLink>
+            </MudAlert>
         }
 
         @if (_followUps.Count > 0)
@@ -81,6 +90,12 @@
                             <CardHeaderContent>
                                 <MudLink Href="@($"area/{area.Number}")" Typo="Typo.subtitle1" Color="Color.Inherit"><b>@Text.Area(area.Number)</b></MudLink>
                                 <MudText Typo="Typo.body2" Class="mylife-muted">@L["HomeObjectCount", count]</MudText>
+                                @if (_dueAreas.Contains(area.Number))
+                                {
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined" data-testid="@($"area-review-due-{area.Number}")">
+                                        @L["HomeReviewDueChip"]
+                                    </MudChip>
+                                }
                             </CardHeaderContent>
                         </MudCardHeader>
                         <MudCardContent Class="pt-0">
@@ -114,14 +129,34 @@
     private const int FollowUpDays = 14;
 
     private Dictionary<int, AreaState> _states = [];
+    private IReadOnlySet<int> _dueAreas = new HashSet<int>();
     private Dictionary<int, int> _counts = [];
     private List<VaultItem> _expiring = [];
     private List<VaultItem> _followUps = [];
     private DateOnly _today;
     private bool _busy;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            await Reminders.LoadAsync();
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Text.Json.JsonException)
+        {
+            // Ohne die eigenen Einstellungen gelten die Standardwerte.
+        }
+
+        if (Vault.IsLoaded)
+        {
+            OnVaultReady();
+        }
+    }
+
     protected override void OnVaultReady()
     {
+        _dueAreas = Reminders.DueAreas(DateTimeOffset.Now);
         _states = Vault.Areas.ToDictionary(a => a.Area);
         _counts = Vault.Current.Where(i => i.Status == ObjectStatus.Active).GroupBy(i => i.Area).ToDictionary(g => g.Key, g => g.Count());
         var today = _today = DateOnly.FromDateTime(DateTime.Today);
@@ -130,7 +165,7 @@
             .OrderBy(i => i.Payload.FollowUpOn)
             .Take(20)];
         _expiring = [.. Vault.Current
-            .Where(i => i.Status == ObjectStatus.Active && i.Payload.ExpiresOn is { } e && e <= today.AddDays(90))
+            .Where(i => i.Status == ObjectStatus.Active && i.Payload.ExpiresOn is { } e && e <= today.AddDays(Reminders.Settings.LeadDays))
             .OrderBy(i => i.Payload.ExpiresOn)
             .Take(10)];
     }

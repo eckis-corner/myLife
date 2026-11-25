@@ -1,0 +1,102 @@
+@page "/account/reminders"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using System.Globalization
+@using MyLife.Shared.Reminders
+@inject IStringLocalizer<SharedResource> L
+@inject ReminderSync Reminders
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["RemindersTitle"]</PageTitle>
+
+@* Erinnerungen (M3.1): Prüfintervall, Vorlauf vor Ablaufdaten, Mail an oder aus; dazu, was der Server davon weiß. *@
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["RemindersTitle"]</MudText>
+    <MudText Typo="Typo.body1">@L["RemindersIntro"]</MudText>
+
+    @if (_settings is null)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else
+    {
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudStack Spacing="3">
+                <MudGrid Spacing="2">
+                    <MudItem xs="12" sm="6">
+                        <MudNumericField T="int" @bind-Value="_reviewMonths" Label="@L["RemindersReviewMonths"]" Variant="Variant.Outlined"
+                                         Min="0" Max="ReminderLimits.MaxReviewMonths" Adornment="Adornment.End" AdornmentText="@L["UnitMonths"]"
+                                         HelperText="@L["RemindersReviewMonthsHelp"]" data-testid="reminders-review" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudNumericField T="int" @bind-Value="_leadDays" Label="@L["RemindersLeadDays"]" Variant="Variant.Outlined"
+                                         Min="ReminderLimits.MinLeadDays" Max="ReminderLimits.MaxLeadDays" Adornment="Adornment.End" AdornmentText="@L["UnitDays"]"
+                                         HelperText="@L["RemindersLeadDaysHelp"]" data-testid="reminders-lead" />
+                    </MudItem>
+                </MudGrid>
+                <MudSwitch T="bool" @bind-Value="_mailEnabled" Color="Color.Primary" Label="@L["RemindersMail"]" />
+                <MudStack Row Justify="Justify.FlexEnd">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" Disabled="_busy" OnClick="SaveAsync"
+                               data-testid="reminders-save">@L["Save"]</MudButton>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" data-testid="reminders-server">
+            @(Reminders.ServerNextDueOn is { } next
+                ? L["RemindersServerKnows", next.ToString("D", CultureInfo.CurrentCulture)]
+                : L["RemindersServerKnowsNothing"])
+        </MudAlert>
+    }
+</MudStack>
+
+@code {
+    private ReminderSettingsDto? _settings;
+    private int _reviewMonths;
+    private int _leadDays;
+    private bool _mailEnabled;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            _settings = await Reminders.LoadAsync();
+            await Reminders.SyncAsync();
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Text.Json.JsonException)
+        {
+            _settings = ReminderSettingsDto.Default;
+            Snackbar.Add(L["ReminderError_reminder-failed"], Severity.Error);
+        }
+
+        (_reviewMonths, _leadDays, _mailEnabled) = (_settings.ReviewMonths, _settings.LeadDays, _settings.MailEnabled);
+    }
+
+    private async Task SaveAsync()
+    {
+        var settings = new ReminderSettingsDto(_reviewMonths, _leadDays, _mailEnabled);
+        if (!settings.IsValid)
+        {
+            Snackbar.Add(L["ReminderError_reminder-invalid"], Severity.Error);
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            await Reminders.SaveAsync(settings);
+            _settings = settings;
+            Snackbar.Add(L["SaveSuccessful"], Severity.Success);
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Text.Json.JsonException)
+        {
+            Snackbar.Add(L["ReminderError_reminder-failed"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

@@ -216,6 +216,8 @@
   <data name="Audit_passkey-removed" xml:space="preserve"><value>Passkey entfernt</value></data>
   <data name="Audit_password-changed" xml:space="preserve"><value>Passwort geändert</value></data>
   <data name="Audit_recovered" xml:space="preserve"><value>Wiederherstellung</value></data>
+  <data name="Audit_reminder-sent" xml:space="preserve"><value>Erinnerung verschickt</value></data>
+  <data name="Audit_reminder-settings-changed" xml:space="preserve"><value>Erinnerungen geändert</value></data>
   <data name="Audit_shared-document-read" xml:space="preserve"><value>Geteiltes Dokument geöffnet</value></data>
   <data name="Audit_shared-read" xml:space="preserve"><value>Geteilten Inhalt gelesen</value></data>
   <data name="Audit_totp-enrolled" xml:space="preserve"><value>Authenticator-App neu eingerichtet</value></data>
@@ -659,6 +661,8 @@
   <data name="HomeNextStepsTitle" xml:space="preserve"><value>Wie geht es weiter?</value></data>
   <data name="HomeNotInVaultHint" xml:space="preserve"><value>PINs, Passwörter und Seed-Phrasen gehören nicht hinein.</value></data>
   <data name="HomeObjectCount" xml:space="preserve"><value>{0} Einträge</value></data>
+  <data name="HomeReviewDue" xml:space="preserve"><value>{0} Bereiche wurden seit mehr als {1} Monaten nicht geprüft. Sieh sie dir an und markiere sie dann als geprüft.</value></data>
+  <data name="HomeReviewDueChip" xml:space="preserve"><value>Prüfung fällig</value></data>
   <data name="HomeReviewedSaved" xml:space="preserve"><value>„{0}“ als geprüft markiert.</value></data>
   <data name="HomeStatusCryptoFormat" xml:space="preserve"><value>Verschlüsselungsformat</value></data>
   <data name="HomeStatusReachable" xml:space="preserve"><value>Server erreichbar</value></data>
@@ -1018,6 +1022,17 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="ReferenceHelp" xml:space="preserve"><value>Verweis auf: {0}</value></data>
   <data name="ReferenceMissing" xml:space="preserve"><value>(gelöschter Eintrag)</value></data>
   <data name="Reload" xml:space="preserve"><value>Neu laden</value></data>
+  <data name="ReminderError_reminder-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
+  <data name="ReminderError_reminder-invalid" xml:space="preserve"><value>Die Angaben sind ungültig.</value></data>
+  <data name="RemindersIntro" xml:space="preserve"><value>myLife erinnert dich per Mail, wenn Bereiche wieder geprüft werden sollten und bevor etwas abläuft, etwa ein Ausweis, eine Karte oder ein Vertrag, und wenn eine Wiedervorlage ansteht. Die Mail nennt keine Einzelheiten; was ansteht, siehst du nach der Anmeldung auf der Übersicht.</value></data>
+  <data name="RemindersLeadDays" xml:space="preserve"><value>Vor einem Ablaufdatum erinnern</value></data>
+  <data name="RemindersLeadDaysHelp" xml:space="preserve"><value>So viele Tage vorher, zwischen 7 und 365. Standard: 60 Tage. So lange vorher steht es auch auf der Übersicht.</value></data>
+  <data name="RemindersMail" xml:space="preserve"><value>Erinnerungen per Mail</value></data>
+  <data name="RemindersReviewMonths" xml:space="preserve"><value>Bereiche prüfen alle</value></data>
+  <data name="RemindersReviewMonthsHelp" xml:space="preserve"><value>0 schaltet die Erinnerung zum Prüfen aus. Standard: 6 Monate.</value></data>
+  <data name="RemindersServerKnows" xml:space="preserve"><value>Der Server kennt von deinen Einträgen nur ein Datum: {0}. Wozu es gehört, weiß er nicht.</value></data>
+  <data name="RemindersServerKnowsNothing" xml:space="preserve"><value>Der Server kennt derzeit keinen Termin aus deinen Einträgen.</value></data>
+  <data name="RemindersTitle" xml:space="preserve"><value>Erinnerungen</value></data>
   <data name="Restore" xml:space="preserve"><value>Wiederherstellen</value></data>
   <data name="Restored" xml:space="preserve"><value>Wiederhergestellt.</value></data>
   <data name="RowsPerPage" xml:space="preserve"><value>Einträge je Seite</value></data>
@@ -1195,6 +1210,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="Type_vehicle" xml:space="preserve"><value>Fahrzeug</value></data>
   <data name="UnitDays" xml:space="preserve"><value>Tage</value></data>
   <data name="UnitMinutes" xml:space="preserve"><value>Minuten</value></data>
+  <data name="UnitMonths" xml:space="preserve"><value>Monate</value></data>
   <data name="UnlockSubmit" xml:space="preserve"><value>Entsperren</value></data>
   <data name="UnlockText" xml:space="preserve"><value>Hallo {0}, du bist noch angemeldet. Zum Entsperren des Tresors brauchen wir dein Master-Passwort.</value></data>
   <data name="UnlockTitle" xml:space="preserve"><value>Tresor entsperren</value></data>

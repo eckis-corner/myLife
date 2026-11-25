@@ -13,6 +13,8 @@ public abstract class VaultPageBase : ComponentBase, IDisposable
 
     [Inject] protected SchemaText Text { get; set; } = default!;
 
+    [Inject] private IServiceProvider Services { get; set; } = default!;
+
     protected bool Loading { get; private set; } = true;
 
     protected bool LoadFailed { get; private set; }
@@ -24,6 +26,7 @@ public abstract class VaultPageBase : ComponentBase, IDisposable
         {
             await Vault.EnsureLoadedAsync();
             OnVaultReady();
+            _ = SyncRemindersAsync();
         }
         catch (Exception exception) when (exception is VaultException or HttpRequestException)
         {
@@ -56,8 +59,27 @@ public abstract class VaultPageBase : ComponentBase, IDisposable
         if (Vault.IsLoaded)
         {
             OnVaultReady();
+            _ = SyncRemindersAsync();
         }
 
         _ = InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>Meldet nach dem Laden und jeder Änderung den nächsten Termin für Erinnerungen (M3.1); Fehler stören die Seite nicht.</summary>
+    private async Task SyncRemindersAsync()
+    {
+        if (Services.GetService(typeof(ReminderSync)) is not ReminderSync reminders)
+        {
+            return;
+        }
+
+        try
+        {
+            await reminders.SyncAsync();
+        }
+        catch (Exception exception) when (exception is HttpRequestException or System.Text.Json.JsonException or InvalidOperationException)
+        {
+            // Beim nächsten Laden wird es erneut versucht.
+        }
     }
 }

@@ -15,6 +15,7 @@ import resources_trust  # noqa: E402
 import resources_emergency  # noqa: E402
 import resources_reading  # noqa: E402
 import resources_package  # noqa: E402
+import resources_reminders  # noqa: E402
 import resources_vault  # noqa: E402
 
 TEXTS: dict[str, tuple[str, str]] = {
@@ -373,7 +374,11 @@ _DUPLICATES = sorted(set(TEXTS) & set(resources_package.CLIENT))
 if _DUPLICATES:
     raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
 TEXTS.update(resources_package.CLIENT)
-MAIL = {**resources_admin.MAIL, **resources_family.MAIL, **resources_trust.MAIL, **resources_emergency.MAIL}
+_DUPLICATES = sorted(set(TEXTS) & set(resources_reminders.CLIENT))
+if _DUPLICATES:
+    raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
+TEXTS.update(resources_reminders.CLIENT)
+MAIL = {**resources_admin.MAIL, **resources_family.MAIL, **resources_trust.MAIL, **resources_emergency.MAIL, **resources_reminders.MAIL}
 
 HEADER = """<?xml version="1.0" encoding="utf-8"?>
 <!-- Automatisch erzeugt mit tools/resources.py. Nicht von Hand bearbeiten. -->
