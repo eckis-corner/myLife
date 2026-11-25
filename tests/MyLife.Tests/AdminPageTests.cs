@@ -42,13 +42,13 @@ public sealed class AdminPageTests : BunitContext, IClassFixture<ServerFixture>,
         Assert.Contains("Allgemein", page.Markup, StringComparison.Ordinal);
         Assert.Contains("Fristen", page.Markup, StringComparison.Ordinal);
 
-        page.Find("input[data-testid=setting-public-url]").Change("keine adresse");
-        page.Find("[data-testid=settings-save]").Click();
+        page.ChangeWhenReady("input[data-testid=setting-public-url]", "keine adresse");
+        page.ClickWhenReady("[data-testid=settings-save]");
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=settings-errors]")));
         Assert.Contains("Keine gültige Adresse", page.Markup, StringComparison.Ordinal);
 
-        page.Find("input[data-testid=setting-public-url]").Change("https://mylife.example.org");
-        page.Find("[data-testid=settings-save]").Click();
+        page.ChangeWhenReady("input[data-testid=setting-public-url]", "https://mylife.example.org");
+        page.ClickWhenReady("[data-testid=settings-save]");
         page.WaitForAssertion(() => Assert.Empty(page.FindAll("[data-testid=settings-errors]")));
     }
 

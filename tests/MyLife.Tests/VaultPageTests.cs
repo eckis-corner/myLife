@@ -63,7 +63,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Assert.Contains("Kreditkarten", page.Find("[data-testid=area-tile-2]").TextContent, StringComparison.Ordinal);
         Assert.Contains("Checkliste", page.Find("[data-testid=area-tile-12]").TextContent, StringComparison.Ordinal);
 
-        page.Find("[data-testid=area-reviewed-2]").Click();
+        page.ClickWhenReady("[data-testid=area-reviewed-2]");
         page.WaitForAssertion(() => Assert.Contains("Zuletzt geprüft am", page.Find("[data-testid=area-tile-2]").TextContent, StringComparison.Ordinal));
     }
 
@@ -77,7 +77,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         var page = Render<PackagePage>();
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=package-create]")));
         Assert.Contains("Dokumente einschließen", page.Markup, StringComparison.Ordinal);
-        page.Find("[data-testid=package-create]").Click();
+        page.ClickWhenReady("[data-testid=package-create]");
 
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=package-key-sheet]")), TimeSpan.FromSeconds(10));
         Assert.Equal(24, page.FindAll("[data-testid=package-words] .mylife-recovery-word").Count);
@@ -93,9 +93,9 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=reminders-save]")));
         Assert.NotNull(page.Find("[data-testid=reminders-server]"));
 
-        page.Find("input[data-testid=reminders-review]").Change("3");
-        page.Find("input[data-testid=reminders-lead]").Change("90");
-        page.Find("[data-testid=reminders-save]").Click();
+        page.ChangeWhenReady("input[data-testid=reminders-review]", "3");
+        page.ChangeWhenReady("input[data-testid=reminders-lead]", "90");
+        page.ClickWhenReady("[data-testid=reminders-save]");
 
         var api = Services.GetRequiredService<ReminderClient>();
         await page.WaitForAssertionAsync(async () => Assert.Equal(new MyLife.Shared.Reminders.ReminderSettingsDto(3, 90, true), (await api.GetAsync(Xunit.TestContext.Current.CancellationToken)).Settings));
@@ -112,7 +112,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
 
         var page = Render<ChecklistPage>();
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=checklist-adopt]")));
-        page.Find("[data-testid=checklist-adopt]").Click();
+        page.ClickWhenReady("[data-testid=checklist-adopt]");
         page.WaitForAssertion(() => Assert.Equal(MyLife.Shared.Checklist.ChecklistTemplate.Tasks.Count, page.FindAll("[data-testid=checklist-task]").Count),
             TimeSpan.FromSeconds(10));
         Assert.Contains("Erste 24 Stunden", page.Markup, StringComparison.Ordinal);
@@ -165,15 +165,15 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Assert.NotNull(page.Find("input[data-testid=field-iban]"));
         Assert.Equal("Bankkonto", page.Find("input[data-testid=object-title]").GetAttribute("value"));
 
-        page.Find("input[data-testid=field-iban]").Change("DE00 1234");
-        page.Find("[data-testid=save]").Click();
+        page.ChangeWhenReady("input[data-testid=field-iban]", "DE00 1234");
+        page.ClickWhenReady("[data-testid=save]");
         page.WaitForAssertion(() => Assert.Contains("Keine gültige IBAN", page.Markup, StringComparison.Ordinal));
         Assert.Contains("Pflichtfeld", page.Markup, StringComparison.Ordinal);
 
-        page.Find("input[data-testid=object-title]").Change("Girokonto Testbank");
-        page.Find("input[data-testid=field-bank]").Change("Testbank");
-        page.Find("input[data-testid=field-iban]").Change("de89 3704 0044 0532 0130 00");
-        page.Find("[data-testid=save]").Click();
+        page.ChangeWhenReady("input[data-testid=object-title]", "Girokonto Testbank");
+        page.ChangeWhenReady("input[data-testid=field-bank]", "Testbank");
+        page.ChangeWhenReady("input[data-testid=field-iban]", "de89 3704 0044 0532 0130 00");
+        page.ClickWhenReady("[data-testid=save]");
 
         var navigation = Services.GetRequiredService<NavigationManager>();
         page.WaitForAssertion(() => Assert.Contains("/object/", navigation.Uri, StringComparison.Ordinal));

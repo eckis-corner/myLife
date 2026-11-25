@@ -46,12 +46,12 @@ public sealed class FamilyPageTests : BunitContext, IClassFixture<ServerFixture>
         var page = Render<Family>();
         page.WaitForAssertion(() => Assert.Contains("Noch niemand außer dir", page.Markup, StringComparison.Ordinal));
 
-        page.Find("[data-testid=family-invite]").Click();
+        page.ClickWhenReady("[data-testid=family-invite]");
         var dialog = _dialogs;
         dialog.WaitForAssertion(() => Assert.NotNull(dialog.Find("input[data-testid=invite-email]")));
-        dialog.Find("input[data-testid=invite-email]").Change("kai@example.org");
+        dialog.ChangeWhenReady("input[data-testid=invite-email]", "kai@example.org");
         dialog.FindAll("input[type=radio]")[1].Click();
-        dialog.Find("[data-testid=invite-submit]").Click();
+        dialog.ClickWhenReady("[data-testid=invite-submit]");
 
         dialog.WaitForAssertion(() => Assert.Contains("/invite#t=", dialog.Find("[data-testid=invite-link]").GetAttribute("value") ?? dialog.Markup, StringComparison.Ordinal));
     }

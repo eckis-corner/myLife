@@ -52,10 +52,10 @@ public sealed class TrustPageTests : BunitContext, IClassFixture<ServerFixture>,
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=grant-matrix]")));
         Assert.Contains("Verstorben", page.Find("[data-testid=grant-matrix]").TextContent, StringComparison.Ordinal);
 
-        page.Find("input[data-testid=trustee-relationship]").Change("Schwester");
-        page.Find("[data-testid=grant-10-Live] input, input[data-testid=grant-10-Live]").Change(true);
-        page.Find("[data-testid=grant-4-Death] input, input[data-testid=grant-4-Death]").Change(true);
-        page.Find("[data-testid=trustee-save]").Click();
+        page.ChangeWhenReady("input[data-testid=trustee-relationship]", "Schwester");
+        page.ChangeWhenReady("[data-testid=grant-10-Live] input, input[data-testid=grant-10-Live]", true);
+        page.ChangeWhenReady("[data-testid=grant-4-Death] input, input[data-testid=grant-4-Death]", true);
+        page.ClickWhenReady("[data-testid=trustee-save]");
 
         var navigation = Services.GetRequiredService<NavigationManager>();
         page.WaitForAssertion(() => Assert.EndsWith("/trust", navigation.Uri, StringComparison.Ordinal), TimeSpan.FromSeconds(10));

@@ -51,7 +51,7 @@ public sealed class EmergencyPageTests : BunitContext, IClassFixture<ServerFixtu
         page.WaitForAssertion(() => Assert.Contains("Nicht aktiv", page.Find("[data-testid=emergency-state]").TextContent, StringComparison.Ordinal));
         Assert.Contains("mindestens eine Vertrauensperson", page.Markup, StringComparison.Ordinal);
 
-        page.Find("[data-testid=emergency-lifesign]").Click();
+        page.ClickWhenReady("[data-testid=emergency-lifesign]");
         page.WaitForAssertion(() => Assert.Contains(Services.GetRequiredService<MudBlazor.ISnackbar>().ShownSnackbars,
             bar => bar.Message?.ToString()?.Contains("Lebenszeichen ist gespeichert", StringComparison.Ordinal) == true));
     }
@@ -83,7 +83,7 @@ public sealed class EmergencyPageTests : BunitContext, IClassFixture<ServerFixtu
 
         var page = Render<EmergencyPage>();
         page.WaitForAssertion(() => Assert.Contains("Zugestimmt: niemand. Es fehlt noch:", page.Find("[data-testid=emergency-deletion-state]").TextContent, StringComparison.Ordinal));
-        page.Find("[data-testid=emergency-deletion-agree]").Click();
+        page.ClickWhenReady("[data-testid=emergency-deletion-agree]");
         _dialogs.WaitForAssertion(() => Assert.Contains("lässt sich nicht rückgängig machen", _dialogs.Markup, StringComparison.Ordinal));
         _dialogs.FindAll("button").First(b => b.TextContent.Trim() == "Dem Löschen zustimmen").Click();
         page.WaitForAssertion(() => Assert.Contains("Alle haben zugestimmt", page.Find("[data-testid=emergency-deletion-state]").TextContent, StringComparison.Ordinal));

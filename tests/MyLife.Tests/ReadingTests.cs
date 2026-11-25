@@ -125,21 +125,21 @@ public sealed class ReadingTests : BunitContext, IClassFixture<ServerFixture>, I
         Assert.Equal("Briefe an dich", page.Find("[data-testid=reading-step-title]").TextContent);
 
         // Die Checkliste führt: abhaken, und der verknüpfte Bereich lässt sich direkt aufschlagen.
-        page.Find("[data-testid=reading-next]").Click();
+        page.ClickWhenReady("[data-testid=reading-next]");
         page.WaitForAssertion(() => Assert.Equal("Checkliste", page.Find("[data-testid=reading-step-title]").TextContent));
         page.WaitForAssertion(() => Assert.Contains("Versicherung melden", page.Find("[data-testid=checklist-task]").TextContent, StringComparison.Ordinal));
         Assert.Contains("Erste 24 Stunden", page.Markup, StringComparison.Ordinal);
-        page.Find("input[data-testid=checklist-tick]").Change(true);
+        page.ChangeWhenReady("input[data-testid=checklist-tick]", true);
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=checklist-done-by]")));
-        page.Find("input[data-testid=checklist-tick]").Change(false);
+        page.ChangeWhenReady("input[data-testid=checklist-tick]", false);
         page.WaitForAssertion(() => Assert.Empty(page.FindAll("[data-testid=checklist-done-by]")));
-        page.Find("[data-testid=checklist-open-area]").Click();
+        page.ClickWhenReady("[data-testid=checklist-open-area]");
         page.WaitForAssertion(() => Assert.Equal("Versicherungen", page.Find("[data-testid=reading-step-title]").TextContent));
-        page.Find("[data-testid=reading-previous]").Click();
+        page.ClickWhenReady("[data-testid=reading-previous]");
         page.WaitForAssertion(() => Assert.Equal("Persönliche Wünsche", page.Find("[data-testid=reading-step-title]").TextContent));
         page.WaitForAssertion(() => Assert.Contains("Im Wald, bitte.", page.Markup, StringComparison.Ordinal));
 
-        page.Find("[data-testid=reading-next]").Click();
+        page.ClickWhenReady("[data-testid=reading-next]");
         page.WaitForAssertion(() => Assert.Contains("Risikoleben", page.Markup, StringComparison.Ordinal));
         Assert.Contains("Fertig", page.Markup, StringComparison.Ordinal);
     }

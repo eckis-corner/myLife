@@ -44,7 +44,7 @@ public sealed class SetupPageTests : BunitContext
         page.WaitForAssertion(() => Assert.Equal("Willkommen", page.Find("[data-testid=setup-step-title]").TextContent));
 
         page.Find("input[data-testid=setup-token]").Input("FALSCH");
-        page.Find("[data-testid=setup-next]").Click();
+        page.ClickWhenReady("[data-testid=setup-next]");
 
         page.WaitForAssertion(() => Assert.Contains("Der Einrichtungscode stimmt nicht", page.Find("[data-testid=setup-error]").TextContent, StringComparison.Ordinal));
         Assert.Equal("Willkommen", page.Find("[data-testid=setup-step-title]").TextContent);
@@ -59,7 +59,7 @@ public sealed class SetupPageTests : BunitContext
         page.WaitForAssertion(() => page.Find("input[data-testid=setup-token]"));
 
         page.Find("input[data-testid=setup-token]").Input("ABCD-EFGH-JKLM-NPQR-STUV");
-        page.Find("[data-testid=setup-next]").Click();
+        page.ClickWhenReady("[data-testid=setup-next]");
 
         page.WaitForAssertion(() => Assert.Equal("Dein Konto", page.Find("[data-testid=setup-step-title]").TextContent));
     }
