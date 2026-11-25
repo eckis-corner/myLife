@@ -200,6 +200,17 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 122 | Typische Einträge | Je Bereich wenige Einträge, die fast jeder hat: persönliche Daten und Ausweis, ein Bankkonto, Kranken- und Haftpflichtversicherung, Geburtsurkunde, Testament, Patientenverfügung und Vorsorgevollmacht, ein Kontakt, Bestattungswünsche, eine Aufgabe der Checkliste, Altersvorsorge. Fehlen sie, schlägt die Bereichsseite sie mit einem Knopf zum Anlegen vor (mit vorbelegter Art); sie fließen nicht in den Prozentwert ein und lassen sich nicht wegklicken. |
 | 123 | Wo gerechnet wird | Ganz im Browser aus dem entschlüsselten Tresor; der Server erfährt nichts über Lücken. |
 
+## Runde 16 (25.11.2026, Umsetzung M3.4)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 124 | Wie die Datenbank gesichert wird | **Abweichung von Architektur 7:** statt `pg_dump` (fehlt im App-Image, müsste zur Server-Version passen) liest myLife jede Tabelle mit `COPY … (FORMAT binary)` aus einem gemeinsamen Schnappschuss (REPEATABLE READ). Das ist konsistent, braucht kein zusätzliches Programm und lässt sich in den Tests vollständig zurückspielen und vergleichen. Gesichert werden alle Tabellen des Modells, der Migrationsstand und die Dokumente, auf die der Schnappschuss verweist. |
+| 125 | Sicherungsschlüssel und Format | Der Schlüssel kommt aus `MYLIFE_BACKUP_KEY` in der `.env` (32 Byte, Base64) und gehört getrennt von der NAS aufbewahrt. Je Sicherung ein Salz; Schlüssel per HKDF, AES-256-GCM in Blöcken zu 1 MiB mit Blocknummer, Markierung des letzten Blocks und Prüfsumme des Kopfs in der AAD. Ohne Schlüssel keine automatische Sicherung; die Verwaltung zeigt dann einen Hinweis. |
+| 126 | Zeitplan und Generationen | Täglich zur eingestellten Uhrzeit (Ortszeit, Standard 3 Uhr), sobald es an dem Tag noch keine gibt; dazu „Jetzt sichern“. Behalten wird die neueste Sicherung je Tag (Standard 7), je ISO-Woche (4) und je Monat (6); die gerade erstellte bleibt immer. |
+| 127 | Dokumente | Standardmäßig in jeder Sicherung. Der Admin kann sie auslassen, wenn Hyper Backup `data/app/files` ohnehin sichert; dann bleiben die Sicherungen klein. |
+| 128 | Rücksicherung | Von der Kommandozeile: `docker compose run --rm app restore <Datei> --confirm`. Sie leert die Datenbank, spielt die Migrationen bis zum Stand der Sicherung ein, lädt die Daten, setzt fortlaufende Nummern, ersetzt Dokumente und Schlüsselring (soweit enthalten) und spielt danach die übrigen Migrationen ein. Ohne `--confirm` passiert nichts. Getestet wird das Zurückspielen in eine frische Datenbank. |
+| 129 | Fehler | Schlägt eine Sicherung fehl, steht das in der Verwaltung und im System-Protokoll; die Admins bekommen höchstens einmal am Tag eine Mail. Der nächste Lauf versucht es erneut. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

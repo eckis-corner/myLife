@@ -10,12 +10,30 @@
   <data name="AccountStatus_Locked" xml:space="preserve"><value>Locked</value></data>
   <data name="AdminAuditText" xml:space="preserve"><value>Administrative actions and system events. What users do in their vaults is only in their own log.</value></data>
   <data name="AdminAuditTitle" xml:space="preserve"><value>System log</value></data>
+  <data name="AdminBackupCreated" xml:space="preserve"><value>Created</value></data>
+  <data name="AdminBackupDocuments" xml:space="preserve"><value>Include documents in every backup</value></data>
+  <data name="AdminBackupDocumentsHint" xml:space="preserve"><value>Turn off if Synology backup already covers the "files" folder: backups then stay small.</value></data>
+  <data name="AdminBackupDone" xml:space="preserve"><value>The backup has been created.</value></data>
+  <data name="AdminBackupError" xml:space="preserve"><value>Error on {0}: {1}</value></data>
+  <data name="AdminBackupFile" xml:space="preserve"><value>File</value></data>
+  <data name="AdminBackupHour" xml:space="preserve"><value>Time</value></data>
+  <data name="AdminBackupKeepDaily" xml:space="preserve"><value>Keep daily</value></data>
+  <data name="AdminBackupKeepMonthly" xml:space="preserve"><value>Keep monthly</value></data>
+  <data name="AdminBackupKeepWeekly" xml:space="preserve"><value>Keep weekly</value></data>
+  <data name="AdminBackupLast" xml:space="preserve"><value>Last backup: {0}</value></data>
+  <data name="AdminBackupNext" xml:space="preserve"><value>Next: {0}</value></data>
+  <data name="AdminBackupNotConfigured" xml:space="preserve"><value>No backup key is set up, so there are no automatic backups. Add MYLIFE_BACKUP_KEY to the .env file (openssl rand -base64 32), keep the key separately and restart the project.</value></data>
+  <data name="AdminBackupNow" xml:space="preserve"><value>Back up now</value></data>
+  <data name="AdminBackupSize" xml:space="preserve"><value>Size</value></data>
+  <data name="AdminBackupText" xml:space="preserve"><value>Every day at the set time, myLife stores an encrypted backup in the "backup" folder: database, key ring and, if chosen, the documents. Synology backup takes it from there. Old backups are pruned by generations. How to restore is described in the installation guide.</value></data>
   <data name="AdminCancelDeletion" xml:space="preserve"><value>Withdraw deletion request</value></data>
   <data name="AdminCancelDeletionConfirm" xml:space="preserve"><value>Withdraw the deletion request for {0} ({1})? The link in the email stops working.</value></data>
   <data name="AdminDeadlinesText" xml:space="preserve"><value>Defaults and limits for emergency access. Each user later chooses their own values within the limits. You cannot force shorter deadlines on a user.</value></data>
   <data name="AdminDeletedAccount" xml:space="preserve"><value>deleted account</value></data>
   <data name="AdminDeletionPending" xml:space="preserve"><value>Deletion requested</value></data>
   <data name="AdminDeletionRequested" xml:space="preserve"><value>Email to {0} is on its way.</value></data>
+  <data name="AdminError_admin-backup-failed" xml:space="preserve"><value>The backup failed; details are in the server log.</value></data>
+  <data name="AdminError_admin-backup-not-configured" xml:space="preserve"><value>No backup key is set up.</value></data>
   <data name="AdminError_admin-failed" xml:space="preserve"><value>That did not work. Please try again.</value></data>
   <data name="AdminError_admin-invalid" xml:space="preserve"><value>The input is incomplete or invalid.</value></data>
   <data name="AdminError_admin-last-admin" xml:space="preserve"><value>There must always be at least one active administrator.</value></data>
@@ -87,6 +105,7 @@
   <data name="AdminSmtpSecurity_SslOnConnect" xml:space="preserve"><value>SSL/TLS (usually port 465)</value></data>
   <data name="AdminSmtpSecurity_StartTls" xml:space="preserve"><value>STARTTLS (usually port 587)</value></data>
   <data name="AdminSmtpUsername" xml:space="preserve"><value>User name</value></data>
+  <data name="AdminTabBackup" xml:space="preserve"><value>Backup</value></data>
   <data name="AdminTabDeadlines" xml:space="preserve"><value>Deadlines</value></data>
   <data name="AdminTabGeneral" xml:space="preserve"><value>General</value></data>
   <data name="AdminTabMail" xml:space="preserve"><value>Email</value></data>
@@ -165,6 +184,8 @@
   <data name="Audit_account-created" xml:space="preserve"><value>Account created</value></data>
   <data name="Audit_account-deleted" xml:space="preserve"><value>Account deleted</value></data>
   <data name="Audit_admin-2fa-reset" xml:space="preserve"><value>Two-factor sign-in reset</value></data>
+  <data name="Audit_admin-backup-created" xml:space="preserve"><value>Backup created</value></data>
+  <data name="Audit_admin-backup-failed" xml:space="preserve"><value>Backup failed</value></data>
   <data name="Audit_admin-deletion-cancelled" xml:space="preserve"><value>Deletion request withdrawn</value></data>
   <data name="Audit_admin-deletion-requested" xml:space="preserve"><value>Deletion requested</value></data>
   <data name="Audit_admin-invitation-revoked" xml:space="preserve"><value>Invitation withdrawn (administration)</value></data>
@@ -1309,6 +1330,7 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="Type_taxes" xml:space="preserve"><value>Taxes</value></data>
   <data name="Type_vehicle" xml:space="preserve"><value>Vehicle</value></data>
   <data name="UnitDays" xml:space="preserve"><value>days</value></data>
+  <data name="UnitHour" xml:space="preserve"><value>h</value></data>
   <data name="UnitMinutes" xml:space="preserve"><value>minutes</value></data>
   <data name="UnitMonths" xml:space="preserve"><value>months</value></data>
   <data name="UnlockSubmit" xml:space="preserve"><value>Unlock</value></data>

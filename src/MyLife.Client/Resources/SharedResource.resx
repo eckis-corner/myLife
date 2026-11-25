@@ -10,12 +10,30 @@
   <data name="AccountStatus_Locked" xml:space="preserve"><value>Gesperrt</value></data>
   <data name="AdminAuditText" xml:space="preserve"><value>Verwaltungsaktionen und Systemereignisse. Was Nutzer in ihren Tresoren tun, steht nur in deren eigenem Protokoll.</value></data>
   <data name="AdminAuditTitle" xml:space="preserve"><value>System-Protokoll</value></data>
+  <data name="AdminBackupCreated" xml:space="preserve"><value>Erstellt</value></data>
+  <data name="AdminBackupDocuments" xml:space="preserve"><value>Dokumente in jede Sicherung aufnehmen</value></data>
+  <data name="AdminBackupDocumentsHint" xml:space="preserve"><value>Abschalten, wenn das Synology-Backup den Ordner „files“ ohnehin sichert: Dann bleiben die Sicherungen klein.</value></data>
+  <data name="AdminBackupDone" xml:space="preserve"><value>Die Sicherung ist erstellt.</value></data>
+  <data name="AdminBackupError" xml:space="preserve"><value>Fehler am {0}: {1}</value></data>
+  <data name="AdminBackupFile" xml:space="preserve"><value>Datei</value></data>
+  <data name="AdminBackupHour" xml:space="preserve"><value>Uhrzeit</value></data>
+  <data name="AdminBackupKeepDaily" xml:space="preserve"><value>Tägliche behalten</value></data>
+  <data name="AdminBackupKeepMonthly" xml:space="preserve"><value>Monatliche behalten</value></data>
+  <data name="AdminBackupKeepWeekly" xml:space="preserve"><value>Wöchentliche behalten</value></data>
+  <data name="AdminBackupLast" xml:space="preserve"><value>Letzte Sicherung: {0}</value></data>
+  <data name="AdminBackupNext" xml:space="preserve"><value>Nächste: {0}</value></data>
+  <data name="AdminBackupNotConfigured" xml:space="preserve"><value>Es ist kein Sicherungsschlüssel eingerichtet, deshalb gibt es keine automatische Sicherung. Trage MYLIFE_BACKUP_KEY in die .env ein (openssl rand -base64 32), bewahre den Schlüssel getrennt auf und starte das Projekt neu.</value></data>
+  <data name="AdminBackupNow" xml:space="preserve"><value>Jetzt sichern</value></data>
+  <data name="AdminBackupSize" xml:space="preserve"><value>Größe</value></data>
+  <data name="AdminBackupText" xml:space="preserve"><value>Jeden Tag zur eingestellten Uhrzeit legt myLife eine verschlüsselte Sicherung im Ordner „backup“ ab: Datenbank, Schlüsselring und auf Wunsch die Dokumente. Das Synology-Backup übernimmt sie von dort. Alte Sicherungen werden nach Generationen aufgeräumt. Wie man zurücksichert, steht in der Installationsanleitung.</value></data>
   <data name="AdminCancelDeletion" xml:space="preserve"><value>Löschantrag zurückziehen</value></data>
   <data name="AdminCancelDeletionConfirm" xml:space="preserve"><value>Löschantrag für {0} ({1}) zurückziehen? Der Link in der Mail wird ungültig.</value></data>
   <data name="AdminDeadlinesText" xml:space="preserve"><value>Standardwerte und Grenzen für den Notfallzugang. Jeder Nutzer wählt seine Werte später innerhalb der Grenzen. Kürzere Fristen eines Nutzers kannst du nicht erzwingen.</value></data>
   <data name="AdminDeletedAccount" xml:space="preserve"><value>gelöschtes Konto</value></data>
   <data name="AdminDeletionPending" xml:space="preserve"><value>Löschung beantragt</value></data>
   <data name="AdminDeletionRequested" xml:space="preserve"><value>Mail an {0} ist unterwegs.</value></data>
+  <data name="AdminError_admin-backup-failed" xml:space="preserve"><value>Die Sicherung ist fehlgeschlagen; Einzelheiten stehen im Protokoll des Servers.</value></data>
+  <data name="AdminError_admin-backup-not-configured" xml:space="preserve"><value>Es ist kein Sicherungsschlüssel eingerichtet.</value></data>
   <data name="AdminError_admin-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
   <data name="AdminError_admin-invalid" xml:space="preserve"><value>Die Eingaben sind unvollständig oder ungültig.</value></data>
   <data name="AdminError_admin-last-admin" xml:space="preserve"><value>Es muss immer mindestens einen aktiven Administrator geben.</value></data>
@@ -87,6 +105,7 @@
   <data name="AdminSmtpSecurity_SslOnConnect" xml:space="preserve"><value>SSL/TLS (meist Port 465)</value></data>
   <data name="AdminSmtpSecurity_StartTls" xml:space="preserve"><value>STARTTLS (meist Port 587)</value></data>
   <data name="AdminSmtpUsername" xml:space="preserve"><value>Benutzername</value></data>
+  <data name="AdminTabBackup" xml:space="preserve"><value>Sicherung</value></data>
   <data name="AdminTabDeadlines" xml:space="preserve"><value>Fristen</value></data>
   <data name="AdminTabGeneral" xml:space="preserve"><value>Allgemein</value></data>
   <data name="AdminTabMail" xml:space="preserve"><value>E-Mail</value></data>
@@ -165,6 +184,8 @@
   <data name="Audit_account-created" xml:space="preserve"><value>Konto angelegt</value></data>
   <data name="Audit_account-deleted" xml:space="preserve"><value>Konto gelöscht</value></data>
   <data name="Audit_admin-2fa-reset" xml:space="preserve"><value>Zwei-Faktor-Anmeldung zurückgesetzt</value></data>
+  <data name="Audit_admin-backup-created" xml:space="preserve"><value>Sicherung erstellt</value></data>
+  <data name="Audit_admin-backup-failed" xml:space="preserve"><value>Sicherung fehlgeschlagen</value></data>
   <data name="Audit_admin-deletion-cancelled" xml:space="preserve"><value>Löschantrag zurückgezogen</value></data>
   <data name="Audit_admin-deletion-requested" xml:space="preserve"><value>Löschen beantragt</value></data>
   <data name="Audit_admin-invitation-revoked" xml:space="preserve"><value>Einladung zurückgezogen (Verwaltung)</value></data>
@@ -1309,6 +1330,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="Type_taxes" xml:space="preserve"><value>Steuern</value></data>
   <data name="Type_vehicle" xml:space="preserve"><value>Fahrzeug</value></data>
   <data name="UnitDays" xml:space="preserve"><value>Tage</value></data>
+  <data name="UnitHour" xml:space="preserve"><value>Uhr</value></data>
   <data name="UnitMinutes" xml:space="preserve"><value>Minuten</value></data>
   <data name="UnitMonths" xml:space="preserve"><value>Monate</value></data>
   <data name="UnlockSubmit" xml:space="preserve"><value>Entsperren</value></data>

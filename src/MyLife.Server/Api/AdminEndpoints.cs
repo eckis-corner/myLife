@@ -27,6 +27,8 @@ internal static partial class AdminEndpoints
         group.MapPost("/settings/test-mail", TestMailAsync);
         group.MapPost("/settings/test-ntfy", TestNtfyAsync);
         group.MapGet("/mail", GetMailQueueAsync);
+        group.MapGet("/backups", (Infrastructure.Backup.BackupService backups, CancellationToken cancellationToken) => backups.StatusAsync(cancellationToken));
+        group.MapPost("/backups", RunBackupAsync);
         group.MapPost("/mail/retry", RetryMailAsync);
         group.MapGet("/users", ListUsersAsync);
         group.MapPost("/users/{id:guid}/lock", LockAsync);
@@ -112,6 +114,26 @@ internal static partial class AdminEndpoints
         {
             LogTestFailed(loggers.CreateLogger(typeof(AdminEndpoints)), "ntfy", exception.GetType().Name);
             return TypedResults.Ok(new SendTestResultDto(false, MailOutboxService.Short(exception.Message)));
+        }
+    }
+
+    /// <summary>Jetzt sichern (M3.4); dauert bei vielen Dokumenten einige Zeit.</summary>
+    private static async Task<Results<Ok<BackupItemDto>, ProblemHttpResult>> RunBackupAsync(
+        ClaimsPrincipal principal, Infrastructure.Backup.BackupService backups, CancellationToken cancellationToken)
+    {
+        if (!backups.Configured)
+        {
+            return ApiProblems.Create(StatusCodes.Status400BadRequest, AdminErrors.BackupNotConfigured);
+        }
+
+        try
+        {
+            return TypedResults.Ok(await backups.RunAsync(Me(principal), cancellationToken));
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or Npgsql.NpgsqlException
+                                              or Microsoft.EntityFrameworkCore.DbUpdateException or InvalidOperationException)
+        {
+            return ApiProblems.Create(StatusCodes.Status500InternalServerError, AdminErrors.BackupFailed);
         }
     }
 

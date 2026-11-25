@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M3.3:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Vollständigkeitsanzeige, Erinnerungen per Mail, die Checkliste mit Vorlage für Deutschland, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen und der Lesemodus für Hinterbliebene funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; das Volume gehört in die Sicherung.
+> **Stand M3.4:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Vollständigkeitsanzeige, Erinnerungen per Mail, die Checkliste mit Vorlage für Deutschland, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen und der Lesemodus für Hinterbliebene funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; myLife sichert täglich nach `/data/backup`, wenn `MYLIFE_BACKUP_KEY` gesetzt ist (Abschnitt 8).
 
 ## 1. Ordner anlegen
 
@@ -27,6 +27,7 @@ In der File Station im freigegebenen Ordner `docker` den Ordner `mylife` anlegen
 | `MYLIFE_VERSION` | `latest` oder eine feste Version |
 | `MYLIFE_PORT` | Freier Port auf der Synology, z. B. `8089` |
 | `MYLIFE_DATA_DIR` | `./data` (relativ zum Projektordner) |
+| `MYLIFE_BACKUP_KEY` | Schlüssel der täglichen Sicherung: per SSH `openssl rand -base64 32`. **Getrennt von der NAS aufbewahren** (ausdrucken, beim Notfallordner); ohne ihn lässt sich keine Sicherung zurückspielen. Leer = keine automatische Sicherung. |
 | `TZ` | `Europe/Berlin` |
 
 ## 3. Rechte für den App-Ordner setzen (einmalig, per SSH)
@@ -104,11 +105,43 @@ Datenbank-Migrationen laufen beim Start automatisch.
 
 ## 8. Sicherung
 
-Bis zum Meilenstein M3 (automatische, konsistente Sicherung per `pg_dump`) gilt:
+### Was myLife selbst sichert
 
-- Den **gesamten Ordner** `/volume1/docker/mylife` (inklusive `.env` und `data/`) in **Hyper Backup** aufnehmen.
-- Für eine konsistente Datenbanksicherung das Projekt vor der Sicherung kurz stoppen oder die Sicherung zu einer ruhigen Zeit planen.
-- **`data/app/keys`** enthält die Schlüssel, mit denen der Server Einstellungen wie das SMTP-Passwort schützt. Ohne diesen Ordner sind diese Einstellungen nach einer Rücksicherung neu einzugeben. Die Inhalte der Tresore hängen **nicht** davon ab, sie sind mit den Schlüsseln der Nutzer verschlüsselt.
+Ist `MYLIFE_BACKUP_KEY` gesetzt, legt myLife **jeden Tag** zur eingestellten Uhrzeit (Standard 3 Uhr) eine verschlüsselte Sicherung unter `data/app/backup/mylife-<Datum>-<Uhrzeit>.mlbak` ab:
+
+- die **Datenbank** als konsistenter Schnappschuss,
+- den **Schlüsselring** aus `data/app/keys` (schützt TOTP-Geheimnisse und SMTP-Passwort),
+- auf Wunsch die **Dokumente** aus `data/app/files`.
+
+Aufbewahrt werden die Generationen: die neueste Sicherung je Tag (7), je Woche (4) und je Monat (6). Uhrzeit, Generationen und ob Dokumente mitkommen, stellt der Admin unter **Verwaltung → Einstellungen → Sicherung** ein. Dort stehen auch die letzte Sicherung, der nächste Lauf, ein Fehler und der Knopf **Jetzt sichern**. Schlägt eine Sicherung fehl, bekommen die Admins eine Mail (höchstens einmal am Tag).
+
+Die Inhalte der Tresore sind ohnehin mit den Schlüsseln der Nutzer verschlüsselt; der Sicherungsschlüssel schützt zusätzlich alles Übrige, etwa Mail-Adressen und den Schlüsselring.
+
+### Hyper Backup
+
+Den **gesamten Ordner** `/volume1/docker/mylife` (inklusive `.env` und `data/`) in **Hyper Backup** aufnehmen, am besten auf ein Ziel außerhalb der NAS. Damit sind die Sicherungen aus `data/app/backup` an einem zweiten Ort. Sichert Hyper Backup den Ordner `data/app/files` ohnehin, kann der Admin „Dokumente in jede Sicherung aufnehmen“ abschalten; die Sicherungen bleiben dann klein.
+
+Die laufende Datenbank (`data/postgres`) ist in Hyper Backup nicht unbedingt konsistent; zurückgespielt wird deshalb aus einer myLife-Sicherung.
+
+### Zurückspielen
+
+Die Rücksicherung **ersetzt die gesamte Datenbank** und, soweit in der Sicherung enthalten, die Dokumente und den Schlüsselring.
+
+1. In Container Manager das Projekt **stoppen** (die Datenbank läuft weiter oder wird mit gestartet).
+2. Per SSH im Projektordner:
+
+   ```bash
+   cd /volume1/docker/mylife
+   sudo docker compose up -d db
+   sudo docker compose run --rm app restore /data/backup/mylife-20261125-030000.mlbak --confirm
+   ```
+
+   Ohne `--confirm` passiert nichts. Die Sicherung muss mit demselben `MYLIFE_BACKUP_KEY` erstellt worden sein. Sie lässt sich mit derselben oder einer neueren myLife-Version zurückspielen; ausstehende Migrationen laufen danach automatisch.
+3. Das Projekt wieder **starten** und sich anmelden.
+
+Auf einer neuen NAS: zuerst wie oben installieren (dieselbe `.env` mit demselben Sicherungsschlüssel), die Sicherungsdatei nach `data/app/backup` kopieren, dann Schritt 2.
+
+Das Format beschreibt der Quelltext in `src/MyLife.Server/Infrastructure/Backup/BackupFormat.cs`: AES-256-GCM in Blöcken zu 1 MiB, Schlüssel aus `MYLIFE_BACKUP_KEY` und einem Salz je Sicherung (HKDF).
 
 ## 9. Lokale Entwicklung und eigener Build
 

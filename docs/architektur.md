@@ -261,14 +261,14 @@ Er kennt die E-Mail-Adressen und Anzeigenamen der Nutzer, wer wessen Vertrauensp
 | **Datenblatt** (29) | Ein Objekt | Druck aus dem Browser oder PDF mit optionalem Passwort |
 | **Notfallordner-PDF** (20) | Alle oder ausgewählte Bereiche: Inhaltsverzeichnis, Checkliste, Datenblätter, Liste der Dokumente | PDF mit AES-256-Passwortschutz (qpdf-wasm im Browser). Alternativ eine druckfertige HTML-Ansicht ohne Passwort für den Papierordner. |
 | **Notfallpaket für Vertrauenspersonen** (4b) | OfflineViewer.html mit den ausgewählten Bereichen als fertige Datenblätter, optional mit Dokumenten (107) | Verschlüsselt mit einem eigenen **Paketschlüssel** (24 Wörter, 108). Den Schlüssel gibt es nur ausgedruckt (Schließfach, Notar). Das Paket bei der Familie nützt ohne den Ausdruck nichts, und der Ausdruck ohne das Paket ebenfalls nicht. |
-| **Server-Sicherung** (5) | `pg_dump`, Dokumente und Data-Protection-Schlüssel, täglich, als Generationen | Die Inhalte sind ohnehin Chiffrat. Zusätzlich verschlüsselt mit einem Sicherungsschlüssel aus der Konfiguration. Ablage im Volume `backup`, das Synology-Backup übernimmt von dort. |
+| **Server-Sicherung** (5) | Datenbank (Schnappschuss per `COPY`, 124), Data-Protection-Schlüssel und auf Wunsch die Dokumente, täglich, als Generationen | Die Inhalte sind ohnehin Chiffrat. Zusätzlich verschlüsselt mit dem Sicherungsschlüssel `MYLIFE_BACKUP_KEY` (125). Ablage in `/data/backup`, das Synology-Backup übernimmt von dort. Rücksicherung per `restore` (128). |
 
 ## 8. Betrieb auf der Synology DS1520+
 
 - `docker-compose.yml` mit `mylife-app` und `postgres`. Die App lauscht nur auf einem lokalen Port, etwa 8080. Nginx Proxy Manager übernimmt TLS und leitet `mylife.eckis-corner.de` weiter (3). `X-Forwarded-*` wird nur vom Proxy angenommen.
 - Images für **linux/amd64** (Celeron J4125), gebaut über GitHub Actions nach `ghcr.io/eckis-corner/mylife` (26, 28).
 - Speicherbedarf: App etwa 200 MB, PostgreSQL etwa 150 MB RAM. Argon2id läuft im Browser, nicht auf der NAS.
-- Volumes: `pgdata`, `files`, `backup` und `keys`. In `keys` liegt der Schlüsselring von ASP.NET Data Protection. Ohne ihn lassen sich TOTP-Geheimnisse und das SMTP-Passwort nicht mehr entschlüsseln, deshalb gehört `keys` in die Sicherung.
+- Volumes: `data/app` (darin `files`, `backup` und `keys`) und `data/postgres`. In `keys` liegt der Schlüsselring von ASP.NET Data Protection. Ohne ihn lassen sich TOTP-Geheimnisse und das SMTP-Passwort nicht mehr entschlüsseln, deshalb gehört `keys` in die Sicherung.
 - Beim ersten Start gibt es einen **Einrichtungsassistenten**: ersten Nutzer als Admin anlegen, 2FA, Recovery-Kit drucken, SMTP einstellen und testen (SMTP folgt mit M2). Er verlangt den **Einrichtungscode** aus dem Container-Protokoll (51).
 - Die Anleitungen (`docs/betrieb/`) beschreiben Installation in Container Manager und Nginx Proxy Manager, Update, Sicherung, Rücksicherung und die Übergabe an eine Nachfolgeperson (4c).
 

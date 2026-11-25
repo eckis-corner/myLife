@@ -19,6 +19,13 @@ Wenn du nicht weißt, warum, wende dich bitte an den Administrator.</value></dat
 
 ein Administrator hat dein Konto bei myLife wieder entsperrt. Du kannst dich wieder anmelden.</value></data>
   <data name="Mail_account-unlocked_subject" xml:space="preserve"><value>Dein myLife-Konto ist wieder entsperrt</value></data>
+  <data name="Mail_backup-failed_body" xml:space="preserve"><value>Hallo {name},
+
+die tägliche Sicherung von myLife ist fehlgeschlagen:
+{error}
+
+Bitte sieh in der Verwaltung unter „Sicherung“ und im Protokoll des Containers nach. myLife versucht es weiter; diese Mail kommt höchstens einmal am Tag.</value></data>
+  <data name="Mail_backup-failed_subject" xml:space="preserve"><value>myLife: Die Sicherung ist fehlgeschlagen</value></data>
   <data name="Mail_deletion-request_body" xml:space="preserve"><value>Hallo {name},
 
 ein Administrator hat beantragt, dein Konto bei myLife zu löschen. Dabei werden dein Tresor mit allen Einträgen und Dokumenten endgültig gelöscht.

@@ -56,6 +56,29 @@ public sealed record DeadlineSettingsDto
     public DayRange RequestWaitingDays { get; init; } = new(7, 3, 30);
 }
 
+/// <summary>
+/// Server-Sicherung (M3.4): Uhrzeit (Ortszeit der Instanz) und Aufbewahrung als Generationen (täglich, wöchentlich,
+/// monatlich). Dokumente lassen sich auslassen, wenn das Synology-Backup den Ordner <c>files</c> ohnehin sichert.
+/// </summary>
+public sealed record BackupSettingsDto
+{
+    public int Hour { get; init; } = 3;
+    public int KeepDaily { get; init; } = 7;
+    public int KeepWeekly { get; init; } = 4;
+    public int KeepMonthly { get; init; } = 6;
+    public bool IncludeDocuments { get; init; } = true;
+}
+
+/// <summary>Eine Sicherung im Ordner <c>backup</c>.</summary>
+public sealed record BackupItemDto(string Name, DateTimeOffset CreatedAt, long Size);
+
+/// <summary>
+/// Stand der Sicherung für den Administrator: ob ein Sicherungsschlüssel eingerichtet ist, letzte Sicherung und
+/// letzter Fehler, nächster Lauf und die vorhandenen Generationen.
+/// </summary>
+public sealed record BackupStatusDto(
+    bool Configured, DateTimeOffset? LastSuccessAt, string? LastError, DateTimeOffset? LastErrorAt, DateTimeOffset? NextRunAt, IReadOnlyList<BackupItemDto> Items);
+
 /// <summary>Globale Einstellungen der Instanz, gepflegt vom Administrator (Architektur 2, Tabelle settings).</summary>
 public sealed record AdminSettingsDto
 {
@@ -67,6 +90,8 @@ public sealed record AdminSettingsDto
     public DeadlineSettingsDto Deadlines { get; init; } = new();
     public int IdleTimeoutMinutes { get; init; } = 15;
     public int AuditRetentionDays { get; init; } = 365;
+
+    public BackupSettingsDto Backup { get; init; } = new();
 
     /// <summary>Text der Datenschutzseite; leer bedeutet den mitgelieferten Standardtext.</summary>
     public string? PrivacyNotice { get; init; }
@@ -90,6 +115,9 @@ public static class AdminLimits
     public const int RetentionMaxDays = 3650;
     public const int PrivacyMaxLength = 20000;
     public const int DeletionLinkDays = 7;
+    public const int BackupMaxDaily = 31;
+    public const int BackupMaxWeekly = 52;
+    public const int BackupMaxMonthly = 60;
 }
 
 /// <summary>Zustand der Mail-Warteschlange für den Administrator.</summary>
@@ -144,6 +172,10 @@ public static class AdminErrors
     /// <summary>Konto mit freigegebenem Notfallzugang: nicht löschbar durch den Admin (Entscheidung 44).</summary>
     public const string Released = "admin-released";
     public const string Failed = "admin-failed";
+
+    /// <summary>Kein Sicherungsschlüssel eingerichtet (M3.4).</summary>
+    public const string BackupNotConfigured = "admin-backup-not-configured";
+    public const string BackupFailed = "admin-backup-failed";
 }
 
 /// <summary>Fehlercodes bei der Prüfung der Einstellungen (Werte im ValidationProblem je Feld).</summary>

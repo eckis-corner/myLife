@@ -25,6 +25,13 @@ var options = builder.Configuration.GetSection(MyLifeOptions.SectionName).Get<My
 builder.Services.Configure<MyLifeOptions>(builder.Configuration.GetSection(MyLifeOptions.SectionName));
 
 var dataDirectory = Path.GetFullPath(options.DataDirectory);
+
+// Rücksicherung von der Kommandozeile (M3.4): dotnet MyLife.Server.dll restore <Datei> --confirm
+if (args is ["restore", ..])
+{
+    return await MyLife.Server.Infrastructure.Backup.BackupCli.RestoreAsync(args, builder.Configuration, options);
+}
+
 Directory.CreateDirectory(Path.Combine(dataDirectory, "keys"));
 builder.Services.AddDataProtection()
     .SetApplicationName("myLife")
@@ -75,6 +82,8 @@ builder.Services.AddHostedService(services => services.GetRequiredService<MyLife
 builder.Services.AddScoped<MyLife.Server.Infrastructure.Reminders.ReminderEngine>();
 builder.Services.AddSingleton<MyLife.Server.Infrastructure.Reminders.ReminderService>();
 builder.Services.AddHostedService(services => services.GetRequiredService<MyLife.Server.Infrastructure.Reminders.ReminderService>());
+builder.Services.AddSingleton<MyLife.Server.Infrastructure.Backup.BackupService>();
+builder.Services.AddHostedService(services => services.GetRequiredService<MyLife.Server.Infrastructure.Backup.BackupService>());
 
 // Sitzungs-Cookie (Architektur 4.4): HttpOnly, SameSite=Strict, gleitende Laufzeit wie die automatische Abmeldung.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -169,6 +178,7 @@ await DatabaseMigrator.MigrateAsync(app.Services);
 await app.Services.GetRequiredService<SettingsStore>().GetAsync();
 
 await app.RunAsync();
+return 0;
 
 static Task WriteStatusAsync(HttpResponse response, int status, string code)
 {

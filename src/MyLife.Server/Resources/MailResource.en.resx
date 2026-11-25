@@ -19,6 +19,13 @@ If you do not know why, please contact the administrator.</value></data>
 
 an administrator has unlocked your myLife account. You can sign in again.</value></data>
   <data name="Mail_account-unlocked_subject" xml:space="preserve"><value>Your myLife account has been unlocked</value></data>
+  <data name="Mail_backup-failed_body" xml:space="preserve"><value>Hello {name},
+
+the daily myLife backup failed:
+{error}
+
+Please check "Backup" in the administration and the container log. myLife keeps trying; this email is sent at most once a day.</value></data>
+  <data name="Mail_backup-failed_subject" xml:space="preserve"><value>myLife: The backup failed</value></data>
   <data name="Mail_deletion-request_body" xml:space="preserve"><value>Hello {name},
 
 an administrator has requested to delete your myLife account. This deletes your vault with all entries and documents for good.

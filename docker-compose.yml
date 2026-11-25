@@ -12,6 +12,8 @@ services:
     environment:
       ConnectionStrings__MyLife: "Host=db;Port=5432;Database=mylife;Username=mylife;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD fehlt in .env};Gss Encryption Mode=Disable"
       MyLife__DataDirectory: /data
+      # Sicherungsschlüssel (32 Byte Base64); ohne ihn keine automatische Sicherung
+      MyLife__BackupKey: ${MYLIFE_BACKUP_KEY:-}
       TZ: ${TZ:-Europe/Berlin}
     ports:
       - "${MYLIFE_PORT:-8080}:8080"

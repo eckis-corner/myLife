@@ -83,6 +83,18 @@ public static class AdminSettingsValidation
             errors["retention"] = SettingsErrors.Range;
         }
 
+        var backup = settings.Backup ?? new BackupSettingsDto();
+        if (backup.Hour is < 0 or > 23)
+        {
+            errors["backup.hour"] = SettingsErrors.Range;
+        }
+
+        if (backup.KeepDaily is < 1 or > AdminLimits.BackupMaxDaily || backup.KeepWeekly is < 0 or > AdminLimits.BackupMaxWeekly
+            || backup.KeepMonthly is < 0 or > AdminLimits.BackupMaxMonthly)
+        {
+            errors["backup.keep"] = SettingsErrors.Range;
+        }
+
         if (settings.PrivacyNotice is { Length: > AdminLimits.PrivacyMaxLength })
         {
             errors["privacy"] = SettingsErrors.TooLong;

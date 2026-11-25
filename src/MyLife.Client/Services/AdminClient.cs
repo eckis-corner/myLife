@@ -25,6 +25,12 @@ public sealed class AdminClient(HttpClient http)
     public async Task<MailQueueDto> GetMailQueueAsync(CancellationToken cancellationToken = default) =>
         (await GetAsync<MailQueueDto>("api/admin/mail", cancellationToken))!;
 
+    public async Task<BackupStatusDto> GetBackupsAsync(CancellationToken cancellationToken = default) =>
+        (await GetAsync<BackupStatusDto>("api/admin/backups", cancellationToken))!;
+
+    public async Task<BackupItemDto> BackupNowAsync(CancellationToken cancellationToken = default) =>
+        (await SendAsync<BackupItemDto>(HttpMethod.Post, "api/admin/backups", new { }, cancellationToken))!;
+
     public Task RetryMailAsync(CancellationToken cancellationToken = default) =>
         SendAsync<object>(HttpMethod.Post, "api/admin/mail/retry", new { }, cancellationToken);
 

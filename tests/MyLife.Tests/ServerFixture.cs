@@ -12,6 +12,12 @@ public sealed class ServerFixture : WebApplicationFactory<Program>, IAsyncLifeti
     private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:17-alpine").Build();
     private readonly string _dataDirectory = Path.Combine(Path.GetTempPath(), "mylife-tests", Guid.NewGuid().ToString("N"));
 
+    /// <summary>Sicherungsschlüssel der Test-Instanz (32 Byte, Base64).</summary>
+    public const string BackupKey = "bXlMaWZlLVRlc3QtU2ljaGVydW5nc3NjaGx1ZXNzZWw=";
+
+    /// <summary>Datenverzeichnis des Servers (Dokumente, Schlüssel, Sicherungen).</summary>
+    public string DataDirectory => _dataDirectory;
+
     /// <summary>Uhr des Servers; Tests stellen sie vor, etwa für den nächsten TOTP-Schritt oder das Ende einer Sperre.</summary>
     public TestClock Clock { get; } = new();
 
@@ -36,6 +42,7 @@ public sealed class ServerFixture : WebApplicationFactory<Program>, IAsyncLifeti
         builder.UseEnvironment("Production");
         builder.UseSetting("ConnectionStrings:MyLife", _database.GetConnectionString());
         builder.UseSetting("MyLife:DataDirectory", _dataDirectory);
+        builder.UseSetting("MyLife:BackupKey", BackupKey);
         // Die Tests melden sich viel öfter an als ein Mensch; das Limit gegen Durchprobieren würde sonst greifen.
         builder.UseSetting("MyLife:AuthRequestsPerMinute", "10000");
         builder.ConfigureTestServices(services =>

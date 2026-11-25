@@ -126,6 +126,7 @@ internal sealed class SettingsStore(
         },
         Ntfy = settings.Ntfy with { ServerUrl = string.IsNullOrWhiteSpace(settings.Ntfy.ServerUrl) ? null : settings.Ntfy.ServerUrl.Trim().TrimEnd('/') },
         PrivacyNotice = string.IsNullOrWhiteSpace(settings.PrivacyNotice) ? null : settings.PrivacyNotice.Trim(),
+        Backup = settings.Backup ?? new BackupSettingsDto(),
     };
 
     private string? Secret(string? incoming, string? currentProtected, string purpose) => incoming switch

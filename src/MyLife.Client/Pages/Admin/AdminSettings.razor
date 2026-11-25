@@ -192,6 +192,69 @@
                     </div>
                 </MudStack>
             </MudTabPanel>
+            <MudTabPanel Text="@L["AdminTabBackup"]" Icon="@Icons.Material.Outlined.Backup">
+                <MudStack Spacing="3" data-testid="backup-tab">
+                    <MudText Typo="Typo.body2" Class="mylife-muted">@L["AdminBackupText"]</MudText>
+                    @if (_backup is { } status)
+                    {
+                        @if (!status.Configured)
+                        {
+                            <MudAlert Severity="Severity.Warning" data-testid="backup-not-configured">@L["AdminBackupNotConfigured"]</MudAlert>
+                        }
+                        else
+                        {
+                            <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                                <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.CloudDone" Color="@(status.LastSuccessAt is null ? Color.Warning : Color.Success)">
+                                    @L["AdminBackupLast", Format(status.LastSuccessAt)]
+                                </MudChip>
+                                <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Schedule">@L["AdminBackupNext", Format(status.NextRunAt)]</MudChip>
+                            </MudStack>
+                            @if (status.LastError is { } backupError)
+                            {
+                                <MudAlert Severity="Severity.Error" Dense data-testid="backup-error">@L["AdminBackupError", Format(status.LastErrorAt), backupError]</MudAlert>
+                            }
+                            <div>
+                                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Backup" Disabled="_busy" OnClick="BackupNowAsync"
+                                           data-testid="backup-now">@L["AdminBackupNow"]</MudButton>
+                            </div>
+                        }
+                    }
+                    <MudGrid Spacing="3">
+                        <MudItem xs="12" sm="3">
+                            <MudNumericField T="int" @bind-Value="_form.BackupHour" Label="@L["AdminBackupHour"]" Variant="Variant.Outlined" Min="0" Max="23"
+                                             AdornmentText="@L["UnitHour"]" Adornment="Adornment.End" Error="@HasError("backup.hour")" ErrorText="@ErrorFor("backup.hour")" />
+                        </MudItem>
+                        <MudItem xs="4" sm="3">
+                            <MudNumericField T="int" @bind-Value="_form.BackupKeepDaily" Label="@L["AdminBackupKeepDaily"]" Variant="Variant.Outlined" Min="1"
+                                             Max="AdminLimits.BackupMaxDaily" Error="@HasError("backup.keep")" />
+                        </MudItem>
+                        <MudItem xs="4" sm="3">
+                            <MudNumericField T="int" @bind-Value="_form.BackupKeepWeekly" Label="@L["AdminBackupKeepWeekly"]" Variant="Variant.Outlined" Min="0"
+                                             Max="AdminLimits.BackupMaxWeekly" Error="@HasError("backup.keep")" />
+                        </MudItem>
+                        <MudItem xs="4" sm="3">
+                            <MudNumericField T="int" @bind-Value="_form.BackupKeepMonthly" Label="@L["AdminBackupKeepMonthly"]" Variant="Variant.Outlined" Min="0"
+                                             Max="AdminLimits.BackupMaxMonthly" Error="@HasError("backup.keep")" ErrorText="@ErrorFor("backup.keep")" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudSwitch T="bool" @bind-Value="_form.BackupIncludeDocuments" Color="Color.Primary" Label="@L["AdminBackupDocuments"]" />
+                            <MudText Typo="Typo.caption" Class="mylife-muted">@L["AdminBackupDocumentsHint"]</MudText>
+                        </MudItem>
+                    </MudGrid>
+                    @if (_backup is { Items.Count: > 0 } withItems)
+                    {
+                        <MudSimpleTable Dense Elevation="0" data-testid="backup-items">
+                            <thead><tr><th>@L["AdminBackupFile"]</th><th>@L["AdminBackupCreated"]</th><th>@L["AdminBackupSize"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var item in withItems.Items)
+                                {
+                                    <tr><td>@item.Name</td><td>@Format(item.CreatedAt)</td><td>@Size(item.Size)</td></tr>
+                                }
+                            </tbody>
+                        </MudSimpleTable>
+                    }
+                </MudStack>
+            </MudTabPanel>
         </MudTabs>
 
         @if (_errors.Count > 0)
@@ -213,6 +276,7 @@
     private SettingsForm? _form;
     private Dictionary<string, string> _errors = [];
     private MailQueueDto? _queue;
+    private BackupStatusDto? _backup;
     private SendTestResultDto? _mailTest;
     private SendTestResultDto? _ntfyTest;
     private string? _ntfyTopic;
@@ -226,12 +290,26 @@
         {
             _form = SettingsForm.From(await Api.GetSettingsAsync());
             await LoadQueueAsync();
+            _backup = await Api.GetBackupsAsync();
         }
         catch (Exception exception) when (exception is AdminException or HttpRequestException)
         {
             _loadError = "AdminError_admin-failed";
         }
     }
+
+    private static string Format(DateTimeOffset? value) => value?.ToLocalTime().ToString("g", CultureInfo.CurrentCulture) ?? "–";
+
+    private static string Size(long bytes) => bytes >= 1024 * 1024
+        ? $"{(bytes / 1024d / 1024d).ToString("0.0", CultureInfo.CurrentCulture)} MB"
+        : $"{Math.Max(1, bytes / 1024)} KB";
+
+    private Task BackupNowAsync() => RunAsync(async () =>
+    {
+        await Api.BackupNowAsync();
+        Snackbar.Add(L["AdminBackupDone"], Severity.Success);
+        _backup = await Api.GetBackupsAsync();
+    });
 
     private static Dictionary<string, object> TestId(string id) => new() { ["data-testid"] = id };
 
@@ -397,6 +475,11 @@
         public RangeForm Waiting { get; set; } = new();
         public RangeForm RequestWaiting { get; set; } = new();
         public string? PrivacyNotice { get; set; }
+        public int BackupHour { get; set; }
+        public int BackupKeepDaily { get; set; }
+        public int BackupKeepWeekly { get; set; }
+        public int BackupKeepMonthly { get; set; }
+        public bool BackupIncludeDocuments { get; set; }
 
         public static SettingsForm From(AdminSettingsDto dto) => new()
         {
@@ -417,6 +500,11 @@
             Waiting = RangeForm.From(dto.Deadlines.WaitingDays),
             RequestWaiting = RangeForm.From(dto.Deadlines.RequestWaitingDays),
             PrivacyNotice = dto.PrivacyNotice,
+            BackupHour = dto.Backup.Hour,
+            BackupKeepDaily = dto.Backup.KeepDaily,
+            BackupKeepWeekly = dto.Backup.KeepWeekly,
+            BackupKeepMonthly = dto.Backup.KeepMonthly,
+            BackupIncludeDocuments = dto.Backup.IncludeDocuments,
         };
 
         /// <summary>Null, wenn die Erinnerungen keine Zahlenliste sind.</summary>
@@ -451,6 +539,11 @@
                     RequestWaitingDays = RequestWaiting.ToDto(),
                 },
                 PrivacyNotice = PrivacyNotice,
+                Backup = new BackupSettingsDto
+                {
+                    Hour = BackupHour, KeepDaily = BackupKeepDaily, KeepWeekly = BackupKeepWeekly, KeepMonthly = BackupKeepMonthly,
+                    IncludeDocuments = BackupIncludeDocuments,
+                },
             };
         }
     }

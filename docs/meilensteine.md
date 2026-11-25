@@ -46,7 +46,7 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 1. **Erinnerungen:** Prüfintervall (Standard 6 Monate) und das Ablaufdatum jedes Objekts (39). Der Server kennt nur den nächsten Termin. ✅ (25.11.2026; Entscheidungen 111–114; dazu Wiedervorlagen per Mail)
 2. **Checkliste (Bereich 12):** Vorlage für Deutschland (24 Stunden, 1 Woche, 1 Monat, später), anpassbar, Aufgaben listen verknüpfte Objekte auf (zum Beispiel alle Verträge mit „kündigen“), gemeinsames Abhaken ✅ (25.11.2026; Entscheidungen 115–119; Lesemodus folgt der Checkliste)
 3. **Vollständigkeitsanzeige** je Bereich und Objekt (Pflicht- und empfohlene Felder, fehlende typische Objekte) ✅ (25.11.2026; Entscheidungen 120–123)
-4. **Server-Sicherung:** täglicher verschlüsselter Dump im Volume `backup`, Rücksicherung getestet
+4. **Server-Sicherung:** täglicher verschlüsselter Dump im Volume `backup`, Rücksicherung getestet ✅ (25.11.2026; Entscheidungen 124–129; Schnappschuss per COPY statt pg_dump)
 5. **Betriebsdoku:** Update, Sicherung, Rücksicherung, Übergabe an die Nachfolgeperson; Formatbeschreibung `docs/format.md`; Werkzeug `mylife-decrypt`
 6. Barrierefreiheit, Durchsicht der englischen Texte, Prüfung der Sicherheit (CSP, Header, Abhängigkeiten), Release v1.0
 

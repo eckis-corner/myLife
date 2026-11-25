@@ -177,6 +177,10 @@ public static class AuditActions
     public const string ChecklistDone = "checklist-done";
     public const string ChecklistUndone = "checklist-undone";
 
+    // Server-Sicherung (M3.4), im System-Protokoll
+    public const string AdminBackupCreated = "admin-backup-created";
+    public const string AdminBackupFailed = "admin-backup-failed";
+
     /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
     public static bool IsSystem(string action) =>
         action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch or EmergencyReleased or EmergencyRevoked
