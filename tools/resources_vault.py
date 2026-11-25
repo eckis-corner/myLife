@@ -20,6 +20,7 @@ AREAS = {
 }
 
 TYPES = {
+    "profile": ("Eigenes Datenblatt", "My details"),
     "personal": ("Persönliche Daten", "Personal details"),
     "idDocument": ("Ausweisdokument", "Identity document"),
     "bankAccount": ("Bankkonto", "Bank account"),
@@ -61,6 +62,8 @@ EXPIRY = {
 }
 
 FIELDS = {
+    "lastName": ("Name", "Surname"),
+    "firstName": ("Vorname", "First name"),
     "fullName": ("Name", "Full name"),
     "birthName": ("Geburtsname", "Birth name"),
     "birthDate": ("Geburtsdatum", "Date of birth"),

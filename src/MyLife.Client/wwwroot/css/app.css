@@ -251,6 +251,25 @@ h1:focus {
     border-top: 1px solid var(--mud-palette-lines-default);
 }
 
+/* Eigenes Datenblatt: rundes Bild oder Initialen. */
+.mylife-profile-picture {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--mud-palette-lines-default);
+}
+
+.mylife-profile-picture--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mylife-accent-soft, var(--mud-palette-background-gray));
+    color: var(--mylife-accent, var(--mud-palette-text-secondary));
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
 .mylife-rixio-light .mylife-nav-account {
     border-top-color: #2a4256;
 }

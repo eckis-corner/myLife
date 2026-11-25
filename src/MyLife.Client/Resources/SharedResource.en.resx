@@ -616,6 +616,7 @@
   <data name="Field_employer" xml:space="preserve"><value>Employer</value></data>
   <data name="Field_employmentKind" xml:space="preserve"><value>Type</value></data>
   <data name="Field_financing" xml:space="preserve"><value>Financing</value></data>
+  <data name="Field_firstName" xml:space="preserve"><value>First name</value></data>
   <data name="Field_frequency" xml:space="preserve"><value>Frequency</value></data>
   <data name="Field_fullName" xml:space="preserve"><value>Full name</value></data>
   <data name="Field_funeralProvision" xml:space="preserve"><value>Funeral plan</value></data>
@@ -642,6 +643,7 @@
   <data name="Field_landRegistry" xml:space="preserve"><value>Land register (court, folio)</value></data>
   <data name="Field_landlord" xml:space="preserve"><value>Landlord</value></data>
   <data name="Field_last4" xml:space="preserve"><value>Last 4 digits</value></data>
+  <data name="Field_lastName" xml:space="preserve"><value>Surname</value></data>
   <data name="Field_legacyContactSet" xml:space="preserve"><value>Legacy contact set up with provider</value></data>
   <data name="Field_legalDocument_issuer" xml:space="preserve"><value>Issued by</value></data>
   <data name="Field_legalDocument_number" xml:space="preserve"><value>Number / reference</value></data>
@@ -820,6 +822,7 @@
   <data name="Logout" xml:space="preserve"><value>Sign out</value></data>
   <data name="MoreActions" xml:space="preserve"><value>More actions</value></data>
   <data name="MovedToTrash" xml:space="preserve"><value>Moved to trash.</value></data>
+  <data name="NavAccount" xml:space="preserve"><value>Account</value></data>
   <data name="NavAdmin" xml:space="preserve"><value>Administration</value></data>
   <data name="NavAreas" xml:space="preserve"><value>Areas</value></data>
   <data name="NavAudit" xml:space="preserve"><value>Activity log</value></data>
@@ -1087,6 +1090,18 @@ How long: The log is deleted after the configured period. If your account is del
 
 Your rights: You can ask for access, correction and deletion at any time. Please contact the administrator of this instance.</value></data>
   <data name="PrivacyTitle" xml:space="preserve"><value>Privacy</value></data>
+  <data name="ProfileIntro" xml:space="preserve"><value>Your surname, first name and picture are stored encrypted in your vault, in the “About me” area. The server cannot see them. Anyone the “About me” area is shared with can see them too.</value></data>
+  <data name="ProfileOpenDatasheet" xml:space="preserve"><value>Open as data sheet</value></data>
+  <data name="ProfilePicture" xml:space="preserve"><value>Picture</value></data>
+  <data name="ProfilePictureChoose" xml:space="preserve"><value>Choose picture</value></data>
+  <data name="ProfilePictureInvalid" xml:space="preserve"><value>Please choose a JPEG, PNG or WebP picture of up to {0} MB.</value></data>
+  <data name="ProfilePictureLimit" xml:space="preserve"><value>JPEG, PNG or WebP, up to {0} MB.</value></data>
+  <data name="ProfilePictureNone" xml:space="preserve"><value>No picture yet</value></data>
+  <data name="ProfilePictureRemove" xml:space="preserve"><value>Remove picture</value></data>
+  <data name="ProfilePictureRemoved" xml:space="preserve"><value>Picture moved to trash.</value></data>
+  <data name="ProfilePictureSaveFirst" xml:space="preserve"><value>Save your name first, then you can add a picture.</value></data>
+  <data name="ProfilePictureSaved" xml:space="preserve"><value>Picture saved.</value></data>
+  <data name="ProfileTitle" xml:space="preserve"><value>My details</value></data>
   <data name="ReadingBackToStart" xml:space="preserve"><value>Back to overview</value></data>
   <data name="ReadingDone" xml:space="preserve"><value>Done</value></data>
   <data name="ReadingEmpty" xml:space="preserve"><value>Nothing has been released to you at the moment.</value></data>
@@ -1319,6 +1334,7 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="Type_pension" xml:space="preserve"><value>Retirement provision</value></data>
   <data name="Type_personal" xml:space="preserve"><value>Personal details</value></data>
   <data name="Type_pet" xml:space="preserve"><value>Pet</value></data>
+  <data name="Type_profile" xml:space="preserve"><value>My details</value></data>
   <data name="Type_property" xml:space="preserve"><value>Property</value></data>
   <data name="Type_safeDeposit" xml:space="preserve"><value>Safe deposit box</value></data>
   <data name="Type_task" xml:space="preserve"><value>Task</value></data>

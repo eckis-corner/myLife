@@ -228,6 +228,13 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 135 | Englische Texte | Durchgesehen: britisches Englisch, einheitlich typografische Anführungszeichen (setzt `tools/resources.py` um), veraltete Hinweise auf spätere Meilensteine entfernt, ungenutzte Texte aus M0 gelöscht. Ein Test prüft gleiche Platzhalter in beiden Sprachen, kein Deutsch im Englischen und keine Verweise auf künftige Meilensteine. |
 | 136 | Release v1.0 | Version 1.0.0 entsteht mit dem Tag `v1.0.0`: Die CI baut das Image `ghcr.io/eckis-corner/mylife:1.0.0` und hängt `mylife-decrypt` an das GitHub-Release. Den Tag setzt der Betreiber, sinnvollerweise nach der Abnahme auf der DS1520+ (M1, M2). |
 
+## Runde 19 (25.11.2026, Menü und eigenes Datenblatt)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 137 | Menü | Zwei Gruppen statt einer langen Liste: **Verwaltung** (Protokoll, Papierkorb; für Admins dazu Einstellungen, Benutzer, Admin-Protokoll) für alle, **Konto** (Erinnerungen, Sicherheit, Eigenes Datenblatt, Was gehört nicht in myLife?) immer sichtbar am unteren Rand der Seitenleiste. |
+| 138 | Eigenes Datenblatt | Name, Vorname und Bild liegen verschlüsselt im Tresor als Eintrag vom Typ `profile` im Bereich 0, höchstens einer je Tresor (`Singleton`, nicht in „Neuer Eintrag“). Das Bild ist ein Dokument an diesem Eintrag (JPEG, PNG oder WebP bis 5 MB); es gilt das neueste, ein neues legt das alte in den Papierkorb. Das Dateiformat ändert sich nicht. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

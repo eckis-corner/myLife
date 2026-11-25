@@ -31,6 +31,7 @@ Felder in *kursiv* sind Auswahllisten.
 
 | Objekttyp | Felder |
 | --- | --- |
+| Eigenes Datenblatt | Name, Vorname, Bild (als Dokument). Höchstens eines je Tresor, gepflegt unter Konto → Eigenes Datenblatt |
 | Persönliche Daten | Name, Geburtsname, Geburtsdatum und -ort, Anschrift, *Familienstand*, Staatsangehörigkeit, Konfession (für die Bestattung), Steuer-ID, Renten-Versicherungsnummer, Krankenversichertennummer |
 | Ausweisdokument | *Art* (Personalausweis, Reisepass, Führerschein, Aufenthaltstitel), Nummer, ausstellende Behörde, gültig bis, Ablageort |
 

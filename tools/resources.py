@@ -22,11 +22,13 @@ import resources_completeness  # noqa: E402
 import resources_backup  # noqa: E402
 import resources_decrypt  # noqa: E402
 import resources_a11y  # noqa: E402
+import resources_profile  # noqa: E402
 import resources_vault  # noqa: E402
 
 TEXTS: dict[str, tuple[str, str]] = {
     "AppName": ("myLife", "myLife"),
     "NavHome": ("Übersicht", "Overview"),
+    "NavAccount": ("Konto", "Account"),
     "OpenMenu": ("Menü öffnen", "Open menu"),
     "ToggleDarkMode": ("Hell/Dunkel umschalten", "Toggle light/dark mode"),
     "Language": ("Sprache", "Language"),
@@ -387,6 +389,10 @@ _DUPLICATES = sorted(set(TEXTS) & set(resources_a11y.CLIENT))
 if _DUPLICATES:
     raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
 TEXTS.update(resources_a11y.CLIENT)
+_DUPLICATES = sorted(set(TEXTS) & set(resources_profile.CLIENT))
+if _DUPLICATES:
+    raise SystemExit(f"Doppelte Schlüssel: {_DUPLICATES}")
+TEXTS.update(resources_profile.CLIENT)
 MAIL = {**resources_admin.MAIL, **resources_family.MAIL, **resources_trust.MAIL, **resources_emergency.MAIL, **resources_reminders.MAIL, **resources_backup.MAIL}
 
 HEADER = """<?xml version="1.0" encoding="utf-8"?>

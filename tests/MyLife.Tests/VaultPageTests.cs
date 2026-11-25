@@ -148,6 +148,45 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
     }
 
     [Fact]
+    public async Task TheProfilePageSavesNameAndPictureEncryptedInTheVault()
+    {
+        var page = Render<ProfilePage>();
+        page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=profile-save]")));
+        Assert.Empty(page.FindAll("[data-testid=profile-picture-input]"));
+
+        page.ClickWhenReady("[data-testid=profile-save]");
+        page.WaitForAssertion(() => Assert.Contains("Pflichtfeld", page.Markup, StringComparison.Ordinal));
+
+        page.ChangeWhenReady("input[data-testid=profile-last-name]", "Muster");
+        page.ChangeWhenReady("input[data-testid=profile-first-name]", "Erika");
+        page.ClickWhenReady("[data-testid=profile-save]");
+        page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=profile-picture-input]")));
+
+        var profile = Assert.Single(_browser.Vault.Current, i => i.Type.Key == "profile");
+        Assert.Equal("Erika Muster", profile.Title);
+        Assert.Equal(0, profile.Area);
+        Assert.Equal("Muster", profile.Payload.Get("lastName"));
+
+        byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2, 3];
+        page.FindComponent<Microsoft.AspNetCore.Components.Forms.InputFile>()
+            .UploadFiles(InputFileContent.CreateFromBinary(png, "ich.png", contentType: "image/png"));
+        await page.WaitForAssertionAsync(() => Assert.Single(_browser.Vault.FilesOf(profile.Id), f => !f.IsDeleted), TimeSpan.FromSeconds(10));
+        var picture = _browser.Vault.FilesOf(profile.Id).Single(f => !f.IsDeleted);
+        Assert.Equal(png, await _browser.Vault.DownloadAsync(picture));
+
+        page.FindComponent<Microsoft.AspNetCore.Components.Forms.InputFile>()
+            .UploadFiles(InputFileContent.CreateFromBinary(png, "neu.png", contentType: "image/png"));
+        await page.WaitForAssertionAsync(() => Assert.True(picture.IsDeleted), TimeSpan.FromSeconds(10));
+        Assert.Equal("neu.png", _browser.Vault.FilesOf(profile.Id).Single(f => !f.IsDeleted).Metadata.FileName);
+
+        // Ein zweites Datenblatt lässt sich nicht über „Neuer Eintrag“ anlegen.
+        var navigation = Services.GetRequiredService<NavigationManager>();
+        Render<ObjectPage>(p => p.Add(x => x.TypeKey, "profile"));
+        Assert.EndsWith("/account/profile", navigation.Uri, StringComparison.Ordinal);
+        Assert.DoesNotContain(ObjectCatalog.TypesIn(0).Where(t => !t.Singleton), t => t.Key == "profile");
+    }
+
+    [Fact]
     public void ATypicalEntryOpensTheFormWithThePresetValue()
     {
         Services.GetRequiredService<NavigationManager>().NavigateTo("object/new/legalDocument?field=documentKind&value=livingWill");

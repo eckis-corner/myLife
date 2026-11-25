@@ -169,6 +169,7 @@ public static class ObjectCatalog
     private static List<ObjectTypeDefinition> BuildTypes() =>
     [
         // Bereich 0 – Über mich
+        new("profile", 0, [Text("lastName", true), Text("firstName")]) { Singleton = true },
         new("personal", 0,
         [
             Text("fullName", true), Text("birthName"), Of("birthDate", FieldType.Date), Text("birthPlace"), Long("address"),

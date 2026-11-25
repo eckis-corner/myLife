@@ -162,7 +162,7 @@ else
 
     protected override void OnParametersSet()
     {
-        _types = [.. ObjectCatalog.TypesIn(Number)];
+        _types = [.. ObjectCatalog.TypesIn(Number).Where(t => !t.Singleton)];
         _selected.Clear();
         _selecting = false;
         if (Vault.IsLoaded)

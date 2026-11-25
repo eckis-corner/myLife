@@ -104,6 +104,12 @@ public sealed record ObjectTypeDefinition(string Key, int Area, IReadOnlyList<Fi
     /// <summary>Das Ablaufdatum gehört zur Vollständigkeit (M3.3), etwa bei Ausweisen und Karten.</summary>
     public bool ExpiryRecommended { get; init; }
 
+    /// <summary>
+    /// Höchstens ein Eintrag je Tresor, angelegt und gepflegt auf einer eigenen Seite (das eigene Datenblatt);
+    /// steht deshalb nicht in der Auswahl „Neuer Eintrag“ des Bereichs.
+    /// </summary>
+    public bool Singleton { get; init; }
+
     public int SchemaVersion { get; init; } = 1;
 
     public FieldDefinition? Field(string key) => Fields.FirstOrDefault(f => f.Key == key);

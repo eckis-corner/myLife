@@ -168,6 +168,13 @@ else
 
         _item = null;
         _type = ObjectCatalog.Find(TypeKey);
+        if (_type is { Singleton: true })
+        {
+            // Das eigene Datenblatt gibt es nur einmal; angelegt wird es auf seiner eigenen Seite.
+            Navigation.NavigateTo("account/profile", replace: true);
+            return;
+        }
+
         if (_type is not null && ObjectCatalog.IsUsableArea(_type.Area))
         {
             _draft = new VaultPayload { Title = Text.Type(_type) };

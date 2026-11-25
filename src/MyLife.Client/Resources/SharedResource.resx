@@ -616,6 +616,7 @@
   <data name="Field_employer" xml:space="preserve"><value>Arbeitgeber</value></data>
   <data name="Field_employmentKind" xml:space="preserve"><value>Art</value></data>
   <data name="Field_financing" xml:space="preserve"><value>Finanzierung</value></data>
+  <data name="Field_firstName" xml:space="preserve"><value>Vorname</value></data>
   <data name="Field_frequency" xml:space="preserve"><value>Rhythmus</value></data>
   <data name="Field_fullName" xml:space="preserve"><value>Name</value></data>
   <data name="Field_funeralProvision" xml:space="preserve"><value>Bestattungsvorsorge</value></data>
@@ -642,6 +643,7 @@
   <data name="Field_landRegistry" xml:space="preserve"><value>Grundbuch (Amtsgericht, Blatt)</value></data>
   <data name="Field_landlord" xml:space="preserve"><value>Vermieter</value></data>
   <data name="Field_last4" xml:space="preserve"><value>Letzte 4 Ziffern</value></data>
+  <data name="Field_lastName" xml:space="preserve"><value>Name</value></data>
   <data name="Field_legacyContactSet" xml:space="preserve"><value>Nachlasskontakt beim Anbieter eingerichtet</value></data>
   <data name="Field_legalDocument_issuer" xml:space="preserve"><value>Ausstellende Stelle</value></data>
   <data name="Field_legalDocument_number" xml:space="preserve"><value>Nummer / Aktenzeichen</value></data>
@@ -820,6 +822,7 @@
   <data name="Logout" xml:space="preserve"><value>Abmelden</value></data>
   <data name="MoreActions" xml:space="preserve"><value>Weitere Aktionen</value></data>
   <data name="MovedToTrash" xml:space="preserve"><value>In den Papierkorb verschoben.</value></data>
+  <data name="NavAccount" xml:space="preserve"><value>Konto</value></data>
   <data name="NavAdmin" xml:space="preserve"><value>Verwaltung</value></data>
   <data name="NavAreas" xml:space="preserve"><value>Bereiche</value></data>
   <data name="NavAudit" xml:space="preserve"><value>Protokoll</value></data>
@@ -1087,6 +1090,18 @@ Wie lange: Das Protokoll wird nach der eingestellten Frist gelöscht. Wird dein 
 
 Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen. Wende dich dafür an den Administrator dieser Instanz.</value></data>
   <data name="PrivacyTitle" xml:space="preserve"><value>Datenschutz</value></data>
+  <data name="ProfileIntro" xml:space="preserve"><value>Name, Vorname und Bild liegen verschlüsselt in deinem Tresor, im Bereich „Über mich“. Der Server sieht sie nicht. Wer den Bereich „Über mich“ freigegeben bekommt, sieht sie auch.</value></data>
+  <data name="ProfileOpenDatasheet" xml:space="preserve"><value>Als Datenblatt öffnen</value></data>
+  <data name="ProfilePicture" xml:space="preserve"><value>Bild</value></data>
+  <data name="ProfilePictureChoose" xml:space="preserve"><value>Bild wählen</value></data>
+  <data name="ProfilePictureInvalid" xml:space="preserve"><value>Bitte wähle ein Bild im Format JPEG, PNG oder WebP mit höchstens {0} MB.</value></data>
+  <data name="ProfilePictureLimit" xml:space="preserve"><value>JPEG, PNG oder WebP, höchstens {0} MB.</value></data>
+  <data name="ProfilePictureNone" xml:space="preserve"><value>Noch kein Bild</value></data>
+  <data name="ProfilePictureRemove" xml:space="preserve"><value>Bild entfernen</value></data>
+  <data name="ProfilePictureRemoved" xml:space="preserve"><value>Bild in den Papierkorb gelegt.</value></data>
+  <data name="ProfilePictureSaveFirst" xml:space="preserve"><value>Speichere zuerst deinen Namen, dann kannst du ein Bild hinzufügen.</value></data>
+  <data name="ProfilePictureSaved" xml:space="preserve"><value>Bild gespeichert.</value></data>
+  <data name="ProfileTitle" xml:space="preserve"><value>Eigenes Datenblatt</value></data>
   <data name="ReadingBackToStart" xml:space="preserve"><value>Zur Übersicht</value></data>
   <data name="ReadingDone" xml:space="preserve"><value>Fertig</value></data>
   <data name="ReadingEmpty" xml:space="preserve"><value>Im Moment ist nichts für dich freigegeben.</value></data>
@@ -1319,6 +1334,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="Type_pension" xml:space="preserve"><value>Altersvorsorge</value></data>
   <data name="Type_personal" xml:space="preserve"><value>Persönliche Daten</value></data>
   <data name="Type_pet" xml:space="preserve"><value>Haustier</value></data>
+  <data name="Type_profile" xml:space="preserve"><value>Eigenes Datenblatt</value></data>
   <data name="Type_property" xml:space="preserve"><value>Immobilie</value></data>
   <data name="Type_safeDeposit" xml:space="preserve"><value>Schließfach</value></data>
   <data name="Type_task" xml:space="preserve"><value>Aufgabe</value></data>

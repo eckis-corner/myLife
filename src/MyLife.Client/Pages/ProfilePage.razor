@@ -1,0 +1,322 @@
+@page "/account/profile"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using Microsoft.AspNetCore.Components.Forms
+@inject IStringLocalizer<SharedResource> L
+@inject BrowserFiles Files
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["ProfileTitle"]</PageTitle>
+
+@*
+    Eigenes Datenblatt: Name, Vorname und Bild als verschlüsselter Eintrag „profile“ im Bereich 0 (höchstens einer je Tresor).
+    Das Bild ist ein Dokument an diesem Eintrag; es gilt das neueste Bild, ein neues legt das alte in den Papierkorb.
+*@
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["ProfileTitle"]</MudText>
+    <MudText Typo="Typo.body1">@L["ProfileIntro"]</MudText>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else
+    {
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudGrid Spacing="4">
+                <MudItem xs="12" sm="4" Class="d-flex flex-column align-center gap-2">
+                    @if (_pictureUrl is not null)
+                    {
+                        <img src="@_pictureUrl" alt="@L["ProfilePicture"]" class="mylife-profile-picture" data-testid="profile-picture" />
+                    }
+                    else
+                    {
+                        <div class="mylife-profile-picture mylife-profile-picture--empty" role="img" aria-label="@L["ProfilePictureNone"]">
+                            @if (Initials is { Length: > 0 } initials)
+                            {
+                                <span>@initials</span>
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Outlined.Person" Size="Size.Large" />
+                            }
+                        </div>
+                    }
+
+                    @if (_item is null)
+                    {
+                        <MudText Typo="Typo.caption" Class="mylife-muted" Align="Align.Center">@L["ProfilePictureSaveFirst"]</MudText>
+                    }
+                    else
+                    {
+                        <InputFile id="@_pictureInputId" class="mylife-hidden-input" OnChange="UploadPictureAsync" accept="@string.Join(",", PictureTypes)"
+                                   data-testid="profile-picture-input" />
+                        <MudButton HtmlTag="label" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.AddAPhoto"
+                                   for="@_pictureInputId" Disabled="_busy">@L["ProfilePictureChoose"]</MudButton>
+                        @if (_picture is not null)
+                        {
+                            <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Delete" Disabled="_busy"
+                                       OnClick="RemovePictureAsync" data-testid="profile-picture-remove">@L["ProfilePictureRemove"]</MudButton>
+                        }
+                        <MudText Typo="Typo.caption" Class="mylife-muted" Align="Align.Center">@L["ProfilePictureLimit", MaxPictureBytes / 1024 / 1024]</MudText>
+                    }
+                </MudItem>
+
+                <MudItem xs="12" sm="8">
+                    <MudStack Spacing="3">
+                        @if (_conflict)
+                        {
+                            <MudAlert Severity="Severity.Warning">
+                                @L["VaultError_vault-conflict"]
+                                <MudButton Variant="Variant.Text" Color="Color.Warning" OnClick="ReloadAsync" Class="ml-2">@L["Reload"]</MudButton>
+                            </MudAlert>
+                        }
+                        <MudTextField T="string" @bind-Value="_lastName" Label="@L["Field_lastName"]" Variant="Variant.Outlined" Required MaxLength="200"
+                                      Error="_lastNameError" ErrorText="@L["FieldError_required"]" data-testid="profile-last-name" />
+                        <MudTextField T="string" @bind-Value="_firstName" Label="@L["Field_firstName"]" Variant="Variant.Outlined" MaxLength="200"
+                                      data-testid="profile-first-name" />
+                        <MudStack Row Justify="Justify.FlexEnd" Spacing="2">
+                            @if (_item is not null)
+                            {
+                                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.Description" Href="@($"object/{_item.Id}")">@L["ProfileOpenDatasheet"]</MudButton>
+                            }
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" Disabled="_busy" OnClick="SaveAsync"
+                                       data-testid="profile-save">@L["Save"]</MudButton>
+                        </MudStack>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    internal const string TypeKey = "profile";
+
+    /// <summary>Profilbilder sind klein; 5 MB reichen auch für Fotos vom Smartphone.</summary>
+    internal const long MaxPictureBytes = 5L * 1024 * 1024;
+
+    internal static readonly string[] PictureTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    private readonly string _pictureInputId = $"profile-picture-{Guid.NewGuid():N}";
+    private VaultItem? _item;
+    private VaultFile? _picture;
+    private Guid? _loadedPictureId;
+    private string? _pictureUrl;
+    private string? _lastName;
+    private string? _firstName;
+    private bool _lastNameError;
+    private bool _formFilled;
+    private bool _busy;
+    private bool _conflict;
+
+    private string Initials =>
+        string.Concat(new[] { _firstName, _lastName }.Where(n => !string.IsNullOrWhiteSpace(n)).Select(n => char.ToUpperInvariant(n!.Trim()[0])));
+
+    /// <summary>Das eigene Datenblatt: der älteste nicht gelöschte Eintrag vom Typ „profile“.</summary>
+    internal static VaultItem? FindProfile(VaultService vault) =>
+        vault.Current.Where(i => i.Type.Key == TypeKey).OrderBy(i => i.CreatedAt).FirstOrDefault();
+
+    /// <summary>Das aktuelle Bild: das neueste nicht gelöschte Bild-Dokument am Eintrag.</summary>
+    internal static VaultFile? FindPicture(VaultService vault, VaultItem? item) =>
+        item is null
+            ? null
+            : vault.FilesOf(item.Id).Where(f => !f.IsDeleted && IsPicture(f.Metadata.ContentType)).OrderByDescending(f => f.CreatedAt).FirstOrDefault();
+
+    internal static bool IsPicture(string? contentType) => PictureTypes.Contains(contentType, StringComparer.OrdinalIgnoreCase);
+
+    protected override void OnVaultReady()
+    {
+        _item = FindProfile(Vault);
+        if (!_formFilled)
+        {
+            FillForm();
+        }
+
+        _picture = FindPicture(Vault, _item);
+        if (_picture?.Id != _loadedPictureId)
+        {
+            _ = ShowPictureAsync(_picture);
+        }
+    }
+
+    private void FillForm()
+    {
+        _lastName = _item?.Payload.Get("lastName");
+        _firstName = _item?.Payload.Get("firstName");
+        _formFilled = true;
+    }
+
+    private async Task ShowPictureAsync(VaultFile? picture)
+    {
+        _loadedPictureId = picture?.Id;
+        var old = _pictureUrl;
+        string? url = null;
+        if (picture is not null)
+        {
+            try
+            {
+                url = await Files.CreateUrlAsync(await Vault.DownloadAsync(picture), picture.Metadata.ContentType);
+            }
+            catch (Exception exception) when (exception is VaultException or HttpRequestException or System.Security.Cryptography.CryptographicException or Microsoft.JSInterop.JSException)
+            {
+                Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+            }
+        }
+
+        if (_loadedPictureId != picture?.Id)
+        {
+            // Inzwischen gilt ein anderes Bild; dieses wird nicht mehr gebraucht.
+            await RevokeAsync(url);
+            return;
+        }
+
+        _pictureUrl = url;
+        await RevokeAsync(old);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task SaveAsync()
+    {
+        _lastNameError = string.IsNullOrWhiteSpace(_lastName);
+        if (_lastNameError)
+        {
+            return;
+        }
+
+        var payload = _item?.Payload.Clone() ?? new VaultPayload();
+        payload.Set("lastName", _lastName!.Trim());
+        payload.Set("firstName", string.IsNullOrWhiteSpace(_firstName) ? null : _firstName.Trim());
+        payload.Title = $"{_firstName?.Trim()} {_lastName.Trim()}".Trim();
+
+        _busy = true;
+        _conflict = false;
+        try
+        {
+            if (_item is null)
+            {
+                _item = await Vault.CreateAsync(TypeKey, payload);
+            }
+            else
+            {
+                await Vault.UpdateAsync(_item, payload, _item.Status);
+            }
+
+            Snackbar.Add(L["Saved"], Severity.Success);
+        }
+        catch (VaultException exception) when (exception.Message == VaultErrors.Conflict)
+        {
+            _conflict = true;
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task ReloadAsync()
+    {
+        _conflict = false;
+        await Vault.ReloadAsync();
+        _item = FindProfile(Vault);
+        FillForm();
+    }
+
+    private async Task UploadPictureAsync(InputFileChangeEventArgs args)
+    {
+        var file = args.File;
+        if (_item is null || file.Size > MaxPictureBytes || !IsPicture(file.ContentType))
+        {
+            Snackbar.Add(L["ProfilePictureInvalid", MaxPictureBytes / 1024 / 1024], Severity.Error);
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            var previous = Vault.FilesOf(_item.Id).Where(f => !f.IsDeleted && IsPicture(f.Metadata.ContentType)).ToList();
+            var metadata = new DocumentMetadata
+            {
+                Label = L["ProfilePicture"],
+                FileName = file.Name,
+                ContentType = file.ContentType,
+                Size = file.Size,
+                Date = DateOnly.FromDateTime(DateTime.Today),
+            };
+            await using (var stream = file.OpenReadStream(MaxPictureBytes))
+            {
+                await Vault.UploadAsync(_item.Id, stream, metadata);
+            }
+
+            // Das alte Bild kommt in den Papierkorb und lässt sich von dort zurückholen.
+            foreach (var old in previous)
+            {
+                await Vault.DeleteFileAsync(old);
+            }
+
+            Snackbar.Add(L["ProfilePictureSaved"], Severity.Success);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException or IOException or System.Security.Cryptography.CryptographicException or Microsoft.JSInterop.JSException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}", VaultLimits.MaxDocumentBytes / 1024 / 1024], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RemovePictureAsync()
+    {
+        if (_picture is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            await Vault.DeleteFileAsync(_picture);
+            Snackbar.Add(L["ProfilePictureRemoved"], Severity.Success);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RevokeAsync(string? url)
+    {
+        if (url is not null)
+        {
+            try
+            {
+                await Files.RevokeUrlAsync(url);
+            }
+            catch (Microsoft.JSInterop.JSDisconnectedException)
+            {
+                // Die Seite ist schon weg.
+            }
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _ = RevokeAsync(_pictureUrl);
+        }
+    }
+}
