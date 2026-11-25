@@ -1,0 +1,52 @@
+@* Druckbares Schlüsselblatt zum Notfallpaket: 24 Wörter, QR-Code, für wen und von wann. Beim Drucken bleibt nur
+   dieser Bereich sichtbar (app.css). Es gehört getrennt vom Paket verwahrt (Schließfach, Notar). *@
+@inject IStringLocalizer<SharedResource> L
+
+<MudPaper Class="mylife-print pa-4" Outlined data-testid="package-key-sheet">
+    <MudStack Spacing="3">
+        <MudText Typo="Typo.h5" HtmlTag="h2">@L["PackageSheetTitle"]</MudText>
+
+        <MudGrid Spacing="2">
+            <MudItem xs="12" sm="4"><MudText Typo="Typo.body2"><b>@L["PackageSheetOwner"]:</b> @OwnerName</MudText></MudItem>
+            <MudItem xs="12" sm="5"><MudText Typo="Typo.body2"><b>@L["PackageSheetFile"]:</b> @FileName</MudText></MudItem>
+            <MudItem xs="12" sm="3"><MudText Typo="Typo.body2"><b>@L["PackageSheetCreated"]:</b> @CreatedAt.ToLocalTime().ToString("d", System.Globalization.CultureInfo.CurrentCulture)</MudText></MudItem>
+        </MudGrid>
+
+        <MudText Typo="Typo.subtitle2">@L["PackageSheetWords"]</MudText>
+        <MudGrid Spacing="1" data-testid="package-words">
+            @for (var i = 0; i < Words.Count; i++)
+            {
+                var number = i + 1;
+                var word = Words[i];
+                <MudItem xs="6" sm="4" md="3">
+                    <MudText Typo="Typo.body1" Class="mylife-recovery-word">
+                        <span class="mylife-recovery-number">@number.</span> @word
+                    </MudText>
+                </MudItem>
+            }
+        </MudGrid>
+
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+            <MudImage Src="@_qrCode" Alt="@L["PackageSheetWords"]" Width="160" Height="160" />
+            <MudStack Spacing="2" Style="flex: 1; min-width: 240px;">
+                <MudText Typo="Typo.body2">@L["PackageSheetInstructions", FileName]</MudText>
+                <MudAlert Severity="Severity.Error" Dense Variant="Variant.Outlined">@L["PackageSheetWarning"]</MudAlert>
+            </MudStack>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+@code {
+    private string? _qrCode;
+
+    [Parameter, EditorRequired] public IReadOnlyList<string> Words { get; set; } = [];
+
+    [Parameter, EditorRequired] public string OwnerName { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public string FileName { get; set; } = string.Empty;
+
+    [Parameter] public DateTimeOffset CreatedAt { get; set; }
+
+    // Der QR-Code enthält die Wörter selbst: Mit dem Smartphone gescannt, lassen sie sich in den Viewer kopieren.
+    protected override void OnParametersSet() => _qrCode = QrCodeService.ToDataUri(string.Join(' ', Words));
+}

@@ -26,6 +26,12 @@ public interface IMyLifeCrypto : IAsyncDisposable
     /// <summary>Schlüssel aus dem Recovery-Key (32 Byte), HKDF mit <c>mylife/recovery</c>. Kann nur Schlüssel ver- und entpacken.</summary>
     Task<CryptoKeyHandle> ImportRecoveryKeyAsync(byte[] recoveryKey);
 
+    /// <summary>
+    /// Schlüssel eines Notfallpakets aus 32 Byte (gedruckt als 24 Wörter), HKDF mit <c>mylife/package</c>. Kann nur
+    /// Daten ver- und entschlüsseln (M2.7).
+    /// </summary>
+    Task<CryptoKeyHandle> ImportPackageKeyAsync(byte[] packageKey);
+
     /// <summary>Prüfwert des Recovery-Keys für den Server (32 Byte), HKDF mit <c>mylife/recovery-auth</c>.</summary>
     Task<byte[]> DeriveRecoveryAuthHashAsync(byte[] recoveryKey);
 

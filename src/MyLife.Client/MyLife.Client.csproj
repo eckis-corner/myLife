@@ -15,6 +15,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Vorlage des OfflineViewers (Notfallpaket, M2.7); das Paket entsteht im Browser. -->
+    <EmbeddedResource Include="..\MyLife.OfflineViewer\OfflineViewer.html" LogicalName="MyLife.Client.OfflineViewer.html" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\MyLife.Shared\MyLife.Shared.csproj" />
     <ProjectReference Include="..\MyLife.Crypto\MyLife.Crypto.csproj" />
   </ItemGroup>

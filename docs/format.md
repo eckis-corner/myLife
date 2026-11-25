@@ -68,3 +68,40 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601.
 ```json
 { "label": "Police 2026", "fileName": "police.pdf", "contentType": "application/pdf", "size": 123456, "date": "2026-01-15" }
 ```
+
+## Notfallpaket (seit M2.7)
+
+Das Notfallpaket ist eine einzelne HTML-Datei: der OfflineViewer (`src/MyLife.OfflineViewer/OfflineViewer.html`) mit
+zwei eingebetteten JSON-Blöcken. Es braucht keinen Server und kein Netz. Geöffnet wird es mit den 24 Wörtern vom
+gedruckten Schlüsselblatt.
+
+- `<script type="application/json" id="mylife-words">`: die englische BIP-39-Wortliste (2048 Wörter).
+- `<script type="application/json" id="mylife-package">`: der Kopf mit dem Chiffrat.
+
+```json
+{ "format": "mylife-package", "version": 1, "cryptoFormat": 1, "language": "de", "createdAt": "2026-11-25T10:00:00+01:00", "data": "…" }
+```
+
+**Entschlüsseln:**
+
+1. Die 24 Wörter nach BIP-39 in 32 Byte `pk` wandeln und die Prüfsumme prüfen (erstes Byte von SHA-256).
+2. `pkKey = HKDF-SHA-256(pk, info "mylife/package")`, siehe [kryptoformat.md](kryptoformat.md).
+3. `data` (Base64) ist ein Datensatz der Art `Data` mit dem Kontext `package`.
+
+Der Klartext ist JSON. Datenblätter stehen darin fertig beschriftet in der Sprache beim Erzeugen, damit der Viewer kein
+Schema kennen muss:
+
+```json
+{
+  "format": "mylife-package-content", "version": 1, "owner": "Daniel", "createdAt": "…", "language": "de",
+  "areas": [ {
+    "area": 1, "title": "Bankkonten & Depots", "text": "…",
+    "items": [ {
+      "title": "Girokonto", "kind": "Bankkonto",
+      "rows": [ { "label": "IBAN", "value": "DE89 3704 0044 0532 0130 00" }, { "label": "Notizen", "value": "…", "multiline": true } ],
+      "links": ["…"],
+      "documents": [ { "label": "Kontoauszug", "fileName": "auszug.pdf", "contentType": "application/pdf", "size": 12345, "data": "… (Base64, Klartext der Datei)" } ]
+    } ]
+  } ]
+}
+```

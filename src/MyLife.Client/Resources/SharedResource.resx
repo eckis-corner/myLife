@@ -189,6 +189,7 @@
   <data name="Audit_emergency-settings-changed" xml:space="preserve"><value>Fristen geändert</value></data>
   <data name="Audit_emergency-waiting" xml:space="preserve"><value>Wartezeit begonnen</value></data>
   <data name="Audit_export-json" xml:space="preserve"><value>JSON-Export</value></data>
+  <data name="Audit_export-package" xml:space="preserve"><value>Notfallpaket erstellt</value></data>
   <data name="Audit_export-pdf" xml:space="preserve"><value>PDF-Export</value></data>
   <data name="Audit_export-print" xml:space="preserve"><value>Druckansicht gedruckt</value></data>
   <data name="Audit_import-json" xml:space="preserve"><value>JSON-Import</value></data>
@@ -928,6 +929,27 @@
   <data name="Option_wish_reset" xml:space="preserve"><value>zurücksetzen</value></data>
   <data name="Option_wish_sell" xml:space="preserve"><value>verkaufen</value></data>
   <data name="Option_wish_takeOver" xml:space="preserve"><value>übernehmen</value></data>
+  <data name="PackageCreate" xml:space="preserve"><value>Paket erzeugen und speichern</value></data>
+  <data name="PackageDone" xml:space="preserve"><value>Die Datei {0} ist gespeichert: {1} Einträge, {2} Dokumente.</value></data>
+  <data name="PackageFileName" xml:space="preserve"><value>myLife-Notfallpaket</value></data>
+  <data name="PackageHow" xml:space="preserve"><value>Alles entsteht hier in deinem Browser. Der Server sieht weder den Inhalt noch den Schlüssel.</value></data>
+  <data name="PackageIntro" xml:space="preserve"><value>Das Notfallpaket besteht aus zwei Teilen: einer HTML-Datei mit deinen Datenblättern und Dokumenten, verschlüsselt, und einem Schlüsselblatt mit 24 Wörtern zum Ausdrucken. Gib die Datei deiner Familie, etwa auf einem USB-Stick, und lege das Blatt an einen anderen sicheren Ort, etwa ins Schließfach oder zum Notar. Nur beides zusammen öffnet das Paket, in jedem aktuellen Browser, ohne Server und ohne Internet.</value></data>
+  <data name="PackageNew" xml:space="preserve"><value>Weiteres Paket erstellen</value></data>
+  <data name="PackageOpen" xml:space="preserve"><value>Notfallpaket erstellen</value></data>
+  <data name="PackagePrintSheet" xml:space="preserve"><value>Schlüsselblatt drucken</value></data>
+  <data name="PackageSaveAgain" xml:space="preserve"><value>Datei erneut speichern</value></data>
+  <data name="PackageSheetCreated" xml:space="preserve"><value>Erstellt am</value></data>
+  <data name="PackageSheetFile" xml:space="preserve"><value>Datei</value></data>
+  <data name="PackageSheetInstructions" xml:space="preserve"><value>So öffnest du das Paket: Die Datei {0} in einem Browser öffnen (Doppelklick), die 24 Wörter in dieser Reihenfolge eingeben und „Öffnen“ wählen. Es braucht weder Internet noch ein Konto.</value></data>
+  <data name="PackageSheetOwner" xml:space="preserve"><value>Von</value></data>
+  <data name="PackageSheetTitle" xml:space="preserve"><value>myLife – Schlüssel zum Notfallpaket</value></data>
+  <data name="PackageSheetWarning" xml:space="preserve"><value>Bewahre dieses Blatt getrennt von der Datei auf. Wer beides hat, kann alles im Paket lesen.</value></data>
+  <data name="PackageSheetWords" xml:space="preserve"><value>Die 24 Wörter</value></data>
+  <data name="PackageSnapshot" xml:space="preserve"><value>Das Paket ist ein Schnappschuss von heute. Erstelle nach wichtigen Änderungen ein neues und tausche Datei und Blatt gemeinsam aus; jedes Paket hat seinen eigenen Schlüssel.</value></data>
+  <data name="PackageTeaser" xml:space="preserve"><value>Eine einzelne Datei für deine Familie, die auch ohne myLife-Server und ohne Internet funktioniert. Öffnen lässt sie sich nur mit einem gedruckten Schlüsselblatt, das du getrennt aufbewahrst.</value></data>
+  <data name="PackageTitle" xml:space="preserve"><value>Notfallpaket</value></data>
+  <data name="PackageWithDocuments" xml:space="preserve"><value>Dokumente einschließen ({0} MB)</value></data>
+  <data name="PackageWordsOnce" xml:space="preserve"><value>Drucke jetzt das Schlüsselblatt. Die 24 Wörter siehst du nur hier; myLife speichert sie nirgends. Ohne sie lässt sich das Paket nicht öffnen.</value></data>
   <data name="PagerInfo" xml:space="preserve"><value>{first_item}–{last_item} von {all_items}</value></data>
   <data name="PdfCreate" xml:space="preserve"><value>PDF erstellen</value></data>
   <data name="PdfPage" xml:space="preserve"><value>Seite {0} von {1}</value></data>

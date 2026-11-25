@@ -43,6 +43,7 @@ builder.Services.AddScoped<BrowserFiles>();
 builder.Services.AddScoped<IPdfCrypto, JsPdfCrypto>();
 builder.Services.AddScoped<EmergencyFolder>();
 builder.Services.AddScoped<VaultExport>();
+builder.Services.AddScoped<EmergencyPackage>();
 builder.Services.AddScoped<MyLifeAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(services => services.GetRequiredService<MyLifeAuthenticationStateProvider>());
 builder.Services.AddAuthorizationCore();

@@ -95,6 +95,18 @@
                     </MudStack>
                 </MudPaper>
             </MudItem>
+            <MudItem xs="12">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="2">
+                        <MudStack Spacing="1" Style="flex: 1; min-width: 260px;">
+                            <MudText Typo="Typo.h6" HtmlTag="h2">@L["PackageTitle"]</MudText>
+                            <MudText Typo="Typo.body2">@L["PackageTeaser"]</MudText>
+                        </MudStack>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Inventory2" Href="export/package"
+                                   data-testid="export-package">@L["PackageOpen"]</MudButton>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
         </MudGrid>
 
         @if (_busy)

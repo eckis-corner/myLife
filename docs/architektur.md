@@ -62,7 +62,7 @@ flowchart LR
 | **MyLife.Crypto** | C#-Fassade über `myLife.crypto.js`. Dazu eine .NET-Referenzimplementierung derselben Formate, die für Tests und für das Kommandozeilen-Werkzeug `mylife-decrypt` dient. |
 | **MyLife.Shared** | DTOs, **Objekttyp-Schemata** (Bereiche, Felder, Auswahllisten, Wünsche, Verweise), Formatversionen, Validierung |
 | **MyLife.Server** | ASP.NET Core: liefert den WASM-Client aus (Blazor Web App, globales Interactive WebAssembly, **ohne Prerendering**) und stellt die REST-API bereit. Außerdem Authentifizierung, EF Core mit Npgsql, Audit-Log, Mail-Outbox und die Hintergrunddienste Notfallzugang, Erinnerungen und Sicherung. |
-| **MyLife.OfflineViewer** | Eine einzelne HTML-Datei ohne Netzwerkzugriff, die ein Export-Paket entschlüsselt und anzeigt (4b) |
+| **MyLife.OfflineViewer** | Eine einzelne HTML-Datei ohne Netzwerkzugriff, die ein Notfallpaket entschlüsselt und anzeigt (4b). Kein eigenes Projekt: Der Client bettet die Datei als Vorlage ein und füllt sie beim Erzeugen (M2.7). |
 | **Tests** | xUnit (Server, Domänenlogik, Zustandsautomat mit simulierter Uhr), bUnit (Komponenten), Playwright (Krypto im echten Browser, Ende-zu-Ende-Abläufe), Kreuztests JS gegen .NET |
 
 ### Warum Blazor WebAssembly (7)
@@ -257,10 +257,10 @@ Er kennt die E-Mail-Adressen und Anzeigenamen der Nutzer, wer wessen Vertrauensp
 
 | Export | Inhalt | Schutz |
 | --- | --- | --- |
-| **JSON-Export** (offenes Format) | Alle Objekte, Dokumente und Schlüsselumschläge mit dokumentiertem Schema (`docs/format.md`) | Mit dem Tresorschlüssel. Entschlüsseln geht mit Master-Passwort oder Recovery-Key, auch mit `mylife-decrypt` oder dem OfflineViewer. |
+| **JSON-Export** (offenes Format) | Alle Objekte, Dokumente und Schlüsselumschläge mit dokumentiertem Schema (`docs/format.md`) | Mit dem Tresorschlüssel. Entschlüsseln geht mit Master-Passwort oder Recovery-Key, auch mit `mylife-decrypt` (M3). Der OfflineViewer öffnet nur Notfallpakete (110). |
 | **Datenblatt** (29) | Ein Objekt | Druck aus dem Browser oder PDF mit optionalem Passwort |
 | **Notfallordner-PDF** (20) | Alle oder ausgewählte Bereiche: Inhaltsverzeichnis, Checkliste, Datenblätter, Liste der Dokumente | PDF mit AES-256-Passwortschutz (qpdf-wasm im Browser). Alternativ eine druckfertige HTML-Ansicht ohne Passwort für den Papierordner. |
-| **Notfallpaket für Vertrauenspersonen** (4b) | OfflineViewer.html und Chiffrat | Verschlüsselt mit einem eigenen **Paketschlüssel**. Den Schlüssel gibt es nur ausgedruckt (Schließfach, Notar). Das Paket bei der Familie nützt ohne den Ausdruck nichts, und der Ausdruck ohne das Paket ebenfalls nicht. |
+| **Notfallpaket für Vertrauenspersonen** (4b) | OfflineViewer.html mit den ausgewählten Bereichen als fertige Datenblätter, optional mit Dokumenten (107) | Verschlüsselt mit einem eigenen **Paketschlüssel** (24 Wörter, 108). Den Schlüssel gibt es nur ausgedruckt (Schließfach, Notar). Das Paket bei der Familie nützt ohne den Ausdruck nichts, und der Ausdruck ohne das Paket ebenfalls nicht. |
 | **Server-Sicherung** (5) | `pg_dump`, Dokumente und Data-Protection-Schlüssel, täglich, als Generationen | Die Inhalte sind ohnehin Chiffrat. Zusätzlich verschlüsselt mit einem Sicherungsschlüssel aus der Konfiguration. Ablage im Volume `backup`, das Synology-Backup übernimmt von dort. |
 
 ## 8. Betrieb auf der Synology DS1520+

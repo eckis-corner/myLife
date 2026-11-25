@@ -189,6 +189,7 @@
   <data name="Audit_emergency-settings-changed" xml:space="preserve"><value>Deadlines changed</value></data>
   <data name="Audit_emergency-waiting" xml:space="preserve"><value>Waiting period started</value></data>
   <data name="Audit_export-json" xml:space="preserve"><value>JSON export</value></data>
+  <data name="Audit_export-package" xml:space="preserve"><value>Emergency package created</value></data>
   <data name="Audit_export-pdf" xml:space="preserve"><value>PDF export</value></data>
   <data name="Audit_export-print" xml:space="preserve"><value>Print view printed</value></data>
   <data name="Audit_import-json" xml:space="preserve"><value>JSON import</value></data>
@@ -928,6 +929,27 @@
   <data name="Option_wish_reset" xml:space="preserve"><value>reset</value></data>
   <data name="Option_wish_sell" xml:space="preserve"><value>sell</value></data>
   <data name="Option_wish_takeOver" xml:space="preserve"><value>take over</value></data>
+  <data name="PackageCreate" xml:space="preserve"><value>Create and save package</value></data>
+  <data name="PackageDone" xml:space="preserve"><value>The file {0} has been saved: {1} entries, {2} documents.</value></data>
+  <data name="PackageFileName" xml:space="preserve"><value>myLife-emergency-package</value></data>
+  <data name="PackageHow" xml:space="preserve"><value>Everything is created here in your browser. The server sees neither the content nor the key.</value></data>
+  <data name="PackageIntro" xml:space="preserve"><value>The emergency package has two parts: an HTML file with your datasheets and documents, encrypted, and a key sheet with 24 words to print. Give the file to your family, for example on a USB stick, and keep the sheet in another safe place, such as a safe deposit box or with a notary. Only both together open the package, in any current browser, without a server and without internet.</value></data>
+  <data name="PackageNew" xml:space="preserve"><value>Create another package</value></data>
+  <data name="PackageOpen" xml:space="preserve"><value>Create emergency package</value></data>
+  <data name="PackagePrintSheet" xml:space="preserve"><value>Print key sheet</value></data>
+  <data name="PackageSaveAgain" xml:space="preserve"><value>Save file again</value></data>
+  <data name="PackageSheetCreated" xml:space="preserve"><value>Created on</value></data>
+  <data name="PackageSheetFile" xml:space="preserve"><value>File</value></data>
+  <data name="PackageSheetInstructions" xml:space="preserve"><value>How to open the package: open the file {0} in a browser (double-click), enter the 24 words in this order and choose "Open". No internet and no account are needed.</value></data>
+  <data name="PackageSheetOwner" xml:space="preserve"><value>From</value></data>
+  <data name="PackageSheetTitle" xml:space="preserve"><value>myLife – Key to the emergency package</value></data>
+  <data name="PackageSheetWarning" xml:space="preserve"><value>Keep this sheet separate from the file. Anyone who has both can read everything in the package.</value></data>
+  <data name="PackageSheetWords" xml:space="preserve"><value>The 24 words</value></data>
+  <data name="PackageSnapshot" xml:space="preserve"><value>The package is a snapshot of today. After important changes, create a new one and replace file and sheet together; every package has its own key.</value></data>
+  <data name="PackageTeaser" xml:space="preserve"><value>A single file for your family that works even without the myLife server and without internet. It can only be opened with a printed key sheet that you keep separately.</value></data>
+  <data name="PackageTitle" xml:space="preserve"><value>Emergency package</value></data>
+  <data name="PackageWithDocuments" xml:space="preserve"><value>Include documents ({0} MB)</value></data>
+  <data name="PackageWordsOnce" xml:space="preserve"><value>Print the key sheet now. You will only see the 24 words here; myLife does not store them anywhere. Without them the package cannot be opened.</value></data>
   <data name="PagerInfo" xml:space="preserve"><value>{first_item}–{last_item} of {all_items}</value></data>
   <data name="PdfCreate" xml:space="preserve"><value>Create PDF</value></data>
   <data name="PdfPage" xml:space="preserve"><value>Page {0} of {1}</value></data>

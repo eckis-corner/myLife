@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<!--
+  myLife – OfflineViewer für ein Notfallpaket (M2.7, Architektur 7, Entscheidung 4b).
+  Eine einzelne Datei ohne Netzwerkzugriff: Sie entschlüsselt das eingebettete Paket mit den 24 Wörtern vom
+  gedruckten Schlüsselblatt und zeigt den Inhalt nur zum Lesen. Format: docs/format.md, Abschnitt „Notfallpaket“.
+  Diese Vorlage füllt der Browser beim Erzeugen des Pakets: Wortliste und Paket stehen danach in den beiden
+  Skript-Blöcken unten. Quelltext: https://github.com/eckis-corner/myLife (AGPL-3.0).
+-->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; frame-src blob:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>myLife – Notfallpaket</title>
+<style>
+  :root { --ink: #1f2933; --muted: #5f6b76; --line: #d8dee4; --accent: #2f5d62; --paper: #ffffff; --bg: #f4f6f8; --error: #b3261e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 18px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: var(--bg); }
+  header { background: var(--accent); color: #fff; padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 20px; margin: 0; font-weight: 600; flex: 1; }
+  header button { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.6); }
+  main { max-width: 960px; margin: 0 auto; padding: 24px; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; }
+  h2 { font-size: 26px; margin: 0 0 4px; }
+  h3 { font-size: 21px; margin: 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: 15px; }
+  textarea { width: 100%; min-height: 140px; font: 18px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; padding: 12px; border: 1px solid var(--line); border-radius: 6px; }
+  button, .button { font: inherit; font-size: 16px; padding: 8px 18px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; text-decoration: none; display: inline-block; }
+  button.secondary, .button.secondary { background: transparent; color: var(--accent); }
+  button:disabled { opacity: .6; cursor: default; }
+  .error { color: var(--error); font-weight: 600; }
+  nav.areas { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 24px; }
+  nav.areas a { border: 1px solid var(--line); background: var(--paper); border-radius: 16px; padding: 4px 14px; color: var(--ink); text-decoration: none; font-size: 16px; }
+  section.area { margin-bottom: 32px; }
+  .item { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+  th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  th { width: 34%; font-weight: 600; color: var(--muted); }
+  td.multiline { white-space: pre-wrap; }
+  ul.docs { list-style: none; padding: 0; margin: 10px 0 0; }
+  ul.docs li { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 4px 0; }
+  .hidden { display: none !important; }
+  @media print {
+    header button, nav.areas, .noprint, ul.docs a { display: none !important; }
+    body { background: #fff; font-size: 12pt; }
+    .card { border: none; padding: 0; }
+    section.area { break-before: page; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">myLife – Notfallpaket</h1>
+  <button type="button" id="print" class="hidden">Drucken</button>
+</header>
+<main>
+  <div id="unlock" class="card">
+    <h2 id="unlock-title"></h2>
+    <p id="unlock-text" class="muted"></p>
+    <p id="unlock-date" class="small muted"></p>
+    <label for="words" id="words-label" class="small"></label>
+    <textarea id="words" autocomplete="off" autocapitalize="none" spellcheck="false"></textarea>
+    <p><button type="button" id="open"></button></p>
+    <p id="message" class="error" role="alert"></p>
+    <p id="offline-note" class="small muted"></p>
+  </div>
+  <div id="content" class="hidden"></div>
+</main>
+
+<script type="application/json" id="mylife-words">null</script>
+<script type="application/json" id="mylife-package">null</script>
+<script id="mylife-core">
+"use strict";
+// Kern ohne Oberfläche: Wörter prüfen und Paket entschlüsseln. Die Tests führen genau diesen Block in Node.js aus.
+globalThis.MyLifeViewer = (function () {
+  const failWith = (code, ...args) => { const error = new Error(code); error.code = code; error.args = args; throw error; };
+
+  /** Index eines Worts; in der BIP-39-Liste bestimmen die ersten vier Buchstaben das Wort eindeutig. */
+  function wordIndex(wordList, word) {
+    const exact = wordList.indexOf(word);
+    if (exact >= 0 || word.length < 4) return exact;
+    const byPrefix = wordList.filter(w => w.slice(0, 4) === word.slice(0, 4));
+    return byPrefix.length === 1 ? wordList.indexOf(byPrefix[0]) : -1;
+  }
+
+  /** 24 Wörter nach BIP-39 → 32 Byte; Nummern, Satzzeichen und Groß-/Kleinschreibung sind egal. */
+  async function decodeWords(text, wordList) {
+    const words = String(text).toLowerCase().split(/[\s,;]+/)
+      .map(w => w.replace(/^\d+[.):]?/, "").replace(/[^a-z]/g, "")).filter(w => w.length > 0);
+    if (words.length !== 24) failWith("wordCount", words.length);
+    let bits = "";
+    for (let i = 0; i < words.length; i++) {
+      const index = wordIndex(wordList, words[i]);
+      if (index < 0) failWith("unknownWord", words[i], i + 1);
+      bits += index.toString(2).padStart(11, "0");
+    }
+    const entropy = new Uint8Array(32);
+    for (let i = 0; i < 32; i++) entropy[i] = parseInt(bits.slice(i * 8, i * 8 + 8), 2);
+    const hash = new Uint8Array(await crypto.subtle.digest("SHA-256", entropy));
+    if (hash[0] !== parseInt(bits.slice(256), 2)) failWith("checksum");
+    return entropy;
+  }
+
+  function fromBase64(text) {
+    const binary = atob(text);
+    const result = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) result[i] = binary.charCodeAt(i);
+    return result;
+  }
+
+  /** HKDF-SHA-256(info "mylife/package") → AES-256-GCM; Datensatz 0x01 | 0x01 | Nonce (12) | Chiffrat | Tag, AAD 0x01 | 0x01 | "package". */
+  async function decrypt(pack, entropy) {
+    const encoder = new TextEncoder();
+    const base = await crypto.subtle.importKey("raw", entropy, "HKDF", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey(
+      { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(0), info: encoder.encode("mylife/package") },
+      base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    entropy.fill(0);
+    const blob = fromBase64(pack.data);
+    if (blob.length < 30 || blob[0] !== 1 || blob[1] !== 1) failWith("empty");
+    const aad = new Uint8Array([1, 1, ...encoder.encode("package")]);
+    let plain;
+    try {
+      plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: blob.subarray(2, 14), additionalData: aad, tagLength: 128 }, key, blob.subarray(14));
+    } catch {
+      failWith("wrongKey");
+    }
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+
+  async function open(pack, text, wordList) {
+    if (!pack || pack.format !== "mylife-package" || pack.version !== 1) failWith("empty");
+    return decrypt(pack, await decodeWords(text, wordList));
+  }
+
+  return { decodeWords, open, fromBase64 };
+})();
+</script>
+<script>
+"use strict";
+(function () {
+  const TEXTS = {
+    de: {
+      title: "myLife – Notfallpaket",
+      unlockTitle: "Notfallpaket öffnen",
+      unlockText: "Gib die 24 Wörter vom gedruckten Schlüsselblatt ein, in der Reihenfolge des Blatts, getrennt durch Leerzeichen. Die Nummern kannst du weglassen; die ersten vier Buchstaben jedes Worts genügen.",
+      asOf: "Stand des Pakets: {0}",
+      wordsLabel: "Die 24 Wörter",
+      open: "Öffnen",
+      opening: "Wird geöffnet …",
+      offline: "Diese Datei arbeitet nur auf diesem Gerät. Sie lädt nichts aus dem Internet und schickt nichts weg.",
+      wordCount: "Es sind {0} Wörter; es müssen genau 24 sein.",
+      unknownWord: "Dieses Wort ist nicht auf der Liste: „{0}“ (Wort {1}).",
+      checksum: "Die Wörter passen nicht zusammen. Bitte prüfe sie noch einmal genau, besonders die Reihenfolge.",
+      wrongKey: "Mit diesen Wörtern lässt sich das Paket nicht öffnen. Gehört das Schlüsselblatt zu diesem Paket?",
+      noCrypto: "Dieser Browser kann das Paket nicht entschlüsseln. Bitte öffne die Datei mit einem aktuellen Chrome, Edge, Firefox oder Safari.",
+      empty: "Diese Datei enthält kein Paket.",
+      print: "Drucken",
+      intro: "Das hat {0} für den Notfall hinterlegt. Stand: {1}.",
+      documents: "Dokumente",
+      view: "Ansehen",
+      save: "Speichern",
+      linked: "Verknüpft mit",
+      nothing: "Das Paket ist leer."
+    },
+    en: {
+      title: "myLife – Emergency package",
+      unlockTitle: "Open emergency package",
+      unlockText: "Enter the 24 words from the printed key sheet, in the order of the sheet, separated by spaces. You can leave out the numbers; the first four letters of each word are enough.",
+      asOf: "Package as of: {0}",
+      wordsLabel: "The 24 words",
+      open: "Open",
+      opening: "Opening …",
+      offline: "This file works only on this device. It loads nothing from the internet and sends nothing anywhere.",
+      wordCount: "There are {0} words; there must be exactly 24.",
+      unknownWord: "This word is not on the list: \"{0}\" (word {1}).",
+      checksum: "The words do not fit together. Please check them again carefully, especially their order.",
+      wrongKey: "These words do not open the package. Does the key sheet belong to this package?",
+      noCrypto: "This browser cannot decrypt the package. Please open the file in a current Chrome, Edge, Firefox or Safari.",
+      empty: "This file contains no package.",
+      print: "Print",
+      intro: "This is what {0} left for an emergency. As of: {1}.",
+      documents: "Documents",
+      view: "View",
+      save: "Save",
+      linked: "Linked to",
+      nothing: "The package is empty."
+    }
+  };
+
+  const $ = id => document.getElementById(id);
+  const readJson = id => { try { return JSON.parse($(id).textContent); } catch { return null; } };
+  const wordList = readJson("mylife-words");
+  const pack = readJson("mylife-package");
+  const language = pack && TEXTS[pack.language] ? pack.language : (navigator.language || "de").slice(0, 2) === "en" ? "en" : "de";
+  const t = TEXTS[language];
+  const format = (text, ...values) => values.reduce((result, value, index) => result.replace(`{${index}}`, value), text);
+  const formatDate = value => new Date(value).toLocaleDateString(language, { year: "numeric", month: "long", day: "numeric" });
+
+  document.documentElement.lang = language;
+  document.title = t.title;
+  $("title").textContent = t.title;
+  $("unlock-title").textContent = t.unlockTitle;
+  $("unlock-text").textContent = t.unlockText;
+  $("words-label").textContent = t.wordsLabel;
+  $("open").textContent = t.open;
+  $("print").textContent = t.print;
+  $("offline-note").textContent = t.offline;
+  if (pack && pack.createdAt) $("unlock-date").textContent = format(t.asOf, formatDate(pack.createdAt));
+
+  const fail = message => { $("message").textContent = message; };
+  if (!pack || pack.format !== "mylife-package" || pack.version !== 1 || !Array.isArray(wordList) || wordList.length !== 2048) {
+    fail(t.empty);
+    $("open").disabled = true;
+    return;
+  }
+  if (!globalThis.crypto || !globalThis.crypto.subtle) {
+    fail(t.noCrypto);
+    $("open").disabled = true;
+    return;
+  }
+
+  // ---------- Anzeige (nur textContent, nie HTML aus dem Paket)
+
+  function element(tag, attributes, ...children) {
+    const node = document.createElement(tag);
+    for (const [name, value] of Object.entries(attributes || {})) {
+      if (value !== undefined && value !== null) node.setAttribute(name, value);
+    }
+    for (const child of children) {
+      if (child === null || child === undefined) continue;
+      node.append(typeof child === "string" ? document.createTextNode(child) : child);
+    }
+    return node;
+  }
+
+  function documentEntry(doc) {
+    const bytes = MyLifeViewer.fromBase64(doc.data);
+    const url = URL.createObjectURL(new Blob([bytes], { type: doc.contentType || "application/octet-stream" }));
+    const name = doc.label || doc.fileName;
+    const viewable = /^(application\/pdf|image\/(png|jpeg|gif|webp)|text\/plain)$/.test(doc.contentType || "");
+    return element("li", null,
+      element("span", null, name),
+      element("span", { class: "small muted" }, `${Math.max(1, Math.round(doc.size / 1024))} KB`),
+      viewable ? element("a", { class: "button secondary", href: url, target: "_blank", rel: "noopener" }, t.view) : null,
+      element("a", { class: "button secondary", href: url, download: doc.fileName }, t.save));
+  }
+
+  function render(content) {
+    const root = $("content");
+    root.replaceChildren();
+    root.append(element("div", { class: "card" },
+      element("h2", null, content.owner),
+      element("p", { class: "muted" }, format(t.intro, content.owner, formatDate(content.createdAt)))));
+    const areas = content.areas || [];
+    if (areas.length === 0) root.append(element("p", { class: "muted" }, t.nothing));
+    root.append(element("nav", { class: "areas" }, ...areas.map(a => element("a", { href: `#area-${a.area}` }, a.title))));
+    for (const area of areas) {
+      const section = element("section", { class: "area card", id: `area-${area.area}` },
+        element("h2", null, area.title),
+        area.text ? element("p", { class: "muted small" }, area.text) : null);
+      for (const item of area.items || []) {
+        const rows = (item.rows || []).map(row => element("tr", null,
+          element("th", { scope: "row" }, row.label),
+          element("td", { class: row.multiline ? "multiline" : null }, row.value)));
+        if ((item.links || []).length > 0) {
+          rows.push(element("tr", null, element("th", { scope: "row" }, t.linked), element("td", null, item.links.join(", "))));
+        }
+        section.append(element("div", { class: "item" },
+          element("h3", null, item.title),
+          element("div", { class: "small muted" }, item.kind),
+          rows.length > 0 ? element("table", null, element("tbody", null, ...rows)) : null,
+          (item.documents || []).length > 0
+            ? element("div", null, element("div", { class: "small muted" }, t.documents), element("ul", { class: "docs" }, ...item.documents.map(documentEntry)))
+            : null));
+      }
+      root.append(section);
+    }
+    $("unlock").classList.add("hidden");
+    root.classList.remove("hidden");
+    $("print").classList.remove("hidden");
+    $("title").textContent = `${t.title} – ${content.owner}`;
+  }
+
+  $("print").addEventListener("click", () => window.print());
+  $("open").addEventListener("click", async () => {
+    const button = $("open");
+    fail("");
+    button.disabled = true;
+    button.textContent = t.opening;
+    try {
+      const content = await MyLifeViewer.open(pack, $("words").value, wordList);
+      $("words").value = "";
+      render(content);
+    } catch (error) {
+      fail(error && error.code && t[error.code] ? format(t[error.code], ...(error.args || [])) : t.wrongKey);
+    } finally {
+      button.disabled = false;
+      button.textContent = t.open;
+    }
+  });
+})();
+</script>
+</body>
+</html>

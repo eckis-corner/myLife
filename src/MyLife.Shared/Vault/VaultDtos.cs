@@ -112,6 +112,7 @@ public static class AuditActions
     public const string ExportJson = "export-json";
     public const string ExportPdf = "export-pdf";
     public const string ExportPrint = "export-print";
+    public const string ExportPackage = "export-package";
     public const string ImportJson = "import-json";
     public const string TotpEnrolled = "totp-enrolled";
 
@@ -174,5 +175,5 @@ public static class AuditActions
             or VaultDeletedByTrustees;
 
     /// <summary>Was der Browser selbst melden darf.</summary>
-    public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ImportJson };
+    public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ExportPackage, ImportJson };
 }

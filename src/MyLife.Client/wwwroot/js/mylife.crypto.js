@@ -34,6 +34,7 @@ const INFO_AUTH = "mylife/auth";
 const INFO_KEK = "mylife/kek";
 const INFO_RECOVERY = "mylife/recovery";
 const INFO_RECOVERY_AUTH = "mylife/recovery-auth";
+const INFO_PACKAGE = "mylife/package";
 const INFO_ECIES = "mylife/ecies";
 
 /** Untergrenzen schützen vor einem Server, der schwache Parameter unterschiebt; Obergrenzen vor Überlast. */
@@ -55,7 +56,8 @@ const KeyType = Object.freeze({
     Wrap: "wrap",       // KEK oder Recovery-Schlüssel, nur ver- und entpacken
     Aes: "aes",         // Tresor-, Bereichs-, Brief- und Dateischlüssel
     Ecdh: "ecdh",       // privater Schlüssel für Umschläge
-    Ecdsa: "ecdsa"      // privater Signaturschlüssel
+    Ecdsa: "ecdsa",     // privater Signaturschlüssel
+    Package: "package"  // Schlüssel eines Notfallpakets, nur Daten ver- und entschlüsseln
 });
 
 const subtle = globalThis.crypto.subtle;
@@ -262,6 +264,18 @@ export async function importRecoveryKey(recoveryKey) {
 }
 
 /**
+ * Schlüssel eines Notfallpakets (32 Byte, gedruckt als 24 Wörter): HKDF(info "mylife/package"). Er ver- und
+ * entschlüsselt nur Daten; der OfflineViewer leitet ihn genauso ab.
+ */
+export async function importPackageKey(packageKey) {
+    const raw = bytes(packageKey, "package-key");
+    if (raw.length !== KEY_LENGTH) fail("invalid-package-key");
+    const base = await subtle.importKey("raw", raw, "HKDF", false, ["deriveKey"]);
+    const key = await subtle.deriveKey(hkdf(INFO_PACKAGE), base, AES, false, ["encrypt", "decrypt"]);
+    return store(key, KeyType.Package);
+}
+
+/**
  * Prüfwert des Recovery-Keys für den Server: HKDF(Recovery-Key, info "mylife/recovery-auth"), 32 Byte.
  * Damit beweist der Browser bei der Wiederherstellung, dass er die 24 Wörter kennt, ohne sie preiszugeben.
  */
@@ -320,14 +334,14 @@ export async function rewrapKey(oldWrapper, wrappedKey, oldContext, newWrapper, 
 
 /** AES-256-GCM: Version | Art 0x01 | Nonce (12) | Chiffrat | Tag (16). */
 export async function encrypt(key, plaintext, context) {
-    const aesKey = lookup(key, KeyType.Aes);
+    const aesKey = lookup(key, KeyType.Aes, KeyType.Package);
     const nonce = random(NONCE_LENGTH);
     const ciphertext = await subtle.encrypt(gcm(nonce, aad(Kind.Data, context)), aesKey, bytes(plaintext, "plaintext"));
     return concat(header(Kind.Data), nonce, new Uint8Array(ciphertext));
 }
 
 export async function decrypt(key, blob, context) {
-    const aesKey = lookup(key, KeyType.Aes);
+    const aesKey = lookup(key, KeyType.Aes, KeyType.Package);
     const { nonce, ciphertext } = parseSealed(blob, Kind.Data);
     const additionalData = aad(Kind.Data, context);
     return new Uint8Array(await guard("decrypt-failed", () => subtle.decrypt(gcm(nonce, additionalData), aesKey, ciphertext)));

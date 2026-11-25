@@ -72,6 +72,16 @@ public sealed class ReferenceMyLifeCrypto : IMyLifeCrypto
         return Task.FromResult(Store(KeyEntry.Secret(KeyType.Wrap, key)));
     }
 
+    public Task<CryptoKeyHandle> ImportPackageKeyAsync(byte[] packageKey)
+    {
+        if (packageKey is not { Length: CryptoFormat.KeyLength })
+        {
+            throw new CryptographicException("mylife:invalid-package-key");
+        }
+
+        return Task.FromResult(Store(KeyEntry.Secret(KeyType.Package, Hkdf(packageKey, CryptoFormat.InfoPackage))));
+    }
+
     public Task<byte[]> DeriveRecoveryAuthHashAsync(byte[] recoveryKey)
     {
         if (recoveryKey is not { Length: CryptoFormat.KeyLength })
@@ -120,11 +130,11 @@ public sealed class ReferenceMyLifeCrypto : IMyLifeCrypto
     public Task<byte[]> EncryptAsync(CryptoKeyHandle key, byte[] plaintext, string context)
     {
         ArgumentNullException.ThrowIfNull(plaintext);
-        return Task.FromResult(SealAead(Lookup(key, KeyType.Aes).SecretBytes, CryptoKind.Data, plaintext, context));
+        return Task.FromResult(SealAead(Lookup(key, KeyType.Aes, KeyType.Package).SecretBytes, CryptoKind.Data, plaintext, context));
     }
 
     public Task<byte[]> DecryptAsync(CryptoKeyHandle key, byte[] blob, string context) =>
-        Task.FromResult(OpenAead(Lookup(key, KeyType.Aes).SecretBytes, CryptoKind.Data, blob, context));
+        Task.FromResult(OpenAead(Lookup(key, KeyType.Aes, KeyType.Package).SecretBytes, CryptoKind.Data, blob, context));
 
     public Task<byte[]> EncryptChunkAsync(CryptoKeyHandle fileKey, int index, bool isLast, byte[] data, string context)
     {
@@ -477,6 +487,7 @@ public sealed class ReferenceMyLifeCrypto : IMyLifeCrypto
         Aes,
         Ecdh,
         Ecdsa,
+        Package,
     }
 
     private sealed class KeyEntry : IDisposable

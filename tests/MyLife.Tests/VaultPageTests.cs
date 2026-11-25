@@ -39,6 +39,8 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton<IPdfCrypto, MyLife.Tests.Export.DotNetPdfCrypto>();
         Services.AddSingleton<EmergencyFolder>();
         Services.AddSingleton(new VaultExport(_browser.Api, _browser.Vault, _browser.Session, _browser.Crypto));
+        Services.AddSingleton<MyLife.Crypto.IMyLifeCrypto>(_browser.Crypto);
+        Services.AddSingleton<EmergencyPackage>();
         Services.AddSingleton(new EmergencyClient(_browser.Http));
         Services.AddSingleton(new AdminClient(_browser.Http));
         Render<MudBlazor.MudPopoverProvider>();
@@ -58,6 +60,25 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
 
         page.Find("[data-testid=area-reviewed-2]").Click();
         page.WaitForAssertion(() => Assert.Contains("Zuletzt geprüft am", page.Find("[data-testid=area-tile-2]").TextContent, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ThePackagePageCreatesTheFileAndShowsTheKeySheetOnce()
+    {
+        await _browser.Vault.CreateAsync("card", new VaultPayload { Title = "Paketkarte", Fields = { ["cardKind"] = "visa", ["last4"] = "4242" } });
+        var save = JSInterop.SetupVoid("myLife.downloadBytes", _ => true);
+        save.SetVoidResult();
+
+        var page = Render<PackagePage>();
+        page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=package-create]")));
+        Assert.Contains("Dokumente einschließen", page.Markup, StringComparison.Ordinal);
+        page.Find("[data-testid=package-create]").Click();
+
+        page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=package-key-sheet]")), TimeSpan.FromSeconds(10));
+        Assert.Equal(24, page.FindAll("[data-testid=package-words] .mylife-recovery-word").Count);
+        Assert.Contains("myLife-Notfallpaket", page.Find("[data-testid=package-done]").TextContent, StringComparison.Ordinal);
+        var saved = Assert.Single(save.Invocations);
+        Assert.Equal("text/html", saved.Arguments[2]);
     }
 
     [Fact]

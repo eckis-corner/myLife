@@ -97,6 +97,11 @@ public sealed class CryptoCrossTests
         var rewrapped = await crypto.UnwrapKeyAsync(recovery, Bin(result.Extra.RewrappedNetVmk.Wrapped), result.Extra.RewrappedNetVmk.Context);
         var area = await crypto.UnwrapKeyAsync(rewrapped, Bin(net.WrappedAreaKey), CryptoVectors.AreaContext);
         Assert.Equal(net.Data.Plaintext, CryptoVectors.Hex(await crypto.DecryptAsync(area, Bin(net.Data.Blob), net.Data.Context)));
+
+        // Notfallpaket (M2.7): in JavaScript verschlüsselt, mit dem .NET-Paketschlüssel lesbar.
+        var package = result.Extra.Package;
+        var packageKey = await crypto.ImportPackageKeyAsync(Bin(package.Key));
+        Assert.Equal(package.Plaintext, CryptoVectors.Hex(await crypto.DecryptAsync(packageKey, Bin(package.Blob), package.Context)));
     }
 
     private static async Task<string> RunNodeAsync(string vectorsPath)
@@ -137,7 +142,9 @@ public sealed class CryptoCrossTests
 
     private sealed record HarnessResult(IReadOnlyList<string> Checks, CryptoVectors Produced, HarnessExtra Extra);
 
-    private sealed record HarnessExtra(EnvelopeOutput EnvelopeToNetKey, RewrapOutput RewrappedNetVmk);
+    private sealed record HarnessExtra(EnvelopeOutput EnvelopeToNetKey, RewrapOutput RewrappedNetVmk, PackageOutput Package);
+
+    private sealed record PackageOutput(string Key, string Context, string Plaintext, string Blob);
 
     private sealed record EnvelopeOutput(string Context, string Envelope);
 

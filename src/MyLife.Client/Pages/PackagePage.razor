@@ -1,0 +1,145 @@
+@page "/export/package"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using MyLife.Client.Export
+@inject IStringLocalizer<SharedResource> L
+@inject EmergencyPackage Package
+@inject EmergencyFolder Folder
+@inject VaultClient Api
+@inject SessionService Session
+@inject BrowserFiles Files
+@inject ISnackbar Snackbar
+
+<PageTitle>@L["AppName"] – @L["PackageTitle"]</PageTitle>
+
+@* Notfallpaket (M2.7): eine HTML-Datei, die ohne Server läuft, und ein gedrucktes Schlüsselblatt mit 24 Wörtern. *@
+<MudStack Spacing="4">
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Href="export" aria-label="@L["NavExport"]" />
+        <MudText Typo="Typo.h4" HtmlTag="h1">@L["PackageTitle"]</MudText>
+    </MudStack>
+    <MudText Typo="Typo.body1">@L["PackageIntro"]</MudText>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else if (_result is { } result)
+    {
+        <MudAlert Severity="Severity.Success" data-testid="package-done">@L["PackageDone", _fileName, result.Items, result.Documents]</MudAlert>
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">@L["PackageWordsOnce"]</MudAlert>
+        <PackageKeySheet Words="result.Words" OwnerName="@OwnerName" FileName="@_fileName" CreatedAt="result.CreatedAt" />
+        <MudStack Row Wrap="Wrap.Wrap" Justify="Justify.FlexEnd" Spacing="2">
+            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Download" OnClick="SaveAgainAsync">@L["PackageSaveAgain"]</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Print" OnClick="() => Files.PrintAsync()">@L["PackagePrintSheet"]</MudButton>
+        </MudStack>
+        <div><MudButton Variant="Variant.Text" OnClick="() => _result = null">@L["PackageNew"]</MudButton></div>
+    }
+    else
+    {
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2">@L["ExportAreas"]</MudText>
+                <MudGrid Spacing="0">
+                    @foreach (var area in ObjectCatalog.Areas.Where(a => a.IsAvailable))
+                    {
+                        var number = area.Number;
+                        <MudItem xs="12" sm="6">
+                            <MudCheckBox T="bool" Value="_areas.Contains(number)" ValueChanged="v => Toggle(number, v)" Dense
+                                         Label="@($"{Text.Area(number)} ({_counts.GetValueOrDefault(number)})")" />
+                        </MudItem>
+                    }
+                </MudGrid>
+                <MudSwitch T="bool" @bind-Value="_includeEnded" Color="Color.Primary" Label="@L["ExportIncludeEnded"]" />
+                <MudSwitch T="bool" @bind-Value="_withDocuments" Color="Color.Primary"
+                           Label="@L["PackageWithDocuments", Megabytes(Package.DocumentBytes(_areas, _includeEnded))]" />
+                <MudText Typo="Typo.body2" Class="mylife-muted">@L["PackageHow"]</MudText>
+                <MudStack Row Justify="Justify.FlexEnd">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Inventory2" Disabled="@(_busy || _areas.Count == 0)"
+                               OnClick="CreateAsync" data-testid="package-create">@L["PackageCreate"]</MudButton>
+                </MudStack>
+                @if (_busy)
+                {
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudProgressCircular Indeterminate Size="Size.Small" />
+                        <MudText>@L["ExportWorking"]</MudText>
+                    </MudStack>
+                }
+            </MudStack>
+        </MudPaper>
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">@L["PackageSnapshot"]</MudAlert>
+    }
+</MudStack>
+
+@code {
+    private HashSet<int> _areas = [];
+    private Dictionary<int, int> _counts = [];
+    private bool _includeEnded;
+    private bool _withDocuments = true;
+    private bool _busy;
+    private bool _initialized;
+    private PackageResult? _result;
+    private string _fileName = string.Empty;
+
+    private string OwnerName => Session.Session?.DisplayName ?? string.Empty;
+
+    protected override void OnVaultReady()
+    {
+        _counts = Vault.Current.GroupBy(i => i.Area).ToDictionary(g => g.Key, g => g.Count());
+        if (!_initialized)
+        {
+            _areas = [.. _counts.Keys];
+            _initialized = true;
+        }
+    }
+
+    private void Toggle(int area, bool selected)
+    {
+        if (selected)
+        {
+            _areas.Add(area);
+        }
+        else
+        {
+            _areas.Remove(area);
+        }
+    }
+
+    private static string Megabytes(long bytes) => (bytes / 1024d / 1024d).ToString("0.0", System.Globalization.CultureInfo.CurrentCulture);
+
+    private async Task CreateAsync()
+    {
+        _busy = true;
+        StateHasChanged();
+        try
+        {
+            var now = DateTimeOffset.Now;
+            var result = await Package.CreateAsync(_areas, _includeEnded, _withDocuments, OwnerName, now);
+            _fileName = BrowserFiles.DatedName(L["PackageFileName"], "html", now);
+            await Files.SaveAsync(result.Html, _fileName, "text/html");
+            _result = result;
+            await Api.ReportAsync(AuditActions.ExportPackage, $"{result.Items}/{result.Documents}");
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException or Microsoft.JSInterop.JSException or InvalidOperationException
+                                              or System.Security.Cryptography.CryptographicException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task SaveAgainAsync()
+    {
+        if (_result is { } result)
+        {
+            await Files.SaveAsync(result.Html, _fileName, "text/html");
+        }
+    }
+}

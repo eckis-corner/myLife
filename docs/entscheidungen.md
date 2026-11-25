@@ -163,6 +163,15 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 105 | Was gelöscht wird | Konto, Tresor, Dokumente samt Dateien und das eigene Protokoll, wie beim Löschen durch den Admin (77). Im System-Protokoll bleibt ein Eintrag mit der Zahl der Zustimmenden; die Vertrauenspersonen bekommen eine Mail. Zum geplanten Zeitpunkt prüft der Dienst noch einmal Freigabe und Zustimmungen. |
 | 106 | Letzter Admin | Ist der Eigentümer der einzige aktive Admin, lässt sich sein Tresor so nicht löschen; die Seite sagt, dass der Betreiber erst jemand anderen zum Admin machen muss. Empfehlung: früh eine zweite Person zum Admin machen. |
 
+## Runde 12 (25.11.2026, Umsetzung M2.7)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 107 | Inhalt des Notfallpakets | Der Eigentümer wählt unter „Exportieren“ → „Notfallpaket“ die Bereiche (Standard: alle belegten), beendete Einträge und ob Dokumente mitkommen (Standard: ja, mit Größenangabe). Das Paket enthält die Datenblätter fertig beschriftet in seiner Sprache, mit Verknüpfungen und Dokumenten; der Viewer braucht kein Schema. Es ist ein Schnappschuss; nach Änderungen ersetzt man Datei und Blatt gemeinsam. Briefe sind Einträge ihres Bereichs wie alle anderen, eine Auswahl je Empfänger gibt es im Paket nicht. |
+| 108 | Paketschlüssel | Jedes Paket bekommt einen eigenen Schlüssel aus 32 Zufallsbytes, gedruckt als 24 Wörter nach BIP-39 (wie das Recovery-Kit, 50) mit QR-Code. `HKDF(info "mylife/package")` ergibt einen AES-256-Schlüssel nur für Daten. Die Wörter erscheinen einmal nach dem Erzeugen; myLife speichert sie nirgends. Beim Eingeben genügen die ersten vier Buchstaben, Nummern stören nicht. |
+| 109 | OfflineViewer | Eine Datei ohne Abhängigkeiten. Eine Content-Security-Policy im Kopf verbietet jedes Nachladen und Senden; entschlüsselt wird mit der Web Crypto API eines aktuellen Browsers, auch von `file://`. Inhalte erscheinen nur als Text, nie als HTML. Dokumente lassen sich ansehen und speichern, das Ganze drucken. Die Texte des Viewers (de/en) stehen in der Datei selbst. Die Vorlage liegt in `src/MyLife.OfflineViewer/` und ist in den Client eingebettet; ein eigenes Projekt gibt es nicht. |
+| 110 | Abgrenzung | Der Server ist nicht beteiligt: kein Upload, nur ein Protokolleintrag mit der Zahl der Einträge und Dokumente. Der OfflineViewer öffnet nur Notfallpakete, keine JSON-Exporte; dafür kommt mit M3 `mylife-decrypt` (abweichend von Architektur 7). |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

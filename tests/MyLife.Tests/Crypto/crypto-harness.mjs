@@ -118,6 +118,8 @@ const first = v.file.chunks[0], last = v.file.chunks.at(-1);
 await rejects("reject reordered chunk", "decrypt-failed", () => c.decryptChunk(file, 1, first.isLast, bin(first.ciphertext), v.file.context));
 await rejects("reject truncated file", "decrypt-failed", () => c.decryptChunk(file, last.index - 1, true, bin(v.file.chunks.at(-2).ciphertext), v.file.context));
 await rejects("reject invalid public key", "invalid-public-key", () => c.sealKey(vmk, bin(v.wrappedAreaKey), AREA, new Uint8Array(65), "grant:x"));
+await rejects("reject short package key", "invalid-package-key", () => c.importPackageKey(new Uint8Array(16)));
+await rejects("reject package key for wrapping", "wrong-key-type", async () => c.createKey([{ wrapper: await c.importPackageKey(new Uint8Array(32)), context: "x" }]));
 await rejects("reject unknown handle", "unknown-key", () => c.encrypt("nicht-vorhanden", utf8("x"), "x"));
 
 c.release(area);
@@ -186,7 +188,10 @@ const netMaster = await c.deriveMasterKey(v.password, bin(v.salt), v.argon2);
 const netKek = await c.deriveKeyEncryptionKey(netMaster);
 const netRecovery = await c.importRecoveryKey(bin(v.recoveryKey));
 const crossContext = `grant:${globalThis.crypto.randomUUID()}:death`;
+const packageKey = c.randomBytes(32);
+const packagePlaintext = utf8(JSON.stringify({ format: "mylife-package-content", version: 1, owner: "Württemberg" }));
 const extra = {
+    package: { key: hex(packageKey), context: "package", plaintext: hex(packagePlaintext), blob: hex(await c.encrypt(await c.importPackageKey(packageKey), packagePlaintext, "package")) },
     envelopeToNetKey: { context: crossContext, envelope: hex(await c.sealKey(jsVmk.handle, jsArea.wrappedKeys[0], AREA, bin(v.ecdh.publicKey), crossContext)) },
     rewrappedNetVmk: { context: "vmk:rewrapped", wrapped: hex(await c.rewrapKey(netKek, bin(v.wrappedVmkByKek), VMK, netRecovery, "vmk:rewrapped")) }
 };

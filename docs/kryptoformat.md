@@ -39,6 +39,8 @@ kek    = HKDF-SHA-256(ikm = mk, salt = leer, info = "mylife/kek", 32)      → A
 rk     = 32 Zufallsbytes (Recovery-Key, 24 Wörter)
 rkKey  = HKDF-SHA-256(ikm = rk, salt = leer, info = "mylife/recovery", 32) → AES-256, nur wrap/unwrap
 rkAuth = HKDF-SHA-256(ikm = rk, salt = leer, info = "mylife/recovery-auth", 32) → an den Server (Prüfwert bei der Wiederherstellung, seit M1.3)
+pk     = 32 Zufallsbytes (Schlüssel eines Notfallpakets, 24 Wörter, seit M2.7)
+pkKey  = HKDF-SHA-256(ikm = pk, salt = leer, info = "mylife/package", 32) → AES-256, nur Daten ver- und entschlüsseln
 ```
 
 - Standard: m = 65536 KiB (64 MiB), t = 3, p = 1, Salt 16 Byte. Erlaubt sind m 64 MiB bis 1 GiB, t 3 bis 20, p 1 bis 8 und ein Salt von 16 bis 64 Byte. Die **Untergrenzen** prüft der Browser, damit ein manipulierter Server keine schwachen Parameter unterschieben kann, die das Erraten des Passworts aus dem Anmeldehash erleichtern.
@@ -119,6 +121,7 @@ Gegenzeichnung = Signatur(ECDSA des Unterzeichners, Fingerprint, Kontext "endors
 | `trustee-profile:{ID}` | Tresorschlüssel | Beziehung und Notiz zu einer Vertrauensperson (seit M2.3) |
 | `envelope:area:{Eigentümer}:{n}` | ECIES an die Vertrauensperson | Bereichsschlüssel im Umschlag (seit M2.3) |
 | `envelope:letter:{Eigentümer}:{ID}` | ECIES an die Vertrauensperson | Briefschlüssel im Umschlag (seit M2.3) |
+| `package` | Paketschlüssel `pkKey` | Inhalt eines Notfallpakets als JSON (seit M2.7, [format.md](format.md)) |
 | `grant:{Person}:{Art}:{Ressource}:{Modus}` | ECDSA (Signatur) | Signatur des Eigentümers über einen Umschlag; Art 0 = Bereich, 1 = Brief; Modus 0 = sofort, 1 = verstorben, 2 = handlungsunfähig (seit M2.3) |
 
 IDs sind GUIDs in der Form `D` (klein geschrieben, mit Bindestrichen).
@@ -128,7 +131,8 @@ IDs sind GUIDs in der Form `D` (klein geschrieben, mit Bindestrichen).
 | Test | Prüft |
 | --- | --- |
 | `ReferenceCryptoTests` | Argon2id gegen RFC 9106 (5.3), NFC, Parametergrenzen, Aufbau, Manipulation, falscher Kontext, Schlüsselarten, Recovery, Neuverpacken, Blöcke, Umschläge, Signaturen |
-| `CryptoCrossTests` | Das Browser-Modul läuft in Node.js gegen die .NET-Vektoren, .NET prüft alles, was JavaScript erzeugt hat |
+| `CryptoCrossTests` | Das Browser-Modul läuft in Node.js gegen die .NET-Vektoren, .NET prüft alles, was JavaScript erzeugt hat (seit M2.7 auch ein Notfallpaket) |
+| `PackageTests` | Ein im Browser-Code erzeugtes Notfallpaket öffnet .NET und der Kern des OfflineViewers in Node.js, mit Nummern und Vier-Buchstaben-Kürzeln; falsche, fehlende und vertauschte Wörter werden erkannt |
 | `tests/MyLife.Tests/Crypto/vectors-v1.json` | Fester Vektorsatz. Er hält das Format fest: Ändert sich ein Byte im Format, schlägt der Test fehl, und alte Tresore wären unlesbar. Nur bewusst neu erzeugen. |
 | `JsMyLifeCryptoTests` | Fassade: jede aufgerufene Funktion existiert im Modul, Fehler werden zu `CryptographicException` |
 
