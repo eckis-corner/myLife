@@ -50,9 +50,9 @@ CLIENT = {
     "EmergencyNtfyTopicHint": ("Push-Nachricht aufs Smartphone, zusätzlich zur Mail.", "Push notification to your phone, in addition to email."),
     "EmergencyReleasedOwner": (
         "Dein Notfallzugang ist freigegeben ({0}) seit {1}. Deine Vertrauenspersonen können lesen, was du für diesen "
-        "Fall hinterlegt hast. Die Rücknahme kommt mit dem nächsten Schritt (M2.6).",
+        "Fall hinterlegt hast. Wenn es dir gut geht, nimm die Freigabe zurück.",
         "Your emergency access has been released ({0}) since {1}. Your trusted persons can read what you set up for "
-        "this case. Revoking it follows with the next step (M2.6).",
+        "this case. If you are well, revoke the release.",
     ),
     "EmergencyRequestPending": (
         "{0} hat Zugang beantragt ({1}). Ohne Widerspruch wird er am {2} freigegeben.",
@@ -90,7 +90,85 @@ CLIENT = {
     "EmergencyError_emergency-pending": ("Es läuft schon ein Antrag für diesen Fall.", "A request for this case is already running."),
     "EmergencyError_emergency-already-released": ("Dieser Fall ist schon freigegeben.", "This case has already been released."),
     "EmergencyError_emergency-token-invalid": ("Der Link ist ungültig oder schon verwendet.", "The link is invalid or has already been used."),
+    "EmergencyError_emergency-not-released": ("Dafür ist der Notfallzugang nicht freigegeben.", "Emergency access has not been released for this."),
+    "EmergencyError_emergency-last-admin": (
+        "Diese Person ist der einzige Administrator; ihr Tresor lässt sich so nicht löschen.",
+        "This person is the only administrator; their vault cannot be deleted this way.",
+    ),
     "EmergencyError_emergency-failed": ("Das hat nicht geklappt. Bitte versuche es erneut.", "That did not work. Please try again."),
+    # Rücknahme und gemeinsames Löschen (M2.6)
+    "EmergencyRevoke": ("Freigabe zurücknehmen", "Revoke release"),
+    "EmergencyRevokeConfirm": (
+        "Freigabe zurücknehmen? Deine Vertrauenspersonen können danach nichts mehr lesen, was nur für den Notfall "
+        "bestimmt ist; sofort Geteiltes bleibt. Die betroffenen Bereiche und Briefe bekommen neue Schlüssel, das "
+        "dauert einen Moment. Ein geplantes Löschen entfällt.",
+        "Revoke the release? Your trusted persons will no longer be able to read what is meant only for an "
+        "emergency; anything shared right away stays shared. The affected areas and letters get new keys, which takes "
+        "a moment. A planned deletion is cancelled.",
+    ),
+    "EmergencyRevoked": ("Die Freigabe ist zurückgenommen.", "The release has been revoked."),
+    "EmergencyRekeying": (
+        "Neue Schlüssel werden erzeugt und alles betroffene neu verschlüsselt. Bitte die Seite nicht schließen.",
+        "New keys are being created and everything affected is re-encrypted. Please do not close the page.",
+    ),
+    "EmergencyRekeyDone": ("Alle betroffenen Bereiche und Briefe haben neue Schlüssel.", "All affected areas and letters have new keys."),
+    "EmergencyRekeyPending": (
+        "Die Freigabe ist zurückgenommen, aber der Schlüsselwechsel ist noch nicht fertig ({0} Bereiche, {1} Briefe). "
+        "Bis dahin kennen Vertrauenspersonen womöglich noch die alten Schlüssel.",
+        "The release has been revoked, but the key change is not finished yet ({0} areas, {1} letters). Until then, "
+        "trusted persons may still know the old keys.",
+    ),
+    "EmergencyRekeyContinue": ("Schlüsselwechsel fortsetzen", "Continue key change"),
+    "EmergencyRekeyFailed": (
+        "Der Schlüsselwechsel ist nicht ganz fertig geworden. Du kannst ihn hier fortsetzen.",
+        "The key change did not quite finish. You can continue it here.",
+    ),
+    "EmergencyRekeyKeyChanged": (
+        "Der Schlüssel einer Vertrauensperson hat sich geändert. Prüfe sie unter „Vertrauenspersonen“ und setze dann "
+        "den Schlüsselwechsel hier fort.",
+        "A trusted person's key has changed. Check them under \"Trusted persons\" and then continue the key change here.",
+    ),
+    "EmergencyDeletionOwnerVotes": (
+        "Deine Vertrauenspersonen erwägen, deinen Tresor endgültig zu löschen. Zugestimmt haben: {0}.",
+        "Your trusted persons are considering deleting your vault for good. Agreed so far: {0}.",
+    ),
+    "EmergencyDeletionOwnerScheduled": (
+        "Alle Vertrauenspersonen haben zugestimmt: Dein Tresor wird am {0} endgültig gelöscht.",
+        "All trusted persons have agreed: your vault will be deleted for good on {0}.",
+    ),
+    "EmergencyDeletionTitle": ("Tresor endgültig löschen", "Delete vault for good"),
+    "EmergencyDeletionText": (
+        "Wenn alles erledigt ist, könnt ihr den Tresor von {0} gemeinsam löschen. Alle Vertrauenspersonen für den Fall "
+        "„verstorben“ müssen zustimmen; sieben Tage nach der letzten Zustimmung ist alles unwiderruflich gelöscht.",
+        "When everything has been taken care of, you can delete {0}'s vault together. All trusted persons for the "
+        "case \"deceased\" must agree; seven days after the last agreement everything is deleted irrevocably.",
+    ),
+    "EmergencyDeletionVotes": ("Zugestimmt: {0}. Es fehlt noch: {1}.", "Agreed: {0}. Still missing: {1}."),
+    "EmergencyDeletionNobody": ("niemand", "nobody"),
+    "EmergencyDeletionScheduled": (
+        "Alle haben zugestimmt. Gelöscht wird am {0}; bis dahin kannst du deine Zustimmung zurückziehen.",
+        "Everyone has agreed. Deletion takes place on {0}; until then you can withdraw your agreement.",
+    ),
+    "EmergencyDeletionAgree": ("Dem Löschen zustimmen", "Agree to deletion"),
+    "EmergencyDeletionWithdraw": ("Zustimmung zurückziehen", "Withdraw agreement"),
+    "EmergencyDeletionConfirm": (
+        "Dem endgültigen Löschen des Tresors von {0} zustimmen? Sobald alle zugestimmt haben, wird nach sieben Tagen "
+        "alles gelöscht: Daten, Dokumente, Briefe. Das lässt sich nicht rückgängig machen. Speichere vorher, was du "
+        "behalten möchtest.",
+        "Agree to deleting {0}'s vault for good? Once everyone has agreed, everything is deleted after seven days: "
+        "data, documents, letters. This cannot be undone. Save anything you want to keep first.",
+    ),
+    "EmergencyDeletionBlocked": (
+        "{0} ist der einzige Administrator dieser Instanz. Bevor der Tresor gelöscht werden kann, muss der Betreiber "
+        "jemand anderen zum Administrator machen.",
+        "{0} is the only administrator of this instance. Before the vault can be deleted, the operator must make "
+        "someone else an administrator.",
+    ),
+    "Audit_emergency-revoked": ("Freigabe zurückgenommen", "Release revoked"),
+    "Audit_letter-key-rotated": ("Neuer Briefschlüssel", "New letter key"),
+    "Audit_vault-deletion-agreed": ("Dem Löschen zugestimmt", "Agreed to deletion"),
+    "Audit_vault-deletion-withdrawn": ("Zustimmung zum Löschen zurückgezogen", "Agreement to deletion withdrawn"),
+    "Audit_vault-deleted-by-trustees": ("Tresor von den Vertrauenspersonen gelöscht", "Vault deleted by trusted persons"),
     "LifesignTitle": ("Lebenszeichen", "Life sign"),
     "LifesignDone": ("Danke, {0}. Dein Lebenszeichen ist gespeichert.", "Thank you, {0}. Your life sign has been saved."),
     "LifesignInvalid": (
@@ -190,5 +268,46 @@ MAIL = {
     "Mail_request-objected_body": (
         "Hallo {name},\n\n{owner} hat dem Antrag von {trustee} auf Zugang endgültig widersprochen. Es wird nichts freigegeben.",
         "Hello {name},\n\n{owner} has objected to {trustee}'s access request for good. Nothing will be released.",
+    ),
+    "Mail_release-revoked_subject": ("myLife: {owner} hat den Notfallzugang zurückgenommen", "myLife: {owner} has revoked emergency access"),
+    "Mail_release-revoked_body": (
+        "Hallo {name},\n\n{owner} hat sich bei myLife zurückgemeldet und die Freigabe des Notfallzugangs "
+        "zurückgenommen. Was nur für den Notfall bestimmt ist, ist für dich nicht mehr sichtbar.",
+        "Hello {name},\n\n{owner} has checked back in on myLife and revoked the release of emergency access. What is "
+        "meant only for an emergency is no longer visible to you.",
+    ),
+    "Mail_vault-deletion-proposed_subject": ("myLife: Tresor von {owner} löschen?", "myLife: Delete {owner}'s vault?"),
+    "Mail_vault-deletion-proposed_body": (
+        "Hallo {name},\n\n{trustee} schlägt vor, den Tresor von {owner} bei myLife endgültig zu löschen. Gelöscht wird "
+        "nur, wenn alle Vertrauenspersonen zustimmen. Melde dich an und entscheide unter „Notfallzugang“. Speichere "
+        "vorher, was du behalten möchtest.",
+        "Hello {name},\n\n{trustee} suggests deleting {owner}'s vault on myLife for good. It will only be deleted if "
+        "all trusted persons agree. Sign in and decide under \"Emergency access\". Save anything you want to keep first.",
+    ),
+    "Mail_vault-deletion-scheduled_subject": ("myLife: Tresor von {owner} wird am {date} gelöscht", "myLife: {owner}'s vault will be deleted on {date}"),
+    "Mail_vault-deletion-scheduled_body": (
+        "Hallo {name},\n\nalle Vertrauenspersonen haben zugestimmt: Der Tresor von {owner} wird am {date} endgültig "
+        "gelöscht. Bis dahin kannst du deine Zustimmung unter „Notfallzugang“ zurückziehen.",
+        "Hello {name},\n\nall trusted persons have agreed: {owner}'s vault will be deleted for good on {date}. Until "
+        "then you can withdraw your agreement under \"Emergency access\".",
+    ),
+    "Mail_vault-deletion-scheduled-owner_subject": ("myLife: Dein Tresor wird am {date} gelöscht", "myLife: Your vault will be deleted on {date}"),
+    "Mail_vault-deletion-scheduled-owner_body": (
+        "Hallo {name},\n\ndeine Vertrauenspersonen haben zugestimmt, deinen Tresor bei myLife am {date} endgültig zu "
+        "löschen. Wenn das ein Irrtum ist, melde dich sofort an und nimm unter „Notfallzugang“ die Freigabe zurück; "
+        "dann wird nichts gelöscht.",
+        "Hello {name},\n\nyour trusted persons have agreed to delete your vault on myLife for good on {date}. If this "
+        "is a mistake, sign in right away and revoke the release under \"Emergency access\"; then nothing will be deleted.",
+    ),
+    "Mail_vault-deletion-cancelled_subject": ("myLife: Löschen des Tresors von {owner} abgebrochen", "myLife: Deletion of {owner}'s vault cancelled"),
+    "Mail_vault-deletion-cancelled_body": (
+        "Hallo {name},\n\n{trustee} hat die Zustimmung zurückgezogen. Der Tresor von {owner} wird vorerst nicht gelöscht.",
+        "Hello {name},\n\n{trustee} has withdrawn their agreement. {owner}'s vault will not be deleted for now.",
+    ),
+    "Mail_vault-deleted_subject": ("myLife: Tresor von {owner} gelöscht", "myLife: {owner}'s vault deleted"),
+    "Mail_vault-deleted_body": (
+        "Hallo {name},\n\nwie mit allen Vertrauenspersonen vereinbart, ist der Tresor von {owner} bei myLife jetzt "
+        "endgültig gelöscht.",
+        "Hello {name},\n\nas agreed by all trusted persons, {owner}'s vault on myLife has now been deleted for good.",
     ),
 }

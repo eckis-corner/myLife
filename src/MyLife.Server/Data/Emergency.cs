@@ -44,6 +44,15 @@ public sealed class EmergencySwitch
 
     public DateTimeOffset? ReleasedAt { get; set; }
 
+    /// <summary>Bereiche, die nach einer Rücknahme noch einen neuen Schlüssel brauchen (M2.6).</summary>
+    public int[] RekeyAreas { get; set; } = [];
+
+    /// <summary>Briefe, die nach einer Rücknahme noch einen neuen Schlüssel brauchen (M2.6).</summary>
+    public Guid[] RekeyLetters { get; set; } = [];
+
+    /// <summary>Alle Vertrauenspersonen haben dem endgültigen Löschen zugestimmt; dann wird zu diesem Zeitpunkt gelöscht.</summary>
+    public DateTimeOffset? DeletionScheduledAt { get; set; }
+
     public DateTimeOffset UpdatedAt { get; set; }
 
     public uint Version { get; set; }
@@ -72,4 +81,14 @@ public sealed class AccessRequest
     public DateTimeOffset? PausedAt { get; set; }
 
     public DateTimeOffset? DecidedAt { get; set; }
+}
+
+/// <summary>Zustimmung einer Vertrauensperson zum endgültigen Löschen nach dem Tod (Tabelle <c>vault_deletion_votes</c>, Entscheidung 36).</summary>
+public sealed class VaultDeletionVote
+{
+    public Guid OwnerId { get; set; }
+
+    public Guid TrusteeId { get; set; }
+
+    public DateTimeOffset AgreedAt { get; set; }
 }

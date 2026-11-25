@@ -72,7 +72,7 @@ public sealed partial class EmergencyTests(ServerFixture server) : IClassFixture
         Assert.Contains(server.Mail.To(family.Trustee.Email), m => m.Subject == $"myLife: Zugang zu {family.Owner.Name} freigegeben");
         Assert.Contains(server.Mail.To(family.Owner.Email), m => m.Subject == "myLife: Dein Notfallzugang wurde freigegeben");
 
-        // Eine Anmeldung danach ist ein Lebenszeichen, hebt die Freigabe aber nicht auf (Rücknahme mit M2.6).
+        // Eine Anmeldung danach ist ein Lebenszeichen, hebt die Freigabe aber nicht auf; dafür gibt es die Rücknahme.
         var status = await (await family.Owner.LoginAsync()).Emergency.GetStatusAsync(Ct);
         Assert.Equal(ReleasedModes.Death | ReleasedModes.Incapacity, status.ReleasedModes);
     }
@@ -215,6 +215,129 @@ public sealed partial class EmergencyTests(ServerFixture server) : IClassFixture
         Assert.Empty(server.Mail.To("allein@example.org"));
     }
 
+    [Fact]
+    public async Task TheOwnerRevokesAReleaseAndAreaAndLetterGetNewKeys()
+    {
+        var family = await FamilyAsync("revoke");
+        var letter = await family.Owner.Browser.Vault.Vault.CreateAsync("letter", new VaultPayload
+        {
+            Title = "Für dich", Fields = { ["recipients"] = "Kind", ["letterText"] = "Alles Gute." },
+        });
+        var people = await family.Owner.Browser.Keys.GetPeopleAsync();
+        await family.Owner.Browser.Trust.SaveAsync(people.Single(p => p.Person.Email == family.Trustee.Email), new TrusteeProfile("Kind", null), true,
+            new HashSet<(int, GrantMode)> { (4, GrantMode.Death), (4, GrantMode.Incapacity) }, new HashSet<(Guid, GrantMode)> { (letter.Id, GrantMode.Incapacity) }, null);
+        await ReleaseAsync(family.Owner, ReleasedModes.Incapacity);
+        var before = await GrantsAsync(family.Owner);
+
+        // Die Vertrauensperson liest Bereich und Brief.
+        var trustee = await family.Trustee.LoginAsync();
+        var shared = (await trustee.Shared.GetOwnersAsync()).Single();
+        Assert.Equal(2, shared.Grants.Count);
+        Assert.Contains((await trustee.Shared.OpenAsync(shared.OwnerId, shared.Grants.Single(g => g.Dto.Kind == GrantKind.Letter).Dto)).Items,
+            i => i.Payload.Get("letterText") == "Alles Gute.");
+
+        // Der Eigentümer meldet sich zurück und nimmt die Freigabe zurück: Der Server liefert sofort nichts mehr aus.
+        var owner = await family.Owner.LoginAsync();
+        var pending = await owner.Emergency.RevokeAsync(Ct);
+        Assert.Equal([4], pending.Areas);
+        Assert.Equal([letter.Id], pending.Letters);
+        Assert.Empty(await (await family.Trustee.LoginAsync()).Shared.GetOwnersAsync());
+        var state = await SwitchAsync(family.Owner);
+        Assert.Equal(ReleasedModes.None, state.ReleasedModes);
+        Assert.Equal(EmergencyState.Active, state.State);
+        Assert.Equal(EmergencyErrors.NotReleased, (await Assert.ThrowsAsync<EmergencyException>(() => owner.Emergency.RevokeAsync(Ct))).Message);
+        await TickAsync(TimeSpan.FromMinutes(1));
+        Assert.Contains(server.Mail.To(family.Trustee.Email), m => m.Subject == $"myLife: {family.Owner.Name} hat den Notfallzugang zurückgenommen");
+
+        // Bis der Browser fertig ist, merkt sich der Server die ausstehenden Schlüsselwechsel.
+        Assert.False((await owner.Emergency.GetStatusAsync(Ct)).Rekey.IsEmpty);
+        await owner.Trust.CompleteRekeyAsync(pending);
+        Assert.True((await owner.Emergency.GetStatusAsync(Ct)).Rekey.IsEmpty);
+
+        // Alle Umschläge sind neu versiegelt; der Eigentümer liest weiter alles.
+        var after = await GrantsAsync(family.Owner);
+        Assert.Equal(before.Keys.Order(), after.Keys.Order());
+        Assert.All(before, g => Assert.False(g.Value.AsSpan().SequenceEqual(after[g.Key])));
+        var reopened = await family.Owner.LoginAsync();
+        await reopened.Vault.Vault.EnsureLoadedAsync();
+        Assert.Equal("Alles Gute.", reopened.Vault.Vault.Find(letter.Id)!.Payload.Get("letterText"));
+        Assert.Contains(reopened.Vault.Vault.Items, i => i.Title == "Lebensversicherung");
+
+        // Wird später wieder freigegeben, öffnen die neuen Umschläge die neuen Schlüssel.
+        await ReleaseAsync(family.Owner, ReleasedModes.Incapacity);
+        trustee = await family.Trustee.LoginAsync();
+        shared = (await trustee.Shared.GetOwnersAsync()).Single();
+        Assert.All(shared.Grants, g => Assert.True(g.Verified));
+        Assert.Contains((await trustee.Shared.OpenAsync(shared.OwnerId, shared.Grants.Single(g => g.Dto.Kind == GrantKind.Area).Dto)).Items,
+            i => i.Title == "Lebensversicherung");
+        Assert.Contains((await trustee.Shared.OpenAsync(shared.OwnerId, shared.Grants.Single(g => g.Dto.Kind == GrantKind.Letter).Dto)).Items,
+            i => i.Payload.Get("letterText") == "Alles Gute.");
+    }
+
+    [Fact]
+    public async Task AfterDeathAllTrusteesMustAgreeAndTheOwnerCanStillStopIt()
+    {
+        var family = await FamilyAsync("deletion", withSecondTrustee: true);
+        var trustee = await family.Trustee.LoginAsync();
+        var second = await family.SecondTrustee!.LoginAsync();
+        var ownerId = family.Owner.Id;
+
+        // Vor der Freigabe „verstorben“ gibt es nichts zu löschen; wer keine Vertrauensperson ist, sieht nichts.
+        Assert.Null((await trustee.Emergency.GetTrustedAsync(Ct)).Single().Deletion);
+        Assert.Equal(EmergencyErrors.NotReleased, (await Assert.ThrowsAsync<EmergencyException>(() => trustee.Emergency.AgreeDeletionAsync(ownerId, Ct))).Message);
+        await ReleaseAsync(family.Owner, ReleasedModes.Death);
+        var (_, _, adminHttp) = await _account.LoginAsync();
+        Assert.Equal(EmergencyErrors.NotFound, (await Assert.ThrowsAsync<EmergencyException>(() => new EmergencyClient(adminHttp).AgreeDeletionAsync(ownerId, Ct))).Message);
+
+        // Die erste Zustimmung schlägt das Löschen den anderen vor.
+        var deletion = await trustee.Emergency.AgreeDeletionAsync(ownerId, Ct);
+        Assert.Equal([family.Trustee.Name], deletion.Agreed);
+        Assert.Equal([family.SecondTrustee.Name], deletion.Missing);
+        Assert.Null(deletion.ScheduledAt);
+        await TickAsync(TimeSpan.FromMinutes(1));
+        Assert.Contains(server.Mail.To(family.SecondTrustee.Email), m => m.Subject == $"myLife: Tresor von {family.Owner.Name} löschen?");
+
+        // Mit der letzten Zustimmung ist das Löschen in sieben Tagen geplant; der Eigentümer bekommt Bescheid.
+        deletion = await second.Emergency.AgreeDeletionAsync(ownerId, Ct);
+        Assert.True(deletion.AgreedByMe);
+        Assert.NotNull(deletion.ScheduledAt);
+        await TickAsync(TimeSpan.FromMinutes(1));
+        Assert.Contains(server.Mail.To(family.Owner.Email), m => (m.Subject ?? string.Empty).StartsWith("myLife: Dein Tresor wird am", StringComparison.Ordinal));
+        Assert.NotNull((await (await family.Owner.LoginAsync()).Emergency.GetStatusAsync(Ct)).Deletion?.ScheduledAt);
+
+        // Wer zurückzieht, stoppt es; die anderen erfahren es.
+        deletion = await second.Emergency.WithdrawDeletionAsync(ownerId, Ct);
+        Assert.Null(deletion.ScheduledAt);
+        await TickAsync(TimeSpan.FromMinutes(1));
+        Assert.Contains(server.Mail.To(family.Trustee.Email), m => (m.Subject ?? string.Empty).StartsWith("myLife: Löschen des Tresors", StringComparison.Ordinal));
+
+        // Lebt der Eigentümer doch, stoppt seine Rücknahme alles und verwirft die Zustimmungen.
+        Assert.NotNull((await second.Emergency.AgreeDeletionAsync(ownerId, Ct)).ScheduledAt);
+        var owner = await family.Owner.LoginAsync();
+        await owner.Trust.CompleteRekeyAsync(await owner.Emergency.RevokeAsync(Ct));
+        Assert.Null((await SwitchAsync(family.Owner)).DeletionScheduledAt);
+        await TickAsync(TimeSpan.FromDays(8));
+        Assert.True(await UserExistsAsync(ownerId));
+
+        // Nach einer neuen Freigabe stimmen beide zu; nach sieben Tagen ist alles gelöscht.
+        await ReleaseAsync(family.Owner, ReleasedModes.Death);
+        trustee = await family.Trustee.LoginAsync();
+        second = await family.SecondTrustee.LoginAsync();
+        Assert.Empty((await trustee.Emergency.GetTrustedAsync(Ct)).Single().Deletion!.Agreed);
+        await trustee.Emergency.AgreeDeletionAsync(ownerId, Ct);
+        await second.Emergency.AgreeDeletionAsync(ownerId, Ct);
+        await TickAsync(TimeSpan.FromDays(6));
+        Assert.True(await UserExistsAsync(ownerId));
+        await TickAsync(TimeSpan.FromDays(1.1));
+        Assert.False(await UserExistsAsync(ownerId));
+        Assert.Contains(server.Mail.To(family.Trustee.Email), m => m.Subject == $"myLife: Tresor von {family.Owner.Name} gelöscht");
+        Assert.Empty(await (await family.Trustee.LoginAsync()).Emergency.GetTrustedAsync(Ct));
+        await using var scope = server.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<MyLifeDbContext>();
+        Assert.True(await db.AuditLog.AnyAsync(a => a.Action == AuditActions.VaultDeletedByTrustees && a.TargetId == ownerId, Ct));
+        Assert.False(await db.Objects.AnyAsync(o => o.OwnerId == ownerId, Ct));
+    }
+
     // ---------- Hilfen ----------
 
     private sealed record Person(ServerFixture Server, AuthTestSupport Account, string Email, string Name, string Secret)
@@ -303,6 +426,30 @@ public sealed partial class EmergencyTests(ServerFixture server) : IClassFixture
     {
         await using var scope = server.Services.CreateAsyncScope();
         return await scope.ServiceProvider.GetRequiredService<MyLifeDbContext>().EmergencySwitches.AsNoTracking().SingleAsync(s => s.OwnerId == owner.Id, Ct);
+    }
+
+    /// <summary>Freigabe direkt setzen; der Weg dorthin ist oben geprüft.</summary>
+    private async Task ReleaseAsync(OwnerHandle owner, ReleasedModes modes)
+    {
+        await using var scope = server.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<MyLifeDbContext>();
+        var state = await db.EmergencySwitches.SingleAsync(s => s.OwnerId == owner.Id, Ct);
+        state.ReleasedModes = modes;
+        state.ReleasedAt = server.Clock.GetUtcNow();
+        await db.SaveChangesAsync(Ct);
+    }
+
+    private async Task<Dictionary<Guid, byte[]>> GrantsAsync(OwnerHandle owner)
+    {
+        await using var scope = server.Services.CreateAsyncScope();
+        return await scope.ServiceProvider.GetRequiredService<MyLifeDbContext>().Grants.AsNoTracking()
+            .Where(g => g.OwnerId == owner.Id).ToDictionaryAsync(g => g.Id, g => g.Envelope, Ct);
+    }
+
+    private async Task<bool> UserExistsAsync(Guid id)
+    {
+        await using var scope = server.Services.CreateAsyncScope();
+        return await scope.ServiceProvider.GetRequiredService<MyLifeDbContext>().Users.AnyAsync(u => u.Id == id, Ct);
     }
 
     private async Task<AccessRequest> RequestAsync(Guid id)

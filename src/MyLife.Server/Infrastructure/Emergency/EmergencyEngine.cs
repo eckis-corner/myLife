@@ -35,8 +35,12 @@ internal sealed class KnownBaseUrl
 /// </list>
 /// </summary>
 internal sealed partial class EmergencyEngine(
-    MyLifeDbContext db, MailOutbox outbox, SettingsStore settings, NtfyClient ntfy, KnownBaseUrl baseUrl, TimeProvider time, ILogger<EmergencyEngine> logger)
+    MyLifeDbContext db, MailOutbox outbox, SettingsStore settings, NtfyClient ntfy, KnownBaseUrl baseUrl, FileStore files, TimeProvider time,
+    ILogger<EmergencyEngine> logger)
 {
+    /// <summary>Zeit zwischen der letzten Zustimmung und dem Löschen; so lange kann jede Person zurückziehen und der Eigentümer widersprechen.</summary>
+    public static readonly TimeSpan DeletionDelay = TimeSpan.FromDays(7);
+
     private static readonly TimeSpan MailDelayThreshold = TimeSpan.FromHours(1);
     private static readonly TimeSpan LinkLifetime = TimeSpan.FromDays(120);
 
@@ -71,7 +75,7 @@ internal sealed partial class EmergencyEngine(
 
     /// <summary>
     /// Lebenszeichen (Anmeldung, Knopf oder Link): beendet Erinnerungen und Wartezeit. Eine Freigabe hebt es nicht
-    /// auf (Rücknahme mit M2.6), Anträge auch nicht (dafür gibt es den Widerspruch).
+    /// auf (dafür gibt es die Rücknahme), Anträge auch nicht (dafür gibt es den Widerspruch).
     /// </summary>
     public async Task LifesignAsync(User owner, string source, CancellationToken cancellationToken)
     {
@@ -117,6 +121,14 @@ internal sealed partial class EmergencyEngine(
             }
 
             await db.SaveChangesAsync(cancellationToken);
+        }
+
+        var now = time.GetUtcNow();
+        foreach (var state in await db.EmergencySwitches.Where(s => s.DeletionScheduledAt != null && s.DeletionScheduledAt <= now).ToListAsync(cancellationToken))
+        {
+            await DeleteVaultAsync(state, cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
+            changes++;
         }
 
         return changes;
@@ -274,6 +286,241 @@ internal sealed partial class EmergencyEngine(
         db.AuditLog.Add(AuditLog.Entry(AuditActions.AccessRequestObjected, owner.Id, owner.Id, now, null, "request", request.Id));
     }
 
+    // ---------- Rücknahme (M2.6) ----------
+
+    /// <summary>
+    /// Der Eigentümer meldet sich zurück und nimmt die Freigabe zurück (Architektur 5.1). Der Server liefert sofort
+    /// nichts mehr aus. Bereiche und Briefe, deren Schlüssel über die Freigabe herausgegeben werden konnten, merkt er
+    /// sich für den Schlüsselwechsel im Browser des Eigentümers. Ein geplantes Löschen entfällt.
+    /// </summary>
+    public async Task<bool> RevokeAsync(User owner, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+        var state = await EnsureAsync(owner, cancellationToken);
+        var revoked = state.ReleasedModes;
+        if (revoked == ReleasedModes.None)
+        {
+            return false;
+        }
+
+        var now = time.GetUtcNow();
+        var modes = GrantModes(revoked);
+        var exposed = await db.Grants.Where(g => g.OwnerId == owner.Id && modes.Contains(g.Mode))
+            .Select(g => new { g.Kind, g.AreaKey, g.ObjectId, g.TrusteeId }).ToListAsync(cancellationToken);
+        state.RekeyAreas = [.. state.RekeyAreas.Union(exposed.Where(g => g.Kind == GrantKind.Area).Select(g => g.AreaKey)).Order()];
+        state.RekeyLetters = [.. state.RekeyLetters.Union(exposed.Where(g => g.Kind == GrantKind.Letter).Select(g => g.ObjectId!.Value))];
+        state.ReleasedModes = ReleasedModes.None;
+        state.ReleasedAt = null;
+        state.State = EmergencyState.Active;
+        state.OverdueAt = null;
+        state.Stage = 0;
+        state.StageMailId = null;
+        state.StageSentAt = null;
+        state.DeletionScheduledAt = null;
+        await db.VaultDeletionVotes.Where(v => v.OwnerId == owner.Id).ExecuteDeleteAsync(cancellationToken);
+        await LifesignAsync(owner, "revoke", cancellationToken);
+
+        var trusteeIds = exposed.Select(g => g.TrusteeId).Distinct().ToList();
+        foreach (var trustee in await db.Users.Where(u => trusteeIds.Contains(u.Id) && u.Status == UserStatus.Active).ToListAsync(cancellationToken))
+        {
+            outbox.Enqueue(trustee, MailTemplate.ReleaseRevoked, new Dictionary<string, string> { ["owner"] = owner.DisplayName });
+        }
+
+        db.AuditLog.Add(AuditLog.Entry(AuditActions.EmergencyRevoked, owner.Id, owner.Id, now, null, details: revoked.ToString()));
+        db.AuditLog.Add(AuditLog.Entry(AuditActions.EmergencyRevoked, owner.Id, null, now, null, "user", owner.Id, revoked.ToString()));
+        LogRevoked(logger, owner.Id, revoked.ToString());
+        return true;
+    }
+
+    /// <summary>Ausstehende Schlüsselwechsel, soweit Bereich oder Brief noch bestehen.</summary>
+    public async Task<RekeyDto> PendingRekeyAsync(EmergencySwitch state, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        var areas = state.RekeyAreas;
+        var letters = state.RekeyLetters;
+        var existingAreas = areas.Length == 0 ? [] : await db.Areas.Where(a => a.OwnerId == state.OwnerId && areas.Contains(a.AreaKey))
+            .Select(a => a.AreaKey).ToListAsync(cancellationToken);
+        var existingLetters = letters.Length == 0 ? [] : await db.Objects.Where(o => o.OwnerId == state.OwnerId && letters.Contains(o.Id) && o.WrappedKey != null)
+            .Select(o => o.Id).ToListAsync(cancellationToken);
+        return new RekeyDto([.. existingAreas.Order()], [.. existingLetters.Order()]);
+    }
+
+    /// <summary>Ein Schlüsselwechsel ist erledigt (neuer Bereichs- oder Briefschlüssel übernommen).</summary>
+    public static async Task RekeyDoneAsync(MyLifeDbContext db, Guid ownerId, int? area, Guid? letter, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(db);
+        var state = await db.EmergencySwitches.SingleOrDefaultAsync(s => s.OwnerId == ownerId, cancellationToken);
+        if (state is null)
+        {
+            return;
+        }
+
+        if (area is { } done && state.RekeyAreas.Contains(done))
+        {
+            state.RekeyAreas = [.. state.RekeyAreas.Where(a => a != done)];
+        }
+
+        if (letter is { } rekeyed && state.RekeyLetters.Contains(rekeyed))
+        {
+            state.RekeyLetters = [.. state.RekeyLetters.Where(l => l != rekeyed)];
+        }
+    }
+
+    // ---------- Gemeinsames Löschen nach dem Tod (Entscheidung 36) ----------
+
+    /// <summary>Wer zustimmen muss: alle aktiven Vertrauenspersonen mit Umschlägen für „verstorben“.</summary>
+    public Task<List<User>> DeletionVotersAsync(Guid ownerId, CancellationToken cancellationToken) =>
+        db.Users.Where(u => u.Status == UserStatus.Active
+                && db.Grants.Any(g => g.OwnerId == ownerId && g.TrusteeId == u.Id && g.Mode == GrantMode.Death)
+                && db.TrustRelations.Any(r => r.OwnerId == ownerId && r.TrusteeId == u.Id))
+            .OrderBy(u => u.DisplayName).ToListAsync(cancellationToken);
+
+    /// <summary>Der letzte aktive Admin lässt sich nicht löschen; sonst bliebe die Instanz ohne Verwaltung.</summary>
+    public async Task<bool> IsLastAdminAsync(User owner, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+        return owner.IsAdmin && !await db.Users.AnyAsync(u => u.IsAdmin && u.Status == UserStatus.Active && u.Id != owner.Id, cancellationToken);
+    }
+
+    /// <summary>Stand des gemeinsamen Löschens aus Sicht von <paramref name="viewer"/> (Vertrauensperson oder Eigentümer).</summary>
+    public async Task<VaultDeletionDto> DeletionAsync(User owner, EmergencySwitch state, Guid viewer, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+        ArgumentNullException.ThrowIfNull(state);
+        var voters = await DeletionVotersAsync(owner.Id, cancellationToken);
+        var votes = await VotesAsync(owner.Id, cancellationToken);
+        return new VaultDeletionDto(
+            [.. voters.Where(v => votes.Contains(v.Id)).Select(v => v.DisplayName)],
+            [.. voters.Where(v => !votes.Contains(v.Id)).Select(v => v.DisplayName)],
+            votes.Contains(viewer),
+            state.DeletionScheduledAt,
+            await IsLastAdminAsync(owner, cancellationToken));
+    }
+
+    /// <summary>
+    /// Zustimmung einer Vertrauensperson. Die erste schlägt das Löschen den anderen vor; mit der letzten wird es in
+    /// <see cref="DeletionDelay"/> geplant, und alle, auch der Eigentümer, bekommen Bescheid.
+    /// </summary>
+    public async Task AgreeDeletionAsync(User owner, EmergencySwitch state, User trustee, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(trustee);
+        var votes = await VotesAsync(owner.Id, cancellationToken);
+        if (!votes.Add(trustee.Id))
+        {
+            return;
+        }
+
+        var now = time.GetUtcNow();
+        db.VaultDeletionVotes.Add(new VaultDeletionVote { OwnerId = owner.Id, TrusteeId = trustee.Id, AgreedAt = now });
+        db.AuditLog.Add(AuditLog.Entry(AuditActions.VaultDeletionAgreed, trustee.Id, owner.Id, now, null, "user", trustee.Id));
+        var voters = await DeletionVotersAsync(owner.Id, cancellationToken);
+        if (voters.All(v => votes.Contains(v.Id)))
+        {
+            state.DeletionScheduledAt = now + DeletionDelay;
+            state.UpdatedAt = now;
+            foreach (var voter in voters)
+            {
+                outbox.Enqueue(voter, MailTemplate.VaultDeletionScheduled, new Dictionary<string, string>
+                {
+                    ["owner"] = owner.DisplayName, ["date"] = MailTemplates.Date(state.DeletionScheduledAt.Value, voter.Language),
+                });
+            }
+
+            // Falls der Eigentümer doch lebt: Die Rücknahme nach der Anmeldung stoppt das Löschen.
+            var parameters = new Dictionary<string, string> { ["date"] = MailTemplates.Date(state.DeletionScheduledAt.Value, owner.Language) };
+            outbox.Enqueue(owner, MailTemplate.VaultDeletionScheduledOwner, parameters);
+            await CopyToSecondChannelsAsync(owner, state, MailTemplate.VaultDeletionScheduledOwner, parameters, cancellationToken);
+        }
+        else if (votes.Count == 1)
+        {
+            foreach (var voter in voters.Where(v => v.Id != trustee.Id))
+            {
+                outbox.Enqueue(voter, MailTemplate.VaultDeletionProposed, new Dictionary<string, string>
+                {
+                    ["owner"] = owner.DisplayName, ["trustee"] = trustee.DisplayName,
+                });
+            }
+        }
+    }
+
+    /// <summary>Zustimmung zurückziehen; ein geplantes Löschen entfällt, die anderen erfahren es.</summary>
+    public async Task WithdrawDeletionAsync(User owner, EmergencySwitch state, User trustee, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(trustee);
+        var vote = await db.VaultDeletionVotes.SingleOrDefaultAsync(v => v.OwnerId == owner.Id && v.TrusteeId == trustee.Id, cancellationToken);
+        if (vote is null)
+        {
+            return;
+        }
+
+        var now = time.GetUtcNow();
+        db.VaultDeletionVotes.Remove(vote);
+        db.AuditLog.Add(AuditLog.Entry(AuditActions.VaultDeletionWithdrawn, trustee.Id, owner.Id, now, null, "user", trustee.Id));
+        if (state.DeletionScheduledAt is not null)
+        {
+            state.DeletionScheduledAt = null;
+            state.UpdatedAt = now;
+            foreach (var voter in (await DeletionVotersAsync(owner.Id, cancellationToken)).Where(v => v.Id != trustee.Id))
+            {
+                outbox.Enqueue(voter, MailTemplate.VaultDeletionCancelled, new Dictionary<string, string>
+                {
+                    ["owner"] = owner.DisplayName, ["trustee"] = trustee.DisplayName,
+                });
+            }
+        }
+    }
+
+    /// <summary>
+    /// Löscht Konto und Tresor, wenn zum geplanten Zeitpunkt noch alles gilt: „verstorben“ freigegeben und alle
+    /// Vertrauenspersonen dafür. Sonst entfällt der Termin.
+    /// </summary>
+    private async Task DeleteVaultAsync(EmergencySwitch state, CancellationToken cancellationToken)
+    {
+        var owner = await db.Users.SingleOrDefaultAsync(u => u.Id == state.OwnerId, cancellationToken);
+        var voters = owner is null ? [] : await DeletionVotersAsync(owner.Id, cancellationToken);
+        var votes = await VotesAsync(state.OwnerId, cancellationToken);
+        if (owner is null || !state.ReleasedModes.HasFlag(ReleasedModes.Death) || voters.Count == 0 || voters.Any(v => !votes.Contains(v.Id))
+            || await IsLastAdminAsync(owner, cancellationToken))
+        {
+            state.DeletionScheduledAt = null;
+            return;
+        }
+
+        var now = time.GetUtcNow();
+        await AccountDeletion.DeleteAsync(db, files, owner, cancellationToken);
+        foreach (var voter in voters)
+        {
+            outbox.Enqueue(voter, MailTemplate.VaultDeleted, new Dictionary<string, string> { ["owner"] = owner.DisplayName });
+        }
+
+        db.AuditLog.Add(AuditLog.Entry(AuditActions.VaultDeletedByTrustees, null, null, now, null, "user", owner.Id,
+            voters.Count.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+        LogVaultDeleted(logger, owner.Id, voters.Count);
+    }
+
+    private async Task<HashSet<Guid>> VotesAsync(Guid ownerId, CancellationToken cancellationToken) =>
+        [.. await db.VaultDeletionVotes.Where(v => v.OwnerId == ownerId).Select(v => v.TrusteeId).ToListAsync(cancellationToken)];
+
+    private static List<GrantMode> GrantModes(ReleasedModes modes)
+    {
+        var result = new List<GrantMode>();
+        if (modes.HasFlag(ReleasedModes.Death))
+        {
+            result.Add(GrantMode.Death);
+        }
+
+        if (modes.HasFlag(ReleasedModes.Incapacity))
+        {
+            result.Add(GrantMode.Incapacity);
+        }
+
+        return result;
+    }
+
     // ---------- Zustandsautomat ----------
 
     private async Task<bool> StepAsync(User owner, EmergencySwitch state, CancellationToken cancellationToken)
@@ -423,17 +670,7 @@ internal sealed partial class EmergencyEngine(
             ["mode"] = string.Join(", ", modeKeys.Select(m => MailTemplates.Phrase($"Mail_mode_{m}", owner.Language))),
         });
 
-        var grantModes = new List<GrantMode>();
-        if (added.HasFlag(ReleasedModes.Death))
-        {
-            grantModes.Add(GrantMode.Death);
-        }
-
-        if (added.HasFlag(ReleasedModes.Incapacity))
-        {
-            grantModes.Add(GrantMode.Incapacity);
-        }
-
+        var grantModes = GrantModes(added);
         var trusteeIds = await db.Grants.Where(g => g.OwnerId == owner.Id && grantModes.Contains(g.Mode)).Select(g => g.TrusteeId).Distinct().ToListAsync(cancellationToken);
         foreach (var trustee in await db.Users.Where(u => trusteeIds.Contains(u.Id) && u.Status == UserStatus.Active).ToListAsync(cancellationToken))
         {
@@ -522,6 +759,12 @@ internal sealed partial class EmergencyEngine(
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Notfallzugang von {OwnerId} freigegeben: {Modes} ({Reason})")]
     private static partial void LogReleased(ILogger logger, Guid ownerId, string modes, string reason);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Notfallzugang von {OwnerId} vom Eigentümer zurückgenommen: {Modes}")]
+    private static partial void LogRevoked(ILogger logger, Guid ownerId, string modes);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Tresor {OwnerId} nach Zustimmung von {Count} Vertrauenspersonen gelöscht")]
+    private static partial void LogVaultDeleted(ILogger logger, Guid ownerId, int count);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "ntfy-Nachricht an {OwnerId} fehlgeschlagen: {Error}")]
     private static partial void LogNtfyFailed(ILogger logger, Guid ownerId, string error);

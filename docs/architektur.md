@@ -117,7 +117,7 @@ flowchart TD
 - **Recovery-Key:** Er verpackt den VMK ein zweites Mal (11). Nach einer Wiederherstellung muss ein neues Passwort gesetzt werden, auf Wunsch entsteht auch ein neuer Recovery-Key.
 - **Jeder Nutzer** hat dieselbe Kette und ein eigenes Schlüsselpaar. Der private Schlüssel liegt nur verpackt auf dem Server.
 - **Umschläge (Grants):** Für jede Vertrauensperson, jeden freigegebenen Bereich oder Brief und jeden Modus (verstorben oder handlungsunfähig) verschlüsselt der Browser des Eigentümers den Bereichsschlüssel mit dem öffentlichen Schlüssel der Person. Der Server liefert einen Umschlag erst aus, wenn der Notfallzugang des Eigentümers für diese Person und diesen Modus freigegeben ist (10a).
-- **Freigaben zurücknehmen:** Vor einer Freigabe genügt es, den Umschlag zu löschen. Nach einer Freigabe im Modus Handlungsunfähigkeit erzeugt der Browser des Eigentümers beim nächsten Login neue Bereichsschlüssel für die betroffenen Bereiche und verschlüsselt sie neu.
+- **Freigaben zurücknehmen:** Vor einer Freigabe genügt es, den Umschlag zu löschen. Nach einer Freigabe nimmt der angemeldete Eigentümer sie unter „Notfallzugang“ zurück; sein Browser erzeugt dann neue Bereichsschlüssel für die betroffenen Bereiche und neue Briefschlüssel für die betroffenen Briefe und versiegelt alle Umschläge neu (102, 103).
 
 ### 4.3 Öffentliche Schlüssel prüfen, ohne Telefon (31)
 
@@ -161,8 +161,8 @@ stateDiagram-v2
     Angehalten --> Aktiv: Eigentümer meldet sich an<br/>und widerspricht endgültig
     Angehalten --> Beantragt: Eigentümer lässt Antrag weiterlaufen
     Beantragt --> Freigegeben_X: Antragsfrist abgelaufen
-    Freigegeben_X --> Aktiv: nur Modus Handlungsunfähigkeit:<br/>Eigentümer entzieht Zugriff
-    Freigegeben_beide --> Aktiv: Eigentümer meldet sich zurück<br/>(entzieht Handlungsunfähigkeit, Bereichsschlüssel neu)
+    Freigegeben_X --> Aktiv: Eigentümer meldet sich an und<br/>nimmt zurück (Schlüssel neu, 102)
+    Freigegeben_beide --> Aktiv: Eigentümer meldet sich an und<br/>nimmt zurück (Schlüssel neu, 102)
     Freigegeben_X --> Freigegeben_beide: weiterer Antrag „verstorben“
 ```
 
@@ -173,7 +173,7 @@ stateDiagram-v2
 - **Lebenszeichen-Link (13):** Ein Token mit 256 Bit, einmal verwendbar und zeitlich begrenzt. Die Datenbank speichert nur seinen Hash. Der Link setzt ausschließlich das Lebenszeichen.
 - **Antrag (14, 33):** Der Antrag geht an den Eigentümer (Mail mit dem Link „Widersprechen“, der sofort anhält, 15) und informiert **alle anderen Vertrauenspersonen** des Eigentümers.
 - **Mailausfall:** Ist der SMTP-Versand gestört, verlängert der Dienst die Fristen automatisch und meldet das dem Admin und im Dashboard. Ein Mailausfall darf nie zu einer Freigabe führen.
-- **Nach der Freigabe** „verstorben“ bleibt der Zugriff unbegrenzt (36). Alle Vertrauenspersonen mit Freigabe können gemeinsam „Tresor endgültig löschen“ auslösen. Dafür müssen alle zustimmen.
+- **Nach der Freigabe** „verstorben“ bleibt der Zugriff unbegrenzt (36). Alle Vertrauenspersonen mit Freigabe können gemeinsam „Tresor endgültig löschen“ auslösen. Dafür müssen alle zustimmen; gelöscht wird 7 Tage nach der letzten Zustimmung, bis dahin kann jede Person zurückziehen und der Eigentümer zurücknehmen (104, 105).
 
 ### 5.2 Ablauf der Freigabe
 

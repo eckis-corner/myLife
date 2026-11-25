@@ -30,6 +30,9 @@ internal static class EmergencyEndpoints
         mine.MapGet("/trusted", TrustedAsync);
         mine.MapPost("/trusted/{ownerId:guid}/requests", RequestAsync);
         mine.MapDelete("/requests/{id:guid}", WithdrawAsync);
+        mine.MapPost("/revoke", RevokeAsync);
+        mine.MapPost("/trusted/{ownerId:guid}/deletion", AgreeDeletionAsync);
+        mine.MapDelete("/trusted/{ownerId:guid}/deletion", WithdrawDeletionAsync);
 
         var links = app.MapGroup("/api/emergency/link").RequireRateLimiting(AuthEndpoints.RateLimitPolicy);
         links.MapPost("/lifesign", LifesignLinkAsync);
@@ -48,6 +51,9 @@ internal static class EmergencyEndpoints
         var stored = await settings.GetAsync(cancellationToken);
         var reminders = stored.Deadlines.ReminderDays;
         var requests = await RequestsQuery(db, r => r.OwnerId == me.Id).ToListAsync(cancellationToken);
+        var deletion = await db.VaultDeletionVotes.AnyAsync(v => v.OwnerId == me.Id, cancellationToken)
+            ? await engine.DeletionAsync(me, state, me.Id, cancellationToken)
+            : null;
         return TypedResults.Ok(new EmergencyStatusDto(
             await engine.IsEnabledAsync(me.Id, cancellationToken),
             state.State,
@@ -62,7 +68,9 @@ internal static class EmergencyEndpoints
             new EmergencySettingsDto(state.IntervalDays, state.WaitingDays, state.RequestWaitingDays, state.SecondEmail, state.NtfyTopic),
             stored.Deadlines,
             stored.Ntfy.ServerUrl is not null,
-            requests));
+            requests,
+            await engine.PendingRekeyAsync(state, cancellationToken),
+            deletion));
     }
 
     private static async Task<NoContent> LifesignAsync(ClaimsPrincipal principal, MyLifeDbContext db, EmergencyEngine engine, CancellationToken cancellationToken)
@@ -134,9 +142,78 @@ internal static class EmergencyEndpoints
         return TypedResults.NoContent();
     }
 
+    /// <summary>
+    /// Rücknahme durch den Eigentümer (M2.6): Er ist angemeldet, also handlungsfähig und am Leben. Der Server liefert
+    /// sofort nichts mehr aus; die Antwort nennt die Bereiche und Briefe, die der Browser jetzt neu verschlüsseln muss.
+    /// </summary>
+    private static async Task<Results<Ok<RekeyDto>, ProblemHttpResult>> RevokeAsync(
+        ClaimsPrincipal principal, MyLifeDbContext db, EmergencyEngine engine, CancellationToken cancellationToken)
+    {
+        var me = await db.Users.SingleAsync(u => u.Id == Me(principal), cancellationToken);
+        if (!await engine.RevokeAsync(me, cancellationToken))
+        {
+            return ApiProblems.Create(StatusCodes.Status409Conflict, EmergencyErrors.NotReleased);
+        }
+
+        await db.SaveChangesAsync(cancellationToken);
+        var state = await engine.EnsureAsync(me, cancellationToken);
+        return TypedResults.Ok(await engine.PendingRekeyAsync(state, cancellationToken));
+    }
+
     // ---------- Vertrauensperson ----------
 
-    private static async Task<Ok<List<TrustedOwnerDto>>> TrustedAsync(ClaimsPrincipal principal, MyLifeDbContext db, CancellationToken cancellationToken)
+    /// <summary>Zustimmung zum endgültigen Löschen (Entscheidung 36): nur nach „verstorben“ und nur mit Umschlägen dafür.</summary>
+    private static async Task<Results<Ok<VaultDeletionDto>, ProblemHttpResult>> AgreeDeletionAsync(
+        Guid ownerId, ClaimsPrincipal principal, MyLifeDbContext db, EmergencyEngine engine, CancellationToken cancellationToken)
+    {
+        var (owner, state, me, problem) = await DeletionContextAsync(ownerId, principal, db, engine, cancellationToken);
+        if (problem is not null)
+        {
+            return problem;
+        }
+
+        if (await engine.IsLastAdminAsync(owner!, cancellationToken))
+        {
+            return ApiProblems.Create(StatusCodes.Status409Conflict, EmergencyErrors.LastAdmin);
+        }
+
+        await engine.AgreeDeletionAsync(owner!, state!, me!, cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
+        return TypedResults.Ok(await engine.DeletionAsync(owner!, state!, me!.Id, cancellationToken));
+    }
+
+    private static async Task<Results<Ok<VaultDeletionDto>, ProblemHttpResult>> WithdrawDeletionAsync(
+        Guid ownerId, ClaimsPrincipal principal, MyLifeDbContext db, EmergencyEngine engine, CancellationToken cancellationToken)
+    {
+        var (owner, state, me, problem) = await DeletionContextAsync(ownerId, principal, db, engine, cancellationToken);
+        if (problem is not null)
+        {
+            return problem;
+        }
+
+        await engine.WithdrawDeletionAsync(owner!, state!, me!, cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
+        return TypedResults.Ok(await engine.DeletionAsync(owner!, state!, me!.Id, cancellationToken));
+    }
+
+    private static async Task<(User? Owner, EmergencySwitch? State, User? Me, ProblemHttpResult? Problem)> DeletionContextAsync(
+        Guid ownerId, ClaimsPrincipal principal, MyLifeDbContext db, EmergencyEngine engine, CancellationToken cancellationToken)
+    {
+        var me = await db.Users.SingleAsync(u => u.Id == Me(principal), cancellationToken);
+        var owner = await db.Users.SingleOrDefaultAsync(u => u.Id == ownerId && u.Status == UserStatus.Active, cancellationToken);
+        if (owner is null || !(await engine.DeletionVotersAsync(ownerId, cancellationToken)).Any(v => v.Id == me.Id))
+        {
+            return (null, null, null, ApiProblems.Create(StatusCodes.Status404NotFound, EmergencyErrors.NotFound));
+        }
+
+        var state = await engine.EnsureAsync(owner, cancellationToken);
+        return state.ReleasedModes.HasFlag(ReleasedModes.Death)
+            ? (owner, state, me, null)
+            : (null, null, null, ApiProblems.Create(StatusCodes.Status409Conflict, EmergencyErrors.NotReleased));
+    }
+
+    private static async Task<Ok<List<TrustedOwnerDto>>> TrustedAsync(
+        ClaimsPrincipal principal, MyLifeDbContext db, EmergencyEngine engine, CancellationToken cancellationToken)
     {
         var me = Me(principal);
         var relations = await db.TrustRelations.AsNoTracking().Where(r => r.TrusteeId == me).ToListAsync(cancellationToken);
@@ -146,14 +223,28 @@ internal static class EmergencyEndpoints
             .Select(g => new { g.OwnerId, g.Mode }).Distinct().ToListAsync(cancellationToken);
         var switches = await db.EmergencySwitches.AsNoTracking().Where(s => ownerIds.Contains(s.OwnerId)).ToDictionaryAsync(s => s.OwnerId, cancellationToken);
         var requests = await RequestsQuery(db, r => r.TrusteeId == me).ToListAsync(cancellationToken);
-        return TypedResults.Ok(relations.Where(r => owners.ContainsKey(r.OwnerId)).OrderBy(r => owners[r.OwnerId].DisplayName).Select(r => new TrustedOwnerDto(
-            r.OwnerId,
-            owners[r.OwnerId].DisplayName,
-            r.CanRequestAccess,
-            grants.Any(g => g.OwnerId == r.OwnerId && g.Mode == GrantMode.Death),
-            grants.Any(g => g.OwnerId == r.OwnerId && g.Mode == GrantMode.Incapacity),
-            switches.TryGetValue(r.OwnerId, out var state) ? state.ReleasedModes : ReleasedModes.None,
-            [.. requests.Where(q => q.OwnerId == r.OwnerId)])).ToList());
+        var result = new List<TrustedOwnerDto>();
+        foreach (var relation in relations.Where(r => owners.ContainsKey(r.OwnerId)).OrderBy(r => owners[r.OwnerId].DisplayName))
+        {
+            var owner = owners[relation.OwnerId];
+            var released = switches.TryGetValue(relation.OwnerId, out var state) ? state.ReleasedModes : ReleasedModes.None;
+            var hasDeath = grants.Any(g => g.OwnerId == relation.OwnerId && g.Mode == GrantMode.Death);
+            // Löschen steht nur Vertrauenspersonen mit Umschlägen für „verstorben“ offen, und erst nach dieser Freigabe.
+            var deletion = hasDeath && released.HasFlag(ReleasedModes.Death) && owner.Status == UserStatus.Active
+                ? await engine.DeletionAsync(owner, state!, me, cancellationToken)
+                : null;
+            result.Add(new TrustedOwnerDto(
+                relation.OwnerId,
+                owner.DisplayName,
+                relation.CanRequestAccess,
+                hasDeath,
+                grants.Any(g => g.OwnerId == relation.OwnerId && g.Mode == GrantMode.Incapacity),
+                released,
+                [.. requests.Where(q => q.OwnerId == relation.OwnerId)],
+                deletion));
+        }
+
+        return TypedResults.Ok(result);
     }
 
     /// <summary>Antrag auf einen Modus (Entscheidungen 14, 33): nur mit Antragsrecht, je Modus nur ein offener Antrag.</summary>

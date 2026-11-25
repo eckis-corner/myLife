@@ -148,6 +148,70 @@ public sealed class TrustService(TrustClient api, FamilyClient family, KeyTrustS
         });
     }
 
+    /// <summary>
+    /// Schlüsselwechsel nach einer Rücknahme (M2.6): neue Bereichsschlüssel und neue Briefschlüssel, alle verbleibenden
+    /// Umschläge neu versiegelt. Jeder Schritt gilt für sich; schlägt einer fehl, laufen die anderen trotzdem, und
+    /// der Server merkt sich, was noch fehlt.
+    /// </summary>
+    public async Task CompleteRekeyAsync(MyLife.Shared.Emergency.RekeyDto pending)
+    {
+        ArgumentNullException.ThrowIfNull(pending);
+        Exception? first = null;
+        foreach (var area in pending.Areas)
+        {
+            try
+            {
+                await RotateAsync(area);
+            }
+            catch (Exception exception) when (exception is TrustException or VaultException)
+            {
+                first ??= exception;
+            }
+        }
+
+        foreach (var letter in pending.Letters)
+        {
+            try
+            {
+                await RekeyLetterAsync(letter);
+            }
+            catch (Exception exception) when (exception is TrustException or VaultException)
+            {
+                first ??= exception;
+            }
+        }
+
+        if (first is not null)
+        {
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw(first);
+        }
+    }
+
+    /// <summary>Neuer Schlüssel für einen Brief; alle Umschläge des Briefs werden neu versiegelt.</summary>
+    public async Task RekeyLetterAsync(Guid letterId)
+    {
+        var (_, signingKey, me) = Keys();
+        var grants = await api.GetLetterGrantsAsync(letterId);
+        var people = (await keys.GetPeopleAsync()).ToDictionary(p => p.Person.Id);
+        await vault.RekeyObjectAsync(letterId, async (areaKey, newWrappedKey) =>
+        {
+            var resealed = new List<RotatedGrant>();
+            foreach (var grant in grants)
+            {
+                if (!people.TryGetValue(grant.TrusteeId, out var person) || person.State == TrustState.Changed)
+                {
+                    throw new TrustException(TrustErrors.KeyChanged);
+                }
+
+                var envelope = await crypto.SealKeyAsync(areaKey, newWrappedKey, KeyContexts.ObjectKey(letterId), person.Person.PublicEncryptionKey,
+                    KeyContexts.LetterEnvelope(me, letterId));
+                resealed.Add(new RotatedGrant(grant.Id, envelope, await SignAsync(signingKey, envelope, grant.TrusteeId, GrantKind.Letter, Resource(letterId), grant.Mode)));
+            }
+
+            return resealed;
+        });
+    }
+
     internal static string Resource(int area) => area.ToString(CultureInfo.InvariantCulture);
 
     internal static string Resource(Guid objectId) => objectId.ToString("D");

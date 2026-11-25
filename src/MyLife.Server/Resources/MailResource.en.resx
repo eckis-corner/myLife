@@ -62,6 +62,10 @@ Without a response, your trusted persons will get access to what you shared with
   <data name="Mail_lifesign-reminder_subject" xml:space="preserve"><value>myLife: Reminder {stage} of {count} – please confirm you are well</value></data>
   <data name="Mail_mode_death" xml:space="preserve"><value>deceased</value></data>
   <data name="Mail_mode_incapacity" xml:space="preserve"><value>incapacitated</value></data>
+  <data name="Mail_release-revoked_body" xml:space="preserve"><value>Hello {name},
+
+{owner} has checked back in on myLife and revoked the release of emergency access. What is meant only for an emergency is no longer visible to you.</value></data>
+  <data name="Mail_release-revoked_subject" xml:space="preserve"><value>myLife: {owner} has revoked emergency access</value></data>
   <data name="Mail_released-owner_body" xml:space="preserve"><value>Hello {name},
 
 your emergency access on myLife has been released ({mode}). Your trusted persons can now read what you shared with them for this case.
@@ -107,4 +111,24 @@ an administrator has reset the two-factor sign-in of your myLife account. The au
 
 If you did not ask for this, please contact the administrator immediately.</value></data>
   <data name="Mail_twofactor-reset_subject" xml:space="preserve"><value>myLife: two-factor sign-in reset</value></data>
+  <data name="Mail_vault-deleted_body" xml:space="preserve"><value>Hello {name},
+
+as agreed by all trusted persons, {owner}'s vault on myLife has now been deleted for good.</value></data>
+  <data name="Mail_vault-deleted_subject" xml:space="preserve"><value>myLife: {owner}'s vault deleted</value></data>
+  <data name="Mail_vault-deletion-cancelled_body" xml:space="preserve"><value>Hello {name},
+
+{trustee} has withdrawn their agreement. {owner}'s vault will not be deleted for now.</value></data>
+  <data name="Mail_vault-deletion-cancelled_subject" xml:space="preserve"><value>myLife: Deletion of {owner}'s vault cancelled</value></data>
+  <data name="Mail_vault-deletion-proposed_body" xml:space="preserve"><value>Hello {name},
+
+{trustee} suggests deleting {owner}'s vault on myLife for good. It will only be deleted if all trusted persons agree. Sign in and decide under "Emergency access". Save anything you want to keep first.</value></data>
+  <data name="Mail_vault-deletion-proposed_subject" xml:space="preserve"><value>myLife: Delete {owner}'s vault?</value></data>
+  <data name="Mail_vault-deletion-scheduled-owner_body" xml:space="preserve"><value>Hello {name},
+
+your trusted persons have agreed to delete your vault on myLife for good on {date}. If this is a mistake, sign in right away and revoke the release under "Emergency access"; then nothing will be deleted.</value></data>
+  <data name="Mail_vault-deletion-scheduled-owner_subject" xml:space="preserve"><value>myLife: Your vault will be deleted on {date}</value></data>
+  <data name="Mail_vault-deletion-scheduled_body" xml:space="preserve"><value>Hello {name},
+
+all trusted persons have agreed: {owner}'s vault will be deleted for good on {date}. Until then you can withdraw your agreement under "Emergency access".</value></data>
+  <data name="Mail_vault-deletion-scheduled_subject" xml:space="preserve"><value>myLife: {owner}'s vault will be deleted on {date}</value></data>
 </root>

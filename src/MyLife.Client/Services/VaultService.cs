@@ -427,6 +427,51 @@ public sealed class VaultService : IDisposable
         }
     }
 
+    /// <summary>
+    /// Neuer eigener Schlüssel für ein Objekt (Brief, M2.6): Inhalt neu verschlüsseln, Dateischlüssel und Metadaten
+    /// seiner Dokumente umpacken; die Umschläge versiegelt <paramref name="resealGrants"/> mit dem neuen verpackten
+    /// Schlüssel. Der Server übernimmt alles in einem Schritt.
+    /// </summary>
+    public async Task RekeyObjectAsync(
+        Guid objectId, Func<CryptoKeyHandle, byte[], Task<IReadOnlyList<MyLife.Shared.Trust.RotatedGrant>>> resealGrants)
+    {
+        ArgumentNullException.ThrowIfNull(resealGrants);
+        await EnsureLoadedAsync();
+        var item = Find(objectId);
+        if (item?.WrappedKey is null)
+        {
+            return;
+        }
+
+        var areaKey = await AreaKeyAsync(item.Area);
+        var oldKey = await ContentKeyAsync(item);
+        var created = await _crypto.CreateKeyAsync([new KeyWrapping(areaKey, KeyContexts.ObjectKey(item.Id))]);
+        var committed = false;
+        try
+        {
+            var payload = await EncryptPayloadAsync(created.Handle, item.Type, item.Id, item.Payload);
+            var documents = new List<MyLife.Shared.Trust.RotatedDocument>();
+            foreach (var file in FilesOf(item.Id))
+            {
+                var wrapped = await _crypto.RewrapKeyAsync(oldKey, file.WrappedFileKey, KeyContexts.FileKey(file.Id), created.Handle, KeyContexts.FileKey(file.Id));
+                documents.Add(new(file.Id, wrapped, await _crypto.EncryptAsync(created.Handle, file.Metadata.ToUtf8(), KeyContexts.DocumentMetadata(file.Id))));
+            }
+
+            var grants = await resealGrants(areaKey, created.WrappedKeys[0]);
+            await _api.RekeyLetterAsync(item.Id, new MyLife.Shared.Trust.RekeyLetterRequest(created.WrappedKeys[0], payload, item.Version, documents, grants));
+            committed = true;
+        }
+        finally
+        {
+            await _crypto.ReleaseAsync(created.Handle);
+        }
+
+        if (committed)
+        {
+            await ReloadAsync();
+        }
+    }
+
     internal async Task<byte[]> EncryptFileAsync(CryptoKeyHandle fileKey, Guid documentId, Stream content, long size, IProgress<double>? progress)
     {
         var chunks = VaultLimits.ChunkCount(size);

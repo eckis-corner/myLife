@@ -134,6 +134,10 @@ namespace MyLife.Server.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("owner_id");
 
+                    b.Property<DateTimeOffset?>("DeletionScheduledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deletion_scheduled_at");
+
                     b.Property<int>("IntervalDays")
                         .HasColumnType("integer")
                         .HasColumnName("interval_days");
@@ -150,6 +154,20 @@ namespace MyLife.Server.Data.Migrations
                     b.Property<DateTimeOffset?>("OverdueAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("overdue_at");
+
+                    b.PrimitiveCollection<int[]>("RekeyAreas")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer[]")
+                        .HasColumnName("rekey_areas")
+                        .HasDefaultValueSql("'{}'");
+
+                    b.PrimitiveCollection<Guid[]>("RekeyLetters")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid[]")
+                        .HasColumnName("rekey_letters")
+                        .HasDefaultValueSql("'{}'");
 
                     b.Property<DateTimeOffset?>("ReleasedAt")
                         .HasColumnType("timestamp with time zone")
@@ -799,6 +817,27 @@ namespace MyLife.Server.Data.Migrations
                     b.ToTable("areas", (string)null);
                 });
 
+            modelBuilder.Entity("MyLife.Server.Data.VaultDeletionVote", b =>
+                {
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_id");
+
+                    b.Property<Guid>("TrusteeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trustee_id");
+
+                    b.Property<DateTimeOffset>("AgreedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("agreed_at");
+
+                    b.HasKey("OwnerId", "TrusteeId");
+
+                    b.HasIndex("TrusteeId");
+
+                    b.ToTable("vault_deletion_votes", (string)null);
+                });
+
             modelBuilder.Entity("MyLife.Server.Data.VaultDocument", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1059,6 +1098,21 @@ namespace MyLife.Server.Data.Migrations
                     b.HasOne("MyLife.Server.Data.User", null)
                         .WithMany()
                         .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyLife.Server.Data.VaultDeletionVote", b =>
+                {
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyLife.Server.Data.User", null)
+                        .WithMany()
+                        .HasForeignKey("TrusteeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

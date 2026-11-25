@@ -161,9 +161,17 @@ public static class AuditActions
     public const string AccessRequestObjected = "access-request-objected";
     public const string AccessRequestWithdrawn = "access-request-withdrawn";
 
+    // Rücknahme und gemeinsames Löschen (M2.6)
+    public const string EmergencyRevoked = "emergency-revoked";
+    public const string LetterKeyRotated = "letter-key-rotated";
+    public const string VaultDeletionAgreed = "vault-deletion-agreed";
+    public const string VaultDeletionWithdrawn = "vault-deletion-withdrawn";
+    public const string VaultDeletedByTrustees = "vault-deleted-by-trustees";
+
     /// <summary>Gehört ins System-Protokoll des Administrators.</summary>
     public static bool IsSystem(string action) =>
-        action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch or EmergencyReleased;
+        action.StartsWith("admin-", StringComparison.Ordinal) || action is AccountDeleted or MailFailed or AccountCreated or KeyMismatch or EmergencyReleased or EmergencyRevoked
+            or VaultDeletedByTrustees;
 
     /// <summary>Was der Browser selbst melden darf.</summary>
     public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ImportJson };

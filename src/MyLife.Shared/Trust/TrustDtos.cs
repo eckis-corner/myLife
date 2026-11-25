@@ -46,6 +46,13 @@ public sealed record RotateAreaRequest(
 /// <summary>Objekt mit neuem Chiffrat; bei eigenem Objektschlüssel (Brief) nur dieser neu verpackt.</summary>
 public sealed record RotatedObject(Guid Id, byte[] Payload, byte[]? WrappedKey, uint Version);
 
+/// <summary>
+/// Neuer Schlüssel für einen Brief (M2.6): Inhalt neu verschlüsselt, Dateischlüssel und Metadaten seiner Dokumente
+/// umgepackt, alle Umschläge des Briefs neu versiegelt; der neue Objektschlüssel ist mit dem Bereichsschlüssel verpackt.
+/// </summary>
+public sealed record RekeyLetterRequest(
+    byte[] WrappedKey, byte[] Payload, uint Version, IReadOnlyList<RotatedDocument> Documents, IReadOnlyList<RotatedGrant> Grants);
+
 public sealed record RotatedDocument(Guid Id, byte[] WrappedFileKey, byte[] Metadata);
 
 public sealed record RotatedGrant(Guid Id, byte[] Envelope, byte[] Signature);

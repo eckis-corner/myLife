@@ -21,6 +21,9 @@ public sealed class TrustClient(HttpClient http)
     public async Task<IReadOnlyList<AreaGrantDto>> GetAreaGrantsAsync(int area, CancellationToken cancellationToken = default) =>
         await GetAsync<List<AreaGrantDto>>(string.Create(CultureInfo.InvariantCulture, $"api/trust/areas/{area}/grants"), cancellationToken) ?? [];
 
+    public async Task<IReadOnlyList<AreaGrantDto>> GetLetterGrantsAsync(Guid objectId, CancellationToken cancellationToken = default) =>
+        await GetAsync<List<AreaGrantDto>>($"api/trust/letters/{objectId}/grants", cancellationToken) ?? [];
+
     public async Task<IReadOnlyList<SharedOwnerDto>> GetSharedAsync(CancellationToken cancellationToken = default) =>
         await GetAsync<List<SharedOwnerDto>>("api/shared", cancellationToken) ?? [];
 

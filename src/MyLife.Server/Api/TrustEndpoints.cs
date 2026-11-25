@@ -26,6 +26,8 @@ internal static class TrustEndpoints
         trust.MapDelete("/trustees/{trusteeId:guid}", RemoveTrusteeAsync);
         trust.MapGet("/areas/{area:int}/grants", ListAreaGrantsAsync);
         trust.MapPost("/areas/{area:int}/rotate", RotateAreaAsync);
+        trust.MapGet("/letters/{objectId:guid}/grants", ListLetterGrantsAsync);
+        trust.MapPost("/letters/{objectId:guid}/rekey", RekeyLetterAsync);
 
         var shared = app.MapGroup("/api/shared").RequireAuthorization().RequireRateLimiting(VaultEndpoints.RateLimitPolicy);
         shared.MapGet("", ListSharedAsync);
@@ -249,7 +251,98 @@ internal static class TrustEndpoints
         }
 
         areaEntity.WrappedAreaKey = request.WrappedAreaKey;
+        await Infrastructure.Emergency.EmergencyEngine.RekeyDoneAsync(db, me, area, null, cancellationToken);
         audit.Own(AuditActions.AreaKeyRotated, me, "area", details: area.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        try
+        {
+            await db.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Problem(StatusCodes.Status409Conflict, TrustErrors.Stale);
+        }
+
+        return TypedResults.NoContent();
+    }
+
+    /// <summary>Alle Umschläge eines Briefs (für den neuen Briefschlüssel nach einer Rücknahme), mit Empfänger.</summary>
+    private static async Task<Ok<List<AreaGrantDto>>> ListLetterGrantsAsync(
+        Guid objectId, ClaimsPrincipal principal, MyLifeDbContext db, CancellationToken cancellationToken)
+    {
+        var me = Me(principal);
+        return TypedResults.Ok(await db.Grants.AsNoTracking().Where(g => g.OwnerId == me && g.Kind == GrantKind.Letter && g.ObjectId == objectId)
+            .Select(g => new AreaGrantDto(g.Id, g.TrusteeId, g.Mode)).ToListAsync(cancellationToken));
+    }
+
+    /// <summary>
+    /// Neuer Schlüssel für einen Brief (M2.6): Nach einer Rücknahme kennen Vertrauenspersonen womöglich den alten
+    /// Briefschlüssel. Der Browser hat den Brief neu verschlüsselt, die Dateischlüssel umgepackt und alle Umschläge des
+    /// Briefs neu versiegelt; der Server übernimmt das nur vollständig und unverändert (sonst 409).
+    /// </summary>
+    private static async Task<Results<NoContent, ProblemHttpResult>> RekeyLetterAsync(
+        Guid objectId, RekeyLetterRequest request, ClaimsPrincipal principal, MyLifeDbContext db, FileStore files, AuditLog audit,
+        CancellationToken cancellationToken)
+    {
+        var me = Me(principal);
+        if (!VaultEndpoints.IsWrappedObjectKey(request.WrappedKey) || request.WrappedKey is null
+            || request.Payload is not { Length: > 0 and <= VaultLimits.MaxPayloadBytes + 64 } || request.Documents is null || request.Grants is null)
+        {
+            return Problem(StatusCodes.Status400BadRequest, TrustErrors.Invalid);
+        }
+
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        var letter = await db.Objects.SingleOrDefaultAsync(o => o.Id == objectId && o.OwnerId == me && o.WrappedKey != null, cancellationToken);
+        if (letter is null)
+        {
+            return Problem(StatusCodes.Status404NotFound, TrustErrors.NotFound);
+        }
+
+        var documents = await db.Documents.Where(d => d.ObjectId == objectId).ToListAsync(cancellationToken);
+        var complete = documents.Where(d => d.IsComplete).ToList();
+        var grants = await db.Grants.Where(g => g.OwnerId == me && g.Kind == GrantKind.Letter && g.ObjectId == objectId).ToListAsync(cancellationToken);
+        var documentUpdates = request.Documents.ToDictionary(d => d.Id);
+        var grantUpdates = request.Grants.ToDictionary(g => g.Id);
+        if (request.Version != letter.Version || documentUpdates.Count != complete.Count || complete.Any(d => !documentUpdates.ContainsKey(d.Id))
+            || grantUpdates.Count != grants.Count || grants.Any(g => !grantUpdates.ContainsKey(g.Id)))
+        {
+            return Problem(StatusCodes.Status409Conflict, TrustErrors.Stale);
+        }
+
+        foreach (var document in complete)
+        {
+            var update = documentUpdates[document.Id];
+            if (!KeyMaterialValidation.IsWrappedSecretKey(update.WrappedFileKey) || update.Metadata is not { Length: > 0 and <= 8192 })
+            {
+                return Problem(StatusCodes.Status400BadRequest, TrustErrors.Invalid);
+            }
+
+            document.WrappedFileKey = update.WrappedFileKey;
+            document.Metadata = update.Metadata;
+        }
+
+        foreach (var grant in grants)
+        {
+            var update = grantUpdates[grant.Id];
+            if (update.Envelope is not { Length: > 0 and <= TrustLimits.MaxEnvelopeBytes } || update.Signature is not { Length: CryptoFormat.SignatureLength })
+            {
+                return Problem(StatusCodes.Status400BadRequest, TrustErrors.Invalid);
+            }
+
+            grant.Envelope = update.Envelope;
+            grant.Signature = update.Signature;
+        }
+
+        foreach (var incomplete in documents.Where(d => !d.IsComplete))
+        {
+            files.Delete(incomplete.StorageKey);
+            db.Documents.Remove(incomplete);
+        }
+
+        letter.Payload = request.Payload;
+        letter.WrappedKey = request.WrappedKey;
+        await Infrastructure.Emergency.EmergencyEngine.RekeyDoneAsync(db, me, null, objectId, cancellationToken);
+        audit.Own(AuditActions.LetterKeyRotated, me, letter.TypeKey, letter.Id);
         try
         {
             await db.SaveChangesAsync(cancellationToken);

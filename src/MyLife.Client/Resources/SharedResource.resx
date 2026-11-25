@@ -185,6 +185,7 @@
   <data name="Audit_document-restored" xml:space="preserve"><value>Dokument wiederhergestellt</value></data>
   <data name="Audit_document-uploaded" xml:space="preserve"><value>Dokument hochgeladen</value></data>
   <data name="Audit_emergency-released" xml:space="preserve"><value>Notfallzugang freigegeben</value></data>
+  <data name="Audit_emergency-revoked" xml:space="preserve"><value>Freigabe zurückgenommen</value></data>
   <data name="Audit_emergency-settings-changed" xml:space="preserve"><value>Fristen geändert</value></data>
   <data name="Audit_emergency-waiting" xml:space="preserve"><value>Wartezeit begonnen</value></data>
   <data name="Audit_export-json" xml:space="preserve"><value>JSON-Export</value></data>
@@ -198,6 +199,7 @@
   <data name="Audit_key-endorsed" xml:space="preserve"><value>Schlüssel gegengezeichnet</value></data>
   <data name="Audit_key-mismatch" xml:space="preserve"><value>Schlüssel passt nicht zur Einladung</value></data>
   <data name="Audit_key-verified" xml:space="preserve"><value>Schlüssel bestätigt</value></data>
+  <data name="Audit_letter-key-rotated" xml:space="preserve"><value>Neuer Briefschlüssel</value></data>
   <data name="Audit_lifesign" xml:space="preserve"><value>Lebenszeichen</value></data>
   <data name="Audit_lifesign-requested" xml:space="preserve"><value>Erinnerung an das Lebenszeichen</value></data>
   <data name="Audit_login" xml:space="preserve"><value>Anmeldung</value></data>
@@ -219,6 +221,9 @@
   <data name="Audit_trustee-added" xml:space="preserve"><value>Vertrauensperson hinzugefügt</value></data>
   <data name="Audit_trustee-changed" xml:space="preserve"><value>Freigaben geändert</value></data>
   <data name="Audit_trustee-removed" xml:space="preserve"><value>Vertrauensperson entfernt</value></data>
+  <data name="Audit_vault-deleted-by-trustees" xml:space="preserve"><value>Tresor von den Vertrauenspersonen gelöscht</value></data>
+  <data name="Audit_vault-deletion-agreed" xml:space="preserve"><value>Dem Löschen zugestimmt</value></data>
+  <data name="Audit_vault-deletion-withdrawn" xml:space="preserve"><value>Zustimmung zum Löschen zurückgezogen</value></data>
   <data name="AuthError_auth-crypto-failed" xml:space="preserve"><value>Die Schlüssel konnten im Browser nicht verarbeitet werden.</value></data>
   <data name="AuthError_auth-disabled" xml:space="preserve"><value>Dein Konto ist gesperrt. Bitte wende dich an den Administrator.</value></data>
   <data name="AuthError_auth-expired" xml:space="preserve"><value>Die Anmeldung hat zu lange gedauert. Bitte beginne von vorn.</value></data>
@@ -306,13 +311,26 @@
   <data name="Edit" xml:space="preserve"><value>Bearbeiten</value></data>
   <data name="EditObject" xml:space="preserve"><value>„{0}“ bearbeiten</value></data>
   <data name="EmergencyContinue" xml:space="preserve"><value>Weiterlaufen lassen</value></data>
+  <data name="EmergencyDeletionAgree" xml:space="preserve"><value>Dem Löschen zustimmen</value></data>
+  <data name="EmergencyDeletionBlocked" xml:space="preserve"><value>{0} ist der einzige Administrator dieser Instanz. Bevor der Tresor gelöscht werden kann, muss der Betreiber jemand anderen zum Administrator machen.</value></data>
+  <data name="EmergencyDeletionConfirm" xml:space="preserve"><value>Dem endgültigen Löschen des Tresors von {0} zustimmen? Sobald alle zugestimmt haben, wird nach sieben Tagen alles gelöscht: Daten, Dokumente, Briefe. Das lässt sich nicht rückgängig machen. Speichere vorher, was du behalten möchtest.</value></data>
+  <data name="EmergencyDeletionNobody" xml:space="preserve"><value>niemand</value></data>
+  <data name="EmergencyDeletionOwnerScheduled" xml:space="preserve"><value>Alle Vertrauenspersonen haben zugestimmt: Dein Tresor wird am {0} endgültig gelöscht.</value></data>
+  <data name="EmergencyDeletionOwnerVotes" xml:space="preserve"><value>Deine Vertrauenspersonen erwägen, deinen Tresor endgültig zu löschen. Zugestimmt haben: {0}.</value></data>
+  <data name="EmergencyDeletionScheduled" xml:space="preserve"><value>Alle haben zugestimmt. Gelöscht wird am {0}; bis dahin kannst du deine Zustimmung zurückziehen.</value></data>
+  <data name="EmergencyDeletionText" xml:space="preserve"><value>Wenn alles erledigt ist, könnt ihr den Tresor von {0} gemeinsam löschen. Alle Vertrauenspersonen für den Fall „verstorben“ müssen zustimmen; sieben Tage nach der letzten Zustimmung ist alles unwiderruflich gelöscht.</value></data>
+  <data name="EmergencyDeletionTitle" xml:space="preserve"><value>Tresor endgültig löschen</value></data>
+  <data name="EmergencyDeletionVotes" xml:space="preserve"><value>Zugestimmt: {0}. Es fehlt noch: {1}.</value></data>
+  <data name="EmergencyDeletionWithdraw" xml:space="preserve"><value>Zustimmung zurückziehen</value></data>
   <data name="EmergencyDisabled" xml:space="preserve"><value>Der Notfallzugang wird aktiv, sobald du mindestens eine Vertrauensperson benannt hast. Bis dahin gibt es keine Erinnerungen.</value></data>
   <data name="EmergencyEarliestRelease" xml:space="preserve"><value>Freigabe ohne Reaktion frühestens</value></data>
   <data name="EmergencyError_emergency-already-released" xml:space="preserve"><value>Dieser Fall ist schon freigegeben.</value></data>
   <data name="EmergencyError_emergency-failed" xml:space="preserve"><value>Das hat nicht geklappt. Bitte versuche es erneut.</value></data>
   <data name="EmergencyError_emergency-invalid" xml:space="preserve"><value>Die Angaben sind ungültig.</value></data>
+  <data name="EmergencyError_emergency-last-admin" xml:space="preserve"><value>Diese Person ist der einzige Administrator; ihr Tresor lässt sich so nicht löschen.</value></data>
   <data name="EmergencyError_emergency-not-allowed" xml:space="preserve"><value>Dafür fehlt dir das Recht.</value></data>
   <data name="EmergencyError_emergency-not-found" xml:space="preserve"><value>Nicht gefunden.</value></data>
+  <data name="EmergencyError_emergency-not-released" xml:space="preserve"><value>Dafür ist der Notfallzugang nicht freigegeben.</value></data>
   <data name="EmergencyError_emergency-pending" xml:space="preserve"><value>Es läuft schon ein Antrag für diesen Fall.</value></data>
   <data name="EmergencyError_emergency-token-invalid" xml:space="preserve"><value>Der Link ist ungültig oder schon verwendet.</value></data>
   <data name="EmergencyForOthers" xml:space="preserve"><value>Für andere</value></data>
@@ -333,14 +351,23 @@
   <data name="EmergencyObject" xml:space="preserve"><value>Endgültig widersprechen</value></data>
   <data name="EmergencyObjectConfirm" xml:space="preserve"><value>Dem Antrag von {0} endgültig widersprechen? Es wird nichts freigegeben.</value></data>
   <data name="EmergencyRange" xml:space="preserve"><value>zwischen {0} und {1} Tagen, Standard {2}</value></data>
+  <data name="EmergencyRekeyContinue" xml:space="preserve"><value>Schlüsselwechsel fortsetzen</value></data>
+  <data name="EmergencyRekeyDone" xml:space="preserve"><value>Alle betroffenen Bereiche und Briefe haben neue Schlüssel.</value></data>
+  <data name="EmergencyRekeyFailed" xml:space="preserve"><value>Der Schlüsselwechsel ist nicht ganz fertig geworden. Du kannst ihn hier fortsetzen.</value></data>
+  <data name="EmergencyRekeyKeyChanged" xml:space="preserve"><value>Der Schlüssel einer Vertrauensperson hat sich geändert. Prüfe sie unter „Vertrauenspersonen“ und setze dann den Schlüsselwechsel hier fort.</value></data>
+  <data name="EmergencyRekeyPending" xml:space="preserve"><value>Die Freigabe ist zurückgenommen, aber der Schlüsselwechsel ist noch nicht fertig ({0} Bereiche, {1} Briefe). Bis dahin kennen Vertrauenspersonen womöglich noch die alten Schlüssel.</value></data>
+  <data name="EmergencyRekeying" xml:space="preserve"><value>Neue Schlüssel werden erzeugt und alles betroffene neu verschlüsselt. Bitte die Seite nicht schließen.</value></data>
   <data name="EmergencyReleasedFor" xml:space="preserve"><value>Freigegeben ({0}) – ansehen</value></data>
-  <data name="EmergencyReleasedOwner" xml:space="preserve"><value>Dein Notfallzugang ist freigegeben ({0}) seit {1}. Deine Vertrauenspersonen können lesen, was du für diesen Fall hinterlegt hast. Die Rücknahme kommt mit dem nächsten Schritt (M2.6).</value></data>
+  <data name="EmergencyReleasedOwner" xml:space="preserve"><value>Dein Notfallzugang ist freigegeben ({0}) seit {1}. Deine Vertrauenspersonen können lesen, was du für diesen Fall hinterlegt hast. Wenn es dir gut geht, nimm die Freigabe zurück.</value></data>
   <data name="EmergencyRequest" xml:space="preserve"><value>Zugang beantragen: {0}</value></data>
   <data name="EmergencyRequestConfirm" xml:space="preserve"><value>Zugang zu {0} für den Fall „{1}“ beantragen? {0} und alle anderen Vertrauenspersonen bekommen sofort eine Mail.</value></data>
   <data name="EmergencyRequestPaused" xml:space="preserve"><value>Der Antrag von {0} ({1}) ist angehalten. Entscheide jetzt: endgültig widersprechen oder weiterlaufen lassen.</value></data>
   <data name="EmergencyRequestPending" xml:space="preserve"><value>{0} hat Zugang beantragt ({1}). Ohne Widerspruch wird er am {2} freigegeben.</value></data>
   <data name="EmergencyRequestSubmit" xml:space="preserve"><value>Beantragen</value></data>
   <data name="EmergencyRequested" xml:space="preserve"><value>Der Antrag ist gestellt.</value></data>
+  <data name="EmergencyRevoke" xml:space="preserve"><value>Freigabe zurücknehmen</value></data>
+  <data name="EmergencyRevokeConfirm" xml:space="preserve"><value>Freigabe zurücknehmen? Deine Vertrauenspersonen können danach nichts mehr lesen, was nur für den Notfall bestimmt ist; sofort Geteiltes bleibt. Die betroffenen Bereiche und Briefe bekommen neue Schlüssel, das dauert einen Moment. Ein geplantes Löschen entfällt.</value></data>
+  <data name="EmergencyRevoked" xml:space="preserve"><value>Die Freigabe ist zurückgenommen.</value></data>
   <data name="EmergencySecondEmail" xml:space="preserve"><value>Zweite E-Mail-Adresse (optional)</value></data>
   <data name="EmergencySecondEmailHint" xml:space="preserve"><value>Erinnerungen und Anträge gehen zusätzlich dorthin.</value></data>
   <data name="EmergencySettings" xml:space="preserve"><value>Deine Fristen</value></data>

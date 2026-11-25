@@ -36,7 +36,7 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 3. **Vertrauenspersonen** im eigenen Tresor festlegen: Beziehung, Antragsrecht, **Freigaben je Bereich und Modus**, Briefe je Empfänger, **„Sofort teilen“ je Bereich** (46b). Die Umschläge erzeugt der Browser. ✅ (24.11.2026; Entscheidungen 85–91)
 4. **Notfallzugang:** Zustandsautomat, Hintergrunddienst, Lebenszeichen per Login oder Link, gestufte Erinnerungen (zweite Mail-Adresse und ntfy optional), Antrag mit Information an alle Vertrauenspersonen, Widerspruch (Link hält an, Anmeldung entscheidet), Schutz bei Mailausfall ✅ (24.11.2026; Entscheidungen 92–98)
 5. **Lesemodus** für Hinterbliebene: Auswahl der verstorbenen bzw. handlungsunfähigen Person, ruhige Oberfläche, große Schrift, nur freigegebene Inhalte, Navigation entlang der Checkliste ✅ (24.11.2026; Entscheidungen 99–101; bis zur Checkliste in M3 entlang der Bereiche)
-6. Rücknahme im Modus Handlungsunfähigkeit mit neuen Bereichsschlüsseln, gemeinsames endgültiges Löschen nach dem Tod
+6. **Rücknahme** im Modus Handlungsunfähigkeit mit neuen Bereichsschlüsseln, **gemeinsames endgültiges Löschen** nach dem Tod ✅ (25.11.2026; Entscheidungen 102–106; Rücknahme auch für „verstorben“, dazu neue Briefschlüssel)
 7. **Notfallpaket** (OfflineViewer.html und gedruckter Paketschlüssel)
 
 **Abnahme:** Testlauf mit zwei Nutzern und verkürzten Fristen, von der Einladung bis zur Vertrauensperson, die liest.

@@ -33,6 +33,16 @@ public sealed class EmergencyClient(HttpClient http)
     public Task WithdrawAsync(Guid requestId, CancellationToken cancellationToken = default) =>
         SendAsync<object>(HttpMethod.Delete, $"api/emergency/requests/{requestId}", null, cancellationToken);
 
+    /// <summary>Rücknahme der Freigabe; die Antwort nennt die Schlüsselwechsel, die der Browser jetzt erledigt.</summary>
+    public async Task<RekeyDto> RevokeAsync(CancellationToken cancellationToken = default) =>
+        (await SendAsync<RekeyDto>(HttpMethod.Post, "api/emergency/revoke", new { }, cancellationToken))!;
+
+    public async Task<VaultDeletionDto> AgreeDeletionAsync(Guid ownerId, CancellationToken cancellationToken = default) =>
+        (await SendAsync<VaultDeletionDto>(HttpMethod.Post, $"api/emergency/trusted/{ownerId}/deletion", new { }, cancellationToken))!;
+
+    public async Task<VaultDeletionDto> WithdrawDeletionAsync(Guid ownerId, CancellationToken cancellationToken = default) =>
+        (await SendAsync<VaultDeletionDto>(HttpMethod.Delete, $"api/emergency/trusted/{ownerId}/deletion", null, cancellationToken))!;
+
     public async Task<EmergencyLinkResultDto> LifesignLinkAsync(string token, CancellationToken cancellationToken = default) =>
         (await SendAsync<EmergencyLinkResultDto>(HttpMethod.Post, "api/emergency/link/lifesign", new EmergencyTokenRequest(token), cancellationToken))!;
 

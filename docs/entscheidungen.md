@@ -153,6 +153,16 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 100 | Reihenfolge bis zur Checkliste | Bis die Checkliste mit M3 kommt, führt der Weg Schritt für Schritt entlang der Bereiche: Briefe an mich, Persönliche Wünsche, Wichtige Kontakte, Über mich, Urkunden & Dokumente, Versicherungen, Bankkonten, Kreditkarten, Kredite, Einkommen/Rente/Steuern, Verträge & Abos, Immobilien/Fahrzeuge, Digitaler Nachlass, Passwortmanager. Jeder Schritt hat einen kurzen, behutsamen Hinweis; der Einleitungstext unterscheidet verstorben und handlungsunfähig. |
 | 101 | Laden und Protokoll | Ein Schritt wird erst beim Aufschlagen geöffnet, damit im Protokoll des Eigentümers nur steht, was wirklich gelesen wurde; die Schlüssel verlassen beim Verlassen der Seite das Krypto-Modul. Gelesen-Markierungen gibt es erst mit der Checkliste (M3). |
 
+## Runde 11 (25.11.2026, Umsetzung M2.6)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 102 | Rücknahme | Der angemeldete Eigentümer nimmt eine Freigabe unter „Notfallzugang“ zurück, ausdrücklich per Knopf und nicht schon durch die Anmeldung (98). **Abweichung von Architektur 5.1:** Das gilt für beide Modi, auch für „verstorben“, denn wer sich anmelden kann, lebt; sonst könnte ein irrtümlich freigegebener Antrag nicht mehr korrigiert werden. Zurückgenommen werden immer alle freigegebenen Modi. Der Server liefert sofort nichts mehr aus, der Notfallzugang beginnt mit einem Lebenszeichen neu, und die Vertrauenspersonen mit betroffenen Umschlägen bekommen eine Mail. Die Umschläge selbst bleiben, damit ein späterer Notfall wieder funktioniert. |
+| 103 | Neue Schlüssel nach der Rücknahme | Alle Bereiche und Briefe mit Umschlägen der zurückgenommenen Modi bekommen neue Schlüssel: Bereiche wie bei 90, Briefe mit eigenem neuen Briefschlüssel (Inhalt neu verschlüsselt, Dateischlüssel umgepackt, Umschläge neu versiegelt). Der Server merkt sich die ausstehenden Wechsel; schlägt einer fehl (etwa wegen eines geänderten Schlüssels einer Person), bietet die Seite „Schlüsselwechsel fortsetzen“ an. |
+| 104 | Gemeinsames Löschen | Nach der Freigabe „verstorben“ können die Vertrauenspersonen den Tresor unter „Notfallzugang“ gemeinsam löschen (36). Zustimmen müssen alle aktiven Vertrauenspersonen mit Umschlägen für „verstorben“. Die erste Zustimmung geht als Vorschlag an die anderen. Mit der letzten wird das Löschen in **7 Tagen** geplant; alle bekommen eine Mail, auch der Eigentümer (mit zweiter Adresse und ntfy). Bis dahin kann jede Person zurückziehen, und die Rücknahme durch den Eigentümer verwirft alle Zustimmungen. |
+| 105 | Was gelöscht wird | Konto, Tresor, Dokumente samt Dateien und das eigene Protokoll, wie beim Löschen durch den Admin (77). Im System-Protokoll bleibt ein Eintrag mit der Zahl der Zustimmenden; die Vertrauenspersonen bekommen eine Mail. Zum geplanten Zeitpunkt prüft der Dienst noch einmal Freigabe und Zustimmungen. |
+| 106 | Letzter Admin | Ist der Eigentümer der einzige aktive Admin, lässt sich sein Tresor so nicht löschen; die Seite sagt, dass der Betreiber erst jemand anderen zum Admin machen muss. Empfehlung: früh eine zweite Person zum Admin machen. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

@@ -36,6 +36,8 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
     public DbSet<AccessRequest> AccessRequests => Set<AccessRequest>();
 
+    public DbSet<VaultDeletionVote> VaultDeletionVotes => Set<VaultDeletionVote>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SystemSetting>(entity =>
@@ -300,8 +302,23 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
             entity.Property(x => x.StageSentAt).HasColumnName("stage_sent_at");
             entity.Property(x => x.ReleasedModes).HasColumnName("released_modes");
             entity.Property(x => x.ReleasedAt).HasColumnName("released_at");
+            entity.Property(x => x.RekeyAreas).HasColumnName("rekey_areas").HasDefaultValueSql("'{}'");
+            entity.Property(x => x.RekeyLetters).HasColumnName("rekey_letters").HasDefaultValueSql("'{}'");
+            entity.Property(x => x.DeletionScheduledAt).HasColumnName("deletion_scheduled_at");
             entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
             entity.Property(x => x.Version).IsRowVersion();
+        });
+
+        modelBuilder.Entity<VaultDeletionVote>(entity =>
+        {
+            entity.ToTable("vault_deletion_votes");
+            entity.HasKey(x => new { x.OwnerId, x.TrusteeId });
+            entity.HasIndex(x => x.TrusteeId);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<User>().WithMany().HasForeignKey(x => x.TrusteeId).OnDelete(DeleteBehavior.Cascade);
+            entity.Property(x => x.OwnerId).HasColumnName("owner_id");
+            entity.Property(x => x.TrusteeId).HasColumnName("trustee_id");
+            entity.Property(x => x.AgreedAt).HasColumnName("agreed_at");
         });
 
         modelBuilder.Entity<AccessRequest>(entity =>

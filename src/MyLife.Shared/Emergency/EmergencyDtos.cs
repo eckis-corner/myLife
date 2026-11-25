@@ -68,12 +68,30 @@ public sealed record EmergencyStatusDto(
     EmergencySettingsDto Settings,
     DeadlineSettingsDto Limits,
     bool NtfyAvailable,
-    IReadOnlyList<AccessRequestDto> Requests);
+    IReadOnlyList<AccessRequestDto> Requests,
+    RekeyDto Rekey,
+    VaultDeletionDto? Deletion);
+
+/// <summary>
+/// Nach einer Rücknahme ausstehende Schlüsselwechsel (M2.6): Bereiche und Briefe, deren Schlüssel Vertrauenspersonen
+/// über eine Freigabe gesehen haben. Der Browser des Eigentümers erledigt sie; der Server merkt sie sich bis dahin.
+/// </summary>
+public sealed record RekeyDto(IReadOnlyList<int> Areas, IReadOnlyList<Guid> Letters)
+{
+    public bool IsEmpty => Areas.Count == 0 && Letters.Count == 0;
+}
+
+/// <summary>
+/// Gemeinsames endgültiges Löschen nach dem Tod (Entscheidung 36): Wer schon zugestimmt hat, wer noch fehlt und
+/// wann gelöscht wird, sobald alle zugestimmt haben.
+/// </summary>
+public sealed record VaultDeletionDto(IReadOnlyList<string> Agreed, IReadOnlyList<string> Missing, bool AgreedByMe, DateTimeOffset? ScheduledAt, bool Blocked);
 
 /// <summary>Ein Eigentümer, für den ich Vertrauensperson bin.</summary>
 public sealed record TrustedOwnerDto(
     Guid OwnerId, string OwnerName, bool CanRequestAccess, bool HasDeathGrants, bool HasIncapacityGrants, ReleasedModes ReleasedModes,
-    IReadOnlyList<AccessRequestDto> Requests);
+    IReadOnlyList<AccessRequestDto> Requests,
+    VaultDeletionDto? Deletion);
 
 public sealed record CreateAccessRequest(GrantMode Mode);
 
@@ -91,4 +109,6 @@ public static class EmergencyErrors
     public const string AlreadyReleased = "emergency-already-released";
     public const string TokenInvalid = "emergency-token-invalid";
     public const string Failed = "emergency-failed";
+    public const string NotReleased = "emergency-not-released";
+    public const string LastAdmin = "emergency-last-admin";
 }

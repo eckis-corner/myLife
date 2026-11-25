@@ -62,6 +62,10 @@ Ohne Reaktion bekommen deine Vertrauenspersonen frühestens am {date} Zugang zu 
   <data name="Mail_lifesign-reminder_subject" xml:space="preserve"><value>myLife: Erinnerung {stage} von {count} – bitte gib ein Lebenszeichen</value></data>
   <data name="Mail_mode_death" xml:space="preserve"><value>verstorben</value></data>
   <data name="Mail_mode_incapacity" xml:space="preserve"><value>handlungsunfähig</value></data>
+  <data name="Mail_release-revoked_body" xml:space="preserve"><value>Hallo {name},
+
+{owner} hat sich bei myLife zurückgemeldet und die Freigabe des Notfallzugangs zurückgenommen. Was nur für den Notfall bestimmt ist, ist für dich nicht mehr sichtbar.</value></data>
+  <data name="Mail_release-revoked_subject" xml:space="preserve"><value>myLife: {owner} hat den Notfallzugang zurückgenommen</value></data>
   <data name="Mail_released-owner_body" xml:space="preserve"><value>Hallo {name},
 
 dein Notfallzugang bei myLife wurde freigegeben ({mode}). Deine Vertrauenspersonen können jetzt lesen, was du für diesen Fall freigegeben hast.
@@ -107,4 +111,24 @@ ein Administrator hat die Zwei-Faktor-Anmeldung deines myLife-Kontos zurückgese
 
 Wenn du das nicht veranlasst hast, melde dich bitte sofort beim Administrator.</value></data>
   <data name="Mail_twofactor-reset_subject" xml:space="preserve"><value>myLife: Zwei-Faktor-Anmeldung zurückgesetzt</value></data>
+  <data name="Mail_vault-deleted_body" xml:space="preserve"><value>Hallo {name},
+
+wie mit allen Vertrauenspersonen vereinbart, ist der Tresor von {owner} bei myLife jetzt endgültig gelöscht.</value></data>
+  <data name="Mail_vault-deleted_subject" xml:space="preserve"><value>myLife: Tresor von {owner} gelöscht</value></data>
+  <data name="Mail_vault-deletion-cancelled_body" xml:space="preserve"><value>Hallo {name},
+
+{trustee} hat die Zustimmung zurückgezogen. Der Tresor von {owner} wird vorerst nicht gelöscht.</value></data>
+  <data name="Mail_vault-deletion-cancelled_subject" xml:space="preserve"><value>myLife: Löschen des Tresors von {owner} abgebrochen</value></data>
+  <data name="Mail_vault-deletion-proposed_body" xml:space="preserve"><value>Hallo {name},
+
+{trustee} schlägt vor, den Tresor von {owner} bei myLife endgültig zu löschen. Gelöscht wird nur, wenn alle Vertrauenspersonen zustimmen. Melde dich an und entscheide unter „Notfallzugang“. Speichere vorher, was du behalten möchtest.</value></data>
+  <data name="Mail_vault-deletion-proposed_subject" xml:space="preserve"><value>myLife: Tresor von {owner} löschen?</value></data>
+  <data name="Mail_vault-deletion-scheduled-owner_body" xml:space="preserve"><value>Hallo {name},
+
+deine Vertrauenspersonen haben zugestimmt, deinen Tresor bei myLife am {date} endgültig zu löschen. Wenn das ein Irrtum ist, melde dich sofort an und nimm unter „Notfallzugang“ die Freigabe zurück; dann wird nichts gelöscht.</value></data>
+  <data name="Mail_vault-deletion-scheduled-owner_subject" xml:space="preserve"><value>myLife: Dein Tresor wird am {date} gelöscht</value></data>
+  <data name="Mail_vault-deletion-scheduled_body" xml:space="preserve"><value>Hallo {name},
+
+alle Vertrauenspersonen haben zugestimmt: Der Tresor von {owner} wird am {date} endgültig gelöscht. Bis dahin kannst du deine Zustimmung unter „Notfallzugang“ zurückziehen.</value></data>
+  <data name="Mail_vault-deletion-scheduled_subject" xml:space="preserve"><value>myLife: Tresor von {owner} wird am {date} gelöscht</value></data>
 </root>

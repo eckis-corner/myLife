@@ -6,13 +6,14 @@
 @using MyLife.Shared.Trust
 @inject IStringLocalizer<SharedResource> L
 @inject EmergencyClient Api
+@inject TrustService Trust
 @inject IDialogService Dialogs
 @inject ISnackbar Snackbar
 
 <PageTitle>@L["AppName"] – @L["EmergencyTitle"]</PageTitle>
 
-@* Notfallzugang (M2.4, Architektur 5): eigener Stand, Lebenszeichen, Anträge auf mich, Einstellungen; dazu als
-   Vertrauensperson die Anträge für andere. *@
+@* Notfallzugang (M2.4, Architektur 5): eigener Stand, Lebenszeichen, Anträge auf mich, Einstellungen, Rücknahme
+   einer Freigabe (M2.6); dazu als Vertrauensperson die Anträge für andere und das gemeinsame Löschen nach dem Tod. *@
 <MudStack Spacing="3">
     <MudText Typo="Typo.h4" HtmlTag="h1">@L["EmergencyTitle"]</MudText>
     <MudText Typo="Typo.body2" Class="mylife-muted">@L["EmergencyText"]</MudText>
@@ -23,10 +24,43 @@
     }
     else
     {
-        @if (_status.ReleasedModes != ReleasedModes.None)
+        @if (_rekeying)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" data-testid="emergency-rekeying">
+                <MudStack Spacing="2">
+                    <MudText>@L["EmergencyRekeying"]</MudText>
+                    <MudProgressLinear Indeterminate Color="Color.Primary" />
+                </MudStack>
+            </MudAlert>
+        }
+        else if (_status.ReleasedModes != ReleasedModes.None)
         {
             <MudAlert Severity="Severity.Error" Variant="Variant.Filled" data-testid="emergency-released">
-                @L["EmergencyReleasedOwner", Modes(_status.ReleasedModes), Date(_status.ReleasedAt)]
+                <MudStack Spacing="2">
+                    <MudText>@L["EmergencyReleasedOwner", Modes(_status.ReleasedModes), Date(_status.ReleasedAt)]</MudText>
+                    @if (_status.Deletion is { } deletion)
+                    {
+                        <MudText data-testid="emergency-deletion-owner">
+                            <b>@(deletion.ScheduledAt is { } at ? L["EmergencyDeletionOwnerScheduled", Date(at)] : L["EmergencyDeletionOwnerVotes", string.Join(", ", deletion.Agreed)])</b>
+                        </MudText>
+                    }
+                    <div>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Inherit" StartIcon="@Icons.Material.Filled.Undo" Disabled="_busy" OnClick="RevokeAsync"
+                                   data-testid="emergency-revoke">@L["EmergencyRevoke"]</MudButton>
+                    </div>
+                </MudStack>
+            </MudAlert>
+        }
+        else if (!_status.Rekey.IsEmpty)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" data-testid="emergency-rekey-pending">
+                <MudStack Spacing="2">
+                    <MudText>@L["EmergencyRekeyPending", _status.Rekey.Areas.Count, _status.Rekey.Letters.Count]</MudText>
+                    <div>
+                        <MudButton Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Key" Disabled="_busy" OnClick="RekeyAsync"
+                                   data-testid="emergency-rekey">@L["EmergencyRekeyContinue"]</MudButton>
+                    </div>
+                </MudStack>
             </MudAlert>
         }
 
@@ -167,6 +201,43 @@
                         {
                             <MudText Typo="Typo.caption" Class="mylife-muted">@L["EmergencyNoRequestRight"]</MudText>
                         }
+                        @if (owner.Deletion is { } deletion)
+                        {
+                            <MudDivider />
+                            <MudStack Spacing="1" data-testid="emergency-deletion">
+                                <MudText Typo="Typo.subtitle2">@L["EmergencyDeletionTitle"]</MudText>
+                                <MudText Typo="Typo.body2" Class="mylife-muted">@L["EmergencyDeletionText", owner.OwnerName]</MudText>
+                                @if (deletion.Blocked)
+                                {
+                                    <MudAlert Severity="Severity.Info" Dense>@L["EmergencyDeletionBlocked", owner.OwnerName]</MudAlert>
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.body2" data-testid="emergency-deletion-state">
+                                        @if (deletion.ScheduledAt is { } at)
+                                        {
+                                            @L["EmergencyDeletionScheduled", Date(at)]
+                                        }
+                                        else
+                                        {
+                                            @L["EmergencyDeletionVotes", Names(deletion.Agreed), Names(deletion.Missing)]
+                                        }
+                                    </MudText>
+                                    <div>
+                                        @if (deletion.AgreedByMe)
+                                        {
+                                            <MudButton Variant="Variant.Outlined" Size="Size.Small" Disabled="_busy" OnClick="() => WithdrawDeletionAsync(owner)"
+                                                       data-testid="emergency-deletion-withdraw">@L["EmergencyDeletionWithdraw"]</MudButton>
+                                        }
+                                        else
+                                        {
+                                            <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Small" StartIcon="@Icons.Material.Filled.DeleteForever"
+                                                       Disabled="_busy" OnClick="() => AgreeDeletionAsync(owner)" data-testid="emergency-deletion-agree">@L["EmergencyDeletionAgree"]</MudButton>
+                                        }
+                                    </div>
+                                }
+                            </MudStack>
+                        }
                     </MudStack>
                 </MudPaper>
             }
@@ -183,6 +254,7 @@
     private string? _secondEmail;
     private string? _ntfyTopic;
     private bool _busy;
+    private bool _rekeying;
 
     protected override Task OnInitializedAsync() => LoadAsync();
 
@@ -213,6 +285,8 @@
         modes.HasFlag(ReleasedModes.Death) ? L["GrantMode_Death"].Value : null,
         modes.HasFlag(ReleasedModes.Incapacity) ? L["GrantMode_Incapacity"].Value : null,
     }.Where(m => m is not null));
+
+    private string Names(IReadOnlyList<string> names) => names.Count == 0 ? L["EmergencyDeletionNobody"] : string.Join(", ", names);
 
     private static Color StateColor(EmergencyStatusDto status) => !status.Enabled ? Color.Default : status.State switch
     {
@@ -273,6 +347,61 @@
             });
         }
     }
+
+    /// <summary>Rücknahme: Der Server liefert sofort nichts mehr aus; danach bekommen die betroffenen Bereiche und Briefe neue Schlüssel.</summary>
+    private async Task RevokeAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["EmergencyRevoke"], L["EmergencyRevokeConfirm"], yesText: L["EmergencyRevoke"], cancelText: L["Cancel"]);
+        if (confirmed == true)
+        {
+            await RunAsync(async () =>
+            {
+                var pending = await Api.RevokeAsync();
+                Snackbar.Add(L["EmergencyRevoked"], Severity.Success);
+                await CompleteRekeyAsync(pending);
+            });
+        }
+    }
+
+    private Task RekeyAsync() => RunAsync(() => CompleteRekeyAsync(_status!.Rekey));
+
+    private async Task CompleteRekeyAsync(RekeyDto pending)
+    {
+        if (pending.IsEmpty)
+        {
+            return;
+        }
+
+        _rekeying = true;
+        StateHasChanged();
+        try
+        {
+            await Trust.CompleteRekeyAsync(pending);
+            Snackbar.Add(L["EmergencyRekeyDone"], Severity.Success);
+        }
+        catch (Exception exception) when (exception is TrustException or VaultException or InvalidOperationException
+                                              or System.Security.Cryptography.CryptographicException)
+        {
+            // Was fehlt, merkt sich der Server; die Seite bietet „Fortsetzen“ an.
+            Snackbar.Add(L[exception is TrustException { Message: TrustErrors.KeyChanged } ? "EmergencyRekeyKeyChanged" : "EmergencyRekeyFailed"], Severity.Warning);
+        }
+        finally
+        {
+            _rekeying = false;
+        }
+    }
+
+    private async Task AgreeDeletionAsync(TrustedOwnerDto owner)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["EmergencyDeletionTitle"], L["EmergencyDeletionConfirm", owner.OwnerName],
+            yesText: L["EmergencyDeletionAgree"], cancelText: L["Cancel"]);
+        if (confirmed == true)
+        {
+            await RunAsync(() => Api.AgreeDeletionAsync(owner.OwnerId));
+        }
+    }
+
+    private Task WithdrawDeletionAsync(TrustedOwnerDto owner) => RunAsync(() => Api.WithdrawDeletionAsync(owner.OwnerId));
 
     private async Task RunAsync(Func<Task> action)
     {
