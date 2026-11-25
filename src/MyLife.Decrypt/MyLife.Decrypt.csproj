@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- mylife-decrypt (M3.5): öffnet JSON-Exporte und Notfallpakete ohne myLife-Server. docs/betrieb/mylife-decrypt.md -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>mylife-decrypt</AssemblyName>
+    <RootNamespace>MyLife.Decrypt</RootNamespace>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyLife.Crypto\MyLife.Crypto.csproj" />
+    <ProjectReference Include="..\MyLife.Shared\MyLife.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Beschriftungen von Bereichen, Typen, Feldern und Auswahlwerten: dieselben Texte wie in der App -->
+    <EmbeddedResource Include="..\MyLife.Client\Resources\SharedResource.resx" LogicalName="MyLife.Decrypt.texts.de.resx" Type="Non-Resx" WithCulture="false" />
+    <EmbeddedResource Include="..\MyLife.Client\Resources\SharedResource.en.resx" LogicalName="MyLife.Decrypt.texts.en.resx" Type="Non-Resx" WithCulture="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="MyLife.Tests" />
+  </ItemGroup>
+</Project>

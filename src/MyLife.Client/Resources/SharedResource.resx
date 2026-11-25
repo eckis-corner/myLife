@@ -373,6 +373,7 @@
   <data name="ContentWarning_seed-phrase" xml:space="preserve"><value>Es sieht nach einer Seed-Phrase aus. Hinterlege nur, wo sie aufbewahrt wird.</value></data>
   <data name="DatasheetPdf" xml:space="preserve"><value>Datenblatt als PDF</value></data>
   <data name="DatasheetTitle" xml:space="preserve"><value>Datenblatt</value></data>
+  <data name="DecryptNotInExport" xml:space="preserve"><value>nicht im Export enthalten</value></data>
   <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
   <data name="DeleteForever" xml:space="preserve"><value>Endgültig löschen</value></data>
   <data name="DeleteForeverText" xml:space="preserve"><value>„{0}“ wird sofort und unwiderruflich gelöscht.</value></data>

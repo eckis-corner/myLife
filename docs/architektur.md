@@ -62,6 +62,7 @@ flowchart LR
 | **MyLife.Crypto** | C#-Fassade über `myLife.crypto.js`. Dazu eine .NET-Referenzimplementierung derselben Formate, die für Tests und für das Kommandozeilen-Werkzeug `mylife-decrypt` dient. |
 | **MyLife.Shared** | DTOs, **Objekttyp-Schemata** (Bereiche, Felder, Auswahllisten, Wünsche, Verweise), Formatversionen, Validierung |
 | **MyLife.Server** | ASP.NET Core: liefert den WASM-Client aus (Blazor Web App, globales Interactive WebAssembly, **ohne Prerendering**) und stellt die REST-API bereit. Außerdem Authentifizierung, EF Core mit Npgsql, Audit-Log, Mail-Outbox und die Hintergrunddienste Notfallzugang, Erinnerungen und Sicherung. |
+| **MyLife.Decrypt** | Kommandozeilen-Werkzeug `mylife-decrypt` (M3.5): öffnet JSON-Exporte und Notfallpakete ohne Server, mit der .NET-Referenz aus MyLife.Crypto. Die CI baut eigenständige Dateien für Windows, macOS und Linux. |
 | **MyLife.OfflineViewer** | Eine einzelne HTML-Datei ohne Netzwerkzugriff, die ein Notfallpaket entschlüsselt und anzeigt (4b). Kein eigenes Projekt: Der Client bettet die Datei als Vorlage ein und füllt sie beim Erzeugen (M2.7). |
 | **Tests** | xUnit (Server, Domänenlogik, Zustandsautomat mit simulierter Uhr), bUnit (Komponenten), Playwright (Krypto im echten Browser, Ende-zu-Ende-Abläufe), Kreuztests JS gegen .NET |
 

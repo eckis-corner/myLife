@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyLife.Server\MyLife.Server.csproj" />
     <ProjectReference Include="..\..\src\MyLife.Client\MyLife.Client.csproj" />
+    <ProjectReference Include="..\..\src\MyLife.Decrypt\MyLife.Decrypt.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

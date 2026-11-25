@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M3.4:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Vollständigkeitsanzeige, Erinnerungen per Mail, die Checkliste mit Vorlage für Deutschland, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen und der Lesemodus für Hinterbliebene funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; myLife sichert täglich nach `/data/backup`, wenn `MYLIFE_BACKUP_KEY` gesetzt ist (Abschnitt 8).
+> **Stand M3.5:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Vollständigkeitsanzeige, Erinnerungen per Mail, die Checkliste mit Vorlage für Deutschland, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen und der Lesemodus für Hinterbliebene funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; myLife sichert täglich nach `/data/backup`, wenn `MYLIFE_BACKUP_KEY` gesetzt ist (Abschnitt 8).
 
 ## 1. Ordner anlegen
 
@@ -93,6 +93,8 @@ Das SMTP-Passwort liegt verschlüsselt mit den Schlüsseln aus `data/app/keys` i
 
 ## 7. Updates
 
+Vor jedem Update in der Verwaltung unter **Einstellungen → Sicherung** auf **Jetzt sichern** klicken.
+
 Container Manager → Projekt `mylife` → **Aktion → Stoppen**, dann **Image** → `ghcr.io/eckis-corner/mylife` → **Aktualisieren**, dann das Projekt wieder **starten**. Alternativ per SSH:
 
 ```bash
@@ -101,7 +103,10 @@ sudo docker compose pull
 sudo docker compose up -d
 ```
 
-Datenbank-Migrationen laufen beim Start automatisch.
+Datenbank-Migrationen laufen beim Start automatisch. Danach kurz anmelden und unter **Verwaltung** nachsehen, ob Mailversand und Sicherung keinen Fehler zeigen.
+
+- **Feste Version:** Statt `latest` lässt sich in der `.env` eine Version wie `MYLIFE_VERSION=1.0.0` eintragen; dann kommt ein Update nur, wenn du die Zahl änderst. Was sich geändert hat, steht unter **Releases** auf GitHub.
+- **Zurück auf die alte Version:** Migrationen laufen nur vorwärts. Also `MYLIFE_VERSION` auf die alte Version setzen und die Sicherung von vor dem Update zurückspielen (Abschnitt 8).
 
 ## 8. Sicherung
 
@@ -141,7 +146,9 @@ Die Rücksicherung **ersetzt die gesamte Datenbank** und, soweit in der Sicherun
 
 Auf einer neuen NAS: zuerst wie oben installieren (dieselbe `.env` mit demselben Sicherungsschlüssel), die Sicherungsdatei nach `data/app/backup` kopieren, dann Schritt 2.
 
-Das Format beschreibt der Quelltext in `src/MyLife.Server/Infrastructure/Backup/BackupFormat.cs`: AES-256-GCM in Blöcken zu 1 MiB, Schlüssel aus `MYLIFE_BACKUP_KEY` und einem Salz je Sicherung (HKDF).
+Weitere Anleitungen: [Übergabe an eine Nachfolgeperson](nachfolge.md) und [mylife-decrypt](mylife-decrypt.md) zum Öffnen von Exporten ohne Server.
+
+Das Format beschreibt [format.md](../format.md), Abschnitt „Server-Sicherung“, und der Quelltext in `src/MyLife.Server/Infrastructure/Backup/BackupFormat.cs`: AES-256-GCM in Blöcken zu 1 MiB, Schlüssel aus `MYLIFE_BACKUP_KEY` und einem Salz je Sicherung (HKDF).
 
 ## 9. Lokale Entwicklung und eigener Build
 

@@ -7,7 +7,7 @@ Der JSON-Export enthält das Chiffrat genau so, wie es auf dem Server liegt, und
 - dem **Master-Passwort zum Zeitpunkt des Exports** (ein späterer Passwortwechsel ändert die Datei nicht) oder
 - dem **Recovery-Key** (24 Wörter).
 
-Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601.
+Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601. Das Werkzeug [mylife-decrypt](betrieb/mylife-decrypt.md) setzt die Schritte unten um und schreibt lesbare Datenblätter und die Dokumente in einen Ordner.
 
 ```json
 {
@@ -105,3 +105,21 @@ Schema kennen muss:
   } ]
 }
 ```
+
+## Server-Sicherung (seit M3.4)
+
+Die tägliche Sicherung des Servers (`data/app/backup/mylife-<Datum>-<Uhrzeit>.mlbak`) ist für das Zurückspielen mit myLife gedacht (`restore`, siehe [installation.md](betrieb/installation.md), Abschnitt 8), nicht zum Lesen. Aufbau:
+
+```text
+"MYLIFEBK" | Version 0x01 | Kopflänge (uint32 BE) | Kopf (JSON: format, version, createdAt, appVersion, salt)
+Blöcke:    AES-256-GCM, Klartext je 1 MiB (der letzte kürzer), jeweils Chiffrat | Tag (16)
+  Schlüssel = HKDF-SHA-256(MYLIFE_BACKUP_KEY, salt, info "mylife/backup")
+  Nonce     = 00 × 8 | uint32 BE (Blocknummer)
+  AAD       = "mylife-backup" | SHA-256(Kopf) | uint32 BE (Blocknummer) | letzter Block (0x00/0x01)
+Klartext:  Einträge Art (1 Byte) | Namenslänge (uint16 BE) | Name (UTF-8) | Länge (int64 BE) | Daten
+  Art 1 Inhaltsverzeichnis (JSON: Migrationsstand, Tabellen in Ladereihenfolge, Zahl der Dokumente und Schlüssel)
+  Art 2 Tabelle als PostgreSQL-COPY im Binärformat, Art 3 Dokument (Chiffrat wie in data/app/files), Art 4 Datei des Schlüsselrings
+  Art 0 Ende
+```
+
+Die Tresorinhalte bleiben auch in der Sicherung mit den Schlüsseln der Nutzer verschlüsselt; wer sie lesen will, braucht zusätzlich deren Passwort oder Recovery-Kit.

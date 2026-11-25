@@ -211,6 +211,14 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | 128 | Rücksicherung | Von der Kommandozeile: `docker compose run --rm app restore <Datei> --confirm`. Sie leert die Datenbank, spielt die Migrationen bis zum Stand der Sicherung ein, lädt die Daten, setzt fortlaufende Nummern, ersetzt Dokumente und Schlüsselring (soweit enthalten) und spielt danach die übrigen Migrationen ein. Ohne `--confirm` passiert nichts. Getestet wird das Zurückspielen in eine frische Datenbank. |
 | 129 | Fehler | Schlägt eine Sicherung fehl, steht das in der Verwaltung und im System-Protokoll; die Admins bekommen höchstens einmal am Tag eine Mail. Der nächste Lauf versucht es erneut. |
 
+## Runde 17 (25.11.2026, Umsetzung M3.5)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 130 | mylife-decrypt | Kommandozeilen-Werkzeug in .NET (`src/MyLife.Decrypt`) mit der Referenzimplementierung des Krypto-Kerns. `export` öffnet einen JSON-Export mit dem Master-Passwort oder den 24 Wörtern des Recovery-Kits, `package` ein Notfallpaket mit den Wörtern vom Schlüsselblatt. Heraus kommt ein Ordner mit `index.txt`, je Eintrag einem Datenblatt als Text (Beschriftungen aus den Ressourcen der App, deutsch oder mit `--en` englisch), beim Export zusätzlich dem JSON und den Originaldokumenten. Die Eingabe des Geheimnisses ist verdeckt; der Zielordner muss leer sein. Server-Sicherungen öffnet es nicht, die spielt myLife selbst zurück (128). |
+| 131 | Verteilung | Die CI baut bei jedem Push eigenständige Einzeldateien für Windows, macOS (Apple und Intel) und Linux und hängt sie bei einem Tag `v*` an das GitHub-Release. Sie brauchen kein .NET; eine Kopie gehört zum Notfallordner. Die Dateien sind nicht signiert; die Anleitung erklärt, wie macOS sie trotzdem startet. |
+| 132 | Betriebsdoku | `installation.md` beschreibt Installation, Updates (mit Sicherung vorher, fester Version und Weg zurück), Sicherung und Rücksicherung; `nachfolge.md` die Übergabe an eine Nachfolgeperson, was sie vorher bekommt, was sie regelmäßig prüft und wie sie die Instanz geordnet beendet oder umzieht; `mylife-decrypt.md` das Werkzeug für Angehörige; `format.md` alle drei Formate. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

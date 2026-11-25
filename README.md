@@ -4,7 +4,7 @@
 
 myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: Versicherungen, Konten, Kredite, Verträge, Urkunden, digitale Zugänge, Kontakte und persönliche Wünsche. Solange du lebst, kann niemand die Daten lesen, auch nicht der Betreiber des Servers. Wirst du handlungsunfähig oder stirbst du, erhalten deine Vertrauenspersonen über einen Notfallzugang (Dead-Man's-Switch) genau die Bereiche, die du für sie freigegeben hast.
 
-> **Status:** frühe Entwicklung (Meilenstein M1 – Tresor, in Arbeit). Noch nicht für echte Daten geeignet.
+> **Status:** Meilensteine M1 und M2 umgesetzt, M3 in Arbeit. Vor echten Daten fehlt die Abnahme auf der Synology.
 
 ## Merkmale (geplant)
 
@@ -25,7 +25,10 @@ myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: V
 | [docs/meilensteine.md](docs/meilensteine.md) | Umsetzungsplan |
 | [docs/kryptoformat.md](docs/kryptoformat.md) | Verschlüsselungsformat Version 1, Byte für Byte |
 | [docs/entscheidungen.md](docs/entscheidungen.md) | Entscheidungsprotokoll |
-| [docs/betrieb/installation.md](docs/betrieb/installation.md) | Installation auf Synology mit Nginx Proxy Manager |
+| [docs/format.md](docs/format.md) | Offene Formate: JSON-Export, Notfallpaket, Server-Sicherung |
+| [docs/betrieb/installation.md](docs/betrieb/installation.md) | Installation auf Synology mit Nginx Proxy Manager, Updates, Sicherung und Rücksicherung |
+| [docs/betrieb/nachfolge.md](docs/betrieb/nachfolge.md) | Übergabe an eine Nachfolgeperson, geordnetes Beenden |
+| [docs/betrieb/mylife-decrypt.md](docs/betrieb/mylife-decrypt.md) | Exporte und Notfallpakete ohne Server öffnen |
 | [PROMPT.md](PROMPT.md) | Ursprüngliche Anforderung |
 
 ## Entwickeln
@@ -53,6 +56,8 @@ src/
   MyLife.Server   ASP.NET Core: Auslieferung, API, Hintergrunddienste, PostgreSQL
   MyLife.Shared   DTOs, Objekttyp-Schemata
   MyLife.Crypto   Verschlüsselungsformate (C#-Fassade und Referenzimplementierung)
+  MyLife.Decrypt  mylife-decrypt: Exporte und Notfallpakete ohne Server öffnen
+  MyLife.OfflineViewer  Vorlage des OfflineViewers für das Notfallpaket
 tests/
   MyLife.Tests    xUnit, bUnit, Integrationstests mit Testcontainers
 ```
