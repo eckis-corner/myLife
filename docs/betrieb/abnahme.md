@@ -24,6 +24,12 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 ## 3. Tresor mit echten Daten (Abnahme M1)
 
 - [ ] Je Bereich mindestens ein echter Eintrag, etwa Girokonto, Krankenversicherung, Testament (mit Ablageort), Ausweis (mit Ablaufdatum), Persönliche Wünsche
+- [ ] **Ablageorte** (Entscheidung 143): unter „Ablageorte“ zwei echte Orte angelegt, etwa „Hängeregister Arbeitszimmer“ mit Beschreibung und „Schließfach Bank“ mit Anschrift und Zugang
+- [ ] Beim Testament „Ablageort des Originals“ aus der Liste gewählt; bei einem anderen Eintrag (etwa Fahrzeugbrief, Schlüssel des Schließfachs oder Seed-Phrase) ebenfalls
+- [ ] Im Formular mit dem Symbol neben dem Feld einen neuen Ablageort angelegt: Er ist sofort ausgewählt und steht danach unter „Ablageorte“
+- [ ] Datenblatt des Testaments zeigt den Ablageort als Link; das Datenblatt des Ablageorts listet unter „Verknüpft mit“ das Testament
+- [ ] Einen Ablageort umbenannt: Testament und die anderen Einträge zeigen sofort den neuen Namen, auch nach Abmelden und neuem Anmelden
+- [ ] Die Suche findet einen Eintrag über den Namen seines Ablageorts
 - [ ] Ein Dokument hochgeladen (PDF) und eines direkt mit dem Smartphone fotografiert; Vorschau funktioniert
 - [ ] Suche findet einen Eintrag über ein Feld (etwa die Bank)
 - [ ] Übersicht: Vollständigkeit, Kacheln, „Als geprüft markieren“
@@ -63,6 +69,7 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 - [ ] B: erneut beantragen, diesmal „verstorben“; A reagiert nicht
 - [ ] Nach der Antragsfrist (1 Tag): A und B bekommen die Mail „freigegeben“
 - [ ] B: Lesemodus – Briefe zuerst, dann die Checkliste, dann die Bereiche; nur Freigegebenes ist zu sehen; ein Dokument ansehen und speichern
+- [ ] B sieht im Lesemodus beim Testament den Namen des Ablageorts, auch wenn A den Bereich „Ablageorte“ **nicht** freigegeben hat; die Beschreibung und den Zugang des Ablageorts sieht B nur, wenn der Bereich freigegeben ist
 - [ ] B: in der Checkliste eine Aufgabe abhaken; A sieht auf der Seite „Checkliste“, wer sie wann abgehakt hat
 - [ ] A: im Protokoll steht, was B gelesen hat
 
@@ -84,6 +91,7 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 ## 6. Notfallpaket und Exporte
 
 - [ ] Export & Druck → Notfallordner als PDF mit Passwort; öffnet sich nur mit dem Passwort
+- [ ] Im Notfallordner stehen die Ablageorte bei den Einträgen (etwa beim Testament) und, wenn beim Export ausgewählt, der Bereich „Ablageorte“ mit Beschreibung und Zugang
 - [ ] Export & Druck → Datensicherung (JSON) mit Dokumenten
 - [ ] Export & Druck → Notfallpaket erstellen; Schlüsselblatt drucken
 - [ ] Die HTML-Datei per Doppelklick öffnen und mit den 24 Wörtern entsperren – in **Chrome**, **Safari** und **Firefox**, auch auf dem Smartphone
