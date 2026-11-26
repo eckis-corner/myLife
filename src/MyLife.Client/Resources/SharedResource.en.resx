@@ -1104,6 +1104,22 @@
   <data name="PackageWithDocuments" xml:space="preserve"><value>Include documents ({0} MB)</value></data>
   <data name="PackageWordsOnce" xml:space="preserve"><value>Print the key sheet now. You will only see the 24 words here; myLife does not store them anywhere. Without them the package cannot be opened.</value></data>
   <data name="PagerInfo" xml:space="preserve"><value>{first_item}–{last_item} of {all_items}</value></data>
+  <data name="PaymentsAccount" xml:space="preserve"><value>Account</value></data>
+  <data name="PaymentsAll" xml:space="preserve"><value>All payments</value></data>
+  <data name="PaymentsAmount" xml:space="preserve"><value>Amount</value></data>
+  <data name="PaymentsByArea" xml:space="preserve"><value>By area</value></data>
+  <data name="PaymentsCount" xml:space="preserve"><value>{0} payments</value></data>
+  <data name="PaymentsEmpty" xml:space="preserve"><value>No payments yet. They appear here as soon as a loan, insurance policy, contract or card has an amount.</value></data>
+  <data name="PaymentsFrequency" xml:space="preserve"><value>Frequency</value></data>
+  <data name="PaymentsGroupByArea" xml:space="preserve"><value>Group by area</value></data>
+  <data name="PaymentsIntro" xml:space="preserve"><value>Everything that is paid regularly from your accounts: loan instalments, insurance premiums, contracts and subscriptions, and card fees. Ended entries and loans owed to you are not included.</value></data>
+  <data name="PaymentsMonthly" xml:space="preserve"><value>Per month</value></data>
+  <data name="PaymentsNoFrequency" xml:space="preserve"><value>No frequency</value></data>
+  <data name="PaymentsNoFrequencyHint" xml:space="preserve"><value>{0} payments without a frequency are not included in the totals. Add the frequency to the entry.</value></data>
+  <data name="PaymentsOnce" xml:space="preserve"><value>One-off</value></data>
+  <data name="PaymentsTitle" xml:space="preserve"><value>Payments</value></data>
+  <data name="PaymentsTotal" xml:space="preserve"><value>Total</value></data>
+  <data name="PaymentsYearly" xml:space="preserve"><value>Per year</value></data>
   <data name="PdfCreate" xml:space="preserve"><value>Create PDF</value></data>
   <data name="PdfPage" xml:space="preserve"><value>Page {0} of {1}</value></data>
   <data name="PdfPassword" xml:space="preserve"><value>PDF password</value></data>

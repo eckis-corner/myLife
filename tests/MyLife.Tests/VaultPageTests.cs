@@ -37,6 +37,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton(_browser.Vault);
         Services.AddSingleton<SchemaText>();
         Services.AddSingleton<VaultSearch>();
+        Services.AddSingleton<PaymentOverview>();
         Services.AddSingleton<BrowserFiles>();
         Services.AddSingleton<IPdfCrypto, MyLife.Tests.Export.DotNetPdfCrypto>();
         Services.AddSingleton<EmergencyFolder>();
@@ -330,6 +331,51 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         search.WaitForAssertion(() => Assert.NotNull(search.Find("input[data-testid=search-input]")));
         search.Find("input[data-testid=search-input]").Input("inwx");
         search.WaitForAssertion(() => Assert.Contains("familie-beispiel.de", search.Find("[data-testid=search-results]").TextContent, StringComparison.Ordinal));
+    }
+
+    /// <summary>Zahlungen (Entscheidung 142): Summen über alle Bereiche, je Bereich und die Liste, gruppiert oder flach.</summary>
+    [Fact]
+    public async Task PaymentsAreSummedOverAllAreasAndGroupedByArea()
+    {
+        var account = await _browser.Vault.CreateAsync("bankAccount", new VaultPayload { Title = "Girokonto Zahlungen", Fields = { ["bank"] = "Sparkasse" } });
+        await _browser.Vault.CreateAsync("contract", new VaultPayload
+        {
+            Title = "Stromvertrag",
+            Fields = { ["contractKind"] = "electricity", ["provider"] = "Stadtwerke", ["cost"] = "90", ["frequency"] = "monthly", ["paymentAccount"] = account.Id.ToString() },
+        });
+        await _browser.Vault.CreateAsync("insurance", new VaultPayload
+        {
+            Title = "Haftpflicht",
+            Fields = { ["insuranceKind"] = "liability", ["insurer"] = "HUK", ["premium"] = "60", ["frequency"] = "yearly" },
+        });
+        await _browser.Vault.CreateAsync("loan", new VaultPayload
+        {
+            Title = "Darlehen an Bruder",
+            Fields = { ["loanDirection"] = "owedToMe", ["counterparty"] = "Max", ["installment"] = "100", ["frequency"] = "monthly" },
+        });
+
+        var page = Render<PaymentsPage>();
+        page.WaitForAssertion(() => Assert.Equal("1.140,00 €", page.Find("[data-testid=payments-yearly]").TextContent.Trim()));
+        Assert.Equal("95,00 €", page.Find("[data-testid=payments-monthly]").TextContent.Trim());
+
+        var areas = page.Find("[data-testid=payments-areas]").TextContent;
+        Assert.Contains("Versicherungen", areas, StringComparison.Ordinal);
+        Assert.Contains("Verträge & Abos", areas, StringComparison.Ordinal);
+        Assert.DoesNotContain("Kredite", areas, StringComparison.Ordinal);
+
+        var list = page.Find("[data-testid=payments-list]").TextContent;
+        Assert.Contains("Stromvertrag", list, StringComparison.Ordinal);
+        Assert.Contains("Girokonto Zahlungen", list, StringComparison.Ordinal);
+        Assert.DoesNotContain("Darlehen an Bruder", list, StringComparison.Ordinal);
+        Assert.Equal(["5,00 €", "90,00 €"], page.FindAll("[data-testid=payments-group-monthly]").Select(c => c.TextContent.Trim()));
+
+        // Ohne Gruppierung keine Zwischensummen, dafür die Spalte „Bereich“.
+        page.FindComponent<MudBlazor.MudSwitch<bool>>().Find("input").Change(false);
+        page.WaitForAssertion(() => Assert.Empty(page.FindAll("[data-testid=payments-group-monthly]")));
+        Assert.Contains(page.FindAll("[data-testid=payments-list] th"), th => th.TextContent.Trim() == "Bereich");
+
+        page.FindAll("[data-testid=payments-list] tbody tr").First(r => r.TextContent.Contains("Stromvertrag", StringComparison.Ordinal)).Click();
+        Assert.Matches("/object/[0-9a-f-]{36}$", Services.GetRequiredService<NavigationManager>().Uri);
     }
 
     [Fact]

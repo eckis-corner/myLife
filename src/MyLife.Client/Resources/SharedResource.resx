@@ -1104,6 +1104,22 @@
   <data name="PackageWithDocuments" xml:space="preserve"><value>Dokumente einschließen ({0} MB)</value></data>
   <data name="PackageWordsOnce" xml:space="preserve"><value>Drucke jetzt das Schlüsselblatt. Die 24 Wörter siehst du nur hier; myLife speichert sie nirgends. Ohne sie lässt sich das Paket nicht öffnen.</value></data>
   <data name="PagerInfo" xml:space="preserve"><value>{first_item}–{last_item} von {all_items}</value></data>
+  <data name="PaymentsAccount" xml:space="preserve"><value>Konto</value></data>
+  <data name="PaymentsAll" xml:space="preserve"><value>Alle Zahlungen</value></data>
+  <data name="PaymentsAmount" xml:space="preserve"><value>Betrag</value></data>
+  <data name="PaymentsByArea" xml:space="preserve"><value>Nach Bereich</value></data>
+  <data name="PaymentsCount" xml:space="preserve"><value>{0} Zahlungen</value></data>
+  <data name="PaymentsEmpty" xml:space="preserve"><value>Noch keine Zahlungen. Sie erscheinen hier, sobald ein Kredit, eine Versicherung, ein Vertrag oder eine Karte einen Betrag hat.</value></data>
+  <data name="PaymentsFrequency" xml:space="preserve"><value>Rhythmus</value></data>
+  <data name="PaymentsGroupByArea" xml:space="preserve"><value>Nach Bereich gruppieren</value></data>
+  <data name="PaymentsIntro" xml:space="preserve"><value>Alles, was regelmäßig von deinen Konten abgeht: Kreditraten, Versicherungsbeiträge, Verträge und Abos sowie Kartengebühren. Beendete Einträge und Kredite, die dir geschuldet werden, zählen nicht mit.</value></data>
+  <data name="PaymentsMonthly" xml:space="preserve"><value>Je Monat</value></data>
+  <data name="PaymentsNoFrequency" xml:space="preserve"><value>Rhythmus fehlt</value></data>
+  <data name="PaymentsNoFrequencyHint" xml:space="preserve"><value>{0} Zahlungen ohne Rhythmus zählen nicht in den Summen. Trage den Rhythmus im Eintrag nach.</value></data>
+  <data name="PaymentsOnce" xml:space="preserve"><value>Einmalig</value></data>
+  <data name="PaymentsTitle" xml:space="preserve"><value>Zahlungen</value></data>
+  <data name="PaymentsTotal" xml:space="preserve"><value>Gesamt</value></data>
+  <data name="PaymentsYearly" xml:space="preserve"><value>Je Jahr</value></data>
   <data name="PdfCreate" xml:space="preserve"><value>PDF erstellen</value></data>
   <data name="PdfPage" xml:space="preserve"><value>Seite {0} von {1}</value></data>
   <data name="PdfPassword" xml:space="preserve"><value>Passwort für das PDF</value></data>

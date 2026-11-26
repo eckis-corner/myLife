@@ -41,6 +41,7 @@ builder.Services.AddScoped<ReadingService>();
 builder.Services.AddScoped<VaultService>();
 builder.Services.AddScoped<SchemaText>();
 builder.Services.AddScoped<VaultSearch>();
+builder.Services.AddScoped<PaymentOverview>();
 builder.Services.AddScoped<BrowserFiles>();
 builder.Services.AddScoped<IPdfCrypto, JsPdfCrypto>();
 builder.Services.AddScoped<EmergencyFolder>();

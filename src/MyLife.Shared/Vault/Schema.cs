@@ -93,6 +93,25 @@ public sealed record AreaDefinition(int Number, string Key)
 public sealed record TypicalEntry(string TypeKey, string? FieldKey = null, string? Value = null);
 
 /// <summary>
+/// Regelmäßige Zahlung eines Objekttyps für die Übersicht „Zahlungen“ (Entscheidung 142): Betragsfeld, Rhythmus aus
+/// einem Feld der Auswahlliste <c>frequency</c> oder fest, das belastete Konto und auf Wunsch eine Bedingung
+/// (etwa nur Kredite, die ich schulde).
+/// </summary>
+public sealed record PaymentDefinition(string AmountField)
+{
+    /// <summary>Feld mit einem Wert der Auswahlliste <c>frequency</c>.</summary>
+    public string? FrequencyField { get; init; }
+
+    /// <summary>Fester Rhythmus, wenn der Typ kein Feld dafür hat (etwa die Jahresgebühr einer Karte).</summary>
+    public string? FixedFrequency { get; init; }
+
+    /// <summary>Verweis auf das Konto, von dem die Zahlung abgeht.</summary>
+    public string? AccountField { get; init; }
+
+    public FieldCondition? When { get; init; }
+}
+
+/// <summary>
 /// Objekttyp (Entscheidung 29): Bereich, Felder, mögliche Wünsche. Aus dem Schema entstehen Formular, Datenblatt
 /// und Suchindex. Name unter <c>Type_{Key}</c>, Bedeutung des Ablaufdatums unter <c>Expiry_{Key}</c> (sonst <c>Expiry_default</c>).
 /// </summary>
@@ -115,6 +134,9 @@ public sealed record ObjectTypeDefinition(string Key, int Area, IReadOnlyList<Fi
     /// steht deshalb nicht in der Auswahl „Neuer Eintrag“ des Bereichs.
     /// </summary>
     public bool Singleton { get; init; }
+
+    /// <summary>Regelmäßige Zahlung, die dieser Typ beschreibt; null, wenn er keine hat.</summary>
+    public PaymentDefinition? Payment { get; init; }
 
     public int SchemaVersion { get; init; } = 1;
 

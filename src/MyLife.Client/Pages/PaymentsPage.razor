@@ -1,0 +1,188 @@
+@page "/payments"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject PaymentOverview Overview
+@inject NavigationManager Navigation
+
+@*
+    Zahlungen (Entscheidung 142): Summen je Monat und Jahr, dieselben Summen je Bereich und alle Zahlungen in einer
+    Tabelle, auf Wunsch nach Bereich gruppiert mit Zwischensummen. Was eine Zahlung ist, legt das Schema fest.
+*@
+
+<PageTitle>@L["AppName"] – @L["PaymentsTitle"]</PageTitle>
+
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["PaymentsTitle"]</MudText>
+    <MudText Typo="Typo.body1" Class="mylife-muted">@L["PaymentsIntro"]</MudText>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else if (_payments.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" data-testid="payments-empty">@L["PaymentsEmpty"]</MudAlert>
+    }
+    else
+    {
+        <MudGrid Spacing="3" data-testid="payments-totals">
+            <MudItem xs="12" sm="4">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudText Typo="Typo.overline">@L["PaymentsMonthly"]</MudText>
+                    <MudText Typo="Typo.h5" data-testid="payments-monthly">@Money(_totals.Monthly)</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudText Typo="Typo.overline">@L["PaymentsYearly"]</MudText>
+                    <MudText Typo="Typo.h5" data-testid="payments-yearly">@Money(_totals.Yearly)</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudPaper Class="pa-4" Elevation="1">
+                    <MudText Typo="Typo.overline">@L["PaymentsOnce"]</MudText>
+                    <MudText Typo="Typo.h5" data-testid="payments-once">@Money(_totals.Once)</MudText>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        @if (_totals.WithoutFrequency > 0)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" data-testid="payments-no-frequency">@L["PaymentsNoFrequencyHint", _totals.WithoutFrequency]</MudAlert>
+        }
+
+        <MudText Typo="Typo.h6" HtmlTag="h2">@L["PaymentsByArea"]</MudText>
+        <MudTable T="PaymentArea" Items="_areas" Hover Striped Dense="false" Elevation="1" OnRowClick="OpenArea" RowClass="mylife-clickable"
+                  Breakpoint="Breakpoint.Sm" data-testid="payments-areas">
+            <HeaderContent>
+                <MudTh><MudTableSortLabel T="PaymentArea" SortBy="a => a.Area">@L["Area"]</MudTableSortLabel></MudTh>
+                <MudTh Style="text-align: right;"><MudTableSortLabel T="PaymentArea" SortBy="a => a.Totals.Count">@L["PaymentsTitle"]</MudTableSortLabel></MudTh>
+                <MudTh Style="text-align: right;"><MudTableSortLabel T="PaymentArea" SortBy="a => a.Totals.Monthly">@L["PaymentsMonthly"]</MudTableSortLabel></MudTh>
+                <MudTh Style="text-align: right;"><MudTableSortLabel T="PaymentArea" SortBy="a => a.Totals.Yearly">@L["PaymentsYearly"]</MudTableSortLabel></MudTh>
+                <MudTh Style="text-align: right;"><MudTableSortLabel T="PaymentArea" SortBy="a => a.Totals.Once">@L["PaymentsOnce"]</MudTableSortLabel></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@L["Area"]"><b>@Text.Area(context.Area)</b></MudTd>
+                <MudTd DataLabel="@L["PaymentsTitle"]" Style="text-align: right;">@context.Totals.Count</MudTd>
+                <MudTd DataLabel="@L["PaymentsMonthly"]" Style="text-align: right;">@Money(context.Totals.Monthly)</MudTd>
+                <MudTd DataLabel="@L["PaymentsYearly"]" Style="text-align: right;">@Money(context.Totals.Yearly)</MudTd>
+                <MudTd DataLabel="@L["PaymentsOnce"]" Style="text-align: right;">@Money(context.Totals.Once)</MudTd>
+            </RowTemplate>
+            <FooterContent>
+                <MudTd><b>@L["PaymentsTotal"]</b></MudTd>
+                <MudTd Style="text-align: right;"><b>@_totals.Count</b></MudTd>
+                <MudTd Style="text-align: right;"><b>@Money(_totals.Monthly)</b></MudTd>
+                <MudTd Style="text-align: right;"><b>@Money(_totals.Yearly)</b></MudTd>
+                <MudTd Style="text-align: right;"><b>@Money(_totals.Once)</b></MudTd>
+            </FooterContent>
+        </MudTable>
+
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+            <MudText Typo="Typo.h6" HtmlTag="h2">@L["PaymentsAll"]</MudText>
+            <MudSwitch T="bool" @bind-Value="_grouped" Color="Color.Primary" Label="@L["PaymentsGroupByArea"]" data-testid="payments-group" />
+        </MudStack>
+        <MudTable T="Payment" Items="_payments" Hover Striped Dense="false" Elevation="1" RowsPerPage="100" OnRowClick="Open" RowClass="mylife-clickable"
+                  GroupBy="@(_grouped ? AreaGroup : null)" Breakpoint="Breakpoint.Sm" data-testid="payments-list">
+            <ToolBarContent>
+                <MudText Typo="Typo.body2">@L["PaymentsCount", _payments.Count]</MudText>
+                <MudSpacer />
+                <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh><MudTableSortLabel T="Payment" SortBy="p => p.Item.Title">@L["CommonTitle"]</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="Payment" SortBy="p => Text.Type(p.Item.Type)">@L["ObjectType"]</MudTableSortLabel></MudTh>
+                @if (!_grouped)
+                {
+                    <MudTh><MudTableSortLabel T="Payment" SortBy="p => p.Item.Area">@L["Area"]</MudTableSortLabel></MudTh>
+                }
+                <MudTh Style="text-align: right;"><MudTableSortLabel T="Payment" SortBy="p => p.Amount">@L["PaymentsAmount"]</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="Payment" SortBy="p => p.TimesPerYear ?? 0">@L["PaymentsFrequency"]</MudTableSortLabel></MudTh>
+                <MudTh Style="text-align: right;"><MudTableSortLabel T="Payment" SortBy="p => p.Monthly ?? 0">@L["PaymentsMonthly"]</MudTableSortLabel></MudTh>
+                <MudTh Style="text-align: right;"><MudTableSortLabel T="Payment" SortBy="p => p.Yearly ?? 0">@L["PaymentsYearly"]</MudTableSortLabel></MudTh>
+                <MudTh><MudTableSortLabel T="Payment" SortBy="AccountOf">@L["PaymentsAccount"]</MudTableSortLabel></MudTh>
+            </HeaderContent>
+            <GroupHeaderTemplate>
+                <MudTd colspan="@Columns"><b>@Text.Area((int)context.Key!)</b></MudTd>
+            </GroupHeaderTemplate>
+            <RowTemplate>
+                <MudTd DataLabel="@L["CommonTitle"]"><b>@context.Item.Title</b></MudTd>
+                <MudTd DataLabel="@L["ObjectType"]">@Text.Type(context.Item.Type)</MudTd>
+                @if (!_grouped)
+                {
+                    <MudTd DataLabel="@L["Area"]">@Text.Area(context.Item.Area)</MudTd>
+                }
+                <MudTd DataLabel="@L["PaymentsAmount"]" Style="text-align: right;">@Money(context.Amount)</MudTd>
+                <MudTd DataLabel="@L["PaymentsFrequency"]">
+                    @if (context.Frequency is { } frequency)
+                    {
+                        @Text.Option("frequency", frequency)
+                    }
+                    else
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">@L["PaymentsNoFrequency"]</MudChip>
+                    }
+                </MudTd>
+                <MudTd DataLabel="@L["PaymentsMonthly"]" Style="text-align: right;">@Money(context.Monthly)</MudTd>
+                <MudTd DataLabel="@L["PaymentsYearly"]" Style="text-align: right;">@Money(context.Yearly)</MudTd>
+                <MudTd DataLabel="@L["PaymentsAccount"]">@AccountOf(context)</MudTd>
+            </RowTemplate>
+            <GroupFooterTemplate>
+                @{ var totals = PaymentTotals.Of(context.Items); }
+                <MudTd colspan="@(Columns - 4)"><b>@L["PaymentsTotal"]: @Text.Area((int)context.Key!)</b></MudTd>
+                <MudTd Style="text-align: right;" data-testid="payments-group-monthly"><b>@Money(totals.Monthly)</b></MudTd>
+                <MudTd Style="text-align: right;"><b>@Money(totals.Yearly)</b></MudTd>
+                <MudTd />
+            </GroupFooterTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="@PageSizes" RowsPerPageString="@L["RowsPerPage"]" InfoFormat="@L["PagerInfo"]" />
+            </PagerContent>
+        </MudTable>
+    }
+</MudStack>
+
+@code {
+    private static readonly int[] PageSizes = [25, 50, 100];
+
+    private static readonly TableGroupDefinition<Payment> AreaGroup = new() { GroupName = string.Empty, Selector = p => p.Item.Area, Indentation = false };
+
+    private IReadOnlyList<Payment> _payments = [];
+    private IReadOnlyList<PaymentArea> _areas = [];
+    private PaymentTotals _totals = PaymentTotals.Of([]);
+    private bool _grouped = true;
+
+    /// <summary>Spalten der Zahlungstabelle; ohne Gruppierung kommt der Bereich dazu.</summary>
+    private int Columns => _grouped ? 7 : 8;
+
+    protected override void OnVaultReady()
+    {
+        _payments = Overview.All();
+        _areas = PaymentOverview.ByArea(_payments);
+        _totals = PaymentTotals.Of(_payments);
+    }
+
+    private string AccountOf(Payment payment) => payment.AccountId is { } id ? Vault.TitleOf(id) ?? string.Empty : string.Empty;
+
+    private static string Money(decimal? amount) => amount is { } value ? value.ToString("N2", CultureInfo.CurrentCulture) + " €" : "–";
+
+    private void Open(TableRowClickEventArgs<Payment> args)
+    {
+        if (args.Item is not null)
+        {
+            Navigation.NavigateTo($"object/{args.Item.Item.Id}");
+        }
+    }
+
+    private void OpenArea(TableRowClickEventArgs<PaymentArea> args)
+    {
+        if (args.Item is not null)
+        {
+            Navigation.NavigateTo($"area/{args.Item.Area}");
+        }
+    }
+}

@@ -40,6 +40,7 @@
                 <MudNavMenu Class="mylife-nav mylife-nav-main">
                     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">@L["NavHome"]</MudNavLink>
                     <MudNavLink Href="search" Icon="@Icons.Material.Outlined.Search">@L["NavSearch"]</MudNavLink>
+                    <MudNavLink Href="payments" Icon="@Icons.Material.Outlined.Payments" data-testid="nav-payments">@L["PaymentsTitle"]</MudNavLink>
                     <MudNavGroup Title="@L["NavAreas"]" Icon="@Icons.Material.Outlined.FolderOpen" Expanded>
                         @foreach (var area in MyLife.Shared.Vault.ObjectCatalog.Areas.Where(a => a.IsAvailable))
                         {
