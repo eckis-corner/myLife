@@ -146,6 +146,7 @@
   <data name="AreaText_11" xml:space="preserve"><value>Bestattung, Organspende, Haustiere und persönliche Briefe.</value></data>
   <data name="AreaText_12" xml:space="preserve"><value>Was die Hinterbliebenen wann tun sollten, mit den passenden Einträgen.</value></data>
   <data name="AreaText_13" xml:space="preserve"><value>Arbeitgeber, Altersvorsorge und Steuern.</value></data>
+  <data name="AreaText_14" xml:space="preserve"><value>Wo Originale, Schlüssel und Unterlagen liegen. Alle Einträge wählen ihren Ablageort aus dieser Liste.</value></data>
   <data name="AreaText_2" xml:space="preserve"><value>Karten ohne vollständige Nummer, ohne PIN und ohne Prüfziffer.</value></data>
   <data name="AreaText_3" xml:space="preserve"><value>Was du schuldest und was dir geschuldet wird.</value></data>
   <data name="AreaText_4" xml:space="preserve"><value>Policen, Bezugsberechtigte und Meldefristen im Todesfall.</value></data>
@@ -160,6 +161,7 @@
   <data name="Area_11" xml:space="preserve"><value>Persönliche Wünsche</value></data>
   <data name="Area_12" xml:space="preserve"><value>Checkliste</value></data>
   <data name="Area_13" xml:space="preserve"><value>Einkommen, Rente &amp; Steuern</value></data>
+  <data name="Area_14" xml:space="preserve"><value>Ablageorte</value></data>
   <data name="Area_2" xml:space="preserve"><value>Kreditkarten</value></data>
   <data name="Area_3" xml:space="preserve"><value>Kredite &amp; Darlehen</value></data>
   <data name="Area_4" xml:space="preserve"><value>Versicherungen</value></data>
@@ -548,6 +550,8 @@
   <data name="FieldHint_deathNotificationPeriod" xml:space="preserve"><value>Bei Lebensversicherungen oft 24 bis 72 Stunden.</value></data>
   <data name="FieldHint_last4" xml:space="preserve"><value>Nie die vollständige Nummer, PIN oder Prüfziffer.</value></data>
   <data name="FieldHint_linkedWish" xml:space="preserve"><value>Zum Beispiel „Verträge &amp; Abos“ mit „kündigen“: Die Aufgabe listet dann alle Verträge auf, die gekündigt werden sollen.</value></data>
+  <data name="FieldHint_locationAccess" xml:space="preserve"><value>Wie man hineinkommt, etwa wo der Schlüssel liegt. Keine Zahlenkombination oder PIN.</value></data>
+  <data name="FieldHint_locationDescription" xml:space="preserve"><value>So genau, dass jemand anderes es findet, etwa „Arbeitszimmer, Rollcontainer, oberste Schublade“.</value></data>
   <data name="FieldHint_masterPasswordLocation" xml:space="preserve"><value>Nur der Ort, nicht das Passwort.</value></data>
   <data name="FieldHint_recipients" xml:space="preserve"><value>Für wen der Brief ist. Wer ihn lesen darf, legst du unter „Vertrauenspersonen“ fest.</value></data>
   <data name="FieldHint_seedLocation" xml:space="preserve"><value>Nur den Ort, nie die Seed-Phrase selbst.</value></data>
@@ -653,6 +657,9 @@
   <data name="Field_linkedWish" xml:space="preserve"><value>Nur Einträge mit dem Wunsch</value></data>
   <data name="Field_loanDirection" xml:space="preserve"><value>Richtung</value></data>
   <data name="Field_loanKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Field_locationAccess" xml:space="preserve"><value>Zugang</value></data>
+  <data name="Field_locationContact" xml:space="preserve"><value>Ansprechpartner vor Ort</value></data>
+  <data name="Field_locationDescription" xml:space="preserve"><value>Beschreibung</value></data>
   <data name="Field_mainDueDate" xml:space="preserve"><value>Hauptfälligkeit</value></data>
   <data name="Field_makeModel" xml:space="preserve"><value>Marke / Modell</value></data>
   <data name="Field_maritalStatus" xml:space="preserve"><value>Familienstand</value></data>
@@ -823,6 +830,13 @@
   <data name="LifesignInvalid" xml:space="preserve"><value>Dieser Link ist ungültig oder wurde schon verwendet. Melde dich einfach an; das zählt auch als Lebenszeichen.</value></data>
   <data name="LifesignTitle" xml:space="preserve"><value>Lebenszeichen</value></data>
   <data name="Loading" xml:space="preserve"><value>Wird geladen …</value></data>
+  <data name="LocationCreate" xml:space="preserve"><value>Anlegen</value></data>
+  <data name="LocationCreated" xml:space="preserve"><value>Ablageort „{0}“ angelegt.</value></data>
+  <data name="LocationLegacy" xml:space="preserve"><value>Bisher als Freitext: „{0}“. Bitte einen Ablageort wählen oder mit dem Symbol daneben anlegen.</value></data>
+  <data name="LocationName" xml:space="preserve"><value>Name</value></data>
+  <data name="LocationNew" xml:space="preserve"><value>Neuer Ablageort</value></data>
+  <data name="LocationNewText" xml:space="preserve"><value>Der Ablageort kommt in die Liste „Ablageorte“ und steht danach in allen Einträgen zur Auswahl. Beschreibung und Anschrift ergänzt du dort.</value></data>
+  <data name="LocationNoneYet" xml:space="preserve"><value>Noch keine Ablageorte. Mit dem Symbol daneben legst du den ersten an.</value></data>
   <data name="LoginChecking" xml:space="preserve"><value>Passwort wird geprüft …</value></data>
   <data name="LoginConfirm" xml:space="preserve"><value>Bestätigen</value></data>
   <data name="LoginEnrollSecret" xml:space="preserve"><value>Oder diesen Schlüssel von Hand eingeben:</value></data>
@@ -1346,6 +1360,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="Type_legalDocument" xml:space="preserve"><value>Urkunde / Dokument</value></data>
   <data name="Type_letter" xml:space="preserve"><value>Brief</value></data>
   <data name="Type_loan" xml:space="preserve"><value>Kredit / Darlehen</value></data>
+  <data name="Type_location" xml:space="preserve"><value>Ablageort</value></data>
   <data name="Type_onlineAccount" xml:space="preserve"><value>Online-Konto</value></data>
   <data name="Type_organDonation" xml:space="preserve"><value>Organspende</value></data>
   <data name="Type_otherWish" xml:space="preserve"><value>Sonstiger Wunsch</value></data>

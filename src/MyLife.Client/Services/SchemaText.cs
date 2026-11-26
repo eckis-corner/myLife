@@ -81,7 +81,12 @@ public sealed class SchemaText(IStringLocalizer<SharedResource> l)
                 continue;
             }
 
-            Guid? reference = field.Type == FieldType.Reference && Guid.TryParse(value, out var id) ? id : null;
+            Guid? reference = field.Type switch
+            {
+                FieldType.Reference when Guid.TryParse(value, out var id) => id,
+                FieldType.Location => payload.LocationId(field.Key),
+                _ => null,
+            };
             rows.Add(new DatasheetRow(Field(item.Type, field), Display(field, value, titleOf), reference, field.Type == FieldType.LongText));
         }
 
@@ -92,7 +97,7 @@ public sealed class SchemaText(IStringLocalizer<SharedResource> l)
 
         if (!string.IsNullOrWhiteSpace(payload.OriginalLocation))
         {
-            rows.Add(new DatasheetRow(l["CommonOriginalLocation"], payload.OriginalLocation));
+            rows.Add(new DatasheetRow(l["CommonOriginalLocation"], payload.OriginalLocation, payload.LocationId(VaultPayload.OriginalLocationKey)));
         }
 
         if (payload.ContactId is { } contact)

@@ -17,6 +17,7 @@ AREAS = {
     11: (("Persönliche Wünsche", "Personal wishes"), ("Bestattung, Organspende, Haustiere und persönliche Briefe.", "Funeral, organ donation, pets and personal letters.")),
     12: (("Checkliste", "Checklist"), ("Was die Hinterbliebenen wann tun sollten, mit den passenden Einträgen.", "What your survivors should do and when, with the matching entries.")),
     13: (("Einkommen, Rente & Steuern", "Income, pension & taxes"), ("Arbeitgeber, Altersvorsorge und Steuern.", "Employer, retirement provision and taxes.")),
+    14: (("Ablageorte", "Storage places"), ("Wo Originale, Schlüssel und Unterlagen liegen. Alle Einträge wählen ihren Ablageort aus dieser Liste.", "Where originals, keys and records are kept. Every entry picks its storage place from this list.")),
 }
 
 TYPES = {
@@ -48,6 +49,7 @@ TYPES = {
     "employment": ("Arbeitgeber / Einkommen", "Employer / income"),
     "pension": ("Altersvorsorge", "Retirement provision"),
     "taxes": ("Steuern", "Taxes"),
+    "location": ("Ablageort", "Storage place"),
 }
 
 EXPIRY = {
@@ -233,6 +235,9 @@ FIELDS = {
     "taxNumber": ("Steuernummer", "Tax number"),
     "taxAdvisor": ("Steuerberater", "Tax advisor"),
     "recordsLocation": ("Ablageort der Unterlagen", "Where the records are kept"),
+    "locationDescription": ("Beschreibung", "Description"),
+    "locationAccess": ("Zugang", "Access"),
+    "locationContact": ("Ansprechpartner vor Ort", "Contact on site"),
 }
 
 # Abweichende Bezeichnung je Objekttyp: Field_{Typ}_{Feld}.
@@ -254,6 +259,14 @@ HINTS = {
     "username": ("Kein Passwort eintragen.", "Do not enter a password."),
     "seedLocation": ("Nur den Ort, nie die Seed-Phrase selbst.", "Only the location, never the seed phrase itself."),
     "masterPasswordLocation": ("Nur der Ort, nicht das Passwort.", "Only the location, not the password."),
+    "locationDescription": (
+        "So genau, dass jemand anderes es findet, etwa „Arbeitszimmer, Rollcontainer, oberste Schublade“.",
+        "Precise enough for someone else to find it, for example “study, filing cabinet, top drawer”.",
+    ),
+    "locationAccess": (
+        "Wie man hineinkommt, etwa wo der Schlüssel liegt. Keine Zahlenkombination oder PIN.",
+        "How to get in, for example where the key is. No combination or PIN.",
+    ),
     "recipients": (
         "Für wen der Brief ist. Wer ihn lesen darf, legst du unter „Vertrauenspersonen“ fest.",
         "Who the letter is for. You decide who may read it under “Trusted persons”.",
@@ -445,6 +458,23 @@ TEXTS = {
     "CommonSection": ("Für alle Einträge", "For all entries"),
     "CommonExpiryHelp": ("Grundlage für Erinnerungen.", "Used for reminders."),
     "CommonOriginalLocation": ("Ablageort des Originals", "Where the original is kept"),
+    # Ablageorte (Entscheidung 143)
+    "LocationNew": ("Neuer Ablageort", "New storage place"),
+    "LocationNewText": (
+        "Der Ablageort kommt in die Liste „Ablageorte“ und steht danach in allen Einträgen zur Auswahl. Beschreibung und Anschrift ergänzt du dort.",
+        "The storage place is added to “Storage places” and can then be chosen in every entry. Add a description and address there.",
+    ),
+    "LocationName": ("Name", "Name"),
+    "LocationCreate": ("Anlegen", "Create"),
+    "LocationCreated": ("Ablageort „{0}“ angelegt.", "Storage place “{0}” created."),
+    "LocationLegacy": (
+        "Bisher als Freitext: „{0}“. Bitte einen Ablageort wählen oder mit dem Symbol daneben anlegen.",
+        "Previously entered as text: “{0}”. Please choose a storage place or create one with the icon next to it.",
+    ),
+    "LocationNoneYet": (
+        "Noch keine Ablageorte. Mit dem Symbol daneben legst du den ersten an.",
+        "No storage places yet. Use the icon next to it to create the first one.",
+    ),
     "CommonContact": ("Ansprechpartner", "Contact person"),
     "CommonWish": ("Wunsch für die Hinterbliebenen", "Wish for your survivors"),
     "CommonWishNote": ("Hinweis zum Wunsch", "Note on your wish"),

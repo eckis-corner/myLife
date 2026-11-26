@@ -146,6 +146,7 @@
   <data name="AreaText_11" xml:space="preserve"><value>Funeral, organ donation, pets and personal letters.</value></data>
   <data name="AreaText_12" xml:space="preserve"><value>What your survivors should do and when, with the matching entries.</value></data>
   <data name="AreaText_13" xml:space="preserve"><value>Employer, retirement provision and taxes.</value></data>
+  <data name="AreaText_14" xml:space="preserve"><value>Where originals, keys and records are kept. Every entry picks its storage place from this list.</value></data>
   <data name="AreaText_2" xml:space="preserve"><value>Cards without the full number, PIN or security code.</value></data>
   <data name="AreaText_3" xml:space="preserve"><value>What you owe and what is owed to you.</value></data>
   <data name="AreaText_4" xml:space="preserve"><value>Policies, beneficiaries and notification deadlines in case of death.</value></data>
@@ -160,6 +161,7 @@
   <data name="Area_11" xml:space="preserve"><value>Personal wishes</value></data>
   <data name="Area_12" xml:space="preserve"><value>Checklist</value></data>
   <data name="Area_13" xml:space="preserve"><value>Income, pension &amp; taxes</value></data>
+  <data name="Area_14" xml:space="preserve"><value>Storage places</value></data>
   <data name="Area_2" xml:space="preserve"><value>Payment cards</value></data>
   <data name="Area_3" xml:space="preserve"><value>Loans</value></data>
   <data name="Area_4" xml:space="preserve"><value>Insurance</value></data>
@@ -548,6 +550,8 @@
   <data name="FieldHint_deathNotificationPeriod" xml:space="preserve"><value>Often 24 to 72 hours for life insurance.</value></data>
   <data name="FieldHint_last4" xml:space="preserve"><value>Never the full number, PIN or security code.</value></data>
   <data name="FieldHint_linkedWish" xml:space="preserve"><value>For example “Contracts &amp; subscriptions” with “cancel”: the task then lists all contracts that should be cancelled.</value></data>
+  <data name="FieldHint_locationAccess" xml:space="preserve"><value>How to get in, for example where the key is. No combination or PIN.</value></data>
+  <data name="FieldHint_locationDescription" xml:space="preserve"><value>Precise enough for someone else to find it, for example “study, filing cabinet, top drawer”.</value></data>
   <data name="FieldHint_masterPasswordLocation" xml:space="preserve"><value>Only the location, not the password.</value></data>
   <data name="FieldHint_recipients" xml:space="preserve"><value>Who the letter is for. You decide who may read it under “Trusted persons”.</value></data>
   <data name="FieldHint_seedLocation" xml:space="preserve"><value>Only the location, never the seed phrase itself.</value></data>
@@ -653,6 +657,9 @@
   <data name="Field_linkedWish" xml:space="preserve"><value>Only entries with the wish</value></data>
   <data name="Field_loanDirection" xml:space="preserve"><value>Direction</value></data>
   <data name="Field_loanKind" xml:space="preserve"><value>Type</value></data>
+  <data name="Field_locationAccess" xml:space="preserve"><value>Access</value></data>
+  <data name="Field_locationContact" xml:space="preserve"><value>Contact on site</value></data>
+  <data name="Field_locationDescription" xml:space="preserve"><value>Description</value></data>
   <data name="Field_mainDueDate" xml:space="preserve"><value>Main renewal date</value></data>
   <data name="Field_makeModel" xml:space="preserve"><value>Make / model</value></data>
   <data name="Field_maritalStatus" xml:space="preserve"><value>Marital status</value></data>
@@ -823,6 +830,13 @@
   <data name="LifesignInvalid" xml:space="preserve"><value>This link is invalid or has already been used. Simply sign in; that also counts as a life sign.</value></data>
   <data name="LifesignTitle" xml:space="preserve"><value>Life sign</value></data>
   <data name="Loading" xml:space="preserve"><value>Loading …</value></data>
+  <data name="LocationCreate" xml:space="preserve"><value>Create</value></data>
+  <data name="LocationCreated" xml:space="preserve"><value>Storage place “{0}” created.</value></data>
+  <data name="LocationLegacy" xml:space="preserve"><value>Previously entered as text: “{0}”. Please choose a storage place or create one with the icon next to it.</value></data>
+  <data name="LocationName" xml:space="preserve"><value>Name</value></data>
+  <data name="LocationNew" xml:space="preserve"><value>New storage place</value></data>
+  <data name="LocationNewText" xml:space="preserve"><value>The storage place is added to “Storage places” and can then be chosen in every entry. Add a description and address there.</value></data>
+  <data name="LocationNoneYet" xml:space="preserve"><value>No storage places yet. Use the icon next to it to create the first one.</value></data>
   <data name="LoginChecking" xml:space="preserve"><value>Checking password …</value></data>
   <data name="LoginConfirm" xml:space="preserve"><value>Confirm</value></data>
   <data name="LoginEnrollSecret" xml:space="preserve"><value>Or enter this key manually:</value></data>
@@ -1346,6 +1360,7 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="Type_legalDocument" xml:space="preserve"><value>Certificate / document</value></data>
   <data name="Type_letter" xml:space="preserve"><value>Letter</value></data>
   <data name="Type_loan" xml:space="preserve"><value>Loan</value></data>
+  <data name="Type_location" xml:space="preserve"><value>Storage place</value></data>
   <data name="Type_onlineAccount" xml:space="preserve"><value>Online account</value></data>
   <data name="Type_organDonation" xml:space="preserve"><value>Organ donation</value></data>
   <data name="Type_otherWish" xml:space="preserve"><value>Other wish</value></data>

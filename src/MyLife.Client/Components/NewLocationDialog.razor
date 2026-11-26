@@ -1,0 +1,33 @@
+@* Neuer Ablageort aus einem Formular heraus: nur der Name; Beschreibung und Anschrift später unter „Ablageorte“. *@
+@inject IStringLocalizer<SharedResource> L
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@L["LocationNew"]</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.body2">@L["LocationNewText"]</MudText>
+            <MudTextField T="string" @bind-Value="Name" Label="@L["LocationName"]" Variant="Variant.Outlined" Immediate AutoFocus
+                          MaxLength="200" UserAttributes="@NameAttributes" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="string.IsNullOrWhiteSpace(Name)" OnClick="Create"
+                   data-testid="location-create">@L["LocationCreate"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private static readonly Dictionary<string, object> NameAttributes = new() { ["data-testid"] = "location-name" };
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
+
+    /// <summary>Vorschlag, etwa der bisherige Freitext.</summary>
+    [Parameter] public string Name { get; set; } = string.Empty;
+
+    private void Cancel() => Dialog.Cancel();
+
+    private void Create() => Dialog.Close(DialogResult.Ok(Name.Trim()));
+}

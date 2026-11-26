@@ -21,6 +21,7 @@ public static class AreaIcons
         11 => Icons.Material.Outlined.FavoriteBorder,
         12 => Icons.Material.Outlined.Checklist,
         13 => Icons.Material.Outlined.Savings,
+        14 => Icons.Material.Outlined.Place,
         _ => Icons.Material.Outlined.Folder,
     };
 }

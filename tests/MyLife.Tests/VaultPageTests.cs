@@ -62,7 +62,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         var page = Render<Home>();
 
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[data-testid=area-tile-2]")));
-        Assert.Equal(14, page.FindAll("[data-testid^=area-tile-]").Count);
+        Assert.Equal(15, page.FindAll("[data-testid^=area-tile-]").Count);
         Assert.Contains("Kreditkarten", page.Find("[data-testid=area-tile-2]").TextContent, StringComparison.Ordinal);
         Assert.Contains("Checkliste", page.Find("[data-testid=area-tile-12]").TextContent, StringComparison.Ordinal);
 
@@ -281,6 +281,40 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
 
         var housePage = Render<ObjectPage>(p => p.Add(x => x.Id, house.Id));
         housePage.WaitForAssertion(() => Assert.Contains("Baufinanzierung", housePage.Find("[data-testid=datasheet]").TextContent, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task StoragePlacesComeFromTheLocationTableAndFollowARename()
+    {
+        var safe = await _browser.Vault.CreateAsync(ObjectCatalog.LocationType, new VaultPayload { Title = "Ordner Arbeitszimmer" });
+        var payload = new VaultPayload { Title = "Testament", Fields = { ["documentKind"] = "will" } };
+        payload.SetLocation(VaultPayload.OriginalLocationKey, safe.Id, safe.Title);
+        var will = await _browser.Vault.CreateAsync("legalDocument", payload);
+        var legacy = await _browser.Vault.CreateAsync("legalDocument", new VaultPayload
+        {
+            Title = "Geburtsurkunde", Fields = { ["documentKind"] = "birth" }, OriginalLocation = "Schuhkarton",
+        });
+
+        // Datenblatt: Name mit Verweis; der Ablageort zeigt, wer ihn nutzt.
+        var willPage = Render<ObjectPage>(p => p.Add(x => x.Id, will.Id));
+        willPage.WaitForAssertion(() => Assert.Contains("Ordner Arbeitszimmer", willPage.Find("[data-testid=datasheet]").TextContent, StringComparison.Ordinal));
+        Assert.Contains(willPage.FindAll("[data-testid=datasheet] a"), a => a.GetAttribute("href") == $"object/{safe.Id}");
+        var safePage = Render<ObjectPage>(p => p.Add(x => x.Id, safe.Id));
+        safePage.WaitForAssertion(() => Assert.Contains("Testament", safePage.Find("[data-testid=datasheet]").TextContent, StringComparison.Ordinal));
+
+        // Alter Freitext bleibt sichtbar, bis er durch eine Auswahl ersetzt ist.
+        var legacyPage = Render<ObjectPage>(p => p.Add(x => x.Id, legacy.Id));
+        legacyPage.WaitForAssertion(() => Assert.Contains("Schuhkarton", legacyPage.Find("[data-testid=datasheet]").TextContent, StringComparison.Ordinal));
+        legacyPage.ClickWhenReady("[data-testid=edit]");
+        legacyPage.WaitForAssertion(() => Assert.Contains("Bisher als Freitext: „Schuhkarton“", legacyPage.Markup, StringComparison.Ordinal));
+        Assert.NotNull(legacyPage.Find("[data-testid=location-new-originalLocation]"));
+
+        // Umbenennen zieht den Namen in jedem Eintrag nach, der den Ablageort gewählt hat.
+        var renamed = safe.Payload.Clone();
+        renamed.Title = "Hängeregister Arbeitszimmer";
+        await _browser.Vault.UpdateAsync(safe, renamed, safe.Status);
+        Assert.Equal("Hängeregister Arbeitszimmer", _browser.Vault.Find(will.Id)!.Payload.OriginalLocation);
+        Assert.Equal("Schuhkarton", _browser.Vault.Find(legacy.Id)!.Payload.OriginalLocation);
     }
 
     [Fact]

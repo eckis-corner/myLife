@@ -15,7 +15,7 @@ Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel
 | **Wunsch für die Hinterbliebenen** | Auswahl je Objekttyp, zum Beispiel *kündigen / übernehmen / weiterlaufen lassen / löschen / Gedenkzustand / übergeben an …*, dazu ein freier Hinweis |
 | Ansprechpartner | Verweis auf ein Objekt vom Typ *Kontakt* |
 | Verknüpfungen | Verweise auf andere Objekte, zum Beispiel Kredit ↔ Immobilie ↔ Gebäudeversicherung, im Datenblatt in beide Richtungen sichtbar (40) |
-| Ablageort des Originals | Wo liegt das Papier? (bei Urkunden Pflicht, sonst optional) |
+| Ablageort des Originals | Wo liegt das Papier? Auswahl aus den **Ablageorten** (Bereich 14, Entscheidung 143); bei Urkunden Pflicht, sonst optional |
 | **Ablaufdatum** | Bei jedem Objekt vorhanden (39). Bedeutung je Typ, zum Beispiel Vertragsende, Gültigkeit oder Zinsbindung. Grundlage der Erinnerungen. |
 | Wiedervorlage | Optional: Datum und Hinweis, wann und warum das Objekt wieder angesehen werden soll (69). Fällige Wiedervorlagen stehen auf der Übersicht. |
 | Notizen | Freitext |
@@ -125,3 +125,9 @@ Felder in *kursiv* sind Auswahllisten.
 | Arbeitgeber / Einkommen | Arbeitgeber (Kontakt), Personalnummer, *Art* (Angestellt, Beamtet, Selbstständig, Rente/Pension), Gehalts- oder Rentenkonto (Verweis) |
 | Altersvorsorge | *Art* (gesetzliche Rente, Betriebsrente, Riester, Rürup, Beamtenversorgung, berufsständisches Versorgungswerk), Träger, Vertrags-/Versicherungsnummer, Hinterbliebenenleistung ja/nein |
 | Steuern | Finanzamt, Steuernummer, Steuerberater (Kontakt), Ablageort der Unterlagen |
+
+### Bereich 14 – Ablageorte (143)
+
+| Objekttyp | Felder |
+| --- | --- |
+| Ablageort | Name (Titel), Beschreibung, Anschrift, Zugang (etwa wo der Schlüssel liegt; keine Kombination oder PIN), Ansprechpartner vor Ort (Kontakt). Alle Ablageort-Felder der anderen Typen wählen aus dieser Tabelle; der Eintrag speichert Verweis und Namen, damit Vertrauenspersonen den Ort auch ohne Freigabe dieses Bereichs sehen |

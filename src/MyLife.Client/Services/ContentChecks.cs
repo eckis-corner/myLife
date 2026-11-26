@@ -52,7 +52,7 @@ public static partial class ContentChecks
         IEnumerable<string?> texts =
         [
             payload.Title, payload.Notes, payload.WishNote, payload.OriginalLocation, payload.FollowUpNote,
-            .. type.Fields.Where(f => f.Type is FieldType.Text or FieldType.LongText).Select(f => payload.Get(f.Key)),
+            .. type.Fields.Where(f => f.Type is FieldType.Text or FieldType.LongText or FieldType.Location).Select(f => payload.Get(f.Key)),
             .. payload.CustomFields.SelectMany(c => new[] { c.Label, c.Value }),
         ];
         return [.. texts.SelectMany(Check).Distinct()];

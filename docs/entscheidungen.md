@@ -253,6 +253,12 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | ---: | --- | --- |
 | 141 | Konto-Menü | Ein Klick auf Bild oder Kontosymbol oben rechts öffnet ein Menü mit **Details**, **Sicherheit** und **Abmelden** (der eigene Aktivator ruft in MudBlazor 9 das Öffnen selbst auf). Die Gruppe **Konto** in der Seitenleiste endet ebenfalls mit **Abmelden**. „Eigenes Datenblatt“ heißt in Menü und Seitentitel jetzt **Details** (ändert 137 und 138); der Typname `profile` bleibt „Eigenes Datenblatt“. |
 
+## Runde 24 (26.11.2026, Ablageorte)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 143 | Ablageorte | Neue Tabelle **Ablageorte** als eigener Bereich 14 mit dem Objekttyp `location` (Name als Titel, Beschreibung, Anschrift, Zugang, Ansprechpartner vor Ort). Jedes Feld, das einen Ablageort beschreibt, wählt aus dieser Tabelle (neuer Feldtyp `Location`): „Ablageort des Originals“ bei allen Einträgen, dazu Schlüssel (Schließfach, Immobilie), Zulassungsbescheinigung Teil II, Aufbewahrungsort (Wertgegenstand), Seed-Phrase, Master-Passwort, Organspendeausweis und Steuerunterlagen. Ein neuer Ablageort lässt sich direkt im Formular anlegen. **Gespeichert werden Verweis und Name:** Der Verweis steht in `VaultPayload.Locations`, der Name wie bisher im Feld. So sieht eine Vertrauensperson den Ablageort, sobald sie den Eintrag sehen darf, auch ohne Freigabe des Bereichs „Ablageorte“; Export, Notfallordner, Suche und Entschlüsselungsprogramm brauchen keine Änderung. Beim Umbenennen eines Ablageorts zieht myLife den Namen in allen Einträgen nach, die ihn gewählt haben. **Alter Freitext** bleibt sichtbar und wird im Formular als „Bisher als Freitext“ angezeigt, bis er durch eine Auswahl ersetzt ist; eine automatische Übernahme gibt es nicht. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

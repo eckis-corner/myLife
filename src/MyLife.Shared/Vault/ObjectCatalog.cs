@@ -9,6 +9,12 @@ public static class ObjectCatalog
 {
     public const int ChecklistArea = 12;
 
+    /// <summary>Bereich der Tabelle „Ablageorte“ (Entscheidung 143).</summary>
+    public const int LocationArea = 14;
+
+    /// <summary>Objekttyp eines Ablageorts; jedes Feld vom Typ <see cref="FieldType.Location"/> wählt aus diesen Einträgen.</summary>
+    public const string LocationType = "location";
+
     /// <summary>Auswahllisten: Name → Werte in Anzeigereihenfolge.</summary>
     public static IReadOnlyDictionary<string, IReadOnlyList<string>> OptionSets { get; } = new Dictionary<string, IReadOnlyList<string>>
     {
@@ -125,6 +131,7 @@ public static class ObjectCatalog
         new(11, "wishes") { Typical = [new("funeral")] },
         new(ChecklistArea, "checklist") { Typical = [new("task")] },
         new(13, "income") { Typical = [new("pension")] },
+        new(LocationArea, "locations"),
     ];
 
     public static IReadOnlyList<ObjectTypeDefinition> Types { get; } = [.. BuildTypes().Select(Recommend)];
@@ -164,6 +171,8 @@ public static class ObjectCatalog
 
     private static FieldDefinition Of(string key, FieldType type) => new(key, type);
 
+    private static FieldDefinition Place(string key) => new(key, FieldType.Location);
+
     private static FieldCondition When(string field, params string[] values) => new(field, values);
 
     private static List<ObjectTypeDefinition> BuildTypes() =>
@@ -195,7 +204,7 @@ public static class ObjectCatalog
         ]) { Wishes = ["sell", "takeOver", "keepRunning"] },
         new("safeDeposit", 1,
         [
-            Text("bank", true), Text("branch"), Text("boxNumber"), Text("keyLocation"), Text("authorizedPersons"), Long("contents"),
+            Text("bank", true), Text("branch"), Text("boxNumber"), Place("keyLocation"), Text("authorizedPersons"), Long("contents"),
         ]) { Wishes = ["close", "takeOver"] },
 
         // Bereich 2 – Kreditkarten
@@ -260,17 +269,17 @@ public static class ObjectCatalog
             Of("acquisitionYear", FieldType.Number), Of("approxValue", FieldType.Money), Ref("financing", "loan"), Ref("buildingInsurance", "insurance"),
             Of("rented", FieldType.YesNo), Text("tenant") with { VisibleWhen = When("rented", "true") },
             Of("rentIncome", FieldType.Money) with { VisibleWhen = When("rented", "true") },
-            Ref("propertyManager", "contact"), Text("keyLocation"),
+            Ref("propertyManager", "contact"), Place("keyLocation"),
         ]) { Wishes = ["sell", "handOver", "keep"] },
         new("vehicle", 7,
         [
             Choice("vehicleKind", "vehicleKind", true), Text("makeModel", true), Text("licensePlate"), Text("vin"), Text("keeper"), Text("owner"),
-            Text("titleLocation"), Ref("financing", "loan", "contract"), Ref("vehicleInsurance", "insurance"), Text("spareKey"), Ref("garage", "contact"),
+            Place("titleLocation"), Ref("financing", "loan", "contract"), Ref("vehicleInsurance", "insurance"), Text("spareKey"), Ref("garage", "contact"),
         ]) { Wishes = ["sell", "handOver", "keep"] },
         new("asset", 7,
         [
             Choice("assetKind", "assetKind", true), Long("description"), Of("approxValue", FieldType.Money), Of("valueDate", FieldType.Date),
-            Text("storageLocation"), Text("proof"),
+            Place("storageLocation"), Text("proof"),
         ]) { Wishes = ["sell", "handOver", "keep"] },
 
         // Bereich 8 – Digitaler Nachlass
@@ -285,7 +294,7 @@ public static class ObjectCatalog
         ]) { Wishes = ["cancel", "handOver", "keepRunning"], HasExpiryLabel = true },
         new("cryptoWallet", 8,
         [
-            Choice("walletKind", "walletKind", true), Text("provider"), Text("seedLocation") with { HasHint = true }, Of("approxValue", FieldType.Money),
+            Choice("walletKind", "walletKind", true), Text("provider"), Place("seedLocation") with { HasHint = true }, Of("approxValue", FieldType.Money),
         ]) { Wishes = ["handOver", "sell"] },
         new("device", 8,
         [
@@ -296,7 +305,7 @@ public static class ObjectCatalog
         new("passwordManager", 9,
         [
             Text("product", true), Text("account"), Choice("pmEmergency", "pmEmergency"), Text("emergencyContacts"),
-            Text("providerWaitingPeriod"), Text("masterPasswordLocation") with { HasHint = true }, Long("instructions"),
+            Text("providerWaitingPeriod"), Place("masterPasswordLocation") with { HasHint = true }, Long("instructions"),
         ]),
 
         // Bereich 10 – Wichtige Kontakte
@@ -315,7 +324,7 @@ public static class ObjectCatalog
         new("organDonation", 11,
         [
             Choice("organDecision", "organDecision", true), Text("decidedBy") with { VisibleWhen = When("organDecision", "delegated") },
-            Text("cardLocation"), Of("registered", FieldType.YesNo),
+            Place("cardLocation"), Of("registered", FieldType.YesNo),
         ]),
         new("pet", 11,
         [
@@ -348,7 +357,14 @@ public static class ObjectCatalog
         ]),
         new("taxes", 13,
         [
-            Text("taxOffice", true), Text("taxNumber"), Ref("taxAdvisor", "contact"), Text("recordsLocation"),
+            Text("taxOffice", true), Text("taxNumber"), Ref("taxAdvisor", "contact"), Place("recordsLocation"),
+        ]),
+
+        // Bereich 14 – Ablageorte (Entscheidung 143): der Titel ist der Name, den die Einträge übernehmen
+        new(LocationType, LocationArea,
+        [
+            Long("locationDescription") with { HasHint = true }, Long("address"), Text("locationAccess") with { HasHint = true },
+            Ref("locationContact", "contact"),
         ]),
     ];
 }

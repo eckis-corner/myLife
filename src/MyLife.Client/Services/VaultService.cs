@@ -188,6 +188,7 @@ public sealed class VaultService : IDisposable
         ArgumentNullException.ThrowIfNull(item);
         ArgumentNullException.ThrowIfNull(payload);
         payload.SchemaVersion = item.Type.SchemaVersion;
+        var renamedLocation = item.Type.Key == ObjectCatalog.LocationType && item.Payload.Title.Trim() != payload.Title.Trim();
         // Briefe aus der Zeit vor M2.3 bekommen beim nächsten Speichern ihren eigenen Schlüssel.
         byte[]? newKey = null;
         if (HasOwnKey(item.Type) && item.WrappedKey is null)
@@ -204,8 +205,39 @@ public sealed class VaultService : IDisposable
         item.Status = dto.Status;
         item.UpdatedAt = dto.UpdatedAt;
         item.Version = dto.Version;
+        if (renamedLocation)
+        {
+            await PropagateLocationNameAsync(item);
+        }
+
         Changed?.Invoke();
         return item;
+    }
+
+    /// <summary>
+    /// Ein Ablageort wurde umbenannt (Entscheidung 143): Alle Einträge, die ihn gewählt haben, bekommen den neuen
+    /// Namen, denn dort steht er für Vertrauenspersonen ohne Freigabe des Bereichs „Ablageorte“. Schlägt ein Eintrag
+    /// fehl (etwa gleichzeitig geändert), behält er den alten Namen; der Verweis bleibt richtig.
+    /// </summary>
+    private async Task PropagateLocationNameAsync(VaultItem location)
+    {
+        foreach (var other in _items.Where(i => !i.IsDeleted && i.Id != location.Id).ToList())
+        {
+            var payload = other.Payload.Clone();
+            if (!payload.RenameLocation(location.Id, location.Title))
+            {
+                continue;
+            }
+
+            try
+            {
+                await UpdateAsync(other, payload, other.Status);
+            }
+            catch (VaultException)
+            {
+                // Bleibt beim alten Namen; beim nächsten Umbenennen oder Speichern wird er nachgezogen.
+            }
+        }
     }
 
     public async Task DeleteAsync(Guid id) => Apply(await _api.DeleteObjectAsync(id));

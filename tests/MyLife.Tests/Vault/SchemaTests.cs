@@ -16,7 +16,7 @@ public sealed class CatalogTests
     public void KeysAreUniqueAndAreasMatchTheCatalog()
     {
         Assert.Equal(ObjectCatalog.Types.Count, ObjectCatalog.Types.Select(t => t.Key).Distinct().Count());
-        Assert.Equal(Enumerable.Range(0, 14), ObjectCatalog.Areas.Select(a => a.Number));
+        Assert.Equal(Enumerable.Range(0, 15), ObjectCatalog.Areas.Select(a => a.Number));
         foreach (var type in ObjectCatalog.Types)
         {
             Assert.True(ObjectCatalog.IsUsableArea(type.Area), type.Key);
@@ -240,6 +240,48 @@ public sealed class FieldValueTests
         Assert.Equal(newContact, copy.ContactId);
         Assert.Equal([newAccount], copy.Links);
         Assert.Equal(newAccount.ToString(), copy.Get("debitAccount"));
+    }
+
+    [Fact]
+    public void EveryStoragePlaceFieldPicksFromTheLocationTable()
+    {
+        // Entscheidung 143: Ablageorte kommen aus der Tabelle „Ablageorte“ (Bereich 14), nicht als Freitext.
+        string[] places = ["keyLocation", "titleLocation", "storageLocation", "seedLocation", "masterPasswordLocation", "cardLocation", "recordsLocation"];
+        var fields = ObjectCatalog.Types.SelectMany(t => t.Fields).ToList();
+        Assert.All(fields.Where(f => places.Contains(f.Key)), f => Assert.Equal(FieldType.Location, f.Type));
+        Assert.All(fields.Where(f => f.Type == FieldType.Location), f => Assert.Contains(f.Key, places));
+        Assert.Equal(ObjectCatalog.LocationArea, ObjectCatalog.Find(ObjectCatalog.LocationType)!.Area);
+    }
+
+    [Fact]
+    public void LocationsKeepReferenceAndNameAndFollowARename()
+    {
+        var wallet = ObjectCatalog.Find("cryptoWallet")!;
+        var safe = Guid.NewGuid();
+        var payload = new VaultPayload { Title = "Ledger" };
+        payload.SetLocation("seedLocation", safe, " Tresor Keller ");
+        payload.SetLocation(VaultPayload.OriginalLocationKey, safe, "Tresor Keller");
+
+        var copy = VaultPayload.FromUtf8(payload.ToUtf8());
+        Assert.Equal(safe, copy.LocationId("seedLocation"));
+        Assert.Equal("Tresor Keller", copy.Get("seedLocation"));
+        Assert.Equal("Tresor Keller", copy.OriginalLocation);
+        Assert.Equal([safe], copy.References(wallet).ToList());
+
+        Assert.True(copy.RenameLocation(safe, "Wandtresor Keller"));
+        Assert.False(copy.RenameLocation(safe, "Wandtresor Keller"));
+        Assert.Equal("Wandtresor Keller", copy.Get("seedLocation"));
+        Assert.Equal("Wandtresor Keller", copy.OriginalLocation);
+
+        // Alter Freitext hat keinen Verweis; ein Import ohne den Ablageort behält den Namen als Freitext.
+        var legacy = new VaultPayload { Title = "Alt", OriginalLocation = "Schublade" };
+        Assert.Null(legacy.LocationId(VaultPayload.OriginalLocationKey));
+        copy.RemapReferences(wallet, new Dictionary<Guid, Guid>());
+        Assert.Null(copy.LocationId("seedLocation"));
+        Assert.Equal("Wandtresor Keller", copy.Get("seedLocation"));
+
+        copy.SetLocation("seedLocation", null, null);
+        Assert.Equal(string.Empty, copy.Get("seedLocation"));
     }
 
     [Fact]

@@ -26,9 +26,9 @@
                            Variant="Variant.Outlined" Editable Clearable HelperText="@L["CommonExpiryHelp"]" />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudTextField T="string" @bind-Value="Payload.OriginalLocation" Label="@L["CommonOriginalLocation"]" Variant="Variant.Outlined"
-                          Required="Type.OriginalLocationRequired" Error="@Has("originalLocation")" ErrorText="@ErrorOf("originalLocation")"
-                          MaxLength="@FieldValues.MaxTextLength" />
+            <LocationPicker Payload="Payload" Key="@VaultPayload.OriginalLocationKey" Label="@L["CommonOriginalLocation"]"
+                            Required="Type.OriginalLocationRequired" Error="@Has(VaultPayload.OriginalLocationKey)"
+                            ErrorText="@ErrorOf(VaultPayload.OriginalLocationKey)" />
         </MudItem>
         <MudItem xs="12" sm="6">
             <MudSelect T="Guid?" Value="Payload.ContactId" ValueChanged="v => Payload.ContactId = v" Label="@L["CommonContact"]"
@@ -58,7 +58,7 @@
             <MudSelect T="Guid" SelectedValues="Payload.Links" SelectedValuesChanged="v => Payload.Links = [.. v]" MultiSelection
                        Label="@L["CommonLinks"]" HelperText="@L["CommonLinksHelp"]" Variant="Variant.Outlined" Clearable
                        ToStringFunc="@(id => Vault.TitleOf(id) ?? string.Empty)">
-                @foreach (var other in Options([]))
+                @foreach (var other in Options([]).Where(o => o.Type.Key != ObjectCatalog.LocationType))
                 {
                     <MudSelectItem T="Guid" Value="@other.Id">@other.Title (@Text.Type(other.Type))</MudSelectItem>
                 }
@@ -181,6 +181,10 @@
                         <MudSelectItem T="Guid?" Value="@option.Id">@option.Title</MudSelectItem>
                     }
                 </MudSelect>
+                break;
+            case FieldType.Location:
+                <LocationPicker Payload="Payload" Key="@field.Key" Label="@label" Required="field.Required" Error="@Has(field.Key)"
+                                ErrorText="@ErrorOf(field.Key)" HelperText="@hint" />
                 break;
             case FieldType.LongText:
                 <MudTextField T="string" Value="@value" ValueChanged="v => Payload.Set(field.Key, v)" Label="@label" Variant="Variant.Outlined"

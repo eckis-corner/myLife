@@ -1,0 +1,82 @@
+@* Auswahl eines Ablageorts aus der Tabelle „Ablageorte“ (Bereich 14, Entscheidung 143). Speichert Verweis und Namen
+   in der Nutzlast; ein neuer Ablageort lässt sich direkt hier anlegen. Alter Freitext bleibt sichtbar, bis er ersetzt ist. *@
+@inject IStringLocalizer<SharedResource> L
+@inject VaultService Vault
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<MudStack Row AlignItems="AlignItems.Start" Spacing="1">
+    <MudSelect T="Guid?" Value="@Payload.LocationId(Key)" ValueChanged="Select" Label="@Label" Variant="Variant.Outlined"
+               Clearable Required="Required" Error="@Error" ErrorText="@ErrorText" HelperText="@Helper" Class="flex-grow-1"
+               ToStringFunc="@(id => id is { } v ? Vault.TitleOf(v) ?? Payload.LocationText(Key) : string.Empty)" UserAttributes="@_testId">
+        @foreach (var location in Locations)
+        {
+            <MudSelectItem T="Guid?" Value="@location.Id">@location.Title</MudSelectItem>
+        }
+    </MudSelect>
+    <MudTooltip Text="@L["LocationNew"]">
+        <MudIconButton Icon="@Icons.Material.Filled.AddLocationAlt" aria-label="@L["LocationNew"]" Class="mt-3" Disabled="_busy"
+                       OnClick="CreateAsync" data-testid="@($"location-new-{Key}")" />
+    </MudTooltip>
+</MudStack>
+
+@code {
+    private Dictionary<string, object> _testId = [];
+    private bool _busy;
+
+    [Parameter, EditorRequired] public VaultPayload Payload { get; set; } = default!;
+
+    /// <summary>Feldschlüssel oder <see cref="VaultPayload.OriginalLocationKey"/>.</summary>
+    [Parameter, EditorRequired] public string Key { get; set; } = default!;
+
+    [Parameter] public string? Label { get; set; }
+
+    [Parameter] public bool Required { get; set; }
+
+    [Parameter] public bool Error { get; set; }
+
+    [Parameter] public string? ErrorText { get; set; }
+
+    [Parameter] public string? HelperText { get; set; }
+
+    /// <summary>Alter Freitext ohne Verweis (vor Entscheidung 143).</summary>
+    private string? LegacyText => Payload.LocationId(Key) is null && Payload.LocationText(Key) is { Length: > 0 } text ? text : null;
+
+    private string? Helper => LegacyText is { } legacy
+        ? L["LocationLegacy", legacy].Value
+        : HelperText ?? (Locations.Any() ? null : L["LocationNoneYet"].Value);
+
+    private IEnumerable<VaultItem> Locations => Vault.Current
+        .Where(i => i.Type.Key == ObjectCatalog.LocationType)
+        .OrderBy(i => i.Title, StringComparer.CurrentCultureIgnoreCase);
+
+    protected override void OnParametersSet() => _testId = new() { ["data-testid"] = $"field-{Key}" };
+
+    private void Select(Guid? id) => Payload.SetLocation(Key, id, id is { } v ? Vault.TitleOf(v) : null);
+
+    private async Task CreateAsync()
+    {
+        var parameters = new DialogParameters<NewLocationDialog> { { d => d.Name, LegacyText ?? string.Empty } };
+        var dialog = await Dialogs.ShowAsync<NewLocationDialog>(L["LocationNew"], parameters, new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        if (await dialog.Result is not { Canceled: false, Data: string name })
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            var created = await Vault.CreateAsync(ObjectCatalog.LocationType, new VaultPayload { Title = name.Trim() });
+            Payload.SetLocation(Key, created.Id, created.Title);
+            Snackbar.Add(L["LocationCreated", created.Title], Severity.Success);
+        }
+        catch (VaultException exception)
+        {
+            Snackbar.Add(L[$"VaultError_{exception.Message}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

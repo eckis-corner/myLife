@@ -1,7 +1,7 @@
 """Texte für das eigene Datenblatt (Name, Vorname, Bild). Wird von tools/resources.py eingebunden."""
 
 CLIENT = {
-    "ProfileTitle": ("Eigenes Datenblatt", "My details"),
+    "ProfileTitle": ("Details", "Details"),
     "ProfileIntro": (
         "Name, Vorname und Bild liegen verschlüsselt in deinem Tresor, im Bereich „Über mich“. Der Server sieht sie nicht. "
         "Wer den Bereich „Über mich“ freigegeben bekommt, sieht sie auch.",

@@ -43,6 +43,12 @@ public enum FieldType
 
     /// <summary>Genau vier Ziffern, etwa die letzten Ziffern einer Karte.</summary>
     Last4,
+
+    /// <summary>
+    /// Ablageort aus der Tabelle „Ablageorte“ (Bereich 14, Entscheidung 143): Der Wert ist der Name des Ablageorts,
+    /// der Verweis steht in <see cref="VaultPayload.Locations"/>. Ein Wert ohne Verweis ist Freitext aus der Zeit davor.
+    /// </summary>
+    Location,
 }
 
 /// <summary>Ein Feld nur zeigen, wenn ein Auswahlfeld einen der Werte hat (etwa Kennzeichen nur bei KFZ-Versicherungen).</summary>

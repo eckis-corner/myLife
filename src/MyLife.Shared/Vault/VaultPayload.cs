@@ -27,8 +27,15 @@ public sealed class VaultPayload
     /// <summary>Verknüpfte Objekte; im Datenblatt in beide Richtungen sichtbar (Entscheidung 40).</summary>
     public List<Guid> Links { get; set; } = [];
 
-    /// <summary>Ablageort des Originals.</summary>
+    /// <summary>Ablageort des Originals: Name des Ablageorts (Verweis unter <see cref="OriginalLocationKey"/> in <see cref="Locations"/>).</summary>
     public string? OriginalLocation { get; set; }
+
+    /// <summary>
+    /// Gewählte Ablageorte (Entscheidung 143): Feldschlüssel bzw. <see cref="OriginalLocationKey"/> → ID des Ablageorts.
+    /// Der Name steht zusätzlich im Feld selbst, damit ihn jeder sieht, der diesen Eintrag sehen darf, auch ohne
+    /// Freigabe des Bereichs „Ablageorte“. Beim Umbenennen eines Ablageorts zieht myLife die Namen nach.
+    /// </summary>
+    public Dictionary<string, Guid> Locations { get; set; } = [];
 
     /// <summary>Ablaufdatum, Bedeutung je Objekttyp (Entscheidung 39).</summary>
     public DateOnly? ExpiresOn { get; set; }
@@ -51,6 +58,58 @@ public sealed class VaultPayload
 
     /// <summary>Ist die Wiedervorlage zum Stichtag fällig (Datum erreicht oder überschritten)?</summary>
     public bool IsFollowUpDue(DateOnly today) => FollowUpOn is { } date && date <= today;
+
+    /// <summary>Schlüssel des gemeinsamen Felds „Ablageort des Originals“ in <see cref="Locations"/>.</summary>
+    public const string OriginalLocationKey = "originalLocation";
+
+    /// <summary>Name im Ablageort-Feld <paramref name="key"/> (Feldschlüssel oder <see cref="OriginalLocationKey"/>).</summary>
+    public string LocationText(string key) => key == OriginalLocationKey ? OriginalLocation ?? string.Empty : Get(key);
+
+    /// <summary>Gewählter Ablageort im Feld <paramref name="key"/>; null bei leerem Feld oder altem Freitext.</summary>
+    public Guid? LocationId(string key) => Locations.TryGetValue(key, out var id) ? id : null;
+
+    /// <summary>Setzt ein Ablageort-Feld auf einen Ablageort aus der Tabelle (Verweis und Name) oder leert es.</summary>
+    public void SetLocation(string key, Guid? id, string? name)
+    {
+        if (id is { } location && !string.IsNullOrWhiteSpace(name))
+        {
+            Locations[key] = location;
+            SetLocationText(key, name);
+        }
+        else
+        {
+            Locations.Remove(key);
+            SetLocationText(key, null);
+        }
+    }
+
+    /// <summary>Übernimmt den neuen Namen eines Ablageorts in alle Felder, die ihn gewählt haben. Liefert, ob sich etwas geändert hat.</summary>
+    public bool RenameLocation(Guid id, string name)
+    {
+        var changed = false;
+        foreach (var key in Locations.Where(l => l.Value == id).Select(l => l.Key).ToList())
+        {
+            if (LocationText(key) != name.Trim())
+            {
+                SetLocationText(key, name);
+                changed = true;
+            }
+        }
+
+        return changed;
+    }
+
+    private void SetLocationText(string key, string? value)
+    {
+        if (key == OriginalLocationKey)
+        {
+            OriginalLocation = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        }
+        else
+        {
+            Set(key, value);
+        }
+    }
 
     public static JsonSerializerOptions JsonOptions { get; } = new(JsonSerializerDefaults.Web)
     {
@@ -79,7 +138,7 @@ public sealed class VaultPayload
 
     public VaultPayload Clone() => FromUtf8(ToUtf8());
 
-    /// <summary>Alle Objekte, auf die dieses Objekt verweist: Ansprechpartner, Verweisfelder und Verknüpfungen.</summary>
+    /// <summary>Alle Objekte, auf die dieses Objekt verweist: Ansprechpartner, Verweisfelder, Ablageorte und Verknüpfungen.</summary>
     public IEnumerable<Guid> References(ObjectTypeDefinition? type)
     {
         if (ContactId is { } contact)
@@ -90,6 +149,11 @@ public sealed class VaultPayload
         foreach (var link in Links)
         {
             yield return link;
+        }
+
+        foreach (var location in Locations.Values.Distinct())
+        {
+            yield return location;
         }
 
         if (type is null)
@@ -106,11 +170,15 @@ public sealed class VaultPayload
         }
     }
 
-    /// <summary>Ersetzt Verweise, etwa beim Import, wenn Objekte neue IDs bekommen. Unbekannte Verweise entfallen.</summary>
+    /// <summary>
+    /// Ersetzt Verweise, etwa beim Import, wenn Objekte neue IDs bekommen. Unbekannte Verweise entfallen; bei
+    /// Ablageorten bleibt dann der Name als Freitext stehen.
+    /// </summary>
     public void RemapReferences(ObjectTypeDefinition? type, IReadOnlyDictionary<Guid, Guid> map)
     {
         ContactId = ContactId is { } contact && map.TryGetValue(contact, out var newContact) ? newContact : null;
         Links = [.. Links.Where(map.ContainsKey).Select(l => map[l]).Distinct()];
+        Locations = Locations.Where(l => map.ContainsKey(l.Value)).ToDictionary(l => l.Key, l => map[l.Value]);
         if (type is null)
         {
             return;
