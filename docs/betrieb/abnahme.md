@@ -11,7 +11,7 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 - [ ] Projekt im Container Manager gestartet, `https://mylife.eckis-corner.de` erreichbar, Zertifikat gültig
 - [ ] Einrichtung mit dem Einrichtungscode aus dem Container-Protokoll: Konto A, Master-Passwort, Recovery-Kit **ausgedruckt**, Authenticator-App
 - [ ] Optional: Passkey unter „Sicherheit“ hinzugefügt und Anmeldung damit getestet
-- [ ] Konto → „Eigenes Datenblatt“: Name und Vorname gespeichert, ein Bild (JPEG, PNG oder WebP bis 5 MB) hochgeladen und angezeigt; ein zweites Bild ersetzt das erste (das alte liegt im Papierkorb); unter „Über mich“ lässt sich kein zweites Datenblatt dieser Art anlegen
+- [ ] Konto → „Details“ (Entscheidung 141): Name und Vorname gespeichert, ein Bild (JPEG, PNG oder WebP bis 5 MB) hochgeladen und angezeigt; ein zweites Bild ersetzt das erste (das alte liegt im Papierkorb); unter „Über mich“ lässt sich kein zweites Datenblatt dieser Art anlegen
 
 ## 2. Verwaltung (als A)
 
@@ -44,7 +44,7 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
   ```
 
   Erwartet: unlesbare Zeichen, keine Titel, Banken, Dateinamen oder Notizen. Lesbar sind nur die Typen (`bankAccount` …), das ist so vorgesehen (Entscheidung 30).
-- [ ] Unter `data/app/files` sind die Dokumente ebenfalls unlesbar (etwa ein PDF oder das Bild aus dem eigenen Datenblatt lässt sich nicht öffnen)
+- [ ] Unter `data/app/files` sind die Dokumente ebenfalls unlesbar (etwa ein PDF oder das Bild unter „Details“ lässt sich nicht öffnen)
 
 ## 4. Familie und Notfallzugang (Abnahme M2)
 
