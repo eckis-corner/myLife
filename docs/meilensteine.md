@@ -48,7 +48,19 @@ Nach jedem Meilenstein halte ich an, committe, pushe und warte auf Feedback (Vor
 3. **Vollständigkeitsanzeige** je Bereich und Objekt (Pflicht- und empfohlene Felder, fehlende typische Objekte) ✅ (25.11.2026; Entscheidungen 120–123)
 4. **Server-Sicherung:** täglicher verschlüsselter Dump im Volume `backup`, Rücksicherung getestet ✅ (25.11.2026; Entscheidungen 124–129; Schnappschuss per COPY statt pg_dump)
 5. **Betriebsdoku:** Update, Sicherung, Rücksicherung, Übergabe an die Nachfolgeperson; Formatbeschreibung `docs/format.md`; Werkzeug `mylife-decrypt` ✅ (25.11.2026; Entscheidungen 130–132)
-6. Barrierefreiheit, Durchsicht der englischen Texte, Prüfung der Sicherheit (CSP, Header, Abhängigkeiten), Release v1.0 ✅ (25.11.2026; Entscheidungen 133–136; das Tag `v1.0.0` setzt der Betreiber nach der Abnahme)
+6. Barrierefreiheit, Durchsicht der englischen Texte, Prüfung der Sicherheit (CSP, Header, Abhängigkeiten), Release v1.0 ✅ (25.11.2026; Entscheidungen 133–136; das Tag `v1.0.0` ist am 25.11.2026 gesetzt, noch ohne Abnahme auf der DS1520+; abgenommen wird jetzt der Stand von v1.1)
+
+## Version 1.1 – Hilfe, Menü, Zahlungen, Ablageorte ✅ (26.11.2026, Tag `v1.1.0`)
+
+1. **Menü und eigenes Datenblatt:** Gruppen „Verwaltung“ und „Konto“ statt einer langen Liste; Name, Vorname und Bild verschlüsselt im Tresor ✅ (25.11.2026; Entscheidungen 137–138)
+2. **Hilfe in der App:** Tutorial und Anleitung, ohne Anmeldung erreichbar, Deutsch und Englisch ✅ (25.11.2026; Entscheidung 139)
+3. **Menü unten und Konto-Menü:** Verwaltung immer sichtbar am unteren Rand; ein Klick auf Bild oder Kontosymbol öffnet Details, Sicherheit und Abmelden ✅ (25.–26.11.2026; Entscheidungen 140–141)
+4. **Zahlungen:** Übersicht aller regelmäßigen Zahlungen über alle Bereiche, Summen je Monat, je Jahr und je Bereich ✅ (26.11.2026; Entscheidung 142)
+5. **Ablageorte:** eigene Tabelle als Bereich 14; alle Ablageort-Felder wählen daraus, Verweis und Name werden gespeichert ✅ (26.11.2026; Entscheidung 143)
+
+Das Update von 1.0.0 braucht keine Datenbank-Migration ([installation.md](betrieb/installation.md), Abschnitt 7).
+
+**Abnahme:** Die Checkliste [abnahme.md](betrieb/abnahme.md) auf der DS1520+ mit dem Stand von `v1.1.0`, zusammen mit den Abnahmen von M1 und M2.
 
 ## Später (nicht geplant)
 
@@ -66,7 +78,7 @@ Jede Anforderung aus `PROMPT.md` mit der Stelle, die sie abdeckt. ⚠ = offen od
 | Kategorien 1–12 mit eigenen Feldern, Notizen, Anhängen | Objekttypen-Katalog, M1.4–6, erweitert um Bereich 0 und 13 (41); ⚠ Felder-Durchsicht offen (47) |
 | Kreditkarte ohne volle Nummer und PIN | Schema Karte, Luhn-Prüfung, M1.5 |
 | Verträge: kündigen/übernehmen/weiterlaufen | Wunsch je Objekt, Checkliste verknüpft |
-| Urkunden mit Ablageort des Originals | Pflichtfeld Urkunde |
+| Urkunden mit Ablageort des Originals | Pflichtfeld Urkunde, Auswahl aus der Tabelle „Ablageorte“ (143) |
 | Digitaler Nachlass mit Wunsch löschen/Gedenkzustand/übergeben, Krypto nur Ort | Schemata Bereich 8 |
 | Passwortmanager ohne einzelne Passwörter | Schema Bereich 9 |
 | Kontakte, persönliche Wünsche, Briefe an Einzelne | Bereiche 10 und 11, Briefe mit eigener Freigabe |
@@ -90,7 +102,7 @@ Jede Anforderung aus `PROMPT.md` mit der Stelle, die sie abdeckt. ⚠ = offen od
 | Blazor + MudBlazor, .NET, PostgreSQL, Skill-Konventionen | M0; Abweichungen in entscheidungen.md |
 | WebAssembly statt Blazor Server, begründet; Krypto-Bibliothek begründet | Architektur 3 |
 | Docker Compose mit App, DB, Reverse Proxy | M0; ⚠ Proxy ist der vorhandene Nginx Proxy Manager (3) |
-| Anleitung Installation, Updates, Backups | M0 (Installation), M3.5 |
+| Anleitung Installation, Updates, Backups | M0 (Installation), M3.5; dazu Tutorial und Anleitung in der App (139) |
 | SMTP konfigurierbar, Dead-Man's-Switch als Hintergrunddienst | M2.1, M2.4 |
 | Responsive Web-App, keine native App | M0 Layout, Foto-Upload mobil |
 | Ein Hauptnutzer, wenige Vertrauenspersonen, keine Registrierung, Einladung | ⚠ geändert durch 34: mehrere Nutzer mit eigenem Tresor, Admin, nur Einladung |
