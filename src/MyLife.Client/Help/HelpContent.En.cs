@@ -27,6 +27,7 @@ public static partial class HelpContent
             | --- | --- |
             | Overview | All areas with count, completeness and “last reviewed”, plus what expires soon |
             | Search | Full-text search across your entries |
+            | Payments | What is paid regularly from your accounts, per month, per year and per area |
             | Areas | Your entries, from “About me” to the checklist |
             | Family | Everyone on this instance, invitations |
             | Trusted persons | Who may see what in an emergency |
@@ -513,7 +514,7 @@ public static partial class HelpContent
         ]),
 
         new("ueberblick", "Keeping track",
-            "Overview, completeness, reminders, search and activity log.",
+            "Overview, completeness, reminders, search, payments and activity log.",
         [
             new("uebersicht", "Overview and completeness", Icons.Material.Outlined.Dashboard,
                 "Everyone",
@@ -566,6 +567,21 @@ public static partial class HelpContent
                     "Search runs only in your browser over the decrypted entries. It does not search the content of PDFs.",
                 ],
                 "search", "Search"),
+
+            new("zahlungen", "Keeping track of payments", Icons.Material.Outlined.Payments,
+                "Everyone",
+                "The **Payments** page collects everything that is paid regularly, across all areas: loan instalments, insurance premiums, contracts and subscriptions, and annual card fees.",
+                [
+                    "Open **Payments**.",
+                    "At the top are the totals **per month**, **per year** and for **one-off** payments, below them the same totals **by area**.",
+                    "**All payments** lists each payment with amount, frequency and account. **Group by area** shows them per area with a subtotal; switched off, it is a list you can sort.",
+                    "Click a payment to open the entry.",
+                ],
+                [
+                    "Only current entries with an amount count. Ended entries and loans owed to you are left out.",
+                    "A payment without a **frequency** is not included in the totals; the page points this out.",
+                ],
+                "payments", "Payments"),
 
             new("protokoll", "Viewing the activity log", Icons.Material.Outlined.History,
                 "Everyone",

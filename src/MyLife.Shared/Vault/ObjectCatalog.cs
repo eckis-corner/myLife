@@ -204,7 +204,11 @@ public static class ObjectCatalog
             Choice("cardKind", "cardKind", true), Text("issuer"), Text("cardholder"), Of("last4", FieldType.Last4) with { HasHint = true },
             Ref("referenceAccount", "bankAccount"), new("blockHotline", FieldType.Phone) { DefaultValue = "116 116" },
             Text("additionalCards"), Of("annualFee", FieldType.Money), Long("includedInsurances"),
-        ]) { Wishes = ["cancel", "keepRunning"], HasExpiryLabel = true },
+        ])
+        {
+            Wishes = ["cancel", "keepRunning"], HasExpiryLabel = true,
+            Payment = new("annualFee") { FixedFrequency = "yearly", AccountField = "referenceAccount" },
+        },
 
         // Bereich 3 – Kredite & Darlehen
         new("loan", 3,
@@ -215,7 +219,11 @@ public static class ObjectCatalog
             Of("termUntil", FieldType.Date), Of("creditLifeInsurance", FieldType.YesNo),
             Ref("creditLifeInsuranceRef", "insurance") with { VisibleWhen = When("creditLifeInsurance", "true") },
             Ref("collateral", "property", "vehicle", "asset"), Ref("debitAccount", "bankAccount"),
-        ]) { Wishes = ["takeOver", "claim", "cancel"], HasExpiryLabel = true },
+        ])
+        {
+            Wishes = ["takeOver", "claim", "cancel"], HasExpiryLabel = true,
+            Payment = new("installment") { FrequencyField = "frequency", AccountField = "debitAccount", When = When("loanDirection", "iOwe") },
+        },
 
         // Bereich 4 – Versicherungen
         new("insurance", 4,
@@ -231,7 +239,11 @@ public static class ObjectCatalog
             Text("insuredNumber") with { VisibleWhen = When("insuranceKind", "health", "care", "dental") },
             Of("disabilityPension", FieldType.Money) with { VisibleWhen = When("insuranceKind", "disability") },
             Ref("property", "property") with { VisibleWhen = When("insuranceKind", "household", "building") },
-        ]) { Wishes = ["claim", "cancel", "takeOver", "keepRunning"], HasExpiryLabel = true },
+        ])
+        {
+            Wishes = ["claim", "cancel", "takeOver", "keepRunning"], HasExpiryLabel = true,
+            Payment = new("premium") { FrequencyField = "frequency", AccountField = "paymentAccount" },
+        },
 
         // Bereich 5 – Verträge & Abos
         new("contract", 5,
@@ -242,7 +254,11 @@ public static class ObjectCatalog
             Ref("landlord", "contact") with { VisibleWhen = When("contractKind", "rent") },
             Of("deposit", FieldType.Money) with { VisibleWhen = When("contractKind", "rent") },
             Ref("depositAccount", "bankAccount") with { VisibleWhen = When("contractKind", "rent") },
-        ]) { Wishes = ["cancel", "takeOver", "keepRunning"], HasExpiryLabel = true },
+        ])
+        {
+            Wishes = ["cancel", "takeOver", "keepRunning"], HasExpiryLabel = true,
+            Payment = new("cost") { FrequencyField = "frequency", AccountField = "paymentAccount" },
+        },
 
         // Bereich 6 – Urkunden & Dokumente
         new("legalDocument", 6,

@@ -253,6 +253,12 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | ---: | --- | --- |
 | 141 | Konto-Menü | Ein Klick auf Bild oder Kontosymbol oben rechts öffnet ein Menü mit **Details**, **Sicherheit** und **Abmelden** (der eigene Aktivator ruft in MudBlazor 9 das Öffnen selbst auf). Die Gruppe **Konto** in der Seitenleiste endet ebenfalls mit **Abmelden**. „Eigenes Datenblatt“ heißt in Menü und Seitentitel jetzt **Details** (ändert 137 und 138); der Typname `profile` bleibt „Eigenes Datenblatt“. |
 
+## Runde 23 (26.11.2026, Zahlungen)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 142 | Zahlungen | Neue Seite **Zahlungen** (`/payments`, im Hauptmenü unter „Suche“) über alle Bereiche: Summen je Monat, je Jahr und für einmalige Zahlungen, dieselben Summen je Bereich und alle Zahlungen in einer Tabelle, mit dem Schalter „Nach Bereich gruppieren“ (Standard an) je Bereich mit Zwischensumme, sonst flach und sortierbar. Was eine Zahlung ist, steht im Schema (`ObjectTypeDefinition.Payment`): Kredit-Rate (nur „ich schulde“), Versicherungsbeitrag, Vertragskosten, je mit dem Feld „Rhythmus“, und die Jahresgebühr einer Karte (fest jährlich), dazu das belastete Konto. Es zählen nur laufende Einträge mit Betrag. Zahlungen ohne Rhythmus stehen in der Liste, aber nicht in den Summen, mit Hinweis. Je Monat ist ein Zwölftel der Jahressumme. Gerechnet wird im Browser; das Dateiformat ändert sich nicht. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

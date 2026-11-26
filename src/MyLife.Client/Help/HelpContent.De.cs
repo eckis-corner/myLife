@@ -27,6 +27,7 @@ public static partial class HelpContent
             | --- | --- |
             | Übersicht | Alle Bereiche mit Anzahl, Vollständigkeit und „Zuletzt geprüft“, dazu was bald abläuft |
             | Suche | Volltextsuche über deine Einträge |
+            | Zahlungen | Was regelmäßig von deinen Konten abgeht, je Monat, je Jahr und je Bereich |
             | Bereiche | Deine Einträge, von „Über mich“ bis zur Checkliste |
             | Familie | Alle Personen dieser Instanz, Einladungen |
             | Vertrauenspersonen | Wer im Ernstfall was sehen darf |
@@ -513,7 +514,7 @@ public static partial class HelpContent
         ]),
 
         new("ueberblick", "Den Überblick behalten",
-            "Übersicht, Vollständigkeit, Erinnerungen, Suche und Protokoll.",
+            "Übersicht, Vollständigkeit, Erinnerungen, Suche, Zahlungen und Protokoll.",
         [
             new("uebersicht", "Übersicht und Vollständigkeit", Icons.Material.Outlined.Dashboard,
                 "Alle",
@@ -566,6 +567,21 @@ public static partial class HelpContent
                     "Die Suche läuft nur in deinem Browser über die entschlüsselten Einträge. Den Inhalt von PDFs durchsucht sie nicht.",
                 ],
                 "search", "Suche"),
+
+            new("zahlungen", "Zahlungen im Blick", Icons.Material.Outlined.Payments,
+                "Alle",
+                "Die Seite **Zahlungen** sammelt aus allen Bereichen, was regelmäßig abgeht: Kreditraten, Versicherungsbeiträge, Verträge und Abos sowie Jahresgebühren von Karten.",
+                [
+                    "**Zahlungen** öffnen.",
+                    "Oben stehen die Summen **je Monat**, **je Jahr** und für **einmalige** Zahlungen, darunter dieselben Summen **nach Bereich**.",
+                    "In **Alle Zahlungen** stehen die einzelnen Zahlungen mit Betrag, Rhythmus und Konto. **Nach Bereich gruppieren** zeigt sie je Bereich mit Zwischensumme; ausgeschaltet ist es eine Liste zum Sortieren.",
+                    "Eine Zahlung anklicken, um den Eintrag zu öffnen.",
+                ],
+                [
+                    "Es zählen nur laufende Einträge mit Betrag. Beendete Einträge und Kredite, die dir geschuldet werden, fehlen.",
+                    "Ohne **Rhythmus** zählt eine Zahlung nicht in den Summen; die Seite weist darauf hin.",
+                ],
+                "payments", "Zahlungen"),
 
             new("protokoll", "Das Protokoll ansehen", Icons.Material.Outlined.History,
                 "Alle",
