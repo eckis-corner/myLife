@@ -36,7 +36,7 @@ public static partial class HelpContent
             | Export & Druck | Notfallordner als PDF, Datensicherung, Notfallpaket |
             | Verwaltung | Protokoll und Papierkorb; für Administratoren auch Einstellungen und Benutzer |
             | Tutorial, Anleitung | Diese Hilfe |
-            | Konto | Erinnerungen, Sicherheit, eigenes Datenblatt |
+            | Konto | Erinnerungen, Sicherheit, Details, Abmelden |
 
             > Verschlüsselt und entschlüsselt wird ausschließlich in deinem Browser. Der Server speichert nur Daten, die er selbst nicht lesen kann.
             """,
@@ -101,7 +101,7 @@ public static partial class HelpContent
 
             **Gute Reihenfolge für den Anfang**
 
-            - **Konto → Eigenes Datenblatt**: Name, Vorname und ein Bild.
+            - **Konto → Details**: Name, Vorname und ein Bild.
             - **Über mich**: persönliche Daten und Ausweise.
             - **Urkunden & Dokumente**: Testament, Vollmachten, Patientenverfügung, jeweils mit dem **Ablageort des Originals**.
             - **Versicherungen**: vor allem Lebens- und Unfallversicherungen; sie haben kurze Meldefristen im Todesfall.
@@ -354,7 +354,7 @@ public static partial class HelpContent
                 [
                     "E-Mail-Adresse und **Master-Passwort** eingeben und **Anmelden** wählen.",
                     "Den 6-stelligen Code aus der Authenticator-App eingeben und **Bestätigen**, oder **Mit Passkey anmelden**.",
-                    "Zum Abmelden oben rechts das **Konto-Menü** öffnen und **Abmelden** wählen.",
+                    "Zum Abmelden oben rechts auf dein Bild oder das Kontosymbol klicken und **Abmelden** wählen, oder in der Seitenleiste **Konto → Abmelden**.",
                 ],
                 [
                     "Nach fünf Fehlversuchen ist das Konto für 15 Minuten gesperrt.",
@@ -490,12 +490,12 @@ public static partial class HelpContent
                 "Alle",
                 "Name, Vorname und ein Bild von dir liegen verschlüsselt im Bereich „Über mich“. Wer diesen Bereich freigegeben bekommt, sieht sie auch.",
                 [
-                    "**Konto → Eigenes Datenblatt** öffnen.",
+                    "**Konto → Details** öffnen.",
                     "Name und Vorname eintragen und **Speichern**.",
                     "**Bild wählen**: JPEG, PNG oder WebP bis 5 MB. Ein neues Bild legt das alte in den Papierkorb.",
                 ],
                 [],
-                "account/profile", "Eigenes Datenblatt"),
+                "account/profile", "Details"),
 
             new("gehoert-nicht-hinein", "Was nicht hineingehört", Icons.Material.Outlined.Block,
                 "Alle",

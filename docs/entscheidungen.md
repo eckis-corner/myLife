@@ -247,6 +247,12 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | ---: | --- | --- |
 | 140 | Menü unten | Die Gruppe **Verwaltung** steht nicht mehr im scrollenden Hauptmenü, sondern immer sichtbar am unteren Rand der Seitenleiste über Tutorial und Anleitung; darunter folgt „Konto“ (ändert 137). Sind Verwaltung und Konto aufgeklappt, scrollt die untere Leiste selbst (höchstens 60 % der Höhe). |
 
+## Runde 22 (26.11.2026, Konto-Menü)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 141 | Konto-Menü | Ein Klick auf Bild oder Kontosymbol oben rechts öffnet ein Menü mit **Details**, **Sicherheit** und **Abmelden** (der eigene Aktivator ruft in MudBlazor 9 das Öffnen selbst auf). Die Gruppe **Konto** in der Seitenleiste endet ebenfalls mit **Abmelden**. „Eigenes Datenblatt“ heißt in Menü und Seitentitel jetzt **Details** (ändert 137 und 138); der Typname `profile` bleibt „Eigenes Datenblatt“. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

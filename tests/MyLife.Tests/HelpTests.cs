@@ -224,6 +224,26 @@ public sealed partial class HelpTests : BunitContext
         Assert.Equal("guide", layout.Find("[data-testid=nav-guide]").GetAttribute("href"));
     }
 
+    /// <summary>„Konto“ in der Seitenleiste endet mit „Abmelden“; das führt zur Anmeldeseite.</summary>
+    [Fact]
+    public async Task TheAccountGroupEndsWithLogout()
+    {
+        // Ohne Server schlägt die Abmeldung beim Server fehl; die Schlüssel sind dann trotzdem verworfen.
+        var http = new HttpClient { BaseAddress = new Uri("http://127.0.0.1:9/") };
+        Services.AddSingleton(new SessionService(new AuthClient(http), new ReferenceMyLifeCrypto(), new WebAuthnService(JSInterop.JSRuntime)));
+        Services.AddSingleton<CultureService>();
+        AddAuthorization().SetAuthorized("anna@example.org");
+        var navigation = Services.GetRequiredService<NavigationManager>();
+
+        var layout = Render<MainLayout>(p => p.Add(x => x.Body, (RenderFragment)(_ => { })));
+        await layout.Find("[data-testid=nav-account] button").ClickAsync(new());
+
+        var logout = layout.Find("[data-testid=nav-account] [data-testid=nav-logout]");
+        Assert.Equal("Abmelden", logout.TextContent.Trim());
+        await logout.ClickAsync(new());
+        layout.WaitForAssertion(() => Assert.EndsWith("/login", navigation.Uri, StringComparison.Ordinal), TimeSpan.FromSeconds(10));
+    }
+
     /// <summary>Parameter aus der Adresse kommen in bUnit nur über den NavigationManager.</summary>
     private IRenderedComponent<TPage> Open<TPage>(string uri)
         where TPage : IComponent

@@ -72,6 +72,7 @@
                         <MudNavLink Href="account/security" Icon="@Icons.Material.Outlined.Security">@L["NavSecurity"]</MudNavLink>
                         <MudNavLink Href="account/profile" Icon="@Icons.Material.Outlined.Badge">@L["ProfileTitle"]</MudNavLink>
                         <MudNavLink Href="hints/not-in-vault" Icon="@Icons.Material.Outlined.Block">@L["NotInVaultTitle"]</MudNavLink>
+                        <MudNavLink OnClick="LogoutAsync" Icon="@Icons.Material.Filled.Logout" data-testid="nav-logout">@L["Logout"]</MudNavLink>
                     </MudNavGroup>
                 </MudNavMenu>
                 </div>
@@ -156,6 +157,18 @@
     }
 
     private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    /// <summary>Abmelden aus der Seitenleiste (Konto → Abmelden), wie im Menü der Kopfzeile.</summary>
+    private async Task LogoutAsync()
+    {
+        if (CurrentSession is null)
+        {
+            return;
+        }
+
+        await CurrentSession.LogoutAsync();
+        ServiceProvider.GetService<NavigationManager>()?.NavigateTo("login");
+    }
 
     private AppInfoClient? AppInfo => ServiceProvider.GetService<AppInfoClient>();
 

@@ -18,6 +18,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
     private readonly ServerFixture _server;
     private VaultBrowser _browser = null!;
     private Bunit.TestDoubles.BunitAuthorizationContext _auth = null!;
+    private IRenderedComponent<MudBlazor.MudPopoverProvider> _popovers = null!;
 
     public VaultPageTests(ServerFixture server)
     {
@@ -50,7 +51,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton(new EmergencyClient(_browser.Http));
         Services.AddSingleton(new AdminClient(_browser.Http));
         _auth = AddAuthorization();
-        Render<MudBlazor.MudPopoverProvider>();
+        _popovers = Render<MudBlazor.MudPopoverProvider>();
     }
 
     [Fact]
@@ -205,11 +206,22 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         menu.WaitForAssertion(() => Assert.NotNull(menu.Find("[data-testid=user-menu] button")));
         Assert.Empty(menu.FindAll("[data-testid=user-menu-picture]"));
 
+        // Ohne Bild öffnet das Kontosymbol dasselbe Menü; ein zweiter Klick schließt es wieder.
+        await menu.Find("[data-testid=user-menu-icon]").ClickAsync(new());
+        _popovers.WaitForAssertion(() => Assert.Equal(3, _popovers.FindAll(".mud-menu-item").Count));
+        await menu.Find("[data-testid=user-menu-icon]").ClickAsync(new());
+        _popovers.WaitForAssertion(() => Assert.Empty(_popovers.FindAll(".mud-menu-item")));
+
         var profile = await _browser.Vault.CreateAsync("profile", new VaultPayload { Title = "Erika Muster", Fields = { ["lastName"] = "Muster" } });
         byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 1, 2, 3];
         var picture = await _browser.Vault.UploadAsync(profile.Id, new MemoryStream(png),
             new DocumentMetadata { Label = "Bild", FileName = "ich.png", ContentType = "image/png", Size = png.Length });
         menu.WaitForAssertion(() => Assert.Equal("blob:profilbild", menu.Find("[data-testid=user-menu-picture] img").GetAttribute("src")), TimeSpan.FromSeconds(10));
+
+        // Ein Klick auf das Bild öffnet das Konto-Menü: Details, Sicherheit, Abmelden.
+        await menu.Find("[data-testid=user-menu-picture]").ClickAsync(new());
+        _popovers.WaitForAssertion(() => Assert.Equal(["Details", "Sicherheit", "Abmelden"],
+            _popovers.FindAll(".mud-menu-item").Select(i => i.TextContent.Trim()).ToArray()));
 
         await _browser.Vault.DeleteFileAsync(picture);
         menu.WaitForAssertion(() => Assert.Empty(menu.FindAll("[data-testid=user-menu-picture]")), TimeSpan.FromSeconds(10));

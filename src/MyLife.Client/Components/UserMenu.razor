@@ -1,5 +1,6 @@
-@* Konto-Menü in der Kopfzeile: Name, Sicherheit, Abmelden. Nur bei entsperrtem Tresor sichtbar.
-   Ist im eigenen Datenblatt ein Bild hinterlegt, steht es statt des Kontosymbols in der Kopfzeile. *@
+@* Konto-Menü in der Kopfzeile: Details, Sicherheit, Abmelden. Nur bei entsperrtem Tresor sichtbar.
+   Ist unter „Details“ ein Bild hinterlegt, steht es statt des Kontosymbols in der Kopfzeile.
+   Ein eigener Aktivator öffnet das Menü in MudBlazor 9 nicht von selbst; der Klick ruft deshalb ToggleAsync. *@
 @inject IStringLocalizer<SharedResource> L
 @inject SessionService Session
 @inject NavigationManager Navigation
@@ -14,13 +15,13 @@
             <ActivatorContent Context="menu">
                 @if (_pictureUrl is not null)
                 {
-                    <button type="button" class="mylife-appbar-avatar" aria-label="@L["UserMenu"]" data-testid="user-menu-picture">
+                    <button type="button" class="mylife-appbar-avatar" aria-label="@L["UserMenu"]" data-testid="user-menu-picture" @onclick="menu.ToggleAsync">
                         <img src="@_pictureUrl" alt="" />
                     </button>
                 }
                 else
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" aria-label="@L["UserMenu"]" />
+                    <MudIconButton Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" aria-label="@L["UserMenu"]" OnClick="menu.ToggleAsync" data-testid="user-menu-icon" />
                 }
             </ActivatorContent>
             <ChildContent>

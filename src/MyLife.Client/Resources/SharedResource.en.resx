@@ -1120,7 +1120,7 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="ProfilePictureRemoved" xml:space="preserve"><value>Picture moved to trash.</value></data>
   <data name="ProfilePictureSaveFirst" xml:space="preserve"><value>Save your name first, then you can add a picture.</value></data>
   <data name="ProfilePictureSaved" xml:space="preserve"><value>Picture saved.</value></data>
-  <data name="ProfileTitle" xml:space="preserve"><value>My details</value></data>
+  <data name="ProfileTitle" xml:space="preserve"><value>Details</value></data>
   <data name="ReadingBackToStart" xml:space="preserve"><value>Back to overview</value></data>
   <data name="ReadingDone" xml:space="preserve"><value>Done</value></data>
   <data name="ReadingEmpty" xml:space="preserve"><value>Nothing has been released to you at the moment.</value></data>

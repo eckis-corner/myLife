@@ -1120,7 +1120,7 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="ProfilePictureRemoved" xml:space="preserve"><value>Bild in den Papierkorb gelegt.</value></data>
   <data name="ProfilePictureSaveFirst" xml:space="preserve"><value>Speichere zuerst deinen Namen, dann kannst du ein Bild hinzufügen.</value></data>
   <data name="ProfilePictureSaved" xml:space="preserve"><value>Bild gespeichert.</value></data>
-  <data name="ProfileTitle" xml:space="preserve"><value>Eigenes Datenblatt</value></data>
+  <data name="ProfileTitle" xml:space="preserve"><value>Details</value></data>
   <data name="ReadingBackToStart" xml:space="preserve"><value>Zur Übersicht</value></data>
   <data name="ReadingDone" xml:space="preserve"><value>Fertig</value></data>
   <data name="ReadingEmpty" xml:space="preserve"><value>Im Moment ist nichts für dich freigegeben.</value></data>

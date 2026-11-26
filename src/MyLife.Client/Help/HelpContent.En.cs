@@ -36,7 +36,7 @@ public static partial class HelpContent
             | Export & print | Emergency folder as PDF, backup, emergency package |
             | Administration | Activity log and trash; for administrators also settings and users |
             | Tutorial, Guide | This help |
-            | Account | Reminders, security, my details |
+            | Account | Reminders, security, details, sign out |
 
             > Encryption and decryption happen only in your browser. The server stores nothing but data it cannot read itself.
             """,
@@ -101,7 +101,7 @@ public static partial class HelpContent
 
             **A good order to start with**
 
-            - **Account → My details**: surname, first name and a picture.
+            - **Account → Details**: surname, first name and a picture.
             - **About me**: personal details and ID documents.
             - **Certificates & legal documents**: will, powers of attorney, living will, each with **where the original is kept**.
             - **Insurance**: above all life and accident insurance; they have short notification periods after a death.
@@ -354,7 +354,7 @@ public static partial class HelpContent
                 [
                     "Enter your email address and **master password** and choose **Sign in**.",
                     "Enter the 6-digit code from the authenticator app and choose **Confirm**, or **Sign in with passkey**.",
-                    "To sign out, open the **account menu** at the top right and choose **Sign out**.",
+                    "To sign out, click your picture or the account icon at the top right and choose **Sign out**, or use **Account → Sign out** in the sidebar.",
                 ],
                 [
                     "After five failed attempts the account is locked for 15 minutes.",
@@ -490,12 +490,12 @@ public static partial class HelpContent
                 "Everyone",
                 "Your surname, first name and a picture are stored encrypted in the “About me” area. Anyone that area is released to sees them too.",
                 [
-                    "Open **Account → My details**.",
+                    "Open **Account → Details**.",
                     "Enter surname and first name and **Save**.",
                     "**Choose picture**: JPEG, PNG or WebP up to 5 MB. A new picture moves the old one to the trash.",
                 ],
                 [],
-                "account/profile", "My details"),
+                "account/profile", "Details"),
 
             new("gehoert-nicht-hinein", "What does not belong in it", Icons.Material.Outlined.Block,
                 "Everyone",
