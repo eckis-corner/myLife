@@ -1,6 +1,6 @@
-# Abnahme auf der Synology (vor Version 1.0)
+# Abnahme auf der Synology (vor Version 1.1)
 
-Checkliste für die Abnahme von M1 und M2 auf der DS1520+ (Meilensteine). Zum Abhaken: `[ ]` durch `[x]` ersetzen. Wenn etwas nicht wie beschrieben funktioniert: notieren, was du getan hast und was passiert ist, dann weiter mit dem nächsten Punkt.
+Checkliste für die Abnahme von M1 und M2 auf der DS1520+ (Meilensteine), dazu was mit Version 1.1 neu ist: Hilfe, Konto-Menü, Zahlungen und Ablageorte. `v1.0.0` ist bereits ohne diese Abnahme veröffentlicht; abgenommen wird der Stand von `v1.1.0`. Zum Abhaken: `[ ]` durch `[x]` ersetzen. Wenn etwas nicht wie beschrieben funktioniert: notieren, was du getan hast und was passiert ist, dann weiter mit dem nächsten Punkt.
 
 Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Folgenden **A** (Eigentümer, Admin) und **B** (Vertrauensperson). Mit den kürzesten Fristen dauert der Antrag in Teil 4 etwa einen Tag; der Weg ohne Lebenszeichen (Teil 5) mindestens 11 Tage.
 
@@ -9,9 +9,12 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 - [ ] Ordner, `.env` und Rechte wie in [installation.md](installation.md), Abschnitte 1–3
 - [ ] `MYLIFE_BACKUP_KEY` erzeugt (`openssl rand -base64 32`), in die `.env` eingetragen, **ausgedruckt** und getrennt von der NAS abgelegt
 - [ ] Projekt im Container Manager gestartet, `https://mylife.eckis-corner.de` erreichbar, Zertifikat gültig
+- [ ] Die Fußzeile zeigt „Version **1.1.0**“ (bei fester Version in der `.env`: `MYLIFE_VERSION=1.1.0`)
+- [ ] Tutorial und Anleitung sind ohne Anmeldung erreichbar (unten in der Seitenleiste); die Suche in der Anleitung findet „Ablageorte“
 - [ ] Einrichtung mit dem Einrichtungscode aus dem Container-Protokoll: Konto A, Master-Passwort, Recovery-Kit **ausgedruckt**, Authenticator-App
 - [ ] Optional: Passkey unter „Sicherheit“ hinzugefügt und Anmeldung damit getestet
-- [ ] Konto → „Details“ (Entscheidung 141): Name und Vorname gespeichert, ein Bild (JPEG, PNG oder WebP bis 5 MB) hochgeladen und angezeigt; ein zweites Bild ersetzt das erste (das alte liegt im Papierkorb); unter „Über mich“ lässt sich kein zweites Datenblatt dieser Art anlegen
+- [ ] Ein Klick auf Bild oder Kontosymbol oben rechts öffnet das Menü mit **Details**, **Sicherheit** und **Abmelden** (Entscheidung 141)
+- [ ] Konto → „Details“: Name und Vorname gespeichert, ein Bild (JPEG, PNG oder WebP bis 5 MB) hochgeladen und angezeigt; ein zweites Bild ersetzt das erste (das alte liegt im Papierkorb); unter „Über mich“ lässt sich kein zweites Datenblatt dieser Art anlegen
 
 ## 2. Verwaltung (als A)
 
@@ -35,6 +38,7 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 - [ ] Übersicht: Vollständigkeit, Kacheln, „Als geprüft markieren“
 - [ ] Checkliste: „Vorlage übernehmen“, die Aufgabe „Verträge kündigen“ listet einen Vertrag mit dem Wunsch „kündigen“
 - [ ] Erinnerungen: Seite „Erinnerungen“ zeigt ein Datum, das der Server kennt
+- [ ] **Zahlungen** (Entscheidung 142): ein Kredit („ich schulde“), eine Versicherung und ein Vertrag mit Betrag und Rhythmus erscheinen auf der Seite „Zahlungen“; Summen je Monat und je Jahr stimmen nach Nachrechnen; „Nach Bereich gruppieren“ aus und wieder an; eine Zahlung ohne Rhythmus steht in der Liste mit Hinweis, aber nicht in den Summen
 - [ ] Abmelden, neu laden, wieder anmelden: alles da
 - [ ] **In der Datenbank steht nur Chiffrat.** Per SSH im Projektordner:
 
@@ -111,4 +115,4 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 - [ ] Zweite Person als Admin eingetragen ([nachfolge.md](nachfolge.md), Abschnitt 1)
 - [ ] Unterlagen für die Nachfolge zusammengestellt (`.env`, Sicherungsschlüssel, Zugänge)
 - [ ] Notizen zu allem, was nicht wie beschrieben funktioniert hat, an die Entwicklung gegeben
-- [ ] Danach: Tag `v1.0.0` setzen (Entscheidung 136)
+- [ ] Danach: Release `v1.1.0` bestätigen (Entscheidung 136). Ist bei der Abnahme etwas nachgebessert worden, stattdessen den nächsten Tag (`v1.1.1`) setzen und diesen Stand nehmen
