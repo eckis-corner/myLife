@@ -104,6 +104,7 @@ public static partial class HelpContent
 
             - **Konto → Details**: Name, Vorname und ein Bild.
             - **Über mich**: persönliche Daten und Ausweise.
+            - **Ablageorte**: wo deine Unterlagen liegen, etwa „Ordner im Arbeitszimmer“ oder „Schließfach Sparkasse“. Jeder Eintrag wählt seinen Ablageort aus dieser Liste.
             - **Urkunden & Dokumente**: Testament, Vollmachten, Patientenverfügung, jeweils mit dem **Ablageort des Originals**.
             - **Versicherungen**: vor allem Lebens- und Unfallversicherungen; sie haben kurze Meldefristen im Todesfall.
             - **Passwortmanager**: welcher es ist und wie der Notfallzugang funktioniert.
@@ -112,7 +113,7 @@ public static partial class HelpContent
 
             PINs, TANs, vollständige Kartennummern, einzelne Passwörter und Seed-Phrasen. myLife warnt dich beim Speichern, wenn ein Text danach aussieht.
             """,
-            ["eintrag-anlegen", "dokumente", "wuensche-verweise", "gehoert-nicht-hinein", "eigenes-datenblatt"]),
+            ["eintrag-anlegen", "dokumente", "wuensche-verweise", "ablageorte", "gehoert-nicht-hinein", "eigenes-datenblatt"]),
 
         new("ueberblick", "Den Überblick behalten", Icons.Material.Outlined.Dashboard,
             """
@@ -429,7 +430,7 @@ public static partial class HelpContent
                     "In der Seitenleiste unter **Bereiche** den Bereich öffnen.",
                     "Den großen Knopf **… anlegen** wählen, oder über den Pfeil daneben einen anderen Typ des Bereichs.",
                     "Die Felder ausfüllen. Pflichtfelder sind markiert; IBAN, BIC, E-Mail-Adressen und Datumsangaben werden geprüft.",
-                    "Unter **Für alle Einträge** bei Bedarf Titel, Notizen, Ablageort des Originals, Ablaufdatum und Wiedervorlage ergänzen.",
+                    "Unter **Für alle Einträge** bei Bedarf Titel, Notizen, Ablageort des Originals (aus deinen **Ablageorten**), Ablaufdatum und Wiedervorlage ergänzen.",
                     "**Speichern**. Der Eintrag wird in deinem Browser verschlüsselt.",
                 ],
                 [
@@ -486,6 +487,22 @@ public static partial class HelpContent
                     "Passt ein Feld nicht ins Schema, **Zusatzfeld hinzufügen** und Bezeichnung und Wert eintragen.",
                 ],
                 []),
+
+            new("ablageorte", "Ablageorte pflegen", Icons.Material.Outlined.Place,
+                "Alle",
+                "Wo liegt das Testament, wo der Fahrzeugbrief, wo der Schlüssel zum Schließfach? Diese Orte pflegst du einmal im Bereich **Ablageorte**. Jedes Feld, das nach einem Ablageort fragt, wählt dann aus dieser Liste: der Ablageort des Originals bei jedem Eintrag, dazu etwa Schlüssel, Fahrzeugbrief, Seed-Phrase, Master-Passwort, Organspendeausweis und Steuerunterlagen.",
+                [
+                    "In der Seitenleiste unter **Bereiche** auf **Ablageorte** klicken und **Ablageort anlegen** wählen.",
+                    "Einen Namen eintragen, den deine Familie versteht, etwa „Hängeregister Arbeitszimmer“. Unter **Beschreibung** genau beschreiben, wie man ihn findet; bei Bedarf Anschrift, **Zugang** und einen Ansprechpartner vor Ort ergänzen.",
+                    "In einem Eintrag beim Feld für den Ablageort einen Ort aus der Liste wählen.",
+                    "Fehlt der Ort noch, legst du ihn mit dem Symbol neben dem Feld direkt an. Er ist dann sofort ausgewählt; Beschreibung und Anschrift ergänzt du später unter **Ablageorte**.",
+                ],
+                [
+                    "Benennst du einen Ablageort um, übernimmt myLife den neuen Namen in alle Einträge, die ihn nutzen.",
+                    "Das Datenblatt eines Ablageorts zeigt unter **Verknüpft mit**, welche Einträge dort liegen.",
+                    "Steht im Formular **Bisher als Freitext**, stammt der Ablageort aus der Zeit vor dieser Liste. Er bleibt sichtbar, bis du einen Ort auswählst. Das Symbol daneben übernimmt den alten Text als Namen für einen neuen Ablageort.",
+                    "Unter **Zugang** nur beschreiben, wie man hineinkommt, etwa wo der Schlüssel liegt. Keine Zahlenkombination und keine PIN.",
+                ]),
 
             new("eigenes-datenblatt", "Das eigene Datenblatt", Icons.Material.Outlined.Badge,
                 "Alle",
@@ -644,6 +661,7 @@ public static partial class HelpContent
                     "Zum Entfernen **Als Vertrauensperson entfernen**. Alle Freigaben für diese Person werden gelöscht.",
                     "Steht **Neu speichern nötig**, hat die Person einen neuen Schlüssel. Öffne sie und speichere einmal neu.",
                     "Der Notfallzugang wird aktiv, sobald du die erste Vertrauensperson eingesetzt hast.",
+                    "Den Namen eines Ablageorts sieht jede Person, die den Eintrag sehen darf, auch ohne Freigabe des Bereichs **Ablageorte**. Diesen Bereich brauchst du nur freizugeben, wenn die Person auch Beschreibung, Anschrift und Zugang sehen soll.",
                 ],
                 "trust", "Vertrauenspersonen"),
 

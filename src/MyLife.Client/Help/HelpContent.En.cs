@@ -104,6 +104,7 @@ public static partial class HelpContent
 
             - **Account → Details**: surname, first name and a picture.
             - **About me**: personal details and ID documents.
+            - **Storage places**: where your papers are kept, for example “folder in the study” or “safe deposit box at the bank”. Every entry picks its storage place from this list.
             - **Certificates & legal documents**: will, powers of attorney, living will, each with **where the original is kept**.
             - **Insurance**: above all life and accident insurance; they have short notification periods after a death.
             - **Password manager**: which one it is and how its emergency access works.
@@ -112,7 +113,7 @@ public static partial class HelpContent
 
             PINs, TANs, full card numbers, individual passwords and seed phrases. myLife warns you when you save a text that looks like one of these.
             """,
-            ["eintrag-anlegen", "dokumente", "wuensche-verweise", "gehoert-nicht-hinein", "eigenes-datenblatt"]),
+            ["eintrag-anlegen", "dokumente", "wuensche-verweise", "ablageorte", "gehoert-nicht-hinein", "eigenes-datenblatt"]),
 
         new("ueberblick", "Keeping track", Icons.Material.Outlined.Dashboard,
             """
@@ -429,7 +430,7 @@ public static partial class HelpContent
                     "In the sidebar under **Areas**, open the area.",
                     "Choose the large **New …** button, or another type of the area via the arrow next to it.",
                     "Fill in the fields. Required fields are marked; IBAN, BIC, email addresses and dates are checked.",
-                    "Under **For all entries**, add title, notes, where the original is kept, expiry date and follow-up as needed.",
+                    "Under **For all entries**, add title, notes, where the original is kept (from your **storage places**), expiry date and follow-up as needed.",
                     "**Save**. The entry is encrypted in your browser.",
                 ],
                 [
@@ -486,6 +487,22 @@ public static partial class HelpContent
                     "If a field is missing from the form, choose **Add field** and enter a label and value.",
                 ],
                 []),
+
+            new("ablageorte", "Managing storage places", Icons.Material.Outlined.Place,
+                "Everyone",
+                "Where is the will, the vehicle registration document, the key to the safe deposit box? You record these places once in the **Storage places** area. Every field that asks where something is kept then picks from this list: where the original is kept for every entry, plus keys, vehicle registration document, seed phrase, master password, donor card and tax records.",
+                [
+                    "In the sidebar under **Areas**, click **Storage places** and choose **New storage place**.",
+                    "Enter a name your family will understand, for example “filing cabinet in the study”. Under **Description**, explain exactly how to find it; add an address, **Access** and a contact on site as needed.",
+                    "In an entry, choose a place from the list in the storage place field.",
+                    "If the place is not there yet, create it with the icon next to the field. It is selected straight away; add a description and address later under **Storage places**.",
+                ],
+                [
+                    "If you rename a storage place, myLife updates the name in every entry that uses it.",
+                    "The data sheet of a storage place shows under **Linked to** which entries are kept there.",
+                    "If the form says **Previously entered as text**, the place dates from before this list. It stays visible until you choose a place. The icon next to it uses the old text as the name of a new storage place.",
+                    "Under **Access**, only describe how to get in, for example where the key is. No combination and no PIN.",
+                ]),
 
             new("eigenes-datenblatt", "My details", Icons.Material.Outlined.Badge,
                 "Everyone",
@@ -644,6 +661,7 @@ public static partial class HelpContent
                     "To remove someone, choose **Remove as trusted person**. All releases for this person are deleted.",
                     "If it says **Needs saving again**, the person has a new key. Open them and save once more.",
                     "Emergency access becomes active as soon as you appoint the first trusted person.",
+                    "Anyone who may see an entry also sees the name of its storage place, even without a release for the **Storage places** area. Only release that area if the person should also see the description, address and access.",
                 ],
                 "trust", "Trusted persons"),
 
