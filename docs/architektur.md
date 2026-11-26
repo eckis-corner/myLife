@@ -1,6 +1,6 @@
 # myLife – Architektur
 
-Stand: 24.11.2026, Entwurf zur Freigabe. Die Nummern in Klammern verweisen auf das [Entscheidungsprotokoll](entscheidungen.md). Bereiche und Objekttypen stehen in [objekttypen.md](objekttypen.md).
+Stand: 26.11.2026, Version 1.1.0 (Entwurf vom 24.11.2026, seitdem fortgeschrieben). Die Nummern in Klammern verweisen auf das [Entscheidungsprotokoll](entscheidungen.md). Bereiche und Objekttypen stehen in [objekttypen.md](objekttypen.md).
 
 ## 1. Leitprinzipien
 
@@ -58,7 +58,7 @@ flowchart LR
 
 | Komponente | Aufgabe |
 | --- | --- |
-| **MyLife.Client** | Blazor WebAssembly, die gesamte Oberfläche (MudBlazor), Lokalisierung de/en, Suche, Formulare und Datenblätter aus den Objekttyp-Schemata, Lesemodus, Admin-Bereich |
+| **MyLife.Client** | Blazor WebAssembly, die gesamte Oberfläche (MudBlazor), Lokalisierung de/en, Suche, Formulare und Datenblätter aus den Objekttyp-Schemata, Lesemodus, Admin-Bereich, Hilfe (Tutorial und Anleitung, 139), Übersicht „Zahlungen“ (142) |
 | **MyLife.Crypto** | C#-Fassade über `myLife.crypto.js`. Dazu eine .NET-Referenzimplementierung derselben Formate, die für Tests und für das Kommandozeilen-Werkzeug `mylife-decrypt` dient. |
 | **MyLife.Shared** | DTOs, **Objekttyp-Schemata** (Bereiche, Felder, Auswahllisten, Wünsche, Verweise), Formatversionen, Validierung |
 | **MyLife.Server** | ASP.NET Core: liefert den WASM-Client aus (Blazor Web App, globales Interactive WebAssembly, **ohne Prerendering**) und stellt die REST-API bereit. Außerdem Authentifizierung, EF Core mit Npgsql, Audit-Log, Mail-Outbox und die Hintergrunddienste Notfallzugang, Erinnerungen und Sicherung. |
@@ -107,7 +107,7 @@ flowchart TD
     KEK -->|entschlüsselt| VMK["Tresorschlüssel VMK<br/>(zufällig, AES-256)"]
     RK -->|entschlüsselt| VMK
     VMK -->|entschlüsselt| PRIV["Private Schlüssel<br/>(ECDH + ECDSA)"]
-    VMK -->|entschlüsselt| BK["Bereichsschlüssel BK₀…BK₁₃<br/>Briefschlüssel LKₙ"]
+    VMK -->|entschlüsselt| BK["Bereichsschlüssel BK₀…BK₁₄<br/>Briefschlüssel LKₙ"]
     BK -->|AES-GCM| OBJ["Objekte (JSON)"]
     BK -->|entschlüsselt| FK["Dateischlüssel je Dokument"]
     FK -->|AES-GCM, 1-MiB-Blöcke| FILE["Dokument"]
@@ -225,8 +225,8 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 | `key_endorsements` | SignerId, SubjectId, Fingerprint, Signatur, At |
 | `pinned_keys` | OwnerId, SubjectId, 🔒Fingerprint, UpdatedAt |
 | `trust_relations` | OwnerId, TrusteeId, 🔒Profil (Beziehung, Notiz), CanRequestAccess, CreatedAt |
-| `areas` | Id, OwnerId, AreaKey (0–13), 🔒WrappedAreaKey, LastReviewedAt |
-| `objects` | Id, AreaId, TypeKey (bank_account, insurance, …), 🔒Payload (alle Felder, Wunsch, Verweise, Notizen als JSON), 🔒WrappedKey (nur Briefe: eigener Objektschlüssel), SchemaVersion, Status, CreatedAt, UpdatedAt, IsDeleted, DeletedAt, `xmin` |
+| `areas` | Id, OwnerId, AreaKey (0–14), 🔒WrappedAreaKey, LastReviewedAt |
+| `objects` | Id, AreaId, TypeKey (bankAccount, insurance, …), 🔒Payload (alle Felder, Wunsch, Verweise, Notizen als JSON), 🔒WrappedKey (nur Briefe: eigener Objektschlüssel), SchemaVersion, Status, CreatedAt, UpdatedAt, IsDeleted, DeletedAt, `xmin` |
 | `documents` | Id, ObjectId, 🔒WrappedFileKey, 🔒Metadata (Bezeichnung, Dateiname, Typ, Datum), CipherSize, StorageKey, CipherSha256, IsDeleted |
 | `grants` | Id, OwnerId, TrusteeId, Ressource (AreaId oder ObjectId bei Briefen), Mode (Live/Death/Incapacity), 🔒Envelope, Signatur des Eigentümers, Fingerprint der Person beim Versiegeln, CreatedAt |
 | `emergency_switches` | OwnerId, IntervalDays, WaitingDays, RequestWaitingDays, zweite Adresse, ntfy-Thema, LastLifesignAt, State, OverdueAt, Stufe, Mail der Stufe und ihr Versandzeitpunkt, ReleasedModes, ReleasedAt (Erinnerungstage gibt der Admin vor) |
@@ -241,9 +241,11 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 
 ### 6.2 Objekttypen und Datenblatt (29)
 
-- Die Objekttypen aus [objekttypen.md](objekttypen.md) sind **Schemata in `MyLife.Shared`**. Ein Schema legt fest: Bereich, Felder mit Datentyp (Text, Zahl, Betrag, Datum, IBAN, Auswahl, Ja/Nein, Verweis auf Objekt, Verweis auf Vertrauensperson), Pflichtfelder, Auswahllisten (lokalisiert), mögliche Wünsche, Felder für Erinnerungen und die Gliederung des Datenblatts.
+- Die Objekttypen aus [objekttypen.md](objekttypen.md) sind **Schemata in `MyLife.Shared`**. Ein Schema legt fest: Bereich, Felder mit Datentyp (Text, Zahl, Betrag, Datum, IBAN, Auswahl, Ja/Nein, Verweis auf Objekt, Ablageort), Pflichtfelder, Auswahllisten (lokalisiert), mögliche Wünsche, Felder für Erinnerungen und die Gliederung des Datenblatts.
 - Aus dem Schema entstehen automatisch **Formular, Datenblatt (Ansicht, Druck, PDF), Suchindex und Lesemodus**. Ein neuer Objekttyp ist damit nur ein neues Schema, kein neuer UI-Code.
 - Die Objekte selbst sind verschlüsseltes JSON mit `schemaVersion`. Damit lassen sich Felder ergänzen, ohne die Datenbank zu migrieren.
+- **Ablageorte (143):** Die Tabelle „Ablageorte“ ist Bereich 14 mit dem Objekttyp `location`. Felder vom Typ Ablageort speichern **Verweis und Namen**: den Verweis in `locations` der Nutzlast, den Namen im Feld selbst. Verweise über Bereichsgrenzen hinweg lösen sich sonst nur auf, wenn auch der Zielbereich freigegeben ist. So sieht eine Vertrauensperson den Ablageort mit jedem freigegebenen Eintrag, und Export, Notfallordner und `mylife-decrypt` brauchen den Verweis nicht. Benennt der Eigentümer einen Ablageort um, verschlüsselt sein Browser alle Einträge neu, die ihn nutzen. Der Server sieht davon nur die Änderungen, keine Namen.
+- **Zahlungen (142):** Welche Felder eine regelmäßige Zahlung beschreiben (Betrag, Rhythmus, belastetes Konto, Bedingung), steht im Schema (`ObjectTypeDefinition.Payment`). Summiert wird im Browser aus den entschlüsselten Objekten; das Dateiformat und der Server ändern sich dadurch nicht.
 - **Prüfungen im Browser** gegen „Was gehört nicht hinein“: Ein Kartennummer-Muster mit Luhn-Prüfung, Begriffe wie PIN oder TAN und eine Folge von 12 bis 24 BIP-39-Wörtern lösen eine Warnung aus. Dazu gibt es eine eigene Hinweisseite und einen Hinweis im Einrichtungsassistenten.
 
 ### 6.3 Dokumente
