@@ -1,6 +1,6 @@
 # myLife – Bereiche und Objekttypen
 
-Stand: Entwurf vom 24.11.2026 zu Entscheidung 29.
+Stand: 26.11.2026, Version 1.1.0 (Entwurf vom 24.11.2026 zu Entscheidung 29, seitdem fortgeschrieben).
 
 Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel ein Bankkonto, eine Versicherung oder ein Vertrag. Jeder Objekttyp hat seine typischen Felder. Die Objekttypen sind in **Bereiche** gruppiert. Die Bereiche sind die Einheit für Freigaben an Vertrauenspersonen und für die Verschlüsselung (ein Schlüssel je Bereich).
 
@@ -16,6 +16,7 @@ Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel
 | Ansprechpartner | Verweis auf ein Objekt vom Typ *Kontakt* |
 | Verknüpfungen | Verweise auf andere Objekte, zum Beispiel Kredit ↔ Immobilie ↔ Gebäudeversicherung, im Datenblatt in beide Richtungen sichtbar (40) |
 | Ablageort des Originals | Wo liegt das Papier? Auswahl aus den **Ablageorten** (Bereich 14, Entscheidung 143); bei Urkunden Pflicht, sonst optional |
+| Zahlung | Nur bei Kredit (wenn *ich schulde*), Versicherung, Vertrag und Karte: Betrag, Rhythmus und belastetes Konto ergeben die regelmäßige Zahlung für die Übersicht „Zahlungen“ (Rate, Beitrag, Kosten bzw. Jahresgebühr, 142). Was als Zahlung zählt, steht in `ObjectCatalog.cs`. |
 | **Ablaufdatum** | Bei jedem Objekt vorhanden (39). Bedeutung je Typ, zum Beispiel Vertragsende, Gültigkeit oder Zinsbindung. Grundlage der Erinnerungen. |
 | Wiedervorlage | Optional: Datum und Hinweis, wann und warum das Objekt wieder angesehen werden soll (69). Fällige Wiedervorlagen stehen auf der Übersicht. |
 | Notizen | Freitext |
@@ -25,13 +26,13 @@ Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel
 
 ## 2. Katalog
 
-Felder in *kursiv* sind Auswahllisten.
+Felder in *kursiv* sind Auswahllisten. Felder, die nach einem Ablageort oder Aufbewahrungsort fragen, wählen aus der Tabelle „Ablageorte“ (Bereich 14, 143).
 
 ### Bereich 0 – Über mich (41)
 
 | Objekttyp | Felder |
 | --- | --- |
-| Eigenes Datenblatt | Name, Vorname, Bild (als Dokument). Höchstens eines je Tresor, gepflegt unter Konto → Eigenes Datenblatt |
+| Eigenes Datenblatt | Name, Vorname, Bild (als Dokument). Höchstens eines je Tresor, gepflegt unter Konto → Details (141) |
 | Persönliche Daten | Name, Geburtsname, Geburtsdatum und -ort, Anschrift, *Familienstand*, Staatsangehörigkeit, Konfession (für die Bestattung), Steuer-ID, Renten-Versicherungsnummer, Krankenversichertennummer |
 | Ausweisdokument | *Art* (Personalausweis, Reisepass, Führerschein, Aufenthaltstitel), Nummer, ausstellende Behörde, gültig bis, Ablageort |
 
