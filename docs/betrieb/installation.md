@@ -2,7 +2,7 @@
 
 Getestet für DSM 7.2 und neuer mit **Container Manager** (Synology DS1520+, x86-64). Für andere Docker-Hosts gelten dieselben Schritte sinngemäß.
 
-> **Stand M3.6 (Version 1.0):** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Vollständigkeitsanzeige, Erinnerungen per Mail, die Checkliste mit Vorlage für Deutschland, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen und der Lesemodus für Hinterbliebene funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ (Meilensteine, M1). Dokumente liegen verschlüsselt unter `/data/files`; myLife sichert täglich nach `/data/backup`, wenn `MYLIFE_BACKUP_KEY` gesetzt ist (Abschnitt 8).
+> **Stand Version 1.1:** Einrichtung, Anmeldung, alle Objekttypen, Dokumente, Suche, Vollständigkeitsanzeige, Erinnerungen per Mail, die Checkliste mit Vorlage für Deutschland, Notfallordner-PDF, JSON-Export, Notfallpaket mit OfflineViewer, Protokoll, die Verwaltung mit Mailversand, Einladungen, Vertrauenspersonen, „Sofort teilen“, der Notfallzugang mit Rücknahme und gemeinsamem Löschen der Lesemodus für Hinterbliebene, die Hilfe (Tutorial und Anleitung), die Übersicht „Zahlungen“ und die Tabelle „Ablageorte“ funktionieren. Mehr als ein Admin ist empfehlenswert: Den Tresor des einzigen Admins können die Vertrauenspersonen nicht löschen. Der Notfallzugang braucht einen funktionierenden Mailversand und die Adresse der Instanz (Verwaltung → Einstellungen). Vor echten Daten fehlt die Abnahme auf der DS1520+ ([abnahme.md](abnahme.md)). Dokumente liegen verschlüsselt unter `/data/files`; myLife sichert täglich nach `/data/backup`, wenn `MYLIFE_BACKUP_KEY` gesetzt ist (Abschnitt 8).
 
 ## 1. Ordner anlegen
 
@@ -105,7 +105,8 @@ sudo docker compose up -d
 
 Datenbank-Migrationen laufen beim Start automatisch. Danach kurz anmelden und unter **Verwaltung** nachsehen, ob Mailversand und Sicherung keinen Fehler zeigen.
 
-- **Feste Version:** Statt `latest` lässt sich in der `.env` eine Version wie `MYLIFE_VERSION=1.0.0` eintragen; dann kommt ein Update nur, wenn du die Zahl änderst. Was sich geändert hat, steht unter **Releases** auf GitHub.
+- **Feste Version:** Statt `latest` lässt sich in der `.env` eine Version wie `MYLIFE_VERSION=1.1.0` eintragen; dann kommt ein Update nur, wenn du die Zahl änderst. Was sich geändert hat, steht unter **Releases** auf GitHub.
+- **Von 1.0.0 auf 1.1.0:** Es gibt keine Datenbank-Migration, es genügt, das Image zu tauschen. Neu ist der Bereich **Ablageorte** (Bereich 14). Bestehende Freigaben für Vertrauenspersonen enthalten ihn nicht. Die Namen der Ablageorte sehen sie trotzdem bei jedem freigegebenen Eintrag. Wer auch Beschreibung, Anschrift und Zugang sehen soll, braucht unter **Vertrauenspersonen** die Freigabe dieses Bereichs.
 - **Zurück auf die alte Version:** Migrationen laufen nur vorwärts. Also `MYLIFE_VERSION` auf die alte Version setzen und die Sicherung von vor dem Update zurückspielen (Abschnitt 8).
 
 ## 8. Sicherung
