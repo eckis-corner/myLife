@@ -1,6 +1,6 @@
 # myLife – Exportformat (JSON), Version 1
 
-Stand: 24.11.2026 (M1.9, Entscheidung 64). Die Bytes der Verschlüsselung beschreibt [kryptoformat.md](kryptoformat.md).
+Stand: 26.11.2026, myLife 1.1.0 (M1.9, Entscheidung 64; Ablageorte 143). Das Format ist seit myLife 1.0 unverändert Version 1, 1.1 ergänzt nur Felder (Abschnitt „Ältere Versionen“). Die Bytes der Verschlüsselung beschreibt [kryptoformat.md](kryptoformat.md).
 
 Der JSON-Export enthält das Chiffrat genau so, wie es auf dem Server liegt, und dazu die verpackten Schlüssel. Er lässt sich ohne myLife-Server öffnen, mit
 
@@ -49,7 +49,8 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601. Das Werkzeug [my
   "wishNote": "…",
   "contactId": "…",
   "links": ["…"],
-  "originalLocation": "…",
+  "originalLocation": "Hängeregister Arbeitszimmer",
+  "locations": { "originalLocation": "…", "keyLocation": "…" },
   "expiresOn": "2030-12-31",
   "notes": "…",
   "customFields": [ { "label": "…", "value": "…" } ],
@@ -62,6 +63,13 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601. Das Werkzeug [my
 - `fields` enthält nur ausgefüllte Felder. Schlüssel und Auswahlwerte stehen in `src/MyLife.Shared/Vault/ObjectCatalog.cs`, ihre Bezeichnungen in `tools/resources_vault.py`.
 - Fehlt ein Wert (etwa keine Wiedervorlage), fehlt auch der Schlüssel.
 - Werte: Zahlen und Beträge invariant mit Punkt, Datum `yyyy-MM-dd`, Ja/Nein als `true`/`false`, Verweise als ID eines anderen Objekts.
+- **Ablageorte (seit 1.1):** Felder, die einen Ablageort beschreiben (`originalLocation` und in `fields` etwa `keyLocation`, `seedLocation`), enthalten den **Namen** des Ablageorts als Text. `locations` ordnet demselben Schlüssel die ID des gewählten Ablageorts zu, eines Objekts vom Typ `location` in Bereich 14. Für die Anzeige genügt der Name; der Verweis ist nur für die Verknüpfung nötig. Ein Name ohne Eintrag in `locations` ist Freitext aus der Zeit vor 1.1. `locations` steht auch leer (`{}`) in der Datei, ebenso wie `links` und `customFields`.
+
+## Ältere Versionen
+
+- **Export aus 1.1, Import in 1.0:** Objekte aus Bereich 14 (Ablageorte) kennt 1.0 nicht und zählt sie beim Import als unlesbar. Das Feld `locations` übergeht 1.0; die Namen der Ablageorte bleiben in den Einträgen erhalten.
+- **Export aus 1.0, Import in 1.1:** ohne Einschränkung. Ablageorte stehen dann als Freitext in den Einträgen.
+- **`mylife-decrypt` aus 1.0 bricht bei einem Export aus 1.1 ab**, sobald er einen Ablageort enthält („Unbekannter Eintragstyp location“). Für Exporte aus 1.1 das Werkzeug vom Release 1.1.0 nehmen. Das Notfallpaket ist nicht betroffen: Es enthält fertige Datenblätter und keine Objekttypen.
 
 ## Metadaten eines Dokuments
 
