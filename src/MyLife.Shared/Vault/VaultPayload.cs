@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MyCommon.Catalog;
 
 namespace MyLife.Shared.Vault;
 
@@ -8,7 +9,7 @@ namespace MyLife.Shared.Vault;
 /// (Kontext <c>object:{Typ}:{Id}</c>); der Server sieht davon nichts. Felder sind Zeichenketten in kanonischer Form
 /// (<see cref="FieldValues"/>), damit neue Felder keine Migration brauchen.
 /// </summary>
-public sealed class VaultPayload
+public sealed class VaultPayload : IFieldValues
 {
     public int SchemaVersion { get; set; } = 1;
 

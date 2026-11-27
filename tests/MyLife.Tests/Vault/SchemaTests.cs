@@ -195,16 +195,16 @@ public sealed class FieldValueTests
     public void ValidatesObjectsIncludingCommonRules()
     {
         var payload = new VaultPayload { Title = " ", Fields = { ["iban"] = "DE00123" } };
-        var errors = FieldValues.ValidateObject(BankAccount, payload);
+        var errors = VaultValidation.ValidateObject(BankAccount, payload);
         Assert.Equal("required", errors["title"]);
         Assert.Equal("required", errors["bank"]);
         Assert.Equal("iban", errors["iban"]);
 
         var document = ObjectCatalog.Find("legalDocument")!;
         var will = new VaultPayload { Title = "Testament", Fields = { ["documentKind"] = "will" } };
-        Assert.Equal("required", FieldValues.ValidateObject(document, will)["originalLocation"]);
+        Assert.Equal("required", VaultValidation.ValidateObject(document, will)["originalLocation"]);
         will.OriginalLocation = "Notar";
-        Assert.Empty(FieldValues.ValidateObject(document, will));
+        Assert.Empty(VaultValidation.ValidateObject(document, will));
     }
 
     [Fact]
@@ -214,9 +214,9 @@ public sealed class FieldValueTests
         var payload = new VaultPayload { Title = "Haftpflicht", Fields = { ["insuranceKind"] = "liability", ["insurer"] = "X", ["vehicle"] = "kein-guid" } };
 
         Assert.False(FieldValues.IsVisible(insurance.Field("vehicle")!, payload));
-        Assert.Empty(FieldValues.ValidateObject(insurance, payload));
+        Assert.Empty(VaultValidation.ValidateObject(insurance, payload));
         payload.Set("insuranceKind", "car");
-        Assert.Equal("invalid", FieldValues.ValidateObject(insurance, payload)["vehicle"]);
+        Assert.Equal("invalid", VaultValidation.ValidateObject(insurance, payload)["vehicle"]);
     }
 
     [Fact]
@@ -292,7 +292,7 @@ public sealed class FieldValueTests
         Assert.False(empty.HasFollowUp);
         Assert.False(empty.IsFollowUpDue(new DateOnly(2026, 11, 24)));
         Assert.DoesNotContain("followUpOn", System.Text.Encoding.UTF8.GetString(empty.ToUtf8()), StringComparison.Ordinal);
-        Assert.False(FieldValues.ValidateObject(type, empty).ContainsKey("followUpNote"));
+        Assert.False(VaultValidation.ValidateObject(type, empty).ContainsKey("followUpNote"));
 
         var payload = new VaultPayload { Title = "Strom", FollowUpOn = new DateOnly(2026, 12, 1), FollowUpNote = "Tarif vergleichen" };
         var copy = VaultPayload.FromUtf8(payload.ToUtf8());
@@ -304,7 +304,7 @@ public sealed class FieldValueTests
 
         Assert.True(new VaultPayload { FollowUpNote = "nur Hinweis" }.HasFollowUp);
         copy.FollowUpNote = new string('x', FieldValues.MaxLongTextLength + 1);
-        Assert.Equal("too-long", FieldValues.ValidateObject(type, copy)["followUpNote"]);
+        Assert.Equal("too-long", VaultValidation.ValidateObject(type, copy)["followUpNote"]);
     }
 }
 

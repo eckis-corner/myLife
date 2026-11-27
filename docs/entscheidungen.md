@@ -265,6 +265,12 @@ Fortlaufend nummeriert. Jede Rückfrage behält ihre Nummer, die Antwort steht d
 | ---: | --- | --- |
 | 143 | Ablageorte | Neue Tabelle **Ablageorte** als eigener Bereich 14 mit dem Objekttyp `location` (Name als Titel, Beschreibung, Anschrift, Zugang, Ansprechpartner vor Ort). Jedes Feld, das einen Ablageort beschreibt, wählt aus dieser Tabelle (neuer Feldtyp `Location`): „Ablageort des Originals“ bei allen Einträgen, dazu Schlüssel (Schließfach, Immobilie), Zulassungsbescheinigung Teil II, Aufbewahrungsort (Wertgegenstand), Seed-Phrase, Master-Passwort, Organspendeausweis und Steuerunterlagen. Ein neuer Ablageort lässt sich direkt im Formular anlegen. **Gespeichert werden Verweis und Name:** Der Verweis steht in `VaultPayload.Locations`, der Name wie bisher im Feld. So sieht eine Vertrauensperson den Ablageort, sobald sie den Eintrag sehen darf, auch ohne Freigabe des Bereichs „Ablageorte“; Export, Notfallordner, Suche und Entschlüsselungsprogramm brauchen keine Änderung. Beim Umbenennen eines Ablageorts zieht myLife den Namen in allen Einträgen nach, die ihn gewählt haben. **Alter Freitext** bleibt sichtbar und wird im Formular als „Bisher als Freitext“ angezeigt, bis er durch eine Auswahl ersetzt ist; eine automatische Übernahme gibt es nicht. |
 
+## Runde 25 (27.11.2026, gemeinsamer Katalog mit myDocs)
+
+| Nr. | Thema | Entscheidung |
+| ---: | --- | --- |
+| 144 | Katalog in my-common | Schema, `ObjectCatalog` und `FieldValues` liegen jetzt im Paket **MyCommon.Catalog** (Repo `eckis-corner/my-common`, AGPL-3.0), das auch myDocs nutzt. Die Texte des Katalogs (Bereiche, Typen, Felder, Hinweise, Auswahlwerte, auch die des Typs „Aufgabe“) stehen dort in `catalog-texts.json`; `tools/resources.py` übernimmt sie wie bisher in `SharedResource.resx`, die erzeugten Dateien sind unverändert. `FieldValues.IsVisible` und `ValidateFields` arbeiten über `IFieldValues`, das `VaultPayload` umsetzt; die Prüfung der gemeinsamen Angaben (Titel, Ablageort des Originals, Hinweis zur Wiedervorlage) heißt jetzt `VaultValidation.ValidateObject`. Liegt `my-common` neben myLife, nutzt der Build den Quellcode, sonst das Paket aus GitHub Packages (`nuget.config`; CI und Docker melden sich mit einem Token an). Das Datenformat ändert sich nicht. |
+
 ### Abweichungen vom MudBlazor-Projekt-Skill
 
 Der Skill stammt aus smartCSV. Bei myLife gelten diese Abweichungen:

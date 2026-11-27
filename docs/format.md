@@ -60,7 +60,7 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601. Das Werkzeug [my
 }
 ```
 
-- `fields` enthält nur ausgefüllte Felder. Schlüssel und Auswahlwerte stehen in `src/MyLife.Shared/Vault/ObjectCatalog.cs`, ihre Bezeichnungen in `tools/resources_vault.py`.
+- `fields` enthält nur ausgefüllte Felder. Schlüssel und Auswahlwerte stehen im Paket MyCommon.Catalog (Repo [my-common](https://github.com/eckis-corner/my-common), `src/MyCommon.Catalog/ObjectCatalog.cs`), ihre Bezeichnungen in `catalog-texts.json` daneben.
 - Fehlt ein Wert (etwa keine Wiedervorlage), fehlt auch der Schlüssel.
 - Werte: Zahlen und Beträge invariant mit Punkt, Datum `yyyy-MM-dd`, Ja/Nein als `true`/`false`, Verweise als ID eines anderen Objekts.
 - **Ablageorte (seit 1.1):** Felder, die einen Ablageort beschreiben (`originalLocation` und in `fields` etwa `keyLocation`, `seedLocation`), enthalten den **Namen** des Ablageorts als Text. `locations` ordnet demselben Schlüssel die ID des gewählten Ablageorts zu, eines Objekts vom Typ `location` in Bereich 14. Für die Anzeige genügt der Name; der Verweis ist nur für die Verknüpfung nötig. Ein Name ohne Eintrag in `locations` ist Freitext aus der Zeit vor 1.1. `locations` steht auch leer (`{}`) in der Datei, ebenso wie `links` und `customFields`.

@@ -58,7 +58,7 @@ Für die lokale Entwicklung erwartet `appsettings.json` PostgreSQL auf `localhos
 src/
   MyLife.Client   Blazor WebAssembly (MudBlazor), gesamte Oberfläche, Verschlüsselung im Browser
   MyLife.Server   ASP.NET Core: Auslieferung, API, Hintergrunddienste, PostgreSQL
-  MyLife.Shared   DTOs, Objekttyp-Schemata
+  MyLife.Shared   DTOs, Tresor-Nutzlast; der Objektkatalog kommt aus MyCommon.Catalog (Repo my-common)
   MyLife.Crypto   Verschlüsselungsformate (C#-Fassade und Referenzimplementierung)
   MyLife.Decrypt  mylife-decrypt: Exporte und Notfallpakete ohne Server öffnen
   MyLife.OfflineViewer  Vorlage des OfflineViewers für das Notfallpaket

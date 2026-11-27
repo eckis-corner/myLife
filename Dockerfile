@@ -4,12 +4,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY global.json Directory.Build.props Directory.Packages.props .editorconfig MyLife.slnx ./
+COPY global.json Directory.Build.props Directory.Packages.props nuget.config .editorconfig MyLife.slnx ./
 COPY src/MyLife.Shared/MyLife.Shared.csproj src/MyLife.Shared/
 COPY src/MyLife.Crypto/MyLife.Crypto.csproj src/MyLife.Crypto/
 COPY src/MyLife.Client/MyLife.Client.csproj src/MyLife.Client/
 COPY src/MyLife.Server/MyLife.Server.csproj src/MyLife.Server/
-RUN dotnet restore src/MyLife.Server/MyLife.Server.csproj
+# MyCommon.* kommt aus GitHub Packages; die Anmeldung als BuildKit-Secret, lokal etwa
+# docker build --secret id=nuget_auth,env=NuGetPackageSourceCredentials_eckiscorner -t mylife .
+RUN --mount=type=secret,id=nuget_auth,env=NuGetPackageSourceCredentials_eckiscorner \
+    dotnet restore src/MyLife.Server/MyLife.Server.csproj
 
 COPY src/ src/
 ARG VERSION=1.1.0

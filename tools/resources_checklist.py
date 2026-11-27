@@ -1,22 +1,7 @@
-"""Texte für die Checkliste (M3.2): Objekttyp „Aufgabe“, Seite, Lesemodus und die Vorlage für Deutschland.
+"""Texte für die Checkliste (M3.2): Seite, Lesemodus und die Vorlage für Deutschland. Die Texte des Objekttyps
+„Aufgabe“ stehen im Katalog von my-common (Entscheidung 144).
 Wird von tools/resources.py eingebunden. Die Vorlage ist keine Rechtsberatung; Fristen sind Richtwerte.
 """
-
-AREA_LABELS = {
-    "aboutMe": ("Über mich", "About me"),
-    "banking": ("Bankkonten & Depots", "Bank accounts & securities"),
-    "cards": ("Kreditkarten", "Payment cards"),
-    "loans": ("Kredite & Darlehen", "Loans"),
-    "insurance": ("Versicherungen", "Insurance"),
-    "contracts": ("Verträge & Abos", "Contracts & subscriptions"),
-    "documents": ("Urkunden & Dokumente", "Certificates & legal documents"),
-    "property": ("Immobilien, Fahrzeuge & Vermögen", "Property, vehicles & assets"),
-    "digital": ("Digitaler Nachlass", "Digital legacy"),
-    "passwordManager": ("Passwortmanager", "Password manager"),
-    "contacts": ("Wichtige Kontakte", "Important contacts"),
-    "wishes": ("Persönliche Wünsche", "Personal wishes"),
-    "income": ("Einkommen, Rente & Steuern", "Income, pension & taxes"),
-}
 
 # Vorlage für Deutschland: Id → (Titel, Beschreibung), je (Deutsch, Englisch).
 TEMPLATE = {
@@ -170,20 +155,6 @@ TEMPLATE = {
 }
 
 CLIENT = {
-    "Type_task": ("Aufgabe", "Task"),
-    "Field_checklistPhase": ("Wann", "When"),
-    "Field_taskText": ("Was zu tun ist", "What to do"),
-    "Field_responsible": ("Zuständig", "Responsible"),
-    "Field_linkedArea": ("Zugehörige Einträge aus dem Bereich", "Related entries from area"),
-    "Field_linkedWish": ("Nur Einträge mit dem Wunsch", "Only entries with the wish"),
-    "FieldHint_linkedWish": (
-        "Zum Beispiel „Verträge & Abos“ mit „kündigen“: Die Aufgabe listet dann alle Verträge auf, die gekündigt werden sollen.",
-        "For example \"Contracts & subscriptions\" with \"cancel\": the task then lists all contracts that should be cancelled.",
-    ),
-    "Option_checklistPhase_first24h": ("Erste 24 Stunden", "First 24 hours"),
-    "Option_checklistPhase_firstWeek": ("Erste Woche", "First week"),
-    "Option_checklistPhase_firstMonth": ("Erster Monat", "First month"),
-    "Option_checklistPhase_later": ("Später", "Later"),
     "ChecklistIntro": (
         "Was ist zu tun, wenn dir etwas zustößt? Die Checkliste führt deine Vertrauenspersonen Schritt für Schritt: "
         "erste 24 Stunden, erste Woche, erster Monat, später. Jede Aufgabe zeigt die passenden Einträge, etwa alle "
@@ -224,9 +195,6 @@ CLIENT = {
     "Audit_checklist-done": ("Aufgabe abgehakt", "Task ticked off"),
     "Audit_checklist-undone": ("Haken zurückgenommen", "Tick removed"),
 }
-
-for key, label in AREA_LABELS.items():
-    CLIENT[f"Option_checklistArea_{key}"] = label
 
 for task_id, (title, text) in TEMPLATE.items():
     CLIENT[f"ChecklistTemplate_{task_id}_title"] = title

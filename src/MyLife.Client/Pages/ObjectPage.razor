@@ -222,7 +222,7 @@ else
 
     private async Task SaveAsync()
     {
-        _errors = FieldValues.ValidateObject(_type!, _draft!);
+        _errors = VaultValidation.ValidateObject(_type!, _draft!);
         if (_errors.Count > 0)
         {
             return;
