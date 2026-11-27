@@ -18,6 +18,16 @@
     <!-- Vorlage des OfflineViewers (Notfallpaket, M2.7); das Paket entsteht im Browser. -->
     <EmbeddedResource Include="..\MyLife.OfflineViewer\OfflineViewer.html" LogicalName="MyLife.Client.OfflineViewer.html" />
   </ItemGroup>
+  <PropertyGroup>
+    <!-- Liegt my-common neben myLife (eckis-corner/my-common), wird der Quellcode genutzt, sonst das Paket (144). -->
+    <MyCommonDir>$(MSBuildThisFileDirectory)..\..\..\my-common\</MyCommonDir>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('$(MyCommonDir)src\MyCommon.Ui\MyCommon.Ui.csproj')">
+    <ProjectReference Include="$(MyCommonDir)src\MyCommon.Ui\MyCommon.Ui.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="!Exists('$(MyCommonDir)src\MyCommon.Ui\MyCommon.Ui.csproj')">
+    <PackageReference Include="MyCommon.Ui" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyLife.Shared\MyLife.Shared.csproj" />
     <ProjectReference Include="..\MyLife.Crypto\MyLife.Crypto.csproj" />

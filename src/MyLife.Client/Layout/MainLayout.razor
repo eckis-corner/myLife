@@ -42,9 +42,9 @@
                     <MudNavLink Href="search" Icon="@Icons.Material.Outlined.Search">@L["NavSearch"]</MudNavLink>
                     <MudNavLink Href="payments" Icon="@Icons.Material.Outlined.Payments" data-testid="nav-payments">@L["PaymentsTitle"]</MudNavLink>
                     <MudNavGroup Title="@L["NavAreas"]" Icon="@Icons.Material.Outlined.FolderOpen" Expanded>
-                        @foreach (var area in MyLife.Shared.Vault.ObjectCatalog.Areas.Where(a => a.IsAvailable))
+                        @foreach (var area in ObjectCatalog.Areas.Where(a => a.IsAvailable))
                         {
-                            <MudNavLink Href="@(area.Number == MyLife.Shared.Vault.ObjectCatalog.ChecklistArea ? "checklist" : $"area/{area.Number}")" Icon="@AreaIcons.For(area.Number)">@L[$"Area_{area.Number}"]</MudNavLink>
+                            <MudNavLink Href="@(area.Number == ObjectCatalog.ChecklistArea ? "checklist" : $"area/{area.Number}")" Icon="@AreaIcons.For(area.Number)">@L[$"Area_{area.Number}"]</MudNavLink>
                         }
                     </MudNavGroup>
                     <MudNavLink Href="family" Icon="@Icons.Material.Outlined.Diversity3">@L["FamilyTitle"]</MudNavLink>

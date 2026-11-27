@@ -12,4 +12,8 @@
     <Version>1.1.0</Version>
     <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Katalog aus my-common (Entscheidung 144) -->
+    <Using Include="MyCommon.Catalog" />
+  </ItemGroup>
 </Project>

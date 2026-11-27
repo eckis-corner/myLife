@@ -1,38 +1,33 @@
 using System.Globalization;
 using Microsoft.Extensions.Localization;
+using MyCommon.Ui;
 using MyLife.Client.Resources;
 using MyLife.Shared.Vault;
 
 namespace MyLife.Client.Services;
 
-/// <summary>Eine Zeile im Datenblatt: Bezeichnung und angezeigter Wert, optional mit Verweis auf ein Objekt.</summary>
-public sealed record DatasheetRow(string Label, string Value, Guid? Reference = null, bool Multiline = false);
-
 /// <summary>
 /// Lokalisierte Texte zum Schema (Bereiche, Objekttypen, Felder, Auswahllisten) und das Datenblatt eines Objekts.
-/// Formular, Datenblatt, Notfallordner und Suche nutzen dieselben Texte (Architektur 6.2).
+/// Formular, Datenblatt, Notfallordner und Suche nutzen dieselben Texte (Architektur 6.2). Die Texte des Katalogs
+/// kommen aus MyCommon.Ui (<see cref="CatalogText"/>, 144), die gemeinsamen Angaben von myLife aus den eigenen Ressourcen.
 /// </summary>
 public sealed class SchemaText(IStringLocalizer<SharedResource> l)
 {
-    public string Area(int number) => l[$"Area_{number.ToString(CultureInfo.InvariantCulture)}"];
+    private readonly CatalogText _catalog = new();
 
-    public string AreaText(int number) => l[$"AreaText_{number.ToString(CultureInfo.InvariantCulture)}"];
+    public string Area(int number) => _catalog.Area(number);
 
-    public string Type(string key) => l[$"Type_{key}"];
+    public string AreaText(int number) => _catalog.AreaText(number);
 
-    public string Type(ObjectTypeDefinition type) => Type(type.Key);
+    public string Type(string key) => _catalog.Type(key);
 
-    public string Field(ObjectTypeDefinition type, FieldDefinition field)
-    {
-        ArgumentNullException.ThrowIfNull(type);
-        ArgumentNullException.ThrowIfNull(field);
-        var specific = l[$"Field_{type.Key}_{field.Key}"];
-        return specific.ResourceNotFound ? l[$"Field_{field.Key}"] : specific;
-    }
+    public string Type(ObjectTypeDefinition type) => _catalog.Type(type);
 
-    public string? Hint(FieldDefinition field) => field is { HasHint: true } ? l[$"FieldHint_{field.Key}"].Value : null;
+    public string Field(ObjectTypeDefinition type, FieldDefinition field) => _catalog.Field(type, field);
 
-    public string Option(string set, string value) => l[$"Option_{set}_{value}"];
+    public string? Hint(FieldDefinition field) => _catalog.Hint(field);
+
+    public string Option(string set, string value) => _catalog.Option(set, value);
 
     public string Wish(string value) => Option("wish", value);
 
@@ -42,54 +37,21 @@ public sealed class SchemaText(IStringLocalizer<SharedResource> l)
     /// <summary>Beschriftung des Ablageorts des Originals.</summary>
     public string OriginalLocation => l["CommonOriginalLocation"];
 
-    public string Expiry(ObjectTypeDefinition type) => type is { HasExpiryLabel: true } ? l[$"Expiry_{type.Key}"] : l["Expiry_default"];
+    public string Expiry(ObjectTypeDefinition type) => _catalog.Expiry(type);
 
     public string Status(ObjectStatus status) => l[$"ObjectStatus_{status}"];
 
-    public string Error(string code) => l[$"FieldError_{code}"];
+    public string Error(string code) => _catalog.Error(code);
 
     /// <summary>Angezeigter Wert eines Felds: Auswahl und Ja/Nein übersetzt, Verweise als Titel, Zahlen und Daten in der Kultur.</summary>
-    public string Display(FieldDefinition field, string? value, Func<Guid, string?> titleOf)
-    {
-        ArgumentNullException.ThrowIfNull(field);
-        ArgumentNullException.ThrowIfNull(titleOf);
-        if (string.IsNullOrEmpty(value))
-        {
-            return string.Empty;
-        }
-
-        return field.Type switch
-        {
-            FieldType.Choice when field.OptionSet is not null => Option(field.OptionSet, value),
-            FieldType.YesNo => value == "true" ? l["Yes"] : l["No"],
-            FieldType.Reference => Guid.TryParse(value, out var id) ? titleOf(id) ?? l["ReferenceMissing"] : value,
-            _ => FieldValues.Format(field, value, CultureInfo.CurrentCulture),
-        };
-    }
+    public string Display(FieldDefinition field, string? value, Func<Guid, string?> titleOf) => _catalog.Display(field, value, titleOf);
 
     /// <summary>Alle ausgefüllten Angaben eines Objekts in der Reihenfolge des Schemas, dann die gemeinsamen Angaben.</summary>
     public IReadOnlyList<DatasheetRow> Rows(VaultItem item, Func<Guid, string?> titleOf)
     {
         ArgumentNullException.ThrowIfNull(item);
         var payload = item.Payload;
-        var rows = new List<DatasheetRow>();
-        foreach (var field in item.Type.Fields.Where(f => FieldValues.IsVisible(f, payload)))
-        {
-            var value = payload.Get(field.Key);
-            if (value.Length == 0)
-            {
-                continue;
-            }
-
-            Guid? reference = field.Type switch
-            {
-                FieldType.Reference when Guid.TryParse(value, out var id) => id,
-                FieldType.Location => payload.LocationId(field.Key),
-                _ => null,
-            };
-            rows.Add(new DatasheetRow(Field(item.Type, field), Display(field, value, titleOf), reference, field.Type == FieldType.LongText));
-        }
-
+        var rows = new List<DatasheetRow>(_catalog.FieldRows(item.Type, payload, titleOf, payload.LocationId));
         if (payload.ExpiresOn is { } expires)
         {
             rows.Add(new DatasheetRow(Expiry(item.Type), expires.ToString("d", CultureInfo.CurrentCulture)));

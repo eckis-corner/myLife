@@ -8,6 +8,11 @@ on:
 
 permissions:
   contents: read
+  packages: read
+
+# MyCommon.* aus GitHub Packages (nuget.config, Entscheidung 144)
+env:
+  NuGetPackageSourceCredentials_eckiscorner: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build-test:
@@ -57,6 +62,8 @@ jobs:
           platforms: linux/amd64
           push: true
           build-args: VERSION=${{ steps.version.outputs.value }}
+          secrets: |
+            nuget_auth=${{ env.NuGetPackageSourceCredentials_eckiscorner }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -70,6 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4

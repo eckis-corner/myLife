@@ -1,5 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>MyLife.Shared</RootNamespace>
+    <!-- Liegt my-common neben myLife (eckis-corner/my-common), wird der Quellcode genutzt, sonst das Paket. -->
+    <MyCommonDir>$(MSBuildThisFileDirectory)..\..\..\my-common\</MyCommonDir>
   </PropertyGroup>
+  <ItemGroup Condition="Exists('$(MyCommonDir)src\MyCommon.Catalog\MyCommon.Catalog.csproj')">
+    <ProjectReference Include="$(MyCommonDir)src\MyCommon.Catalog\MyCommon.Catalog.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="!Exists('$(MyCommonDir)src\MyCommon.Catalog\MyCommon.Catalog.csproj')">
+    <PackageReference Include="MyCommon.Catalog" />
+  </ItemGroup>
 </Project>

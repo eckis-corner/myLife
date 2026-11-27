@@ -162,13 +162,13 @@ h1:focus {
    MyLifeTheme.cs; hier nur Formen und Akzente, die MudBlazor nicht über das Theme abbildet.
    --------------------------------------------------------------------------------------------- */
 
-/* Titillium Web (SIL Open Font License 1.1, siehe fonts/OFL-TitilliumWeb.txt), selbst gehostet. */
+/* Titillium Web (SIL Open Font License 1.1, siehe _content/MyCommon.Ui/fonts/OFL-TitilliumWeb.txt), selbst gehostet in MyCommon.Ui (144). */
 @font-face {
     font-family: 'Titillium Web';
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url(../fonts/TitilliumWeb-Regular.ttf) format('truetype');
+    src: url(../_content/MyCommon.Ui/fonts/TitilliumWeb-Regular.ttf) format('truetype');
 }
 
 @font-face {
@@ -176,7 +176,7 @@ h1:focus {
     font-style: normal;
     font-weight: 600;
     font-display: swap;
-    src: url(../fonts/TitilliumWeb-SemiBold.ttf) format('truetype');
+    src: url(../_content/MyCommon.Ui/fonts/TitilliumWeb-SemiBold.ttf) format('truetype');
 }
 
 @font-face {
@@ -184,7 +184,7 @@ h1:focus {
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url(../fonts/TitilliumWeb-Bold.ttf) format('truetype');
+    src: url(../_content/MyCommon.Ui/fonts/TitilliumWeb-Bold.ttf) format('truetype');
 }
 
 .mylife-rixio {

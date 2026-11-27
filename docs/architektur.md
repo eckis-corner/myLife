@@ -58,9 +58,9 @@ flowchart LR
 
 | Komponente | Aufgabe |
 | --- | --- |
-| **MyLife.Client** | Blazor WebAssembly, die gesamte Oberfläche (MudBlazor), Lokalisierung de/en, Suche, Formulare und Datenblätter aus den Objekttyp-Schemata, Lesemodus, Admin-Bereich, Hilfe (Tutorial und Anleitung, 139), Übersicht „Zahlungen“ (142) |
+| **MyLife.Client** | Blazor WebAssembly, die gesamte Oberfläche (MudBlazor; Farbschema, Schrift und Formular der Katalogfelder aus **MyCommon.Ui**, 145), Lokalisierung de/en, Suche, Formulare und Datenblätter aus den Objekttyp-Schemata, Lesemodus, Admin-Bereich, Hilfe (Tutorial und Anleitung, 139), Übersicht „Zahlungen“ (142) |
 | **MyLife.Crypto** | C#-Fassade über `myLife.crypto.js`. Dazu eine .NET-Referenzimplementierung derselben Formate, die für Tests und für das Kommandozeilen-Werkzeug `mylife-decrypt` dient. |
-| **MyLife.Shared** | DTOs, **Objekttyp-Schemata** (Bereiche, Felder, Auswahllisten, Wünsche, Verweise), Formatversionen, Validierung |
+| **MyLife.Shared** | DTOs, Tresor-Nutzlast (`VaultPayload`), Formatversionen, Validierung. Die **Objekttyp-Schemata** (Bereiche, Felder, Auswahllisten, Wünsche, Verweise) und ihre Texte kommen aus dem Paket **MyCommon.Catalog** (Repo `my-common`, gemeinsam mit myDocs, 144). |
 | **MyLife.Server** | ASP.NET Core: liefert den WASM-Client aus (Blazor Web App, globales Interactive WebAssembly, **ohne Prerendering**) und stellt die REST-API bereit. Außerdem Authentifizierung, EF Core mit Npgsql, Audit-Log, Mail-Outbox und die Hintergrunddienste Notfallzugang, Erinnerungen und Sicherung. |
 | **MyLife.Decrypt** | Kommandozeilen-Werkzeug `mylife-decrypt` (M3.5): öffnet JSON-Exporte und Notfallpakete ohne Server, mit der .NET-Referenz aus MyLife.Crypto. Die CI baut eigenständige Dateien für Windows, macOS und Linux. |
 | **MyLife.OfflineViewer** | Eine einzelne HTML-Datei ohne Netzwerkzugriff, die ein Notfallpaket entschlüsselt und anzeigt (4b). Kein eigenes Projekt: Der Client bettet die Datei als Vorlage ein und füllt sie beim Erzeugen (M2.7). |
@@ -241,7 +241,7 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 
 ### 6.2 Objekttypen und Datenblatt (29)
 
-- Die Objekttypen aus [objekttypen.md](objekttypen.md) sind **Schemata in `MyLife.Shared`**. Ein Schema legt fest: Bereich, Felder mit Datentyp (Text, Zahl, Betrag, Datum, IBAN, Auswahl, Ja/Nein, Verweis auf Objekt, Ablageort), Pflichtfelder, Auswahllisten (lokalisiert), mögliche Wünsche, Felder für Erinnerungen und die Gliederung des Datenblatts.
+- Die Objekttypen aus [objekttypen.md](objekttypen.md) sind **Schemata in `MyCommon.Catalog`** (144). Ein Schema legt fest: Bereich, Felder mit Datentyp (Text, Zahl, Betrag, Datum, IBAN, Auswahl, Ja/Nein, Verweis auf Objekt, Ablageort), Pflichtfelder, Auswahllisten (lokalisiert), mögliche Wünsche, Felder für Erinnerungen und die Gliederung des Datenblatts.
 - Aus dem Schema entstehen automatisch **Formular, Datenblatt (Ansicht, Druck, PDF), Suchindex und Lesemodus**. Ein neuer Objekttyp ist damit nur ein neues Schema, kein neuer UI-Code.
 - Die Objekte selbst sind verschlüsseltes JSON mit `schemaVersion`. Damit lassen sich Felder ergänzen, ohne die Datenbank zu migrieren.
 - **Ablageorte (143):** Die Tabelle „Ablageorte“ ist Bereich 14 mit dem Objekttyp `location`. Felder vom Typ Ablageort speichern **Verweis und Namen**: den Verweis in `locations` der Nutzlast, den Namen im Feld selbst. Verweise über Bereichsgrenzen hinweg lösen sich sonst nur auf, wenn auch der Zielbereich freigegeben ist. So sieht eine Vertrauensperson den Ablageort mit jedem freigegebenen Eintrag, und Export, Notfallordner und `mylife-decrypt` brauchen den Verweis nicht. Benennt der Eigentümer einen Ablageort um, verschlüsselt sein Browser alle Einträge neu, die ihn nutzen. Der Server sieht davon nur die Änderungen, keine Namen.

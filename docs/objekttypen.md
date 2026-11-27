@@ -16,13 +16,13 @@ Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel
 | Ansprechpartner | Verweis auf ein Objekt vom Typ *Kontakt* |
 | Verknüpfungen | Verweise auf andere Objekte, zum Beispiel Kredit ↔ Immobilie ↔ Gebäudeversicherung, im Datenblatt in beide Richtungen sichtbar (40) |
 | Ablageort des Originals | Wo liegt das Papier? Auswahl aus den **Ablageorten** (Bereich 14, Entscheidung 143); bei Urkunden Pflicht, sonst optional |
-| Zahlung | Nur bei Kredit (wenn *ich schulde*), Versicherung, Vertrag und Karte: Betrag, Rhythmus und belastetes Konto ergeben die regelmäßige Zahlung für die Übersicht „Zahlungen“ (Rate, Beitrag, Kosten bzw. Jahresgebühr, 142). Was als Zahlung zählt, steht in `ObjectCatalog.cs`. |
+| Zahlung | Nur bei Kredit (wenn *ich schulde*), Versicherung, Vertrag und Karte: Betrag, Rhythmus und belastetes Konto ergeben die regelmäßige Zahlung für die Übersicht „Zahlungen“ (Rate, Beitrag, Kosten bzw. Jahresgebühr, 142). Was als Zahlung zählt, steht in `ObjectCatalog.cs` (MyCommon.Catalog, 144). |
 | **Ablaufdatum** | Bei jedem Objekt vorhanden (39). Bedeutung je Typ, zum Beispiel Vertragsende, Gültigkeit oder Zinsbindung. Grundlage der Erinnerungen. |
 | Wiedervorlage | Optional: Datum und Hinweis, wann und warum das Objekt wieder angesehen werden soll (69). Fällige Wiedervorlagen stehen auf der Übersicht. |
 | Notizen | Freitext |
 | Zusatzfelder | Frei benannte Felder mit Bezeichnung und Wert für alles, was der Katalog nicht abdeckt (Felderkatalog: Durchsicht offen, 47) |
 | Zuletzt geprüft | Datum, wird mit „Als geprüft markieren“ gesetzt |
-| Vollständigkeit | Pflicht- und **empfohlene** Felder, Wunsch, Ablageort (Urkunden) und Ablaufdatum (Ausweise, Karten). Welche Felder empfohlen sind und welche Einträge je Bereich typisch sind, steht in `ObjectCatalog.cs` (M3.3, 120–122). |
+| Vollständigkeit | Pflicht- und **empfohlene** Felder, Wunsch, Ablageort (Urkunden) und Ablaufdatum (Ausweise, Karten). Welche Felder empfohlen sind und welche Einträge je Bereich typisch sind, steht in `ObjectCatalog.cs` (MyCommon.Catalog; M3.3, 120–122). |
 
 ## 2. Katalog
 
