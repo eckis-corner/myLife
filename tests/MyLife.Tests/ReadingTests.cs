@@ -3,6 +3,7 @@ using Bunit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
+using MyCommon.Ui;
 using MyLife.Client.Pages.Reading;
 using MyLife.Client.Services;
 using MyLife.Server.Data;
@@ -46,6 +47,7 @@ public sealed class ReadingTests : BunitContext, IClassFixture<ServerFixture>, I
         _reading = new ReadingService(shared);
         Services.AddSingleton(_reading);
         Services.AddSingleton(new ChecklistClient(_reader.Http));
+        Services.AddMyCommonUi();
         Services.AddSingleton<SchemaText>();
         Services.AddSingleton<BrowserFiles>();
         Render<MudBlazor.MudPopoverProvider>();

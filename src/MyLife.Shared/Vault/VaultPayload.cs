@@ -9,7 +9,7 @@ namespace MyLife.Shared.Vault;
 /// (Kontext <c>object:{Typ}:{Id}</c>); der Server sieht davon nichts. Felder sind Zeichenketten in kanonischer Form
 /// (<see cref="FieldValues"/>), damit neue Felder keine Migration brauchen.
 /// </summary>
-public sealed class VaultPayload : IFieldValues
+public sealed class VaultPayload : IEditableFieldValues
 {
     public int SchemaVersion { get; set; } = 1;
 

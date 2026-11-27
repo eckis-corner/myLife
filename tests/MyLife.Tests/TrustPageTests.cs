@@ -3,6 +3,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
+using MyCommon.Ui;
 using MyLife.Client.Pages;
 using MyLife.Client.Services;
 using MyLife.Tests.Server;
@@ -37,6 +38,7 @@ public sealed class TrustPageTests : BunitContext, IClassFixture<ServerFixture>,
         _trust = new TrustService(trustApi, family, _keys, browser.Vault, browser.Crypto, browser.Session);
         Services.AddSingleton(browser.Session);
         Services.AddSingleton(browser.Vault);
+        Services.AddMyCommonUi();
         Services.AddSingleton<SchemaText>();
         Services.AddSingleton(_keys);
         Services.AddSingleton(_trust);

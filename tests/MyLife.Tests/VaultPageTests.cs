@@ -3,6 +3,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
+using MyCommon.Ui;
 using MyLife.Client.Export;
 using MyLife.Client.Export.Pdf;
 using MyLife.Client.Pages;
@@ -35,6 +36,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton(_browser.Session);
         Services.AddSingleton(_browser.Api);
         Services.AddSingleton(_browser.Vault);
+        Services.AddMyCommonUi();
         Services.AddSingleton<SchemaText>();
         Services.AddSingleton<VaultSearch>();
         Services.AddSingleton<PaymentOverview>();

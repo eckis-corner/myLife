@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
+using MyCommon.Ui;
 using MyLife.Crypto;
 using MyLife.Shared.Auth;
 using MyLife.Client.Export;
@@ -39,6 +40,7 @@ builder.Services.AddScoped<ReminderClient>();
 builder.Services.AddScoped<ChecklistClient>();
 builder.Services.AddScoped<ReadingService>();
 builder.Services.AddScoped<VaultService>();
+builder.Services.AddMyCommonUi();
 builder.Services.AddScoped<SchemaText>();
 builder.Services.AddScoped<VaultSearch>();
 builder.Services.AddScoped<PaymentOverview>();

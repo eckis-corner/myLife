@@ -12,5 +12,4 @@ CLIENT = {
     "CompletenessTypical": ("Das haben die meisten hier, bei dir fehlt es noch:", "Most people have this here; yours is still missing:"),
     "CompletenessMissing": ("Es fehlt noch: {0}", "Still missing: {0}"),
     "CompletenessGaps": ("Lücken", "Gaps"),
-    "CompletenessRecommended": ("Empfohlen.", "Recommended."),
 }

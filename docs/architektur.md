@@ -58,7 +58,7 @@ flowchart LR
 
 | Komponente | Aufgabe |
 | --- | --- |
-| **MyLife.Client** | Blazor WebAssembly, die gesamte Oberfläche (MudBlazor), Lokalisierung de/en, Suche, Formulare und Datenblätter aus den Objekttyp-Schemata, Lesemodus, Admin-Bereich, Hilfe (Tutorial und Anleitung, 139), Übersicht „Zahlungen“ (142) |
+| **MyLife.Client** | Blazor WebAssembly, die gesamte Oberfläche (MudBlazor; Farbschema, Schrift und Formular der Katalogfelder aus **MyCommon.Ui**, 145), Lokalisierung de/en, Suche, Formulare und Datenblätter aus den Objekttyp-Schemata, Lesemodus, Admin-Bereich, Hilfe (Tutorial und Anleitung, 139), Übersicht „Zahlungen“ (142) |
 | **MyLife.Crypto** | C#-Fassade über `myLife.crypto.js`. Dazu eine .NET-Referenzimplementierung derselben Formate, die für Tests und für das Kommandozeilen-Werkzeug `mylife-decrypt` dient. |
 | **MyLife.Shared** | DTOs, Tresor-Nutzlast (`VaultPayload`), Formatversionen, Validierung. Die **Objekttyp-Schemata** (Bereiche, Felder, Auswahllisten, Wünsche, Verweise) und ihre Texte kommen aus dem Paket **MyCommon.Catalog** (Repo `my-common`, gemeinsam mit myDocs, 144). |
 | **MyLife.Server** | ASP.NET Core: liefert den WASM-Client aus (Blazor Web App, globales Interactive WebAssembly, **ohne Prerendering**) und stellt die REST-API bereit. Außerdem Authentifizierung, EF Core mit Npgsql, Audit-Log, Mail-Outbox und die Hintergrunddienste Notfallzugang, Erinnerungen und Sicherung. |
