@@ -1,6 +1,6 @@
 # myLife – Exportformat (JSON), Version 1
 
-Stand: 26.11.2026, myLife 1.1.0 (M1.9, Entscheidung 64; Ablageorte 143). Das Format ist seit myLife 1.0 unverändert Version 1, 1.1 ergänzt nur Felder (Abschnitt „Ältere Versionen“). Die Bytes der Verschlüsselung beschreibt [kryptoformat.md](kryptoformat.md).
+Stand: 28.11.2026, myLife 1.2.0 (M1.9, Entscheidung 64; Ablageorte 143; Abgleich mit myDocs 147). Das Format ist seit myLife 1.0 unverändert Version 1, 1.1 und 1.2 ergänzen nur Felder (Abschnitt „Ältere Versionen“). Die Bytes der Verschlüsselung beschreibt [kryptoformat.md](kryptoformat.md).
 
 Der JSON-Export enthält das Chiffrat genau so, wie es auf dem Server liegt, und dazu die verpackten Schlüssel. Er lässt sich ohne myLife-Server öffnen, mit
 

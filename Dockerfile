@@ -15,7 +15,7 @@ RUN --mount=type=secret,id=nuget_auth,env=NuGetPackageSourceCredentials_eckiscor
     dotnet restore src/MyLife.Server/MyLife.Server.csproj
 
 COPY src/ src/
-ARG VERSION=1.1.0
+ARG VERSION=1.2.0
 RUN dotnet publish src/MyLife.Server/MyLife.Server.csproj \
         -c Release -o /app --no-restore \
         -p:Version=${VERSION} -p:UseAppHost=false
