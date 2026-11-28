@@ -119,6 +119,7 @@ Gegenzeichnung = Signatur(ECDSA des Unterzeichners, Fingerprint, Kontext "endors
 | `endorsement:{ID}` | ECDSA (Signatur) | Gegenzeichnung des Fingerprints einer Person (seit M2.2) |
 | `object-key:{ID}` | Bereichsschlüssel | eigener Schlüssel eines Briefs; verschlüsselt dessen Inhalt (`object:letter:{ID}`) und Dateischlüssel (seit M2.3). Nach einer Rücknahme entsteht ein neuer (M2.6). |
 | `trustee-profile:{ID}` | Tresorschlüssel | Beziehung und Notiz zu einer Vertrauensperson (seit M2.3) |
+| `mydocs-bridge` | Tresorschlüssel | Verbindung zu myDocs als JSON: Adresse, lesendes Token, letzter Abgleich (Spalte `users.mydocs_bridge`, Entscheidung 146) |
 | `envelope:area:{Eigentümer}:{n}` | ECIES an die Vertrauensperson | Bereichsschlüssel im Umschlag (seit M2.3) |
 | `envelope:letter:{Eigentümer}:{ID}` | ECIES an die Vertrauensperson | Briefschlüssel im Umschlag (seit M2.3) |
 | `package` | Paketschlüssel `pkKey` | Inhalt eines Notfallpakets als JSON (seit M2.7, [format.md](format.md)) |

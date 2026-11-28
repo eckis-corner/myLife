@@ -4,10 +4,12 @@ namespace MyLife.Server.Infrastructure;
 /// Setzt strikte Sicherheits-Header. Skripte nur vom eigenen Server, kein Inline-JavaScript;
 /// 'wasm-unsafe-eval' ist für Blazor WebAssembly nötig. Inline-Styles erlaubt MudBlazor (nur CSS).
 /// <c>blob:</c> bei Bildern und Frames dient der Vorschau entschlüsselter Dokumente, die nur im Browser existieren.
-/// API-Antworten (Chiffrat) landen in keinem Cache.
+/// API-Antworten (Chiffrat) landen in keinem Cache. Mit der Brücke (M5) darf der Browser zusätzlich myDocs abfragen.
 /// </summary>
-public sealed class SecurityHeadersMiddleware(RequestDelegate next)
+public sealed class SecurityHeadersMiddleware(RequestDelegate next, Microsoft.Extensions.Options.IOptions<MyLifeOptions> options)
 {
+    private readonly string _policy = ContentSecurityPolicy.Replace("connect-src 'self';", options.Value.MyDocsOrigin is { } origin ? $"connect-src 'self' {origin};" : "connect-src 'self';", StringComparison.Ordinal);
+
     internal const string ContentSecurityPolicy =
         "default-src 'self'; " +
         "script-src 'self' 'wasm-unsafe-eval'; " +
@@ -27,7 +29,7 @@ public sealed class SecurityHeadersMiddleware(RequestDelegate next)
         context.Response.OnStarting(() =>
         {
             var headers = context.Response.Headers;
-            headers.ContentSecurityPolicy = ContentSecurityPolicy;
+            headers.ContentSecurityPolicy = _policy;
             headers.XContentTypeOptions = "nosniff";
             headers.XFrameOptions = "DENY";
             headers["Referrer-Policy"] = "no-referrer";

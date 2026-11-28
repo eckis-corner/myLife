@@ -54,6 +54,12 @@ public sealed class VaultPayload : IEditableFieldValues
     /// <summary>Hinweis zur Wiedervorlage, etwa „Beitrag vergleichen“. Optional.</summary>
     public string? FollowUpNote { get; set; }
 
+    /// <summary>
+    /// Verknüpfung mit einem Eintrag in myDocs (M5, 168). Dann pflegt myDocs Titel, Katalogfelder, Ablageorte,
+    /// Ablaufdatum, Status und „zuletzt geprüft“; hier sind sie schreibgeschützt. Null bei eigenen Einträgen.
+    /// </summary>
+    public MyDocsLink? MyDocs { get; set; }
+
     /// <summary>Hat das Objekt eine Wiedervorlage (Datum oder Hinweis)?</summary>
     public bool HasFollowUp => FollowUpOn is not null || !string.IsNullOrWhiteSpace(FollowUpNote);
 
@@ -192,6 +198,22 @@ public sealed class VaultPayload : IEditableFieldValues
     }
 }
 
+/// <summary>Herkunft aus myDocs (M5): ID dort, Stand des letzten Abgleichs, Lebenszyklus und „überfällig seit“ (14).</summary>
+public sealed class MyDocsLink
+{
+    public Guid Id { get; set; }
+
+    public DateTimeOffset SyncedAt { get; set; }
+
+    /// <summary>Zustand in myDocs (aktiv, gekündigt, beendet …), Texte unter <c>MyDocsLifecycle_{Zustand}</c>.</summary>
+    public string? LifecycleState { get; set; }
+
+    public DateOnly? LifecycleDate { get; set; }
+
+    /// <summary>Die Prüfung in myDocs ist seit diesem Tag überfällig: „Stand ungeprüft seit …“.</summary>
+    public DateOnly? OverdueSince { get; set; }
+}
+
 /// <summary>Frei benanntes Zusatzfeld.</summary>
 public sealed record CustomField(string Label, string Value);
 
@@ -209,6 +231,12 @@ public sealed class DocumentMetadata
     public long Size { get; set; }
 
     public DateOnly? Date { get; set; }
+
+    /// <summary>Feste Kopie eines Dokuments aus myDocs (M5, 169): ID dort; null bei eigenen Dokumenten.</summary>
+    public Guid? MyDocsId { get; set; }
+
+    /// <summary>Stand der Kopie; ändert er sich in myDocs, ersetzt der Abgleich die Kopie.</summary>
+    public string? MyDocsHash { get; set; }
 
     public byte[] ToUtf8() => JsonSerializer.SerializeToUtf8Bytes(this, VaultPayload.JsonOptions);
 

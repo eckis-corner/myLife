@@ -1413,4 +1413,69 @@ Deine Rechte: Du kannst jederzeit Auskunft, Berichtigung und Löschung verlangen
   <data name="VaultLoadFailed" xml:space="preserve"><value>Der Tresor konnte nicht geladen werden. Bitte lade die Seite neu.</value></data>
   <data name="VaultUnreadable" xml:space="preserve"><value>{0} Einträge ließen sich nicht entschlüsseln und werden nicht angezeigt.</value></data>
   <data name="Yes" xml:space="preserve"><value>Ja</value></data>
+  <data name="Audit_mydocs-connected" xml:space="preserve"><value>Mit myDocs verbunden</value></data>
+  <data name="Audit_mydocs-disconnected" xml:space="preserve"><value>Verbindung mit myDocs entfernt</value></data>
+  <data name="Audit_mydocs-synced" xml:space="preserve"><value>Abgleich mit myDocs übernommen</value></data>
+  <data name="BannerMyDocs" xml:space="preserve"><value>{0} Änderungen aus myDocs warten auf deine Bestätigung.</value></data>
+  <data name="MyDocsApplied" xml:space="preserve"><value>{0} Änderungen übernommen.</value></data>
+  <data name="MyDocsApply" xml:space="preserve"><value>Verschlüsselt übernehmen</value></data>
+  <data name="MyDocsApplyHint" xml:space="preserve"><value>Dein Browser verschlüsselt alles, bevor es gespeichert wird. Danach bekommt myDocs nur eine Quittung, keine Inhalte.</value></data>
+  <data name="MyDocsChangedDocuments" xml:space="preserve"><value>{0} Dokumente neu gefasst</value></data>
+  <data name="MyDocsChanges" xml:space="preserve"><value>Änderungen aus myDocs ({0})</value></data>
+  <data name="MyDocsCheck" xml:space="preserve"><value>Jetzt prüfen</value></data>
+  <data name="MyDocsConnect" xml:space="preserve"><value>Verbinden</value></data>
+  <data name="MyDocsConnectIntro" xml:space="preserve"><value>In myDocs unter myLife ein Token anlegen und hier mit der Adresse von myDocs einfügen, oder dort auf In myLife öffnen klicken.</value></data>
+  <data name="MyDocsConnectedTo" xml:space="preserve"><value>Verbunden mit {0}</value></data>
+  <data name="MyDocsCurrent" xml:space="preserve"><value>Alles auf dem Stand von myDocs ({0} Einträge).</value></data>
+  <data name="MyDocsDisconnect" xml:space="preserve"><value>Verbindung entfernen</value></data>
+  <data name="MyDocsDisconnected" xml:space="preserve"><value>Verbindung entfernt. Die übernommenen Einträge bleiben.</value></data>
+  <data name="MyDocsError_failed" xml:space="preserve"><value>myDocs hat die Anfrage abgelehnt.</value></data>
+  <data name="MyDocsError_format" xml:space="preserve"><value>Die Antwort von myDocs ist in einem unbekannten Format. Vielleicht ist myLife älter als myDocs.</value></data>
+  <data name="MyDocsError_token" xml:space="preserve"><value>Das Token gilt nicht mehr. Lege in myDocs ein neues an.</value></data>
+  <data name="MyDocsError_unreachable" xml:space="preserve"><value>myDocs ist nicht erreichbar. Stimmt die Adresse, und steht sie in MYLIFE_MYDOCS_URL?</value></data>
+  <data name="MyDocsError_url" xml:space="preserve"><value>Bitte eine Adresse mit https:// und ein Token angeben.</value></data>
+  <data name="MyDocsFieldLifecycle" xml:space="preserve"><value>Zustand</value></data>
+  <data name="MyDocsFieldLocations" xml:space="preserve"><value>Ablageorte</value></data>
+  <data name="MyDocsFieldOverdue" xml:space="preserve"><value>Prüfung überfällig</value></data>
+  <data name="MyDocsFieldReviewed" xml:space="preserve"><value>Zuletzt geprüft</value></data>
+  <data name="MyDocsForeignServer" xml:space="preserve"><value>Diese Adresse ist nicht die freigegebene Adresse von myDocs ({0}). Verbinde nur, wenn du den Link selbst in myDocs geöffnet hast.</value></data>
+  <data name="MyDocsIntro" xml:space="preserve"><value>myDocs führt die Unterlagen im Alltag, myLife hält bereit, was im Ernstfall gebraucht wird. Hier holst du dir den Stand aus myDocs: Du siehst die Änderungen, dein Browser verschlüsselt sie, und der Server von myLife sieht nur Chiffrat. Einträge aus myDocs sind hier schreibgeschützt; Wünsche, Ansprechpartner und Notizen pflegst du weiter in myLife.</value></data>
+  <data name="MyDocsKind_Changed" xml:space="preserve"><value>geändert</value></data>
+  <data name="MyDocsKind_New" xml:space="preserve"><value>neu</value></data>
+  <data name="MyDocsKind_Removed" xml:space="preserve"><value>nicht mehr in myDocs</value></data>
+  <data name="MyDocsLastSynced" xml:space="preserve"><value>Zuletzt übernommen: {0}</value></data>
+  <data name="MyDocsLifecycle_active" xml:space="preserve"><value>aktiv</value></data>
+  <data name="MyDocsLifecycle_archived" xml:space="preserve"><value>archiviert</value></data>
+  <data name="MyDocsLifecycle_cancelled" xml:space="preserve"><value>gekündigt zum</value></data>
+  <data name="MyDocsLifecycle_disposed" xml:space="preserve"><value>abgegeben am</value></data>
+  <data name="MyDocsLifecycle_draft" xml:space="preserve"><value>in Abschluss</value></data>
+  <data name="MyDocsLifecycle_ended" xml:space="preserve"><value>beendet am</value></data>
+  <data name="MyDocsLifecycle_expired" xml:space="preserve"><value>abgelaufen</value></data>
+  <data name="MyDocsLifecycle_expiring" xml:space="preserve"><value>läuft ab</value></data>
+  <data name="MyDocsLifecycle_present" xml:space="preserve"><value>vorhanden</value></data>
+  <data name="MyDocsLifecycle_replaced" xml:space="preserve"><value>ersetzt</value></data>
+  <data name="MyDocsLifecycle_valid" xml:space="preserve"><value>gültig</value></data>
+  <data name="MyDocsManaged" xml:space="preserve"><value>gepflegt in myDocs</value></data>
+  <data name="MyDocsManagedHint" xml:space="preserve"><value>Titel, Felder, Ablageorte, Ablaufdatum und Status pflegt myDocs. Ändere sie dort; der nächste Abgleich bringt sie hierher.</value></data>
+  <data name="MyDocsNeverSynced" xml:space="preserve"><value>Noch nichts übernommen.</value></data>
+  <data name="MyDocsNewDocuments" xml:space="preserve"><value>{0} Dokumente neu</value></data>
+  <data name="MyDocsNotConfigured" xml:space="preserve"><value>Der Abgleich ist auf dieser Instanz nicht eingerichtet: Der Administrator muss die Adresse von myDocs in MYLIFE_MYDOCS_URL eintragen.</value></data>
+  <data name="MyDocsOffer" xml:space="preserve"><value>Mit myDocs unter {0} verbinden?</value></data>
+  <data name="MyDocsRecoveryCreate" xml:space="preserve"><value>Eintrag anlegen</value></data>
+  <data name="MyDocsRecoveryEntryTitle" xml:space="preserve"><value>myDocs-Wiederherstellung</value></data>
+  <data name="MyDocsRecoveryExists" xml:space="preserve"><value>Der Eintrag ist angelegt:</value></data>
+  <data name="MyDocsRecoveryInstructions" xml:space="preserve"><value>myDocs unter {0} sichert sich täglich verschlüsselt nach /data/backup; das Synology-Backup holt die Sicherungen ab. Zum Zurückspielen braucht es die Sicherung, den Sicherungsschlüssel aus der .env und die 24 Wörter des Hauptschlüssels. Die Schritte stehen in der Installationsanleitung von myDocs unter Rücksicherung.</value></data>
+  <data name="MyDocsRecoveryIntro" xml:space="preserve"><value>Ohne den Hauptschlüssel von myDocs (24 Wörter auf Papier) und den Sicherungsschlüssel lässt sich myDocs nicht wiederherstellen. Lege hier einen Eintrag an und trage ein, wo das Papier liegt. Die Wörter selbst gehören nicht hinein.</value></data>
+  <data name="MyDocsRecoveryNotes" xml:space="preserve"><value>Die 24 Wörter und den Sicherungsschlüssel nie hier eintragen, nur ihren Ablageort.</value></data>
+  <data name="MyDocsRecoveryTitle" xml:space="preserve"><value>myDocs-Wiederherstellung</value></data>
+  <data name="MyDocsRemovalTrash" xml:space="preserve"><value>In den Papierkorb</value></data>
+  <data name="MyDocsRemovalUnlink" xml:space="preserve"><value>Als eigenen Eintrag behalten</value></data>
+  <data name="MyDocsRemovedDocuments" xml:space="preserve"><value>{0} Dokumente entfallen</value></data>
+  <data name="MyDocsServer" xml:space="preserve"><value>Adresse von myDocs</value></data>
+  <data name="MyDocsSkipped" xml:space="preserve"><value>Zu groß für myLife (über 25 MB): {0}</value></data>
+  <data name="MyDocsTitle" xml:space="preserve"><value>Abgleich mit myDocs</value></data>
+  <data name="MyDocsToken" xml:space="preserve"><value>Token aus myDocs</value></data>
+  <data name="MyDocsUnchecked" xml:space="preserve"><value>Stand ungeprüft seit {0}</value></data>
+  <data name="MyDocsUnlink" xml:space="preserve"><value>Verknüpfung mit myDocs lösen</value></data>
+  <data name="MyDocsUnlinkConfirm" xml:space="preserve"><value>Der Eintrag wird wieder ein eigener Eintrag in myLife und lässt sich bearbeiten. Kommt er beim nächsten Abgleich noch aus myDocs, entsteht ein zweiter Eintrag.</value></data>
 </root>

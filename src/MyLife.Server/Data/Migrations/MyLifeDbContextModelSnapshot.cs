@@ -778,6 +778,10 @@ namespace MyLife.Server.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("lockout_until");
 
+                    b.Property<byte[]>("MyDocsBridge")
+                        .HasColumnType("bytea")
+                        .HasColumnName("mydocs_bridge");
+
                     b.Property<byte[]>("PublicEncryptionKey")
                         .IsRequired()
                         .HasColumnType("bytea")

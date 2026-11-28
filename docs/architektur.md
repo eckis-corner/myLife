@@ -219,7 +219,7 @@ Bekannte Grenze von 10a: Der Server entscheidet, wann er die Umschläge herausgi
 
 | Tabelle | Wichtige Felder |
 | --- | --- |
-| `users` | Id, E-Mail, Anzeigename, IsAdmin, Status (eingeladen/aktiv/gesperrt), Sprache, AuthHash, KdfSalt, KdfParams, 🔒WrappedVmk, 🔒WrappedVmkByRecovery, 🔒WrappedPrivateKeys, PublicEncKey, PublicSignKey, TotpSecret (Data Protection), LastLoginAt, IsDeleted |
+| `users` | Id, E-Mail, Anzeigename, IsAdmin, Status (eingeladen/aktiv/gesperrt), Sprache, AuthHash, KdfSalt, KdfParams, 🔒WrappedVmk, 🔒WrappedVmkByRecovery, 🔒WrappedPrivateKeys, PublicEncKey, PublicSignKey, TotpSecret (Data Protection), 🔒MyDocsBridge (Adresse und Token für myDocs, 146), LastLoginAt, IsDeleted |
 | `passkeys` | UserId, CredentialId, PublicKey, SignCount, Name |
 | `invitations` | Id, InviterId, E-Mail, Sprache, TokenHash, 🔒Einladungsgeheimnis, ExpiresAt, AcceptedAt, InviteeId, Bindung (HMAC), VerifiedAt, MismatchAt, RevokedAt |
 | `key_endorsements` | SignerId, SubjectId, Fingerprint, Signatur, At |
@@ -266,6 +266,10 @@ Er kennt die E-Mail-Adressen und Anzeigenamen der Nutzer, wer wessen Vertrauensp
 | **Notfallpaket für Vertrauenspersonen** (4b) | OfflineViewer.html mit den ausgewählten Bereichen als fertige Datenblätter, optional mit Dokumenten (107) | Verschlüsselt mit einem eigenen **Paketschlüssel** (24 Wörter, 108). Den Schlüssel gibt es nur ausgedruckt (Schließfach, Notar). Das Paket bei der Familie nützt ohne den Ausdruck nichts, und der Ausdruck ohne das Paket ebenfalls nicht. |
 | **Server-Sicherung** (5) | Datenbank (Schnappschuss per `COPY`, 124), Data-Protection-Schlüssel und auf Wunsch die Dokumente, täglich, als Generationen | Die Inhalte sind ohnehin Chiffrat. Zusätzlich verschlüsselt mit dem Sicherungsschlüssel `MYLIFE_BACKUP_KEY` (125). Ablage in `/data/backup`, das Synology-Backup übernimmt von dort. Rücksicherung per `restore` (128). |
 
+### 7.1 Abgleich mit myDocs (146, 147)
+
+myDocs (eigene App für die Unterlagen im Alltag, Repo `eckis-corner/myDocs`) führt die Einträge; myLife übernimmt, was im Ernstfall gebraucht wird. **myLife zieht, und nur im Browser:** Die Seite „Abgleich mit myDocs“ holt mit einem lesenden Token den Stand der Person im Klartext über TLS (`GET {myDocs}/api/mylife/export`), vergleicht ihn mit den entschlüsselten Einträgen, zeigt die Änderungen und verschlüsselt nach Bestätigung wie jede andere Änderung. Der Server von myLife sieht davon nur Chiffrat; an myDocs geht nur eine Quittung mit dem Fingerabdruck des übernommenen Stands. Verknüpft wird über `myDocs` in der Nutzlast; diese Felder sind dann schreibgeschützt. Das Format steht in myDocs unter `docs/brueckenformat.md`. `connect-src` enthält zusätzlich den Origin aus `MYLIFE_MYDOCS_URL`, sonst gibt es keinen Abgleich.
+
 ## 8. Betrieb auf der Synology DS1520+
 
 - `docker-compose.yml` mit `mylife-app` und `postgres`. Die App lauscht nur auf einem lokalen Port, etwa 8080. Nginx Proxy Manager übernimmt TLS und leitet `mylife.eckis-corner.de` weiter (3). `X-Forwarded-*` wird nur vom Proxy angenommen.
@@ -282,5 +286,5 @@ Er kennt die E-Mail-Adressen und Anzeigenamen der Nutzer, wer wessen Vertrauensp
 - **Audit-Log:** Anmeldung, fehlgeschlagene Anmeldung, 2FA-Änderung, Export, Änderungen an Freigaben, alle Übergänge des Notfallzugangs, Abruf von Umschlägen, Objekten und Dokumenten durch Vertrauenspersonen, Admin-Aktionen. Jeder Nutzer sieht die Einträge zu seinem Tresor, der Admin die Systemereignisse.
 - **Benachrichtigung bei Admin-Aktionen:** Setzt der Admin die 2FA eines Nutzers zurück oder sperrt ihn, bekommt der Nutzer eine Mail.
 - **Datenschutz:** Hinweisseite (Text vom Admin), Löschen des eigenen Kontos mit Tresor, Audit-Einträge mit gekürzter IP, Aufbewahrungsfrist der Logs einstellbar.
-- **Sicherheits-Header:** CSP, HSTS (über den Proxy), `X-Content-Type-Options`, `Referrer-Policy: no-referrer`, `Permissions-Policy`.
+- **Sicherheits-Header:** CSP (mit Abgleich zusätzlich der Origin von myDocs in `connect-src`), HSTS (über den Proxy), `X-Content-Type-Options`, `Referrer-Policy: no-referrer`, `Permissions-Policy`.
 - **Tests:** Testvektoren für jedes Krypto-Format, Kreuztests JS ↔ .NET, Simulation des Zustandsautomaten mit `FakeTimeProvider`, Playwright-Abläufe „Nutzer A legt an → Freigabe → Vertrauensperson B liest“.

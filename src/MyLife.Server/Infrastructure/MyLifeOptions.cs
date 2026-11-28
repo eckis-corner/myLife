@@ -30,4 +30,16 @@ public sealed class MyLifeOptions
 
     /// <summary>Anfragen je Minute und IP an den Tresor (Objekte, Dokumente, Audit-Log).</summary>
     public int VaultRequestsPerMinute { get; set; } = 600;
+
+    /// <summary>
+    /// Adresse von myDocs (M5, 166), etwa <c>https://mydocs.eckis-corner.de</c>, aus <c>MYLIFE_MYDOCS_URL</c>. Nur dieser
+    /// Origin steht zusätzlich in <c>connect-src</c>; der Browser holt dort den Stand für den Abgleich. Leer: keine Brücke.
+    /// </summary>
+    public string? MyDocsUrl { get; set; }
+
+    /// <summary>Origin von <see cref="MyDocsUrl"/> (<c>https://host[:port]</c>); null, wenn sie fehlt oder kein http(s) ist.</summary>
+    public string? MyDocsOrigin =>
+        Uri.TryCreate(MyDocsUrl?.Trim(), UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp)
+            ? uri.GetLeftPart(UriPartial.Authority)
+            : null;
 }

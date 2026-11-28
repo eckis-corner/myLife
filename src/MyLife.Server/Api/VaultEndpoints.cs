@@ -41,6 +41,10 @@ internal static class VaultEndpoints
         group.MapPost("/documents/{id:guid}/restore", RestoreDocumentAsync);
         group.MapDelete("/documents/{id:guid}/purge", PurgeDocumentAsync);
 
+        group.MapGet("/mydocs", GetMyDocsAsync);
+        group.MapPut("/mydocs", SetMyDocsAsync);
+        group.MapDelete("/mydocs", ClearMyDocsAsync);
+
         group.MapGet("/audit", ListAuditAsync);
         group.MapPost("/audit", ReportAuditAsync);
         return app;
@@ -476,6 +480,45 @@ internal static class VaultEndpoints
 
         audit.Own(request.Action, me, details: request.Details);
         await db.SaveChangesAsync(cancellationToken);
+        return TypedResults.NoContent();
+    }
+
+    // ---------- Verbindung zu myDocs (M5) ----------
+
+    private static async Task<Ok<MyDocsBridgeDto>> GetMyDocsAsync(ClaimsPrincipal principal, MyLifeDbContext db, CancellationToken cancellationToken)
+    {
+        var me = Me(principal);
+        var cipher = await db.Users.AsNoTracking().Where(u => u.Id == me).Select(u => u.MyDocsBridge).SingleOrDefaultAsync(cancellationToken);
+        return TypedResults.Ok(new MyDocsBridgeDto(cipher));
+    }
+
+    private static async Task<Results<NoContent, ProblemHttpResult>> SetMyDocsAsync(
+        MyDocsBridgeRequest request, ClaimsPrincipal principal, MyLifeDbContext db, AuditLog audit, CancellationToken cancellationToken)
+    {
+        var me = Me(principal);
+        if (!IsData(request?.Cipher, 4 * 1024))
+        {
+            return ApiProblems.Create(StatusCodes.Status400BadRequest, VaultErrors.Invalid);
+        }
+
+        var user = await db.Users.SingleAsync(u => u.Id == me, cancellationToken);
+        user.MyDocsBridge = request!.Cipher;
+        audit.Own(AuditActions.MyDocsConnected, me);
+        await db.SaveChangesAsync(cancellationToken);
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<NoContent> ClearMyDocsAsync(ClaimsPrincipal principal, MyLifeDbContext db, AuditLog audit, CancellationToken cancellationToken)
+    {
+        var me = Me(principal);
+        var user = await db.Users.SingleAsync(u => u.Id == me, cancellationToken);
+        if (user.MyDocsBridge is not null)
+        {
+            user.MyDocsBridge = null;
+            audit.Own(AuditActions.MyDocsDisconnected, me);
+            await db.SaveChangesAsync(cancellationToken);
+        }
+
         return TypedResults.NoContent();
     }
 

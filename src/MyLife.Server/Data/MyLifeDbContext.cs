@@ -62,6 +62,7 @@ public sealed class MyLifeDbContext(DbContextOptions<MyLifeDbContext> options) :
 
             entity.Property(x => x.Id).HasColumnName("id");
             entity.Property(x => x.Email).HasColumnName("email").HasMaxLength(254);
+            entity.Property(x => x.MyDocsBridge).HasColumnName("mydocs_bridge");
             entity.Property(x => x.DisplayName).HasColumnName("display_name").HasMaxLength(100);
             entity.Property(x => x.IsAdmin).HasColumnName("is_admin");
             entity.Property(x => x.Status).HasColumnName("status");

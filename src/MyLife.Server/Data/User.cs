@@ -59,6 +59,12 @@ public sealed class User
 
     public List<Passkey> Passkeys { get; } = [];
 
+    /// <summary>
+    /// 🔒 Verbindung zu myDocs (M5, 167): Adresse und lesendes Token als JSON, verschlüsselt mit dem Tresorschlüssel
+    /// (Kontext <c>mydocs-bridge</c>). Gehört zum Konto, nicht zu einem Bereich: Vertrauenspersonen bekommen es nie.
+    /// </summary>
+    public byte[]? MyDocsBridge { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset? LastLoginAt { get; set; }
