@@ -1413,4 +1413,69 @@ Your rights: You can ask for access, correction and deletion at any time. Please
   <data name="VaultLoadFailed" xml:space="preserve"><value>The vault could not be loaded. Please reload the page.</value></data>
   <data name="VaultUnreadable" xml:space="preserve"><value>{0} entries could not be decrypted and are not shown.</value></data>
   <data name="Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="Audit_mydocs-connected" xml:space="preserve"><value>Connected to myDocs</value></data>
+  <data name="Audit_mydocs-disconnected" xml:space="preserve"><value>myDocs connection removed</value></data>
+  <data name="Audit_mydocs-synced" xml:space="preserve"><value>myDocs sync applied</value></data>
+  <data name="BannerMyDocs" xml:space="preserve"><value>{0} changes from myDocs are waiting for your confirmation.</value></data>
+  <data name="MyDocsApplied" xml:space="preserve"><value>{0} changes applied.</value></data>
+  <data name="MyDocsApply" xml:space="preserve"><value>Encrypt and apply</value></data>
+  <data name="MyDocsApplyHint" xml:space="preserve"><value>Your browser encrypts everything before it is stored. myDocs then only gets a confirmation, no contents.</value></data>
+  <data name="MyDocsChangedDocuments" xml:space="preserve"><value>{0} documents updated</value></data>
+  <data name="MyDocsChanges" xml:space="preserve"><value>Changes from myDocs ({0})</value></data>
+  <data name="MyDocsCheck" xml:space="preserve"><value>Check now</value></data>
+  <data name="MyDocsConnect" xml:space="preserve"><value>Connect</value></data>
+  <data name="MyDocsConnectIntro" xml:space="preserve"><value>Create a token in myDocs under myLife and paste it here with the myDocs address, or click Open in myLife there.</value></data>
+  <data name="MyDocsConnectedTo" xml:space="preserve"><value>Connected to {0}</value></data>
+  <data name="MyDocsCurrent" xml:space="preserve"><value>Everything matches myDocs ({0} entries).</value></data>
+  <data name="MyDocsDisconnect" xml:space="preserve"><value>Remove connection</value></data>
+  <data name="MyDocsDisconnected" xml:space="preserve"><value>Connection removed. The entries already applied stay.</value></data>
+  <data name="MyDocsError_failed" xml:space="preserve"><value>myDocs refused the request.</value></data>
+  <data name="MyDocsError_format" xml:space="preserve"><value>The answer from myDocs has an unknown format. Perhaps myLife is older than myDocs.</value></data>
+  <data name="MyDocsError_token" xml:space="preserve"><value>The token is no longer valid. Create a new one in myDocs.</value></data>
+  <data name="MyDocsError_unreachable" xml:space="preserve"><value>myDocs cannot be reached. Is the address right, and is it set in MYLIFE_MYDOCS_URL?</value></data>
+  <data name="MyDocsError_url" xml:space="preserve"><value>Please enter an address with https:// and a token.</value></data>
+  <data name="MyDocsFieldLifecycle" xml:space="preserve"><value>State</value></data>
+  <data name="MyDocsFieldLocations" xml:space="preserve"><value>Storage locations</value></data>
+  <data name="MyDocsFieldOverdue" xml:space="preserve"><value>Review overdue</value></data>
+  <data name="MyDocsFieldReviewed" xml:space="preserve"><value>Last reviewed</value></data>
+  <data name="MyDocsForeignServer" xml:space="preserve"><value>This is not the approved myDocs address ({0}). Only connect if you opened the link in myDocs yourself.</value></data>
+  <data name="MyDocsIntro" xml:space="preserve"><value>myDocs keeps the records for everyday use, myLife holds what is needed in an emergency. Here you fetch the current state from myDocs: you see the changes, your browser encrypts them, and the myLife server only sees ciphertext. Entries from myDocs are read-only here; wishes, contacts and notes are still kept in myLife.</value></data>
+  <data name="MyDocsKind_Changed" xml:space="preserve"><value>changed</value></data>
+  <data name="MyDocsKind_New" xml:space="preserve"><value>new</value></data>
+  <data name="MyDocsKind_Removed" xml:space="preserve"><value>no longer in myDocs</value></data>
+  <data name="MyDocsLastSynced" xml:space="preserve"><value>Last applied: {0}</value></data>
+  <data name="MyDocsLifecycle_active" xml:space="preserve"><value>active</value></data>
+  <data name="MyDocsLifecycle_archived" xml:space="preserve"><value>archived</value></data>
+  <data name="MyDocsLifecycle_cancelled" xml:space="preserve"><value>cancelled as of</value></data>
+  <data name="MyDocsLifecycle_disposed" xml:space="preserve"><value>disposed of on</value></data>
+  <data name="MyDocsLifecycle_draft" xml:space="preserve"><value>being concluded</value></data>
+  <data name="MyDocsLifecycle_ended" xml:space="preserve"><value>ended on</value></data>
+  <data name="MyDocsLifecycle_expired" xml:space="preserve"><value>expired</value></data>
+  <data name="MyDocsLifecycle_expiring" xml:space="preserve"><value>expiring</value></data>
+  <data name="MyDocsLifecycle_present" xml:space="preserve"><value>present</value></data>
+  <data name="MyDocsLifecycle_replaced" xml:space="preserve"><value>replaced</value></data>
+  <data name="MyDocsLifecycle_valid" xml:space="preserve"><value>valid</value></data>
+  <data name="MyDocsManaged" xml:space="preserve"><value>kept in myDocs</value></data>
+  <data name="MyDocsManagedHint" xml:space="preserve"><value>Title, fields, storage locations, expiry date and status are kept in myDocs. Change them there; the next sync brings them here.</value></data>
+  <data name="MyDocsNeverSynced" xml:space="preserve"><value>Nothing applied yet.</value></data>
+  <data name="MyDocsNewDocuments" xml:space="preserve"><value>{0} new documents</value></data>
+  <data name="MyDocsNotConfigured" xml:space="preserve"><value>The sync is not set up on this instance: the administrator has to set the myDocs address in MYLIFE_MYDOCS_URL.</value></data>
+  <data name="MyDocsOffer" xml:space="preserve"><value>Connect to myDocs at {0}?</value></data>
+  <data name="MyDocsRecoveryCreate" xml:space="preserve"><value>Create entry</value></data>
+  <data name="MyDocsRecoveryEntryTitle" xml:space="preserve"><value>myDocs recovery</value></data>
+  <data name="MyDocsRecoveryExists" xml:space="preserve"><value>The entry exists:</value></data>
+  <data name="MyDocsRecoveryInstructions" xml:space="preserve"><value>myDocs at {0} backs itself up daily, encrypted, to /data/backup; the Synology backup collects the backups. Restoring needs the backup, the backup key from the .env file and the 24 words of the master key. The steps are in the myDocs installation guide under restore.</value></data>
+  <data name="MyDocsRecoveryIntro" xml:space="preserve"><value>Without the myDocs master key (24 words on paper) and the backup key, myDocs cannot be restored. Create an entry here and record where the paper is kept. The words themselves do not belong in it.</value></data>
+  <data name="MyDocsRecoveryNotes" xml:space="preserve"><value>Never enter the 24 words or the backup key here, only where they are kept.</value></data>
+  <data name="MyDocsRecoveryTitle" xml:space="preserve"><value>myDocs recovery</value></data>
+  <data name="MyDocsRemovalTrash" xml:space="preserve"><value>Move to trash</value></data>
+  <data name="MyDocsRemovalUnlink" xml:space="preserve"><value>Keep as own entry</value></data>
+  <data name="MyDocsRemovedDocuments" xml:space="preserve"><value>{0} documents dropped</value></data>
+  <data name="MyDocsServer" xml:space="preserve"><value>myDocs address</value></data>
+  <data name="MyDocsSkipped" xml:space="preserve"><value>Too large for myLife (over 25 MB): {0}</value></data>
+  <data name="MyDocsTitle" xml:space="preserve"><value>Sync with myDocs</value></data>
+  <data name="MyDocsToken" xml:space="preserve"><value>Token from myDocs</value></data>
+  <data name="MyDocsUnchecked" xml:space="preserve"><value>Not reviewed since {0}</value></data>
+  <data name="MyDocsUnlink" xml:space="preserve"><value>Unlink from myDocs</value></data>
+  <data name="MyDocsUnlinkConfirm" xml:space="preserve"><value>The entry becomes an own entry in myLife again and can be edited. If it still comes from myDocs at the next sync, a second entry is created.</value></data>
 </root>

@@ -39,7 +39,10 @@ else
                 else
                 {
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" OnClick="StartEdit" data-testid="edit">@L["Edit"]</MudButton>
-                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.TaskAlt" OnClick="MarkReviewedAsync" Disabled="_busy">@L["ObjectMarkReviewed"]</MudButton>
+                    @if (_item.Payload.MyDocs is null)
+                    {
+                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.TaskAlt" OnClick="MarkReviewedAsync" Disabled="_busy">@L["ObjectMarkReviewed"]</MudButton>
+                    }
                     @if (_item.Payload.HasFollowUp)
                     {
                         <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.EventAvailable" OnClick="CompleteFollowUpAsync" Disabled="_busy"
@@ -48,7 +51,12 @@ else
                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="@L["MoreActions"]" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                         <MudMenuItem Icon="@Icons.Material.Outlined.Print" OnClick="PrintAsync">@L["Print"]</MudMenuItem>
                         <MudMenuItem Icon="@Icons.Material.Outlined.PictureAsPdf" OnClick="PdfAsync">@L["DatasheetPdf"]</MudMenuItem>
-                        @if (_item.Status == ObjectStatus.Active)
+                        @if (_item.Payload.MyDocs is not null)
+                        {
+                            @* Status und Prüfung kommen aus myDocs (168); Lösen macht den Eintrag wieder zu einem eigenen. *@
+                            <MudMenuItem Icon="@Icons.Material.Outlined.LinkOff" OnClick="UnlinkAsync" data-testid="mydocs-unlink">@L["MyDocsUnlink"]</MudMenuItem>
+                        }
+                        else if (_item.Status == ObjectStatus.Active)
                         {
                             <MudMenuItem Icon="@Icons.Material.Outlined.Archive" OnClick="() => SetStatusAsync(ObjectStatus.Ended)">@L["ObjectEnd"]</MudMenuItem>
                         }
@@ -222,6 +230,13 @@ else
 
     private async Task SaveAsync()
     {
+        if (_item?.Payload.MyDocs is not null)
+        {
+            // Schreibschutz (168): Was myDocs pflegt, bleibt so, wie es zuletzt kam.
+            MyDocsBridge.KeepManaged(_item.Payload, _draft!);
+            _status = _item.Status;
+        }
+
         _errors = VaultValidation.ValidateObject(_type!, _draft!);
         if (_errors.Count > 0)
         {
@@ -290,6 +305,17 @@ else
         payload.FollowUpOn = null;
         payload.FollowUpNote = null;
         await RunAsync(() => Vault.UpdateAsync(_item, payload, _item.Status), L["FollowUpDoneSaved"]);
+    }
+
+    private async Task UnlinkAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(L["MyDocsUnlink"], L["MyDocsUnlinkConfirm"], yesText: L["MyDocsUnlink"], cancelText: L["Cancel"]);
+        if (confirmed == true)
+        {
+            var payload = _item!.Payload.Clone();
+            payload.MyDocs = null;
+            await RunAsync(() => Vault.UpdateAsync(_item, payload, _item.Status), L["Saved"]);
+        }
     }
 
     private Task SetStatusAsync(ObjectStatus status) =>

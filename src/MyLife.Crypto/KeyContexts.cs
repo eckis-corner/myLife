@@ -55,6 +55,9 @@ public static class KeyContexts
         string.Create(CultureInfo.InvariantCulture, $"grant:{trusteeId:D}:{kind}:{resource}:{mode}");
 
     /// <summary>Gegenzeichnung (ECDSA) des Fingerprints einer Person.</summary>
+    /// <summary>Verbindung zu myDocs (M5): Adresse und lesendes Token, mit dem Tresorschlüssel verschlüsselt.</summary>
+    public const string MyDocsBridge = "mydocs-bridge";
+
     public static string Endorsement(Guid subjectId) => string.Create(CultureInfo.InvariantCulture, $"endorsement:{subjectId:D}");
 }
 

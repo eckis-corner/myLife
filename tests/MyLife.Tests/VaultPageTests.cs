@@ -18,6 +18,7 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
 {
     private readonly ServerFixture _server;
     private VaultBrowser _browser = null!;
+    private readonly FakeMyDocs _myDocs = new();
     private Bunit.TestDoubles.BunitAuthorizationContext _auth = null!;
     private IRenderedComponent<MudBlazor.MudPopoverProvider> _popovers = null!;
 
@@ -53,6 +54,8 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         Services.AddSingleton(sp => new ReminderSync(sp.GetRequiredService<ReminderClient>(), _browser.Vault));
         Services.AddSingleton(new EmergencyClient(_browser.Http));
         Services.AddSingleton(new AdminClient(_browser.Http));
+        Services.AddSingleton(new AppInfoClient(_browser.Http));
+        Services.AddSingleton(new MyDocsBridge(_browser.Api, _browser.Vault, _browser.Crypto, _browser.Session, () => _myDocs));
         _auth = AddAuthorization();
         _popovers = Render<MudBlazor.MudPopoverProvider>();
     }
@@ -401,5 +404,34 @@ public sealed class VaultPageTests : BunitContext, IClassFixture<ServerFixture>,
         var page = Render<PrintView>();
 
         page.WaitForAssertion(() => Assert.Contains("Notfallordner", page.Find("[data-testid=print-view]").TextContent, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task TheLinkFromMyDocsConnectsShowsTheChangesAndAppliesThem()
+    {
+        var fake = _myDocs;
+        var contract = Guid.NewGuid();
+        fake.Export = FakeMyDocs.Empty(FakeMyDocs.Object(contract, "contract", "Stromvertrag aus myDocs", new() { ["contractKind"] = "electricity", ["provider"] = "Stadtwerke" }));
+        var navigation = Services.GetRequiredService<NavigationManager>();
+        navigation.NavigateTo($"mydocs#server={Uri.EscapeDataString(FakeMyDocs.Url)}&token={FakeMyDocs.Token}");
+
+        var page = Render<MyDocsPage>();
+
+        page.WaitForAssertion(() => Assert.Contains("mydocs.example.test", page.Find("[data-testid=mydocs-offer]").TextContent, StringComparison.Ordinal));
+        Assert.Empty(page.FindAll("[data-testid=mydocs-foreign]"));
+        Assert.DoesNotContain("token", navigation.Uri, StringComparison.Ordinal);
+        page.ClickWhenReady("[data-testid=mydocs-accept]");
+        page.WaitForAssertion(() => Assert.Contains(page.FindAll("[data-testid=mydocs-change]"), r => r.TextContent.Contains("Stromvertrag aus myDocs", StringComparison.Ordinal)));
+        page.ClickWhenReady("[data-testid=mydocs-apply]");
+
+        page.WaitForAssertion(() => Assert.NotEmpty(page.FindAll("[data-testid=mydocs-current]")));
+        var item = _browser.Vault.Current.Single(i => i.Payload.MyDocs?.Id == contract);
+        Assert.Single(fake.Confirmed);
+
+        // Auf der Objektseite ist der Eintrag schreibgeschützt.
+        var objectPage = Render<ObjectPage>(p => p.Add(x => x.Id, item.Id));
+        objectPage.WaitForAssertion(() => Assert.NotEmpty(objectPage.FindAll("[data-testid=datasheet-mydocs]")));
+        objectPage.ClickWhenReady("[data-testid=edit]");
+        objectPage.WaitForAssertion(() => Assert.NotEmpty(objectPage.FindAll("[data-testid=form-managed]")));
     }
 }

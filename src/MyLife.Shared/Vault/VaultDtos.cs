@@ -187,5 +187,15 @@ public static class AuditActions
             or VaultDeletedByTrustees;
 
     /// <summary>Was der Browser selbst melden darf.</summary>
-    public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ExportPackage, ImportJson };
+    // Brücke zu myDocs (M5)
+    public const string MyDocsConnected = "mydocs-connected";
+    public const string MyDocsDisconnected = "mydocs-disconnected";
+    public const string MyDocsSynced = "mydocs-synced";
+
+    public static IReadOnlySet<string> ClientReported { get; } = new HashSet<string>(StringComparer.Ordinal) { ExportJson, ExportPdf, ExportPrint, ExportPackage, ImportJson, MyDocsSynced };
 }
+
+/// <summary>Verbindung zu myDocs (M5, 167): nur Chiffrat, mit dem Tresorschlüssel verschlüsselt; null ohne Verbindung.</summary>
+public sealed record MyDocsBridgeDto(byte[]? Cipher);
+
+public sealed record MyDocsBridgeRequest(byte[] Cipher);

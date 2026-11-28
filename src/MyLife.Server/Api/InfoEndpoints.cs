@@ -8,7 +8,8 @@ internal static class InfoEndpoints
 {
     public static IEndpointRouteBuilder MapInfoEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/info", () => TypedResults.Ok(new AppInfoDto(AppVersion, CryptoFormat.CurrentVersion)))
+        app.MapGet("/api/info", (Microsoft.Extensions.Options.IOptions<MyLife.Server.Infrastructure.MyLifeOptions> options) =>
+                TypedResults.Ok(new AppInfoDto(AppVersion, CryptoFormat.CurrentVersion, options.Value.MyDocsOrigin is { } origin ? origin + "/" : null)))
             .WithName("GetAppInfo");
         return app;
     }

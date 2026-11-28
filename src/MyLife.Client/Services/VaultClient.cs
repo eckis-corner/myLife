@@ -79,6 +79,16 @@ public sealed class VaultClient(HttpClient http)
     public Task RekeyLetterAsync(Guid objectId, MyLife.Shared.Trust.RekeyLetterRequest request, CancellationToken cancellationToken = default) =>
         SendAsync<object>(HttpMethod.Post, $"api/trust/letters/{objectId}/rekey", request, cancellationToken);
 
+    /// <summary>Verbindung zu myDocs (M5): Chiffrat oder null.</summary>
+    public async Task<byte[]?> GetMyDocsAsync(CancellationToken cancellationToken = default) =>
+        (await GetAsync<MyDocsBridgeDto>("api/vault/mydocs", cancellationToken))?.Cipher;
+
+    public Task SetMyDocsAsync(byte[] cipher, CancellationToken cancellationToken = default) =>
+        SendAsync<object>(HttpMethod.Put, "api/vault/mydocs", new MyDocsBridgeRequest(cipher), cancellationToken);
+
+    public Task ClearMyDocsAsync(CancellationToken cancellationToken = default) =>
+        SendAsync<object>(HttpMethod.Delete, "api/vault/mydocs", null, cancellationToken);
+
     public Task ReportAsync(string action, string? details = null, CancellationToken cancellationToken = default) =>
         SendAsync<object>(HttpMethod.Post, "api/vault/audit", new AuditEventRequest(action, details), cancellationToken);
 

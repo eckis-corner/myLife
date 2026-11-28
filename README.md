@@ -17,6 +17,7 @@ myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: V
 - **Notfallordner:** verschlüsseltes PDF, druckfertige Ansicht, offenes JSON-Format, Offline-Viewer
 - **Self-hosted:** Docker Compose mit PostgreSQL, z. B. auf einer Synology
 - **Hilfe in der App:** Tutorial und Anleitung, ohne Anmeldung erreichbar
+- **Abgleich mit myDocs:** Einträge und Dokumente aus [myDocs](https://github.com/eckis-corner/myDocs) übernehmen, verschlüsselt im Browser, mit Schreibschutz für die Felder aus myDocs
 - Deutsch und Englisch
 
 ## Dokumentation

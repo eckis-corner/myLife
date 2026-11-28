@@ -1,0 +1,57 @@
+@* Anstoß des Abgleichs (60, 171): Beim Öffnen der Übersicht prüft myLife einmal je Sitzung still, ob myDocs Änderungen
+   hat. Übernommen wird nur auf der Seite „Abgleich mit myDocs“ nach Bestätigung. *@
+@implements IDisposable
+@using Microsoft.Extensions.DependencyInjection
+@inject IStringLocalizer<SharedResource> L
+@inject IServiceProvider Services
+
+@if (_bridge?.Pending is { IsEmpty: false } plan)
+{
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Sync" data-testid="banner-mydocs">
+        @L["BannerMyDocs", plan.Changes.Count]
+        <MudButton Variant="Variant.Text" Href="mydocs" Class="ml-2">@L["MyDocsTitle"]</MudButton>
+    </MudAlert>
+}
+else if (_bridge?.Error is { } error)
+{
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" data-testid="banner-mydocs-error">
+        @L[$"MyDocsError_{error}"]
+        <MudButton Variant="Variant.Text" Href="mydocs" Class="ml-2">@L["MyDocsTitle"]</MudButton>
+    </MudAlert>
+}
+
+@code {
+    private MyDocsBridge? _bridge;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bridge = Services.GetService<MyDocsBridge>();
+        if (_bridge is null)
+        {
+            return;
+        }
+
+        _bridge.Changed += OnChanged;
+        try
+        {
+            if (_bridge.Pending is null && _bridge.Error is null && await _bridge.LoadAsync() is not null)
+            {
+                await _bridge.CheckAsync();
+            }
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException or System.Text.Json.JsonException)
+        {
+            // Der Hinweis ist eine Annehmlichkeit; die Übersicht funktioniert ohne ihn.
+        }
+    }
+
+    private void OnChanged() => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        if (_bridge is not null)
+        {
+            _bridge.Changed -= OnChanged;
+        }
+    }
+}

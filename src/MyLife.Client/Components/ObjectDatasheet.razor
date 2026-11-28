@@ -10,7 +10,16 @@
     }
     <MudText Typo="Typo.caption" Class="mylife-muted">
         @Text.Type(Item.Type)@(Item.Status == ObjectStatus.Ended ? $" · {Text.Status(Item.Status)}" : string.Empty)
+        @if (Item.Payload.MyDocs is { } link)
+        {
+            <span data-testid="datasheet-mydocs"> · @L["MyDocsManaged"]@(link.LifecycleState is { } state ? $" · {L[$"MyDocsLifecycle_{state}"]}{(link.LifecycleDate is { } date ? " " + date.ToString("d", System.Globalization.CultureInfo.CurrentCulture) : string.Empty)}" : string.Empty)</span>
+        }
     </MudText>
+    @if (Item.Payload.MyDocs?.OverdueSince is { } overdue)
+    {
+        @* „Stand ungeprüft seit …“ (14): Die Prüfung in myDocs ist überfällig; das sehen auch Vertrauenspersonen. *@
+        <MudText Typo="Typo.body2" Color="Color.Warning" data-testid="datasheet-unchecked">@L["MyDocsUnchecked", overdue.ToString("d", System.Globalization.CultureInfo.CurrentCulture)]</MudText>
+    }
 
     <MudSimpleTable Dense Elevation="0" Class="mylife-datasheet-table mt-2">
         <tbody>

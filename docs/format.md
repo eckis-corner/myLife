@@ -64,6 +64,7 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601. Das Werkzeug [my
 - Fehlt ein Wert (etwa keine Wiedervorlage), fehlt auch der Schlüssel.
 - Werte: Zahlen und Beträge invariant mit Punkt, Datum `yyyy-MM-dd`, Ja/Nein als `true`/`false`, Verweise als ID eines anderen Objekts.
 - **Ablageorte (seit 1.1):** Felder, die einen Ablageort beschreiben (`originalLocation` und in `fields` etwa `keyLocation`, `seedLocation`), enthalten den **Namen** des Ablageorts als Text. `locations` ordnet demselben Schlüssel die ID des gewählten Ablageorts zu, eines Objekts vom Typ `location` in Bereich 14. Für die Anzeige genügt der Name; der Verweis ist nur für die Verknüpfung nötig. Ein Name ohne Eintrag in `locations` ist Freitext aus der Zeit vor 1.1. `locations` steht auch leer (`{}`) in der Datei, ebenso wie `links` und `customFields`.
+- **Aus myDocs (Abgleich mit myDocs):** Einträge aus myDocs tragen `"myDocs": { "id": "…", "syncedAt": "…", "lifecycleState": "active", "lifecycleDate": "…", "overdueSince": "…" }` mit der ID des Eintrags in myDocs, dem Zeitpunkt des Abgleichs, dem Lebenszyklus dort und dem Tag, seit dem die Prüfung in myDocs überfällig ist. Titel, `fields`, `locations` (außer `originalLocation`), `expiresOn` und `reviewedOn` kommen dann aus myDocs. Ältere Versionen von myLife und `mylife-decrypt` übergehen das Feld.
 
 ## Ältere Versionen
 
@@ -76,6 +77,8 @@ Byte-Felder sind Base64 (mit Auffüllung), Zeitpunkte ISO 8601. Das Werkzeug [my
 ```json
 { "label": "Police 2026", "fileName": "police.pdf", "contentType": "application/pdf", "size": 123456, "date": "2026-01-15" }
 ```
+
+Kopien aus myDocs haben zusätzlich `myDocsId` (ID des Dokuments in myDocs) und `myDocsHash` (Stand der Kopie); ändert sich der Stand in myDocs, ersetzt der Abgleich die Kopie.
 
 ## Notfallpaket (seit M2.7)
 

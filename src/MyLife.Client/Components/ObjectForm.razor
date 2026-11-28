@@ -5,22 +5,31 @@
 @inject VaultService Vault
 
 <MudStack Spacing="3">
-    <MudTextField T="string" Value="Payload.Title" ValueChanged="v => Payload.Title = v ?? string.Empty" Label="@L["CommonTitle"]"
-                  Variant="Variant.Outlined" Required MaxLength="200" Error="@Has("title")" ErrorText="@ErrorOf("title")"
-                  UserAttributes="@TitleAttributes" />
+    @if (Managed)
+    {
+        @* Schreibschutz (59, 168): Diese Angaben pflegt myDocs; hier bleiben nur die eigenen Angaben von myLife. *@
+        <MudAlert Severity="Severity.Info" Dense Icon="@Icons.Material.Outlined.Sync" data-testid="form-managed">@L["MyDocsManagedHint"]</MudAlert>
+        <MudTextField T="string" Value="Payload.Title" Label="@L["CommonTitle"]" Variant="Variant.Outlined" ReadOnly UserAttributes="@TitleAttributes" />
+    }
+    else
+    {
+        <MudTextField T="string" Value="Payload.Title" ValueChanged="v => Payload.Title = v ?? string.Empty" Label="@L["CommonTitle"]"
+                      Variant="Variant.Outlined" Required MaxLength="200" Error="@Has("title")" ErrorText="@ErrorOf("title")"
+                      UserAttributes="@TitleAttributes" />
 
-    <CatalogFields Type="Type" Values="Payload" Errors="Errors" Choices="Choices">
-        <LocationField Context="place">
-            <LocationPicker Payload="Payload" Key="@place.Field.Key" Label="@place.Label" Required="place.Required" Error="@place.Error"
-                            ErrorText="@place.ErrorText" HelperText="@place.HelperText" />
-        </LocationField>
-    </CatalogFields>
+        <CatalogFields Type="Type" Values="Payload" Errors="Errors" Choices="Choices">
+            <LocationField Context="place">
+                <LocationPicker Payload="Payload" Key="@place.Field.Key" Label="@place.Label" Required="place.Required" Error="@place.Error"
+                                ErrorText="@place.ErrorText" HelperText="@place.HelperText" />
+            </LocationField>
+        </CatalogFields>
+    }
 
     <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="mt-2"><b>@L["CommonSection"]</b></MudText>
     <MudGrid Spacing="2">
         <MudItem xs="12" sm="6">
             <MudDatePicker Label="@Text.Expiry(Type)" Date="@ToDateTime(Payload.ExpiresOn)" DateChanged="d => Payload.ExpiresOn = ToDateOnly(d)"
-                           Variant="Variant.Outlined" Editable Clearable HelperText="@L["CommonExpiryHelp"]" />
+                           Variant="Variant.Outlined" Editable="!Managed" ReadOnly="Managed" Clearable="!Managed" HelperText="@L["CommonExpiryHelp"]" />
         </MudItem>
         <MudItem xs="12" sm="6">
             <LocationPicker Payload="Payload" Key="@VaultPayload.OriginalLocationKey" Label="@L["CommonOriginalLocation"]"
@@ -111,6 +120,9 @@
     [Parameter] public Guid? ObjectId { get; set; }
 
     [Parameter] public IReadOnlyDictionary<string, string> Errors { get; set; } = new Dictionary<string, string>();
+
+    /// <summary>Mit myDocs verknüpft (168): Titel, Katalogfelder und Ablaufdatum sind schreibgeschützt.</summary>
+    private bool Managed => Payload.MyDocs is not null;
 
     private bool Has(string key) => Errors.ContainsKey(key);
 

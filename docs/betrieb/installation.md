@@ -28,6 +28,7 @@ In der File Station im freigegebenen Ordner `docker` den Ordner `mylife` anlegen
 | `MYLIFE_PORT` | Freier Port auf der Synology, z. B. `8089` |
 | `MYLIFE_DATA_DIR` | `./data` (relativ zum Projektordner) |
 | `MYLIFE_BACKUP_KEY` | Schlüssel der täglichen Sicherung: per SSH `openssl rand -base64 32`. **Getrennt von der NAS aufbewahren** (ausdrucken, beim Notfallordner); ohne ihn lässt sich keine Sicherung zurückspielen. Leer = keine automatische Sicherung. |
+| `MYLIFE_MYDOCS_URL` | Adresse von myDocs, z. B. `https://mydocs.eckis-corner.de`, wenn myDocs läuft und myLife daraus abgleichen soll (Abschnitt 6a). Leer = kein Abgleich. |
 | `TZ` | `Europe/Berlin` |
 
 ## 3. Rechte für den App-Ordner setzen (einmalig, per SSH)
@@ -91,6 +92,10 @@ Nach der Anmeldung als Administrator: **Verwaltung → Einstellungen**.
 
 Das SMTP-Passwort liegt verschlüsselt mit den Schlüsseln aus `data/app/keys` in der Datenbank. Ohne diesen Ordner muss es nach einer Rücksicherung neu eingegeben werden.
 
+## 6a. Abgleich mit myDocs
+
+Läuft auch myDocs, holt sich myLife von dort, was im Ernstfall gebraucht wird. Dafür in der `.env` von myLife `MYLIFE_MYDOCS_URL` und in der von myDocs `MYDOCS_MYLIFE_URL` eintragen, beide Projekte neu erstellen. Danach in myDocs **Benutzermenü → myLife → Mit myLife verbinden → In myLife öffnen**; myLife fragt nach dem Entsperren, ob es sich verbinden soll. Die Einzelheiten stehen in der Installationsanleitung von myDocs (Abschnitt 6d).
+
 ## 7. Updates
 
 Vor jedem Update in der Verwaltung unter **Einstellungen → Sicherung** auf **Jetzt sichern** klicken.
@@ -107,6 +112,7 @@ Datenbank-Migrationen laufen beim Start automatisch. Danach kurz anmelden und un
 
 - **Feste Version:** Statt `latest` lässt sich in der `.env` eine Version wie `MYLIFE_VERSION=1.1.0` eintragen; dann kommt ein Update nur, wenn du die Zahl änderst. Was sich geändert hat, steht unter **Releases** auf GitHub.
 - **Von 1.0.0 auf 1.1.0:** Es gibt keine Datenbank-Migration, es genügt, das Image zu tauschen. Neu ist der Bereich **Ablageorte** (Bereich 14). Bestehende Freigaben für Vertrauenspersonen enthalten ihn nicht. Die Namen der Ablageorte sehen sie trotzdem bei jedem freigegebenen Eintrag. Wer auch Beschreibung, Anschrift und Zugang sehen soll, braucht unter **Vertrauenspersonen** die Freigabe dieses Bereichs.
+- **Mit dem Abgleich mit myDocs:** Eine Migration ergänzt eine Spalte; sie läuft beim Start. Ohne `MYLIFE_MYDOCS_URL` ändert sich nichts.
 - **Zurück auf die alte Version:** Migrationen laufen nur vorwärts. Also `MYLIFE_VERSION` auf die alte Version setzen und die Sicherung von vor dem Update zurückspielen (Abschnitt 8).
 
 ## 8. Sicherung

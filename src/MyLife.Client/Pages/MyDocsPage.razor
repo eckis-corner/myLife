@@ -1,0 +1,333 @@
+@page "/mydocs"
+@attribute [Authorize]
+@inherits VaultPageBase
+@using System.Globalization
+@* Abgleich mit myDocs (M5, 56–61, 166–172): verbinden, Änderungen ansehen, nach Bestätigung verschlüsselt übernehmen. *@
+@inject IStringLocalizer<SharedResource> L
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject MyDocsBridge Bridge
+@inject AppInfoClient AppInfo
+
+<PageTitle>@L["AppName"] – @L["MyDocsTitle"]</PageTitle>
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h4" HtmlTag="h1">@L["MyDocsTitle"]</MudText>
+    <MudText Typo="Typo.body2" Class="mylife-muted">@L["MyDocsIntro"]</MudText>
+
+    @if (Loading || !_ready)
+    {
+        <MudProgressLinear Indeterminate Color="Color.Primary" />
+    }
+    else if (LoadFailed)
+    {
+        <MudAlert Severity="Severity.Error">@L["VaultLoadFailed"]</MudAlert>
+    }
+    else
+    {
+        @if (_allowed is null)
+        {
+            <MudAlert Severity="Severity.Warning" data-testid="mydocs-not-configured">@L["MyDocsNotConfigured"]</MudAlert>
+        }
+
+        @if (_offer is { } offer)
+        {
+            <MudPaper Class="pa-4" Elevation="1" data-testid="mydocs-offer">
+                <MudStack Spacing="2">
+                    <MudText>@L["MyDocsOffer", offer.Server]</MudText>
+                    @if (!Allowed(offer.Server))
+                    {
+                        <MudAlert Severity="Severity.Warning" Dense data-testid="mydocs-foreign">@L["MyDocsForeignServer", _allowed ?? "–"]</MudAlert>
+                    }
+                    <MudStack Row Spacing="2">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ConnectAsync(offer.Server, offer.Token)" Disabled="_busy"
+                                   data-testid="mydocs-accept">@L["MyDocsConnect"]</MudButton>
+                        <MudButton Variant="Variant.Text" OnClick="() => _offer = null">@L["Cancel"]</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        }
+        else if (!Bridge.IsConnected)
+        {
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudStack Spacing="2">
+                    <MudText>@L["MyDocsConnectIntro"]</MudText>
+                    <MudTextField T="string" @bind-Value="_server" Label="@L["MyDocsServer"]" Variant="Variant.Outlined" UserAttributes="@ServerAttributes" />
+                    <MudTextField T="string" @bind-Value="_token" Label="@L["MyDocsToken"]" Variant="Variant.Outlined" InputType="InputType.Password" UserAttributes="@TokenAttributes" />
+                    <div>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ConnectAsync(_server, _token)" Disabled="@(_busy || string.IsNullOrWhiteSpace(_token))"
+                                   data-testid="mydocs-connect">@L["MyDocsConnect"]</MudButton>
+                    </div>
+                </MudStack>
+            </MudPaper>
+        }
+        else
+        {
+            var settings = Bridge.Settings!;
+            <MudPaper Class="pa-4" Elevation="1">
+                <MudStack Spacing="2">
+                    <MudText data-testid="mydocs-connected">@L["MyDocsConnectedTo", settings.ServerUrl]</MudText>
+                    <MudText Typo="Typo.body2" Class="mylife-muted">
+                        @(settings.LastSyncedAt is { } synced ? L["MyDocsLastSynced", synced.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)] : L["MyDocsNeverSynced"])
+                    </MudText>
+                    @if (Bridge.Error is { } error)
+                    {
+                        <MudAlert Severity="Severity.Error" Dense data-testid="mydocs-error">@L[$"MyDocsError_{error}"]</MudAlert>
+                    }
+                    <MudStack Row Spacing="2">
+                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Sync" OnClick="CheckAsync" Disabled="_busy" data-testid="mydocs-check">@L["MyDocsCheck"]</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="DisconnectAsync" Disabled="_busy" data-testid="mydocs-disconnect">@L["MyDocsDisconnect"]</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+
+            @if (Bridge.Pending is { } plan)
+            {
+                @if (plan.IsEmpty)
+                {
+                    <MudAlert Severity="Severity.Success" data-testid="mydocs-current">@L["MyDocsCurrent", plan.Export.Objects.Count]</MudAlert>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6" HtmlTag="h2">@L["MyDocsChanges", plan.Changes.Count]</MudText>
+                    <MudPaper Elevation="1">
+                        <MudSimpleTable Dense Elevation="0" data-testid="mydocs-changes">
+                            <tbody>
+                                @foreach (var change in plan.Changes)
+                                {
+                                    <tr data-testid="mydocs-change">
+                                        <td style="white-space: nowrap">
+                                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined"
+                                                     Color="@(change.Kind == MyDocsChangeKind.New ? Color.Success : change.Kind == MyDocsChangeKind.Removed ? Color.Warning : Color.Info)">
+                                                @L[$"MyDocsKind_{change.Kind}"]
+                                            </MudChip>
+                                        </td>
+                                        <td><b>@change.Title</b><br /><MudText Typo="Typo.caption" Class="mylife-muted">@Text.Type(change.Type)</MudText></td>
+                                        <td>
+                                            @if (change.Kind == MyDocsChangeKind.Removed)
+                                            {
+                                                <MudSelect T="MyDocsRemoval" @bind-Value="change.Removal" Dense Variant="Variant.Outlined" Margin="Margin.Dense" data-testid="mydocs-removal">
+                                                    <MudSelectItem T="MyDocsRemoval" Value="MyDocsRemoval.Unlink">@L["MyDocsRemovalUnlink"]</MudSelectItem>
+                                                    <MudSelectItem T="MyDocsRemoval" Value="MyDocsRemoval.Trash">@L["MyDocsRemovalTrash"]</MudSelectItem>
+                                                </MudSelect>
+                                            }
+                                            else
+                                            {
+                                                <MudText Typo="Typo.body2">@Details(change)</MudText>
+                                                @if (change.SkippedDocuments.Count > 0)
+                                                {
+                                                    <MudText Typo="Typo.caption" Color="Color.Warning">@L["MyDocsSkipped", string.Join(", ", change.SkippedDocuments.Select(d => d.FileName))]</MudText>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </MudSimpleTable>
+                    </MudPaper>
+                    @if (_progress is { } progress)
+                    {
+                        <MudProgressLinear Value="@(progress * 100)" Color="Color.Primary" />
+                    }
+                    <div>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Lock" OnClick="() => ApplyAsync(plan)" Disabled="_busy"
+                                   data-testid="mydocs-apply">@L["MyDocsApply"]</MudButton>
+                    </div>
+                    <MudText Typo="Typo.caption" Class="mylife-muted">@L["MyDocsApplyHint"]</MudText>
+                }
+            }
+
+            @* M5.3: Wo der Hauptschlüssel von myDocs liegt, gehört in den Notfallordner (46, 172). *@
+            <MudPaper Class="pa-4" Elevation="1" data-testid="mydocs-recovery">
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.h6" HtmlTag="h2">@L["MyDocsRecoveryTitle"]</MudText>
+                    @if (RecoveryEntry is { } entry)
+                    {
+                        <MudText>@L["MyDocsRecoveryExists"] <MudLink Href="@($"object/{entry.Id}")" data-testid="mydocs-recovery-link">@entry.Title</MudLink></MudText>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2">@L["MyDocsRecoveryIntro"]</MudText>
+                        <div>
+                            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Key" OnClick="CreateRecoveryAsync" Disabled="_busy"
+                                       data-testid="mydocs-recovery-create">@L["MyDocsRecoveryCreate"]</MudButton>
+                        </div>
+                    }
+                </MudStack>
+            </MudPaper>
+        }
+    }
+</MudStack>
+
+@code {
+    private static readonly Dictionary<string, object> ServerAttributes = new() { ["data-testid"] = "mydocs-server" };
+    private static readonly Dictionary<string, object> TokenAttributes = new() { ["data-testid"] = "mydocs-token" };
+    private (string Server, string Token)? _offer;
+    private string? _allowed;
+    private string? _server;
+    private string? _token;
+    private bool _ready;
+    private bool _busy;
+    private double? _progress;
+
+    /// <summary>Titel des Eintrags „myDocs-Wiederherstellung“; daran erkennt die Seite, ob es ihn schon gibt.</summary>
+    private string RecoveryTitle => L["MyDocsRecoveryEntryTitle"];
+
+    private VaultItem? RecoveryEntry => Vault.Current.FirstOrDefault(i => i.Type.Key == "passwordManager" && i.Title == RecoveryTitle);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _allowed = (await AppInfo.GetAsync())?.MyDocsUrl;
+        _server = _allowed;
+        ReadOffer();
+        try
+        {
+            await Bridge.LoadAsync();
+            if (Bridge.IsConnected && Bridge.Pending is null && _offer is null)
+            {
+                await Bridge.CheckAsync();
+            }
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{VaultErrors.Failed}"], Severity.Error);
+        }
+
+        _ready = true;
+    }
+
+    /// <summary>Adresse und Token aus dem Link von myDocs (#server=…&amp;token=…); das Fragment erreicht keinen Server und verschwindet sofort aus dem Verlauf.</summary>
+    private void ReadOffer()
+    {
+        var uri = new Uri(Navigation.Uri);
+        if (uri.Fragment.Length < 2)
+        {
+            return;
+        }
+
+        var values = uri.Fragment[1..].Split('&').Select(p => p.Split('=', 2)).Where(p => p.Length == 2)
+            .ToDictionary(p => p[0], p => Uri.UnescapeDataString(p[1]), StringComparer.Ordinal);
+        if (values.TryGetValue("server", out var server) && values.TryGetValue("token", out var token) && MyDocsBridge.NormalizeUrl(server) is { } url)
+        {
+            _offer = (url, token);
+        }
+
+        Navigation.NavigateTo("mydocs", replace: true);
+    }
+
+    private bool Allowed(string server) => _allowed is not null && MyDocsBridge.NormalizeUrl(server) is { } url
+        && new Uri(url).GetLeftPart(UriPartial.Authority) == new Uri(_allowed).GetLeftPart(UriPartial.Authority);
+
+    private async Task ConnectAsync(string? server, string? token)
+    {
+        await RunAsync(async () =>
+        {
+            await Bridge.ConnectAsync(server ?? string.Empty, token ?? string.Empty);
+            _offer = null;
+            _token = null;
+            await Bridge.CheckAsync();
+        });
+    }
+
+    private Task CheckAsync() => RunAsync(() => Bridge.CheckAsync());
+
+    private Task DisconnectAsync() => RunAsync(async () =>
+    {
+        await Bridge.DisconnectAsync();
+        Snackbar.Add(L["MyDocsDisconnected"], Severity.Success);
+    });
+
+    private Task ApplyAsync(MyDocsPlan plan) => RunAsync(async () =>
+    {
+        _progress = 0;
+        await Bridge.ApplyAsync(plan, new Progress<double>(p =>
+        {
+            _progress = p;
+            StateHasChanged();
+        }));
+        Snackbar.Add(L["MyDocsApplied", plan.Changes.Count], Severity.Success);
+        await Bridge.CheckAsync();
+    });
+
+    /// <summary>Eintrag „myDocs-Wiederherstellung“ (M5.3, 172): ein Passwortmanager-Eintrag mit Ablageort der 24 Wörter und Anleitung.</summary>
+    private Task CreateRecoveryAsync() => RunAsync(async () =>
+    {
+        var payload = new VaultPayload
+        {
+            Title = RecoveryTitle,
+            Notes = L["MyDocsRecoveryNotes"],
+            Fields =
+            {
+                ["product"] = "myDocs",
+                ["instructions"] = L["MyDocsRecoveryInstructions", Bridge.Settings?.ServerUrl ?? _allowed ?? "https://…"],
+            },
+        };
+        if (Bridge.Settings?.ServerUrl is { } url)
+        {
+            payload.Set("account", url);
+        }
+
+        var created = await Vault.CreateAsync("passwordManager", payload);
+        Navigation.NavigateTo($"object/{created.Id}");
+    });
+
+    private string Details(MyDocsChange change)
+    {
+        var parts = new List<string>();
+        if (change.Kind == MyDocsChangeKind.Changed && change.Fields.Count > 0)
+        {
+            parts.Add(string.Join(", ", change.Fields.Select(f => Label(change.Type, f)).Distinct()));
+        }
+
+        if (change.NewDocuments.Count > 0)
+        {
+            parts.Add(L["MyDocsNewDocuments", change.NewDocuments.Count]);
+        }
+
+        if (change.ChangedDocuments.Count > 0)
+        {
+            parts.Add(L["MyDocsChangedDocuments", change.ChangedDocuments.Count]);
+        }
+
+        if (change.RemovedDocuments.Count > 0)
+        {
+            parts.Add(L["MyDocsRemovedDocuments", change.RemovedDocuments.Count]);
+        }
+
+        return string.Join(" · ", parts);
+    }
+
+    private string Label(ObjectTypeDefinition type, string key) => key switch
+    {
+        "title" => L["CommonTitle"],
+        "expiresOn" => Text.Expiry(type),
+        "status" or "lifecycle" => L["MyDocsFieldLifecycle"],
+        "reviewedOn" => L["MyDocsFieldReviewed"],
+        "overdueSince" => L["MyDocsFieldOverdue"],
+        "locations" => L["MyDocsFieldLocations"],
+        _ => type.Field(key) is { } field ? Text.Field(type, field) : key,
+    };
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        _busy = true;
+        try
+        {
+            await action();
+        }
+        catch (MyDocsException exception)
+        {
+            Snackbar.Add(L[$"MyDocsError_{exception.Message}"], Severity.Error);
+        }
+        catch (Exception exception) when (exception is VaultException or HttpRequestException)
+        {
+            Snackbar.Add(L[$"VaultError_{(exception as VaultException)?.Message ?? VaultErrors.Failed}"], Severity.Error);
+        }
+        finally
+        {
+            _busy = false;
+            _progress = null;
+        }
+    }
+}
