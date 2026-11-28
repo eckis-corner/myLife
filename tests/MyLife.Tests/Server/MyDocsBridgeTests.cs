@@ -130,7 +130,7 @@ public sealed class MyDocsBridgeTests(ServerFixture server) : IClassFixture<Serv
         // Alle Tests der Klasse teilen sich einen Tresor: Verknüpfte Einträge anderer Tests erscheinen als „nicht mehr in myDocs“.
         Assert.Equal(3, plan.Changes.Count(c => c.Kind == MyDocsChangeKind.New));
         Assert.DoesNotContain(plan.Changes, c => c.Title == "Unbekannt");
-        Assert.Single(plan.Changes.Single(c => c.Source!.Id == insurance).NewDocuments);
+        Assert.Single(plan.Changes.Single(c => c.Source?.Id == insurance).NewDocuments);
 
         await bridge.ApplyAsync(plan);
 
