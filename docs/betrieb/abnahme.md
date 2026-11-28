@@ -1,6 +1,6 @@
-# Abnahme auf der Synology (vor Version 1.1)
+# Abnahme auf der Synology (vor Version 1.2)
 
-Checkliste für die Abnahme von M1 und M2 auf der DS1520+ (Meilensteine), dazu was mit Version 1.1 neu ist: Hilfe, Konto-Menü, Zahlungen und Ablageorte. `v1.0.0` ist bereits ohne diese Abnahme veröffentlicht; abgenommen wird der Stand von `v1.1.0`. Zum Abhaken: `[ ]` durch `[x]` ersetzen. Wenn etwas nicht wie beschrieben funktioniert: notieren, was du getan hast und was passiert ist, dann weiter mit dem nächsten Punkt.
+Checkliste für die Abnahme von M1 und M2 auf der DS1520+ (Meilensteine), dazu was mit Version 1.1 neu ist (Hilfe, Konto-Menü, Zahlungen und Ablageorte) und mit 1.2 (gemeinsamer Katalog mit myDocs, Abgleich mit myDocs, Teil 8). `v1.0.0` und `v1.1.0` sind bereits ohne diese Abnahme veröffentlicht; abgenommen wird der Stand von `v1.2.0`. Zum Abhaken: `[ ]` durch `[x]` ersetzen. Wenn etwas nicht wie beschrieben funktioniert: notieren, was du getan hast und was passiert ist, dann weiter mit dem nächsten Punkt.
 
 Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Folgenden **A** (Eigentümer, Admin) und **B** (Vertrauensperson). Mit den kürzesten Fristen dauert der Antrag in Teil 4 etwa einen Tag; der Weg ohne Lebenszeichen (Teil 5) mindestens 11 Tage.
 
@@ -9,7 +9,7 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 - [ ] Ordner, `.env` und Rechte wie in [installation.md](installation.md), Abschnitte 1–3
 - [ ] `MYLIFE_BACKUP_KEY` erzeugt (`openssl rand -base64 32`), in die `.env` eingetragen, **ausgedruckt** und getrennt von der NAS abgelegt
 - [ ] Projekt im Container Manager gestartet, `https://mylife.eckis-corner.de` erreichbar, Zertifikat gültig
-- [ ] Die Fußzeile zeigt „Version **1.1.0**“ (bei fester Version in der `.env`: `MYLIFE_VERSION=1.1.0`)
+- [ ] Die Fußzeile zeigt „Version **1.2.0**“ (bei fester Version in der `.env`: `MYLIFE_VERSION=1.2.0`)
 - [ ] Tutorial und Anleitung sind ohne Anmeldung erreichbar (unten in der Seitenleiste); die Suche in der Anleitung findet „Ablageorte“
 - [ ] Einrichtung mit dem Einrichtungscode aus dem Container-Protokoll: Konto A, Master-Passwort, Recovery-Kit **ausgedruckt**, Authenticator-App
 - [ ] Optional: Passkey unter „Sicherheit“ hinzugefügt und Anmeldung damit getestet
@@ -108,11 +108,19 @@ Gebraucht werden zwei Personen bzw. zwei Konten mit eigenen Mail-Adressen, im Fo
 - [ ] **Rücksicherung geprobt:** auf einem anderen Rechner mit Docker oder in einem zweiten Projektordner mit eigener Datenbank und derselben `.env` installieren, eine Sicherung nach `data/app/backup` kopieren, `restore … --confirm` ([installation.md](installation.md), Abschnitt 8); Anmeldung von A klappt, Einträge und Dokumente sind da
 - [ ] Update geprobt: „Jetzt sichern“, `docker compose pull`, `up -d`; danach Anmeldung und Verwaltung ohne Fehler
 
-## 8. Abschluss
+## 8. Version 1.2: gemeinsamer Katalog und Abgleich mit myDocs
+
+- [ ] **Update von 1.1.0:** „Jetzt sichern“, Image auf `1.2.0`, Projekt neu starten; Anmeldung, alle Bereiche, ein Datenblatt, „Zahlungen“ und „Ablageorte“ sehen aus wie vorher (Katalog und Farben kommen jetzt aus my-common)
+- [ ] Ein Eintrag lässt sich wie bisher anlegen, ändern und als PDF ausgeben; die Vollständigkeitsanzeige stimmt
+- [ ] Ohne `MYLIFE_MYDOCS_URL`: Die Seite **Abgleich mit myDocs** sagt, dass der Abgleich nicht eingerichtet ist; die Übersicht zeigt keinen Hinweis
+- [ ] Mit myDocs: Teil 19 der Abnahme von myDocs ([abnahme.md dort](https://github.com/eckis-corner/myDocs/blob/main/docs/betrieb/abnahme.md)), als A in myLife
+- [ ] Ein JSON-Export mit Einträgen aus myDocs lässt sich mit `mylife-decrypt` aus dem Release 1.2.0 öffnen
+
+## 9. Abschluss
 
 - [ ] Fristen in der Verwaltung wieder auf sinnvolle Werte (Standard: Lebenszeichen 30 Tage, Erinnerungen 3, 7, 14, Wartezeit 14, Antragsfrist 7)
 - [ ] Testkonten gelöscht oder gesperrt; Testeinträge entfernt
 - [ ] Zweite Person als Admin eingetragen ([nachfolge.md](nachfolge.md), Abschnitt 1)
 - [ ] Unterlagen für die Nachfolge zusammengestellt (`.env`, Sicherungsschlüssel, Zugänge)
 - [ ] Notizen zu allem, was nicht wie beschrieben funktioniert hat, an die Entwicklung gegeben
-- [ ] Danach: Release `v1.1.0` bestätigen (Entscheidung 136). Ist bei der Abnahme etwas nachgebessert worden, stattdessen den nächsten Tag (`v1.1.1`) setzen und diesen Stand nehmen
+- [ ] Danach: Release `v1.2.0` bestätigen (Entscheidung 136). Ist bei der Abnahme etwas nachgebessert worden, stattdessen den nächsten Tag (`v1.2.1`) setzen und diesen Stand nehmen

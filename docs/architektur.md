@@ -1,6 +1,6 @@
 # myLife – Architektur
 
-Stand: 26.11.2026, Version 1.1.0 (Entwurf vom 24.11.2026, seitdem fortgeschrieben). Die Nummern in Klammern verweisen auf das [Entscheidungsprotokoll](entscheidungen.md). Bereiche und Objekttypen stehen in [objekttypen.md](objekttypen.md).
+Stand: 28.11.2026, Version 1.2.0 (Entwurf vom 24.11.2026, seitdem fortgeschrieben). Die Nummern in Klammern verweisen auf das [Entscheidungsprotokoll](entscheidungen.md). Bereiche und Objekttypen stehen in [objekttypen.md](objekttypen.md).
 
 ## 1. Leitprinzipien
 

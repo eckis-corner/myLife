@@ -62,11 +62,14 @@ Das Update von 1.0.0 braucht keine Datenbank-Migration ([installation.md](betrie
 
 **Abnahme:** Die Checkliste [abnahme.md](betrieb/abnahme.md) auf der DS1520+ mit dem Stand von `v1.1.0`, zusammen mit den Abnahmen von M1 und M2.
 
-## Abgleich mit myDocs ✅ (28.11.2026, Branch `m5-mydocs-bridge`)
+## Version 1.2 – gemeinsamer Katalog, Abgleich mit myDocs (vorbereitet 28.11.2026, Tag `v1.2.0` nach der Abnahme)
 
-Gegenstück zu M5 in myDocs: Seite „Abgleich mit myDocs“, Verbindung verschlüsselt am Konto, Vergleich und Übernahme im Browser, Schreibschutz für Felder aus myDocs, Dokumente als feste Kopie, „Stand ungeprüft seit …“, Hinweis auf der Übersicht, Eintrag „myDocs-Wiederherstellung“, CSP mit dem Origin von myDocs (Entscheidungen 146, 147). Neue Migration `MyDocsBridge` (eine Spalte); das Exportformat ergänzt nur Felder. 289 von 290 Tests grün, 1 übersprungen wie vorher.
+1. **Gemeinsamer Katalog:** Objektkatalog, Feldprüfungen und Texte aus dem Paket **MyCommon.Catalog**, Farbschema, Schrift und Formular der Katalogfelder aus **MyCommon.Ui** (Repo my-common, PR #1); für die Nutzer unverändert ✅ (27.11.2026; Entscheidungen 144, 145)
+2. **Abgleich mit myDocs:** Seite „Abgleich mit myDocs“, Verbindung verschlüsselt am Konto, Vergleich und Übernahme im Browser, Schreibschutz für Felder aus myDocs, Dokumente als feste Kopie, „Stand ungeprüft seit …“, Hinweis auf der Übersicht, Eintrag „myDocs-Wiederherstellung“, CSP mit dem Origin von myDocs (PR #2) ✅ (28.11.2026; Entscheidungen 146, 147)
 
-**Abnahme:** Teil 19 der Abnahme von myDocs (`docs/betrieb/abnahme.md` dort): Eine Änderung an einer Versicherung in myDocs steht nach dem Abgleich verschlüsselt in myLife, und der myLife-Server sieht nur Chiffrat.
+Das Update von 1.1.0 bringt eine Migration (eine Spalte) und die neue Variable `MYLIFE_MYDOCS_URL` ([installation.md](betrieb/installation.md), Abschnitt 7). Das Exportformat ergänzt nur Felder. 289 von 290 Tests grün, 1 übersprungen wie vorher.
+
+**Abnahme:** Die Checkliste [abnahme.md](betrieb/abnahme.md) mit dem Stand von `v1.2.0`, darin Teil 8 für 1.2; mit myDocs zusammen Teil 19 der Abnahme von myDocs: Eine Änderung an einer Versicherung in myDocs steht nach dem Abgleich verschlüsselt in myLife, und der myLife-Server sieht nur Chiffrat.
 
 ## Später (nicht geplant)
 

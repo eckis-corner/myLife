@@ -1,6 +1,6 @@
 # myLife – Bereiche und Objekttypen
 
-Stand: 26.11.2026, Version 1.1.0 (Entwurf vom 24.11.2026 zu Entscheidung 29, seitdem fortgeschrieben).
+Stand: 28.11.2026, Version 1.2.0 (Entwurf vom 24.11.2026 zu Entscheidung 29, seitdem fortgeschrieben).
 
 Jede Information ist ein **Objekt** mit einem festen **Objekttyp**, zum Beispiel ein Bankkonto, eine Versicherung oder ein Vertrag. Jeder Objekttyp hat seine typischen Felder. Die Objekttypen sind in **Bereiche** gruppiert. Die Bereiche sind die Einheit für Freigaben an Vertrauenspersonen und für die Verschlüsselung (ein Schlüssel je Bereich).
 

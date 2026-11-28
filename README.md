@@ -4,7 +4,7 @@
 
 myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: Versicherungen, Konten, Kredite, Verträge, Urkunden, digitale Zugänge, Kontakte und persönliche Wünsche. Solange du lebst, kann niemand die Daten lesen, auch nicht der Betreiber des Servers. Wirst du handlungsunfähig oder stirbst du, erhalten deine Vertrauenspersonen über einen Notfallzugang (Dead-Man's-Switch) genau die Bereiche, die du für sie freigegeben hast.
 
-> **Status:** Version 1.1.0 (Meilensteine M1 bis M3, dazu Hilfe, Zahlungen und Ablageorte). Vor echten Daten fehlt die Abnahme auf der Synology ([Checkliste](docs/betrieb/abnahme.md)). Was sich geändert hat, steht unter [Releases](https://github.com/eckis-corner/myLife/releases).
+> **Status:** Version 1.2.0 (Meilensteine M1 bis M3, dazu Hilfe, Zahlungen und Ablageorte; seit 1.2 der gemeinsame Katalog mit myDocs und der Abgleich mit myDocs). Vor echten Daten fehlt die Abnahme auf der Synology ([Checkliste](docs/betrieb/abnahme.md)). Was sich geändert hat, steht unter [Releases](https://github.com/eckis-corner/myLife/releases).
 
 ## Merkmale
 
@@ -31,7 +31,7 @@ myLife sammelt an einem Ort alles, was deine Familie im Ernstfall wissen muss: V
 | [docs/entscheidungen.md](docs/entscheidungen.md) | Entscheidungsprotokoll |
 | [docs/format.md](docs/format.md) | Offene Formate: JSON-Export, Notfallpaket, Server-Sicherung |
 | [docs/betrieb/installation.md](docs/betrieb/installation.md) | Installation auf Synology mit Nginx Proxy Manager, Updates, Sicherung und Rücksicherung |
-| [docs/betrieb/abnahme.md](docs/betrieb/abnahme.md) | Checkliste für die Abnahme auf der Synology vor Version 1.1 |
+| [docs/betrieb/abnahme.md](docs/betrieb/abnahme.md) | Checkliste für die Abnahme auf der Synology vor Version 1.2 |
 | [docs/betrieb/nachfolge.md](docs/betrieb/nachfolge.md) | Übergabe an eine Nachfolgeperson, geordnetes Beenden |
 | [docs/betrieb/mylife-decrypt.md](docs/betrieb/mylife-decrypt.md) | Exporte und Notfallpakete ohne Server öffnen |
 | [PROMPT.md](PROMPT.md) | Ursprüngliche Anforderung |
